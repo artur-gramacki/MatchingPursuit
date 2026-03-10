@@ -6,10 +6,12 @@
 \alias{MatchingPursuit}
 \title{Processing Time Series Data Using the Matching Pursuit Algorithm}
 \description{
-Dłuższy opis pakietu. TODO.
+This package provides tools for analysing and decomposing time series data using the \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition technique that represents complex signals as a linear combination of simpler functions selected from an overcomplete dictionary.
 }
 \details{
-todo
+In addition to working with generic time-series data, the package also supports direct loading of data stored in EDF and EDF(+) files. These formats are widely used for storing physiological signals such as EEG, EMG, or ECG recordings. By enabling the import of EDF and EDF(+) files, the package facilitates the analysis of biomedical signals.
+
+In the package we use the implementation of the Matching Pursuit algorithm by Piotr Różański available at \url{https://github.com/develancer/empi}.
 }
 \references{
 Mallat, S. & Zhang, Z. (1993). \emph{Matching Pursuits with Time-Frequency Dictionaries}.
