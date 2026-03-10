@@ -1,0 +1,36 @@
+Package: MatchingPursuit
+Type: Package
+Title: Reading EEG Data and Processing Using the Matching Pursuit Algorithm
+Version: 1.0.0
+Author: 
+  Artur Gramacki [aut, cre] (ORCID: <https://orcid.org/0000-0002-1610-9743>),
+  Jarosław Gramacki [ctb] (ORCID: <https://orcid.org/"0000-0001-5032-1353>)
+Authors@R: c(
+  person(
+    "Artur", "Gramacki", 
+    role = c("aut","cre"), 
+    comment = c(ORCID = "0000-0002-1610-9743"),
+    email = "a.gramacki@gmail.com"),
+    person(
+    "Jarosław", "Gramacki", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0001-5032-1353"),
+    email = "a.gramacki@gmail.com"))
+Maintainer: Artur Gramacki <a.gramacki@gmail.com>
+Description: TODO.
+SystemRequirements: external tool (installed via empi.download())
+Imports: 
+  edf, 
+  signal,
+  RSQLite,
+  DescTools,
+  imager,
+  raster,
+  graphics,
+  grDevices,
+  utils
+Depends: R (>= 3.5.0)
+License:  GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.3

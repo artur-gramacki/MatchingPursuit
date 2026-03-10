@@ -1,0 +1,75 @@
+#' Runs the \emph{empi} program for the given data.
+#'
+#' todo.
+#'
+#' @param signal Must be a data frame: rows = samples for all channels, columns = channels. The data frame must have column names (channel names).
+#' @param sampling.rate Sampling rate of the given signal (must be the same for every channel).
+#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download} function.
+#' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.
+#'
+#' @return Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE}, additionally, these results are written to the \code{empi.db} disk file in the working directory.
+#'
+#' @export
+#'
+#' @examples
+#' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+#' signal <- read.csv(file, header = TRUE)
+#'
+#' empi.out <- empi.execute (
+#'   signal = signal,
+#'   sampling.rate = 128,
+#'   empi.options = NULL,
+#'   write.to.file = FALSE
+#' )
+#'
+empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE) {
+  empi.loc <-  locate.empi()
+  dir.name <- tools::file_path_sans_ext((empi.loc$fname))
+
+  n.channels <- ncol(signal)
+
+  signal.raw <- sig2bin(data = signal, write.to.file = TRUE)
+
+  file.bin <- tempfile("file_for_empi_", fileext = ".bin")
+  file.db <- tempfile("file__for_empi_", fileext = ".db")
+  writeBin(signal.raw, file.bin)
+
+  file.db <- tempfile("file__for_empi_", fileext = ".db")
+
+  if (is.null(empi.options)) {
+    options <-  "-o local --gabor -i 50"
+  } else {
+    options <- empi.options
+  }
+
+  command <- paste(
+    dir.name,
+    "/empi.exe ",
+    file.bin,
+    " ",
+    file.db,
+    " ",
+    "-f ",
+    sampling.rate,
+    " -c ",
+    n.channels,
+    " --channels 1-",
+    n.channels,
+    " ",
+    options,
+    sep = "")
+
+  system(command)
+
+  if (write.to.file) {
+    file.copy(file.db, "empi.db", overwrite = TRUE)
+    cat("\n--> Note: results were also saved in the 'empi.db' file in the current directory (in SQLite format). <--\n")
+  }
+
+  out <- read.empi.db.file(file.db)
+
+  file.remove(file.bin, file.db)
+
+  return(out)
+
+}
