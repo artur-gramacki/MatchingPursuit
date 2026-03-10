@@ -1,9 +1,6 @@
-#' Using the Matching Pursuit algorithm to analyze time series data.
+#' Processing Time Series Data Using the Matching Pursuit Algorithm
 #'
-#' Dłuższy opis pakietu. Możesz tu opisać:
-#' - do czego służy pakiet
-#' - główne funkcje
-#' - przykładowy workflow
+#' Dłuższy opis pakietu. TODO.
 #'
 #' @docType package
 #' @name MatchingPursuit

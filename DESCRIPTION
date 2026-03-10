@@ -1,6 +1,6 @@
 Package: MatchingPursuit
 Type: Package
-Title: Reading EEG Data and Processing Using the Matching Pursuit Algorithm
+Title: Processing Time Series Data Using the Matching Pursuit Algorithm
 Version: 1.0.0
 Author: 
   Artur Gramacki [aut, cre] (ORCID: <https://orcid.org/0000-0002-1610-9743>),
