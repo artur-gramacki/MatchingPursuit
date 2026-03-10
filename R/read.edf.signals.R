@@ -1,6 +1,6 @@
-#' Reads a selected EDF and EDF+ file and returns all signals data.
+#' Reads a selected EDF or EDF+ file and returns all signals data
 #'
-#' The function reads a selected EDF(+) file and returns all signals data as a matrix.
+#' The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
 #' Also resampling can be done (upsampling or downsampling).
 #'
 #' @param file the full path to the EDF/EDF+ file to be read.

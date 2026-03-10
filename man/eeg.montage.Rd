@@ -2,7 +2,7 @@
 % Please edit documentation in R/eeg.montage.R
 \name{eeg.montage}
 \alias{eeg.montage}
-\title{Performs bipolar, reference or average EEG montage.}
+\title{Performs bipolar, reference or average EEG montage}
 \usage{
 eeg.montage(
   eeg.data,

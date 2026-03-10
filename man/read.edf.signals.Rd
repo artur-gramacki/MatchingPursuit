@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.edf.signals.R
 \name{read.edf.signals}
 \alias{read.edf.signals}
-\title{Reads a selected EDF and EDF+ file and returns all signals data.}
+\title{Reads a selected EDF or EDF+ file and returns all signals data}
 \usage{
 read.edf.signals(file, resampling = TRUE, f.new = NULL, from = NULL, to = NULL)
 }
@@ -21,7 +21,7 @@ read.edf.signals(file, resampling = TRUE, f.new = NULL, from = NULL, to = NULL)
 A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a result of executing \code{edf::read.edf()} function.
 }
 \description{
-The function reads a selected EDF(+) file and returns all signals data as a matrix.
+The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
 Also resampling can be done (upsampling or downsampling).
 }
 \details{

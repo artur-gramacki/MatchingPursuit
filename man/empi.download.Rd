@@ -2,7 +2,7 @@
 % Please edit documentation in R/empi.download.R
 \name{empi.download}
 \alias{empi.download}
-\title{Downloads \emph{Enhanced Matching Pursuit Implementation} program \href{https://github.com/develancer/empi}{empi}.}
+\title{Downloading the required software}
 \usage{
 empi.download()
 }
@@ -10,6 +10,9 @@ empi.download()
 The function downloads the empi program in a version compatible with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64) and saves it in the current directory.
 }
 \description{
+Downloads \emph{Enhanced Matching Pursuit Implementation} program \href{https://github.com/develancer/empi}{empi}.
+}
+\details{
 \emph{empi} is a fast implementation of Matching Pursuit algorithm. The program uses both CPU parallelization and GPU
 devices. See README.md for more details on this implementation.
 The program (sources and binaries for different OSs) is available for download at

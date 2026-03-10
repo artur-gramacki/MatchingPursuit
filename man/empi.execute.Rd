@@ -2,7 +2,7 @@
 % Please edit documentation in R/empi.execute.R
 \name{empi.execute}
 \alias{empi.execute}
-\title{Runs the \emph{empi} program for the given data.}
+\title{Launching the Matching Pursuit algorithm}
 \usage{
 empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE)
 }
@@ -19,8 +19,11 @@ empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE)
 Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE}, additionally, these results are written to the \code{empi.db} disk file in the working directory.
 }
 \description{
-The program (sources and binaries for different OSs) is available for download at
-\href{https://github.com/develancer/empi}{empi}. Details are presented in a journal paper: Różański, P.T. (2024).
+Runs the \emph{empi} program for the given data.
+}
+\details{
+The \emph{empi} program (sources and binaries for different OSs) is available for download at
+\url{https://github.com/develancer/empi}. Details are presented in a journal paper: Różański, P.T. (2024).
 \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}. ACM Transactions on Mathematical Software,
  vol.50, issue = 3, pp. 1-17, \url{https://doi.org/10.1145/3674832}.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.edf.params.R
 \name{read.edf.params}
 \alias{read.edf.params}
-\title{Reads a selected EDF and EDF+ file and returns signals parameters.}
+\title{Reads a selected EDF or EDF+ file and returns signal parameters}
 \usage{
 read.edf.params(file)
 }
@@ -13,7 +13,7 @@ read.edf.params(file)
 A data frame is returned containing the most basic parameters of the EDF / EDF(+) file.
 }
 \description{
-The function reads a selected EDF(+) file and returns selected signals parameters
+The function reads a selected EDF or EDF+ file and returns selected signals parameters
 (channel names, frequency of each channel, number of samples in each channel
 and the length of each channel in seconds). Additional information stored in EDF+
 files (such as interrupted recordings, time-stamped annotations) is not used in the

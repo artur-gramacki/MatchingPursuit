@@ -1,6 +1,7 @@
-#' Reads a selected EDF and EDF+ file and returns signals parameters.
+#' Reads a selected EDF or EDF+ file and returns signal parameters
 #'
-#' The function reads a selected EDF(+) file and returns selected signals parameters
+#' @description
+#' The function reads a selected EDF or EDF+ file and returns selected signals parameters
 #' (channel names, frequency of each channel, number of samples in each channel
 #' and the length of each channel in seconds). Additional information stored in EDF+
 #' files (such as interrupted recordings, time-stamped annotations) is not used in the

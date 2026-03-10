@@ -1,4 +1,4 @@
-#' Reads data from a SQLite file created by the Matching Pursuit algorithm.
+#' Reads data from a SQLite file created by the Matching Pursuit algorithm
 #'
 #'@param db.file SQLite file.
 #'

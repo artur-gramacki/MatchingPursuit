@@ -2,7 +2,7 @@
 % Please edit documentation in R/filters.coeff.R
 \name{filters.coeff}
 \alias{filters.coeff}
-\title{A wrapper function for \code{signal::butter} function.}
+\title{A wrapper function for \code{signal::butter} function}
 \usage{
 filters.coeff(
   fs = 256,

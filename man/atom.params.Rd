@@ -2,7 +2,7 @@
 % Please edit documentation in R/atom.params.R
 \name{atom.params}
 \alias{atom.params}
-\title{Returns a data frame with atom parameters.}
+\title{Reading the atom parameters}
 \usage{
 atom.params(db.file)
 }

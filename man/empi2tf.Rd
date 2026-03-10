@@ -2,7 +2,7 @@
 % Please edit documentation in R/empi2tf.R
 \name{empi2tf}
 \alias{empi2tf}
-\title{Creates a time-frequency map using atoms from the Matching Pursuit algorithm.}
+\title{Creates a time-frequency map using atoms from the Matching Pursuit algorithm}
 \usage{
 empi2tf(
   db.file = NULL,

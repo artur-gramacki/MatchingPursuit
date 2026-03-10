@@ -2,7 +2,7 @@
 % Please edit documentation in R/sig2bin.R
 \name{sig2bin}
 \alias{sig2bin}
-\title{Reads input signal(s) from a data frame and returns them in binary format.}
+\title{Reads input signal(s) from a data frame and returns them in binary format}
 \usage{
 sig2bin(data, write.to.file = TRUE)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Gabor.fun.R
 \name{Gabor.fun}
 \alias{Gabor.fun}
-\title{Gabor function implementation.}
+\title{Gabor function implementation}
 \usage{
 Gabor.fun(
   number.of.samples,
