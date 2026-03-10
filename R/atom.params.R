@@ -7,13 +7,13 @@
 #' @export
 #'
 #' @examples
-# The file contains data from 18 channels.
+#' # The file contains data from 18 channels.
 #' file <- system.file("extdata", "EEG_data_10sec.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out[which(out$channel_id == 1), ]
 #' out[which(out$channel_id == 18), ]
 #'
-#' Only 1 channel is in the file.
+#' # Only 1 channel is in the file.
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out
