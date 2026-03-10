@@ -32,6 +32,7 @@
 #' )
 #'
 empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE) {
+
   empi.loc <-  locate.empi()
   dir.name <- tools::file_path_sans_ext((empi.loc$fname))
 
@@ -50,6 +51,8 @@ empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.fi
   } else {
     options <- empi.options
   }
+
+  if (!dir.exists(dir.name)) empi.download()
 
   command <- paste(
     dir.name,
