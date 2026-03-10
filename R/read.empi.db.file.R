@@ -1,6 +1,6 @@
-#' Reads data from an SQLite file that is created by Matching Pursuit.
+#' Reads data from a SQLite file created by the Matching Pursuit algorithm.
 #'
-#'@param db.file SQLlite file.
+#'@param db.file SQLite file.
 #'
 #' @return 1) Detailed parameters of all the generated atoms. 2) Analysed input signal(s). 3) Reconstructed signal (as the sum of generated atoms. 4) Generated Gabor atoms.
 #'

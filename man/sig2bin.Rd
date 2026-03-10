@@ -2,7 +2,7 @@
 % Please edit documentation in R/sig2bin.R
 \name{sig2bin}
 \alias{sig2bin}
-\title{Reads input signal(s) form a data frame and returns it in the binary format.}
+\title{Reads input signal(s) from a data frame and returns them in binary format.}
 \usage{
 sig2bin(data, write.to.file = TRUE)
 }
@@ -12,10 +12,15 @@ sig2bin(data, write.to.file = TRUE)
 \item{write.to.file}{If TRUE, the file \code{signal.bin} will be created and saved in the current directory.}
 }
 \value{
-Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin} will additionaly be created and saved in the current directory.
+Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin} will conditionally be created and saved in the current directory.
 }
 \description{
-Input signal(s) must be a data frame: rows = samples for all channels, columns = channels. The data frame should have column names. Te function is used internally in the \code{empi.execute} function. The binary data are floating-point values in the byte order  of the current machine (no byte-order conversion is performed). For multichannel signals, first come the samples for all channels at \code{t=0}, then for all channels at \code{t=Δt}, and so forth. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
+Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
+The data frame should have column names. Te function is used internally in the \code{empi.execute}
+function. The binary data are floating-point values in the byte order  of the current machine
+(no byte-order conversion is performed). For multichannel signals, first come the samples for all
+channels at \code{t=0}, then for all channels at \code{t=Δt}, and so forth. In other words,
+the signal should be written in column-major order (rows = channels, columns = samples).
 }
 \examples{
 ## Not run:

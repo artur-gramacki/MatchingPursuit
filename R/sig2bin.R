@@ -1,4 +1,4 @@
-#' Reads input signal(s) form a data frame and returns it in the binary format.
+#' Reads input signal(s) from a data frame and returns them in binary format.
 #'
 #' Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
 #' The data frame should have column names. Te function is used internally in the \code{empi.execute}

@@ -1,6 +1,9 @@
 #' Runs the \emph{empi} program for the given data.
 #'
-#' todo.
+#' The program (sources and binaries for different OSs) is available for download at
+#' \href{https://github.com/develancer/empi}{empi}. Details are presented in a journal paper: Różański, P.T. (2024).
+#' \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}. ACM Transactions on Mathematical Software,
+#'  vol.50, issue = 3, pp. 1-17, \url{https://doi.org/10.1145/3674832}.
 #'
 #' @param signal Must be a data frame: rows = samples for all channels, columns = channels. The data frame must have column names (channel names).
 #' @param sampling.rate Sampling rate of the given signal (must be the same for every channel).

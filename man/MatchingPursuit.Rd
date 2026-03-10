@@ -4,12 +4,9 @@
 \name{MatchingPursuit}
 \alias{MatchingPursuit-package}
 \alias{MatchingPursuit}
-\title{Using the Matching Pursuit algorithm to analyze time series data.}
+\title{Processing Time Series Data Using the Matching Pursuit Algorithm}
 \description{
-Dłuższy opis pakietu. Możesz tu opisać:
-- do czego służy pakiet
-- główne funkcje
-- przykładowy workflow
+Dłuższy opis pakietu. TODO.
 }
 \details{
 todo

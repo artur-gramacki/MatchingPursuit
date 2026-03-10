@@ -2,18 +2,18 @@
 % Please edit documentation in R/read.empi.db.file.R
 \name{read.empi.db.file}
 \alias{read.empi.db.file}
-\title{Reads data from an SQLite file that is created by Matching Pursuit.}
+\title{Reads data from a SQLite file created by the Matching Pursuit algorithm.}
 \usage{
 read.empi.db.file(db.file)
 }
 \arguments{
-\item{db.file}{SQLlite file.}
+\item{db.file}{SQLite file.}
 }
 \value{
 1) Detailed parameters of all the generated atoms. 2) Analysed input signal(s). 3) Reconstructed signal (as the sum of generated atoms. 4) Generated Gabor atoms.
 }
 \description{
-Reads data from an SQLite file that is created by Matching Pursuit.
+Reads data from a SQLite file created by the Matching Pursuit algorithm.
 }
 \examples{
 ## Not run:

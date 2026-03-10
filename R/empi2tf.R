@@ -1,6 +1,6 @@
-#' Title
+#' Creates a time-frequency map using atoms from the Matching Pursuit algorithm.
 #'
-#' Todo.
+#' The map can be displayed on the screen, saved to a \code{png} file, or saved as an RData object (as a matrix).
 #'
 #' @importFrom graphics rasterImage par points text axis mtext layout plot.new plot.window box abline
 #' @importFrom grDevices hcl.colors graphics.off pdf dev.off png

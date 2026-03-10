@@ -2,7 +2,7 @@
 % Please edit documentation in R/empi2tf.R
 \name{empi2tf}
 \alias{empi2tf}
-\title{Title}
+\title{Creates a time-frequency map using atoms from the Matching Pursuit algorithm.}
 \usage{
 empi2tf(
   db.file = NULL,
@@ -83,7 +83,7 @@ Depending on the \code{outMode} parameter the function returns:
   }
 }
 \description{
-Todo.
+The map can be displayed on the screen, saved to a \code{png} file, or saved as an RData object (as a matrix).
 }
 \examples{
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")

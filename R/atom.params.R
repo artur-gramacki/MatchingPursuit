@@ -1,4 +1,4 @@
-#' Returns data frame with all the atoms' parameters.
+#' Returns a data frame with atom parameters.
 #'
 #' @param db.file The SQLite file created after executing the \code{empi.execute} function.
 #'
