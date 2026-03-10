@@ -16,7 +16,7 @@
 #'
 #' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.
 #'
-#' @return Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE}, additionally, these results are written to the \code{empi.db} disk file in the working directory.
+#' @return Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE} additionally, these results are written to the \code{empi.db} disk file in the working directory.
 #'
 #' @export
 #'
