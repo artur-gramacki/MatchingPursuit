@@ -30,10 +30,10 @@ Gabor.fun(
 \item{normalization}{If TRUE, norm of the generated atom equals 1.}
 }
 \value{
-List of 4 vectors with cosinus, gauss, gabor and time waveforms of size \code{number.of.samples}.
+List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
 }
 \description{
-A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is widely used as a basic building block for representing signals that are localized in both time and frequency. Matching Pursuit algorithm uses a redundant dictionary of the so called \emph{Gabor atoms}. Gabor atoms are ideal for Matching Pursuit because they: 1) provide optimal time–frequency localization, 2) represent oscillatory signals well, 3) enable adaptive time-frequency decomposition
+A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is widely used as a basic building block for representing signals that are localized in both time and frequency. Matching Pursuit algorithm uses a redundant dictionary of the so called \emph{Gabor atoms}. Gabor atoms are ideal for Matching Pursuit because they: 1) provide optimal time–frequency localization, 2) represent oscillatory signals well, 3) enable adaptive time-frequency decomposition.
 }
 \examples{
 number.of.samples <- 512

@@ -9,22 +9,22 @@ empi2tf(
   db.list = NULL,
   channel,
   mode = "sqrt",
-  freqDivide = 1,
-  increaseFactor = 1,
-  shorteningFactor.x = 2,
-  shorteningFactor.y = 2,
-  displayCrosses = TRUE,
-  displayAtomNumbers = FALSE,
-  displayGrid = FALSE,
-  crossesColor = "white",
+  freq.divide = 1,
+  increase.factor = 1,
+  shortening.factor.x = 2,
+  shortening.factor.y = 2,
+  display.crosses = TRUE,
+  display.atom.numbers = FALSE,
+  display.grid = FALSE,
+  crosses.color = "white",
   palette = "my custom palette",
   rev = TRUE,
-  outMode = "file",
-  fileName = "sample.png",
-  fileSize = c(512, 512),
-  drawEllipses = FALSE,
-  plotSignals = TRUE,
-  plotAtoms = FALSE
+  out.mode = "file",
+  file.name = "sample.png",
+  file.size = c(512, 512),
+  draw.ellipses = FALSE,
+  plot.signals = TRUE,
+  plot.atoms = FALSE
 )
 }
 \arguments{
@@ -36,46 +36,46 @@ empi2tf(
 
 \item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}.}
 
-\item{freqDivide}{For setting frequency range. For example, when sampling frequency is \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the frequency is  \code{f/2/freqDivide}.}
+\item{freq.divide}{For setting frequency range. For example, when sampling frequency is \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the frequency is  \code{f/2/freq.divide}.}
 
-\item{increaseFactor}{Factor of increasing the number of pixels in the f-axis, the most sensible are non-negative integers (e.g. 2, 4, 5, 8).}
+\item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 
-\item{shorteningFactor.x}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
+\item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
 
-\item{shorteningFactor.y}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
+\item{shortening.factor.y}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
 
-\item{displayCrosses}{Whether small crosses should be displayed in the canters of atoms.}
+\item{display.crosses}{Whether small crosses should be displayed in the canters of atoms.}
 
-\item{displayAtomNumbers}{Whether atom numbers should be displayed in the canters of atoms.}
+\item{display.atom.numbers}{Whether atom numbers should be displayed in the canters of atoms.}
 
-\item{displayGrid}{Whether to draw grid lines.}
+\item{display.grid}{Whether to draw grid lines.}
 
-\item{crossesColor}{Colour of small crosses.}
+\item{crosses.color}{Colour of small crosses.}
 
 \item{palette}{Palette from the list returned by \code{hcl.pals} function or the string \code{"my custom palette"}.}
 
 \item{rev}{\code{rev} param in \code{hcl.colors} function.}
 
-\item{outMode}{One of the following:
+\item{out.mode}{One of the following:
 \itemize{
    \item \code{"plot"} - draws a TF map on the screen.
-   \item \code{"file"} - saves a TF map to file \code{fileName} (as png file).
-   \item \code{"RData"} - saves the TF map of \code{fileSize} in the \code{fileName} (as R's matrix) resampling using \code{imager::resize} function.
-   \item \code{"RData2"} - saves the TF map of \code{fileSize} in the \code{fileName} (as R's matrix) resampling using \code{raster::resample} function.
+   \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
+   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize} function.
+   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample} function.
  }}
 
-\item{fileName}{Name of the png file.}
+\item{file.name}{Name of the png file.}
 
-\item{fileSize}{File size in pixels.}
+\item{file.size}{File size in pixels.}
 
-\item{drawEllipses}{Only for testing.}
+\item{draw.ellipses}{Only for testing.}
 
-\item{plotSignals}{Whether the original and reconstructed signals should also be displayed.}
+\item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
 
-\item{plotAtoms}{If TRUE, plot all atoms into \code{Atoms.pdf} file.}
+\item{plot.atoms}{If TRUE, plot all atoms into \code{Atoms.pdf} file.}
 }
 \value{
-Depending on the \code{outMode} parameter the function returns:
+Depending on the \code{out.mode} parameter the function returns:
    \itemize{
    \item a time-Frequency map plotted on the screen.
    \item a time-Frequency map saved in a png file.
@@ -92,13 +92,13 @@ out <- empi2tf(
   db.file = file,
   channel = 1,
   mode = "sqrt",
-  freqDivide = 1,
-  increaseFactor= 4,
-  shorteningFactor.x = 2,
-  shorteningFactor.y = 2,
-  displayCrosses = TRUE,
-  displayAtomNumbers = FALSE,
-  outMode = "plot"
+  freq.divide = 1,
+  increase.factor= 4,
+  shortening.factor.x = 2,
+  shortening.factor.y = 2,
+  display.crosses = TRUE,
+  display.atom.numbers = FALSE,
+  out.mode = "plot"
 )
 
 }

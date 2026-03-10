@@ -16,7 +16,7 @@ empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE)
 \item{write.to.file}{If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.}
 }
 \value{
-Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE}, additionally, these results are written to the \code{empi.db} disk file in the working directory.
+Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE} additionally, these results are written to the \code{empi.db} disk file in the working directory.
 }
 \description{
 Runs the \emph{empi} program for the given data.

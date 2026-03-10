@@ -11,7 +11,7 @@
 #' @param frequency Frequency of the sinusoid.
 #' @param normalization If TRUE, norm of the generated atom equals 1.
 #'
-#' @return List of 4 vectors with cosinus, gauss, gabor and time waveforms of size \code{number.of.samples}.
+#' @return List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
 #'
 #' @examples
 #' number.of.samples <- 512

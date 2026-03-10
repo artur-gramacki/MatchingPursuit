@@ -17,45 +17,45 @@
 #'
 #' @param mode \code{"sqrt"}, \code{"log"}, or \code{"linear"}.
 #'
-#' @param freqDivide For setting frequency range. For example, when sampling frequency is \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the frequency is  \code{f/2/freqDivide}.
+#' @param freq.divide For setting frequency range. For example, when sampling frequency is \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the frequency is  \code{f/2/freq.divide}.
 #'
-#' @param increaseFactor Factor of increasing the number of pixels in the f-axis, the most sensible are non-negative integers (e.g. 2, 4, 5, 8).
+#' @param increase.factor Factor of increasing the number of pixels in the f-axis, the most sensible are non-negative integers (e.g. 2, 4, 5, 8).
 #'
-#' @param shorteningFactor.x Usually, for better visualization of atoms, a value of 2 will be appropriate.
+#' @param shortening.factor.x Usually, for better visualization of atoms, a value of 2 will be appropriate.
 #'
-#' @param shorteningFactor.y Usually, for better visualization of atoms, a value of 2 will be appropriate.
+#' @param shortening.factor.y Usually, for better visualization of atoms, a value of 2 will be appropriate.
 #'
-#' @param displayCrosses Whether small crosses should be displayed in the canters of atoms.
+#' @param display.crosses Whether small crosses should be displayed in the canters of atoms.
 #'
-#' @param displayAtomNumbers Whether atom numbers should be displayed in the canters of atoms.
+#' @param display.atom.numbers Whether atom numbers should be displayed in the canters of atoms.
 #'
-#' @param displayGrid Whether to draw grid lines.
+#' @param display.grid Whether to draw grid lines.
 #'
-#' @param crossesColor Colour of small crosses.
+#' @param crosses.color Colour of small crosses.
 #'
 #' @param palette Palette from the list returned by \code{hcl.pals} function or the string \code{"my custom palette"}.
 #'
 #' @param rev \code{rev} param in \code{hcl.colors} function.
 #'
-#' @param outMode One of the following:
+#' @param out.mode One of the following:
 #'   \itemize{
 #'      \item \code{"plot"} - draws a TF map on the screen.
-#'      \item \code{"file"} - saves a TF map to file \code{fileName} (as png file).
-#'      \item \code{"RData"} - saves the TF map of \code{fileSize} in the \code{fileName} (as R's matrix) resampling using \code{imager::resize} function.
-#'      \item \code{"RData2"} - saves the TF map of \code{fileSize} in the \code{fileName} (as R's matrix) resampling using \code{raster::resample} function.
+#'      \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
+#'      \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize} function.
+#'      \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample} function.
 #'    }
 #'
-#' @param fileName Name of the png file.
+#' @param file.name Name of the png file.
 #'
-#' @param fileSize File size in pixels.
+#' @param file.size File size in pixels.
 #'
-#' @param drawEllipses Only for testing.
+#' @param draw.ellipses Only for testing.
 #'
-#' @param plotSignals Whether the original and reconstructed signals should also be displayed.
+#' @param plot.signals Whether the original and reconstructed signals should also be displayed.
 #'
-#' @param plotAtoms If TRUE, plot all atoms into \code{Atoms.pdf} file.
+#' @param plot.atoms If TRUE, plot all atoms into \code{Atoms.pdf} file.
 #'
-#' @return Depending on the \code{outMode} parameter the function returns:
+#' @return Depending on the \code{out.mode} parameter the function returns:
 #'    \itemize{
 #'    \item a time-Frequency map plotted on the screen.
 #'    \item a time-Frequency map saved in a png file.
@@ -71,13 +71,13 @@
 #'   db.file = file,
 #'   channel = 1,
 #'   mode = "sqrt",
-#'   freqDivide = 1,
-#'   increaseFactor= 4,
-#'   shorteningFactor.x = 2,
-#'   shorteningFactor.y = 2,
-#'   displayCrosses = TRUE,
-#'   displayAtomNumbers = FALSE,
-#'   outMode = "plot"
+#'   freq.divide = 1,
+#'   increase.factor= 4,
+#'   shortening.factor.x = 2,
+#'   shortening.factor.y = 2,
+#'   display.crosses = TRUE,
+#'   display.atom.numbers = FALSE,
+#'   out.mode = "plot"
 #' )
 #'
 
@@ -86,25 +86,25 @@ empi2tf <- function(
     db.list = NULL,
     channel,
     mode = "sqrt",
-    freqDivide = 1,
-    increaseFactor= 1,
-    shorteningFactor.x = 2,
-    shorteningFactor.y = 2,
-    displayCrosses = TRUE,
-    displayAtomNumbers = FALSE,
-    displayGrid = FALSE,
-    crossesColor = "white",
+    freq.divide = 1,
+    increase.factor = 1,
+    shortening.factor.x = 2,
+    shortening.factor.y = 2,
+    display.crosses = TRUE,
+    display.atom.numbers = FALSE,
+    display.grid = FALSE,
+    crosses.color = "white",
     palette = 'my custom palette',
     rev = TRUE,
-    outMode = "file",
-    fileName = "sample.png",
-    fileSize = c(512, 512),
-    drawEllipses = FALSE,
-    plotSignals = TRUE,
-    plotAtoms = FALSE) {
+    out.mode = "file",
+    file.name = "sample.png",
+    file.size = c(512, 512),
+    draw.ellipses = FALSE,
+    plot.signals = TRUE,
+    plot.atoms = FALSE) {
 
-  if (outMode != "plot" & outMode != "file" & outMode != "RData" & outMode != "RData2")
-    stop("\n--> Incorrect value for 'outMode' parameter.' <--")
+  if (out.mode != "plot" & out.mode != "file" & out.mode != "RData" & out.mode != "RData2")
+    stop("\n--> Incorrect value for 'out.mode' parameter.' <--")
 
   if (is.null(db.file) & is.null(db.list))
     stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute' function. <--")
@@ -149,7 +149,7 @@ empi2tf <- function(
   f <- out$f
 
   # according to the Nyquist criterion
-  maxf <- round((f / 2) / freqDivide)
+  maxf <- round((f / 2) / freq.divide)
 
   epochSize <- length(out$t)
   s <- epochSize / f
@@ -158,10 +158,10 @@ empi2tf <- function(
   t <- seq(from = 0, to = s, length.out = epochSize)
 
   # grid size in f
-  y <- seq(from = 0, to = maxf, length.out = maxf * increaseFactor)
+  y <- seq(from = 0, to = maxf, length.out = maxf * increase.factor)
 
   # t-f map
-  tf.map <- matrix(0, nrow = epochSize, ncol = maxf * increaseFactor)
+  tf.map <- matrix(0, nrow = epochSize, ncol = maxf * increase.factor)
 
   grid <- expand.grid(x = t, y = y)
 
@@ -185,7 +185,7 @@ empi2tf <- function(
   cat("Signal length (in seconds): ", s, "\n", sep = "")
 
   # Empty chart on which the ellipses will appear
-  if (drawEllipses) {
+  if (draw.ellipses) {
     par(mfrow = c(1, 1), pty = "m")
     par(mai = c(0.9, 0.9, 0.2, 0.4))
     plot(0, xlim = c(0, tail(t, 1)), ylim = c(0, tail(y, 1)), type = "n", las = 1,
@@ -194,7 +194,7 @@ empi2tf <- function(
 
   for (n in 1:num.atoms) {
 
-    if (drawEllipses) {
+    if (draw.ellipses) {
       ellipse <- DrawEllipse(
         x = position[n],
         y = frequency[n],
@@ -206,11 +206,11 @@ empi2tf <- function(
         plot = TRUE,
         nv = 100)
 
-      if (displayCrosses) {
+      if (display.crosses) {
         points(position[n], frequency[n] , pch = 3, col = "black", cex = 1)
       }
 
-      if(displayAtomNumbers) {
+      if(display.atom.numbers) {
         text(position[n], frequency[n], n, col = "black", cex = 1)
       }
     }
@@ -225,8 +225,8 @@ empi2tf <- function(
       A  <- energy[n] * f
 
     # from Heisenberg rule: delta_t x delta_omega >= 1/2
-    radius.x = (scale[n] / 2) / shorteningFactor.x
-    radius.y = 1 / ((scale[n])) / shorteningFactor.y
+    radius.x = (scale[n] / 2) / shortening.factor.x
+    radius.y = 1 / ((scale[n])) / shortening.factor.y
 
     x0 <- position[n]
     y0 <- frequency[n]
@@ -244,7 +244,7 @@ empi2tf <- function(
 
   } # for (n in 1:num.atoms)
 
-  if(plotAtoms) {
+  if(plot.atoms) {
     graphics.off()
     pdf("Atoms.pdf", width = 15, height = 30)
 
@@ -283,8 +283,8 @@ empi2tf <- function(
     dev.off()
   }
 
-  if (outMode == "plot") {
-    if (plotSignals) {
+  if (out.mode == "plot") {
+    if (plot.signals) {
       grid.matrix <- cbind(c(1, 1, 1, 2, 3))
       layout(grid.matrix, widths = c(1, 1, 1), heights = c(2, 1, 1))
       # mai: c(bottom, left, top, right)
@@ -327,7 +327,7 @@ empi2tf <- function(
     mtext("Frequency [Hz]", side = 2, line = 3.5, cex = 0.8)
 
     # At the centres of the atoms, the atom numbers
-    if (displayAtomNumbers) {
+    if (display.atom.numbers) {
       for (n in 1:num.atoms) {
         text(position[n], frequency[n], n, col = "black", cex = 1)
       }
@@ -335,15 +335,15 @@ empi2tf <- function(
 
     # We display small crosses in the centres of atoms
     for (n in 1:num.atoms) {
-      if (displayCrosses) {
-        points(position[n], frequency[n], pch = 3, col = crossesColor, cex = 1)
+      if (display.crosses) {
+        points(position[n], frequency[n], pch = 3, col = crosses.color, cex = 1)
       }
     }
 
-    if (displayGrid)
+    if (display.grid)
       grid(col = "grey")
 
-    if (plotSignals) {
+    if (plot.signals) {
       xx <- seq(from = 0, to = epochSize / f, length.out =  epochSize)
       plot(x = xx, original.signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, main = "Original signal", panel.first = grid())
       abline(h = 0, col = "blue")
@@ -352,54 +352,54 @@ empi2tf <- function(
       abline(h = 0, col = "blue")
     }
 
-  } # if (outMode == "plot")
+  } # if (out.mode == "plot")
 
-  if (outMode == "file") {
+  if (out.mode == "file") {
     graphics.off()
-    png(fileName, width = fileSize[1], height = fileSize[2], pointsize = 18)
+    png(file.name, width = file.size[1], height = file.size[2], pointsize = 18)
     par(pty = "m", mai = c(0, 0, 0, 0))
     graphics::image(x = t, y = y, z = tf.map, col = col)
     dev.off()
-  } # if (outMode == "file")
+  }
 
-  if (outMode == "RData") {
+  if (out.mode == "RData") {
     im <- as.cimg(tf.map)
-    im.resampled <- imager::resize(im, size_x = fileSize[1], size_y = fileSize[2], interpolation_type = 3)
+    im.resampled <- imager::resize(im, size_x = file.size[1], size_y = file.size[2], interpolation_type = 3)
     tf.map.resampled <- as.matrix(im.resampled)
 
     # Rescaling to the range 0-1.
     # Protect against a situation where a zero appears in the denominator.
     if (max(tf.map.resampled) - min(tf.map.resampled) == 0) {
-      tf.map.resampled <- matrix(0, fileSize[1], fileSize[2])
+      tf.map.resampled <- matrix(0, file.size[1], file.size[2])
     } else {
       tf.map.resampled <- (tf.map.resampled - min(tf.map.resampled)) / (max(tf.map.resampled) - min(tf.map.resampled))
     }
 
     # Remove extension
-    fileName <- paste(tools::file_path_sans_ext(fileName), ".RData", sep = "")
-    save(tf.map.resampled, file = fileName)
+    file.name <- paste(tools::file_path_sans_ext(file.name), ".RData", sep = "")
+    save(tf.map.resampled, file = file.name)
   }
 
-  if (outMode == "RData2") {
+  if (out.mode == "RData2") {
     zz  <- tf.map
     rr <- raster::raster(nrow = ncol(zz), ncol = nrow(zz)) # # this is how it should be: nrow = ncol(zz), ncol = nrow(zz)
     rr[] <- t(zz)
-    tt <- raster::raster(ncol = fileSize[1], nrow = fileSize[2])
+    tt <- raster::raster(ncol = file.size[1], nrow = file.size[2])
     tt <- raster::resample(rr, tt)
-    tf.map.resampled <- matrix(tt@data@values, fileSize[1], fileSize[2])
+    tf.map.resampled <- matrix(tt@data@values, file.size[1], file.size[2])
 
     # Rescaling to the range 0-1.
     # Protect against a situation where a zero appears in the denominator.
     if (max(tf.map.resampled) - min(tf.map.resampled) == 0) {
-      tf.map.resampled <- matrix(0, fileSize[1], fileSize[2])
+      tf.map.resampled <- matrix(0, file.size[1], file.size[2])
     } else {
       tf.map.resampled <- (tf.map.resampled - min(tf.map.resampled)) / (max(tf.map.resampled) - min(tf.map.resampled))
     }
 
     # Remove extension
-    fileName <- paste(tools::file_path_sans_ext(fileName), ".RData", sep = "")
-    save(tf.map.resampled, file = fileName)
-  } # if (outMode == "RData")
+    file.name <- paste(tools::file_path_sans_ext(file.name), ".RData", sep = "")
+    save(tf.map.resampled, file = file.name)
+  } # if (out.mode == "RData2")
 
   # Signal energy
   o <- round(sum(original.signal^2), 2)
@@ -418,5 +418,5 @@ empi2tf <- function(
     number.of.secs = s,
     tf.map = tf.map,
     channel = channel,
-    freq.divide = freqDivide)
+    freq.divide = freq.divide)
 }

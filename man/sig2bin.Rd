@@ -30,10 +30,10 @@ signal.bin <- sig2bin(data = signal, write.to.file = FALSE)
 
 class(signal.bin)
 
-# First 4 elements in signal
+# First 4 elements of the signal
 head(signal, 4)
 
-#' # First 4 elements in signal in binary (float, 4 bytes)
+# First 4 elements of the signal in binary (float, 4 bytes)
 head(signal.bin, 16)
 ## End(Not run)
 
