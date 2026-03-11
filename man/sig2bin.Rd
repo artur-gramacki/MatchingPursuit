@@ -4,7 +4,7 @@
 \alias{sig2bin}
 \title{Reads input signal(s) from a data frame and returns them in binary format}
 \usage{
-sig2bin(data, write.to.file = TRUE)
+sig2bin(data, write.to.file = FALSE)
 }
 \arguments{
 \item{data}{Data frame with the input signal(s).}

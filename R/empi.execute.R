@@ -33,14 +33,14 @@
 #' )
 #' ## End(Not run)
 #'
-empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE) {
+empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE) {
 
   empi.loc <-  locate.empi()
   dir.name <- tools::file_path_sans_ext((empi.loc$fname))
 
   n.channels <- ncol(signal)
 
-  signal.raw <- sig2bin(data = signal, write.to.file = TRUE)
+  signal.raw <- sig2bin(data = signal, write.to.file = FALSE)
 
   file.bin <- tempfile("file_for_empi_", fileext = ".bin")
   file.db <- tempfile("file__for_empi_", fileext = ".db")

@@ -4,7 +4,7 @@
 \alias{empi.execute}
 \title{Launching the Matching Pursuit algorithm}
 \usage{
-empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE)
+empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE)
 }
 \arguments{
 \item{signal}{Must be a data frame: rows = samples for all channels, columns = channels. The data frame must have column names (channel names).}
@@ -28,6 +28,7 @@ The \emph{empi} program (sources and binaries for different OSs) is available fo
  vol.50, issue = 3, pp. 1-17, \url{https://doi.org/10.1145/3674832}.
 }
 \examples{
+## Not run:
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read.csv(file, header = TRUE)
 
@@ -37,5 +38,6 @@ empi.out <- empi.execute (
   empi.options = NULL,
   write.to.file = FALSE
 )
+## End(Not run)
 
 }

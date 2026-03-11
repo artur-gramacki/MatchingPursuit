@@ -30,7 +30,7 @@
 #' head(signal.bin, 16)
 #' ## End(Not run)
 #'
-sig2bin <- function(data, write.to.file = TRUE) {
+sig2bin <- function(data, write.to.file = FALSE) {
 
   signal.raw = raw()
   for (m in 1:nrow(data)) {
