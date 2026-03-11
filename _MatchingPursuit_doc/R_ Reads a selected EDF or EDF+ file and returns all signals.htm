@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html><head><title>R: Reads a selected EDF or EDF+ file and returns all signals...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/katex.css">
+<script type="text/javascript" src="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>read.edf.signals {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Reads a selected EDF or EDF+ file and returns all signals data</h2>
+
+<h3>Description</h3>
+
+<p>The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
+Also resampling can be done (upsampling or downsampling).
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">read.edf.signals<span class="token punctuation">(</span>file<span class="token punctuation">,</span> resampling <span class="token operator">=</span> <span class="token boolean">TRUE</span><span class="token punctuation">,</span> f.new <span class="token operator">=</span> <span class="token keyword">NULL</span><span class="token punctuation">,</span> from <span class="token operator">=</span> <span class="token keyword">NULL</span><span class="token punctuation">,</span> to <span class="token operator">=</span> <span class="token keyword">NULL</span><span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="file">file</code></td>
+<td>
+<p>the full path to the EDF/EDF+ file to be read.</p>
+</td></tr>
+<tr><td><code id="resampling">resampling</code></td>
+<td>
+<p>logical TRUE or FALSE. If TRUE the frequency of all signals will be 
+upsampling or downsampling, depending on the actual sampling rate of 
+subsequent channel.</p>
+</td></tr>
+<tr><td><code id="f.new">f.new</code></td>
+<td>
+<p>a new frequency.</p>
+</td></tr>
+<tr><td><code id="from">from</code></td>
+<td>
+<p>loading a signal <code>from</code> the given second.</p>
+</td></tr>
+<tr><td><code id="to">to</code></td>
+<td>
+<p>loading a signal <code>to</code> the given second.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Details</h3>
+
+<p>If <code>resampling=TRUE</code>, the frequency of all signals will be
+ upsampled or downsampled, depending on the actual sampling rate of the 
+individual channels and the set value of the <code>f.new</code> 
+parameter. The EDF standard assumes that each channel can be sampled at a
+ different rate. Therefore, it may happen that some channels are 
+upsampled and others are downsampled. The function does not provide the 
+functionality to independently change the sampling rate for each 
+channel.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A matrix <code>edf.mtx</code> with all signals data is returned and a list <code>edf</code> as a result of executing <code>edf::read.edf()</code> function.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/read.edf.signals">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"EEG_data_10sec.edf"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+sigs1  <span class="token operator">&lt;-</span> read.edf.signals<span class="token punctuation">(</span>file<span class="token punctuation">,</span> resampling <span class="token operator">=</span> <span class="token boolean">FALSE</span><span class="token punctuation">)</span>
+head<span class="token punctuation">(</span>sigs1<span class="token punctuation">)</span>
+sigs2 <span class="token operator">&lt;-</span> read.edf.signals<span class="token punctuation">(</span>file<span class="token punctuation">,</span> resampling <span class="token operator">=</span> <span class="token boolean">TRUE</span><span class="token punctuation">,</span> f.new <span class="token operator">=</span> <span class="token number">128</span><span class="token punctuation">)</span>
+head<span class="token punctuation">(</span>sigs2<span class="token punctuation">)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Reads%20a%20selected%20EDF%20or%20EDF+%20file%20and%20returns%20all%20signals_files/prism.js"></script>
+</body></html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html><head><title>R: Reads input signal(s) from a data frame and returns them in...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/katex.css">
+<script type="text/javascript" src="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>sig2bin {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Reads input signal(s) from a data frame and returns them in binary format</h2>
+
+<h3>Description</h3>
+
+<p>Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
+The data frame should have column names. Te function is used internally in the <code>empi.execute</code>
+function. The binary data are floating-point values in the byte order  of the current machine
+(no byte-order conversion is performed). For multichannel signals, first come the samples for all
+channels at <code>t=0</code>, then for all channels at <code>t=Δt</code>, and so forth. In other words,
+the signal should be written in column-major order (rows = channels, columns = samples).
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">sig2bin<span class="token punctuation">(</span>data<span class="token punctuation">,</span> write.to.file <span class="token operator">=</span> <span class="token boolean">FALSE</span><span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="data">data</code></td>
+<td>
+<p>Data frame with the input signal(s).</p>
+</td></tr>
+<tr><td><code id="write.to.file">write.to.file</code></td>
+<td>
+<p>If TRUE, the file <code>signal.bin</code> will be created and saved in the current directory.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Value</h3>
+
+<p>Input signal saved as the <code>raw</code>. If <code>write.to.file=TRUE</code>, the file <code>signal.bin</code> will conditionally be created and saved in the current directory.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/sig2bin">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r"><span class="token comment">## Not run:</span>
+file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"sample1.csv"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+signal <span class="token operator">&lt;-</span> read.csv<span class="token punctuation">(</span>file<span class="token punctuation">,</span> header <span class="token operator">=</span> <span class="token boolean">TRUE</span><span class="token punctuation">)</span>
+signal.bin <span class="token operator">&lt;-</span> sig2bin<span class="token punctuation">(</span>data <span class="token operator">=</span> signal<span class="token punctuation">,</span> write.to.file <span class="token operator">=</span> <span class="token boolean">FALSE</span><span class="token punctuation">)</span>
+
+class<span class="token punctuation">(</span>signal.bin<span class="token punctuation">)</span>
+
+<span class="token comment"># First 4 elements of the signal</span>
+head<span class="token punctuation">(</span>signal<span class="token punctuation">,</span> <span class="token number">4</span><span class="token punctuation">)</span>
+
+<span class="token comment"># First 4 elements of the signal in binary (float, 4 bytes)</span>
+head<span class="token punctuation">(</span>signal.bin<span class="token punctuation">,</span> <span class="token number">16</span><span class="token punctuation">)</span>
+<span class="token comment">## End(Not run)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Reads%20input%20signal(s)%20from%20a%20data%20frame%20and%20returns%20them%20in_files/prism.js"></script>
+</body></html>

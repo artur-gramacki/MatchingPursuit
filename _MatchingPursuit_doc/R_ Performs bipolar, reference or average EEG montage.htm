@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html><head><title>R: Performs bipolar, reference or average EEG montage</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/katex.css">
+<script type="text/javascript" src="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>eeg.montage {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Performs bipolar, reference or average EEG montage</h2>
+
+<h3>Description</h3>
+
+<p>An EEG montage is the specific way EEG electrodes are arranged and 
+how their signals are displayed relative to each other during 
+interpretation of an electroencephalogram. The same EEG recording can 
+look very different depending on the montage use. The function 
+implements the three most frequently used montage methods in practice, 
+i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) 
+Average Reference Montage.
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">eeg.montage<span class="token punctuation">(</span>
+  eeg.data<span class="token punctuation">,</span>
+  montage.type <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token string">"average"</span><span class="token punctuation">,</span> <span class="token string">"reference"</span><span class="token punctuation">,</span> <span class="token string">"bipolar"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  ref.channel <span class="token operator">=</span> <span class="token keyword">NULL</span><span class="token punctuation">,</span>
+  bipolar.pairs <span class="token operator">=</span> <span class="token keyword">NULL</span>
+<span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="eeg.data">eeg.data</code></td>
+<td>
+<p>Must be a dataframe: rows = samples, columns = channels.The data frame must have correct column names (channel names).</p>
+</td></tr>
+<tr><td><code id="montage.type">montage.type</code></td>
+<td>
+<p>A character string representing montage type.
+</p>
+
+<ul>
+<li> <p><code>average</code> - each electrode is referenced to the average of all electrodes.
+</p>
+</li>
+<li> <p><code>reference</code> - each active electrode is compared to a single common reference electrode.
+</p>
+</li>
+<li> <p><code>bipolar</code> - each channel compares two adjacent electrodes.
+</p>
+</li></ul>
+</td></tr>
+<tr><td><code id="ref.channel">ref.channel</code></td>
+<td>
+<p>name of the reference channel for <code>reference</code> montage.</p>
+</td></tr>
+<tr><td><code id="bipolar.pairs">bipolar.pairs</code></td>
+<td>
+<p>list of electrodes pairs. See example below.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Details</h3>
+
+<p>To find out what names the individual channels have in the analysed EEG set, it is worth executing the <code>read.edf.params</code> function.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A dataframe with final montage (rows = samples, columns = channels).
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/eeg.montage">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"EEG_data_10sec.edf"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+signal <span class="token operator">&lt;-</span> read.edf.signals<span class="token punctuation">(</span>file<span class="token punctuation">,</span> resampling <span class="token operator">=</span> <span class="token boolean">FALSE</span><span class="token punctuation">,</span> from <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">,</span> to <span class="token operator">=</span> <span class="token number">6</span><span class="token punctuation">)</span>
+
+pars <span class="token operator">&lt;-</span> read.edf.params<span class="token punctuation">(</span>file<span class="token punctuation">)</span>
+pars
+
+sampling.rate <span class="token operator">&lt;-</span> pars<span class="token operator">$</span>frequency<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span>
+sampling.rate
+
+<span class="token comment"># The classical double banana montage.</span>
+pairs <span class="token operator">&lt;-</span> list<span class="token punctuation">(</span>
+ c<span class="token punctuation">(</span><span class="token string">"Fp2"</span><span class="token punctuation">,</span> <span class="token string">"F4"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"F4"</span><span class="token punctuation">,</span> <span class="token string">"C4"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"C4"</span><span class="token punctuation">,</span> <span class="token string">"P4"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"P4"</span><span class="token punctuation">,</span> <span class="token string">"O2"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"Fp1"</span><span class="token punctuation">,</span> <span class="token string">"F3"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"F3"</span><span class="token punctuation">,</span> <span class="token string">"C3"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"C3"</span><span class="token punctuation">,</span> <span class="token string">"P3"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"P3"</span><span class="token punctuation">,</span> <span class="token string">"O1"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"Fp2"</span><span class="token punctuation">,</span> <span class="token string">"F8"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"F8"</span><span class="token punctuation">,</span> <span class="token string">"T4"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"T4"</span><span class="token punctuation">,</span> <span class="token string">"T6"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"T6"</span><span class="token punctuation">,</span> <span class="token string">"O2"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"Fp1"</span><span class="token punctuation">,</span> <span class="token string">"F7"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"F7"</span><span class="token punctuation">,</span> <span class="token string">"T3"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"T3"</span><span class="token punctuation">,</span> <span class="token string">"T5"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"T5"</span><span class="token punctuation">,</span> <span class="token string">"O1"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"Fz"</span><span class="token punctuation">,</span> <span class="token string">"Cz"</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+ c<span class="token punctuation">(</span><span class="token string">"Cz"</span><span class="token punctuation">,</span> <span class="token string">"Pz"</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span>
+
+bip.mont <span class="token operator">&lt;-</span> eeg.montage<span class="token punctuation">(</span>signal<span class="token punctuation">,</span> montage.type <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token string">"bipolar"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> bipolar.pairs <span class="token operator">=</span> pairs<span class="token punctuation">)</span>
+ref.mont <span class="token operator">&lt;-</span> eeg.montage<span class="token punctuation">(</span>signal<span class="token punctuation">,</span> montage.type <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token string">"reference"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> ref.channel <span class="token operator">=</span> <span class="token string">"O1"</span><span class="token punctuation">)</span>
+avg.mont <span class="token operator">&lt;-</span> eeg.montage<span class="token punctuation">(</span>signal<span class="token punctuation">,</span> montage.type <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token string">"average"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+head<span class="token punctuation">(</span>bip.mont<span class="token punctuation">)</span>
+head<span class="token punctuation">(</span>ref.mont<span class="token punctuation">)</span>
+head<span class="token punctuation">(</span>avg.mont<span class="token punctuation">)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Performs%20bipolar,%20reference%20or%20average%20EEG%20montage_files/prism.js"></script>
+</body></html>

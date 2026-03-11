@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html><head><title>R: Gabor function implementation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Gabor%20function%20implementation_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Gabor%20function%20implementation_files/katex.css">
+<script type="text/javascript" src="R_%20Gabor%20function%20implementation_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Gabor%20function%20implementation_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Gabor%20function%20implementation_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>Gabor.fun {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Gabor function implementation</h2>
+
+<h3>Description</h3>
+
+<p>A Gabor function is a sinusoidal wave localized by a Gaussian 
+envelope. In signal processing it is widely used as a basic building 
+block for representing signals that are localized in both time and 
+frequency. Matching Pursuit algorithm uses a redundant dictionary of the
+ so called <em>Gabor atoms</em>. Gabor atoms are ideal for Matching 
+Pursuit because they: 1) provide optimal time–frequency localization, 2)
+ represent oscillatory signals well, 3) enable adaptive time-frequency 
+decomposition.
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">Gabor.fun<span class="token punctuation">(</span>
+  number.of.samples<span class="token punctuation">,</span>
+  sampling.frequency<span class="token punctuation">,</span>
+  mean<span class="token punctuation">,</span>
+  phase<span class="token punctuation">,</span>
+  sigma<span class="token punctuation">,</span>
+  frequency<span class="token punctuation">,</span>
+  normalization <span class="token operator">=</span> T
+<span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="number.of.samples">number.of.samples</code></td>
+<td>
+<p>How many samples should the generated atom consist of?</p>
+</td></tr>
+<tr><td><code id="sampling.frequency">sampling.frequency</code></td>
+<td>
+<p>Sampling frequency.</p>
+</td></tr>
+<tr><td><code id="mean">mean</code></td>
+<td>
+<p>Time position.</p>
+</td></tr>
+<tr><td><code id="phase">phase</code></td>
+<td>
+<p>Phase.</p>
+</td></tr>
+<tr><td><code id="sigma">sigma</code></td>
+<td>
+<p>Scale / width of the Gaussian window.</p>
+</td></tr>
+<tr><td><code id="frequency">frequency</code></td>
+<td>
+<p>Frequency of the sinusoid.</p>
+</td></tr>
+<tr><td><code id="normalization">normalization</code></td>
+<td>
+<p>If TRUE, norm of the generated atom equals 1.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Value</h3>
+
+<p>List of 4 vectors with cosine, gauss, gabor and time waveforms of size <code>number.of.samples</code>.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/Gabor.fun">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">number.of.samples <span class="token operator">&lt;-</span> <span class="token number">512</span>
+sampling.frequency <span class="token operator">&lt;-</span> <span class="token number">256.0</span>
+mean <span class="token operator">&lt;-</span> <span class="token number">1</span>
+phase <span class="token operator">&lt;-</span> pi
+sigma <span class="token operator">&lt;-</span> <span class="token number">0.5</span>
+frequency <span class="token operator">&lt;-</span> <span class="token number">5.0</span>
+normalization <span class="token operator">=</span> <span class="token boolean">TRUE</span>
+out <span class="token operator">&lt;-</span> Gabor.fun<span class="token punctuation">(</span>
+  number.of.samples<span class="token punctuation">,</span>
+  sampling.frequency<span class="token punctuation">,</span>
+  mean<span class="token punctuation">,</span>
+  phase<span class="token punctuation">,</span>
+  sigma<span class="token punctuation">,</span>
+  frequency<span class="token punctuation">,</span>
+  normalization
+<span class="token punctuation">)</span>
+
+<span class="token comment"># If normalization = TRUE, norm of atom = 1, we can check it</span>
+crossprod<span class="token punctuation">(</span>out<span class="token operator">$</span>gabor<span class="token punctuation">)</span>
+
+plot<span class="token punctuation">(</span>out<span class="token operator">$</span>t<span class="token punctuation">,</span> out<span class="token operator">$</span>gabor<span class="token punctuation">,</span> type <span class="token operator">=</span> <span class="token string">"l"</span><span class="token punctuation">,</span> xlab <span class="token operator">=</span> <span class="token string">"t"</span><span class="token punctuation">,</span> ylab <span class="token operator">=</span> <span class="token string">"gabor"</span><span class="token punctuation">,</span> panel.first <span class="token operator">=</span> grid<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Gabor%20function%20implementation_files/prism.js"></script>
+</body></html>

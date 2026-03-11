@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html><head><title>R: Reads data from a SQLite file created by the Matching Pursuit...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/katex.css">
+<script type="text/javascript" src="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>read.empi.db.file {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Reads data from a SQLite file created by the Matching Pursuit algorithm</h2>
+
+<h3>Description</h3>
+
+<p>Reads data from a SQLite file created by the Matching Pursuit algorithm
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">read.empi.db.file<span class="token punctuation">(</span>db.file<span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="db.file">db.file</code></td>
+<td>
+<p>SQLite file.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Value</h3>
+
+<p>1) Detailed parameters of all the generated atoms. 2) Analysed input 
+signal(s). 3) Reconstructed signal (as the sum of generated atoms. 4) 
+Generated Gabor atoms.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/read.empi.db.file">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r"><span class="token comment">## Not run:</span>
+file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"EEG_data_10sec.db"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+out <span class="token operator">&lt;-</span> read.empi.db.file<span class="token punctuation">(</span>file<span class="token punctuation">)</span>
+
+n.channnels <span class="token operator">&lt;-</span> ncol<span class="token punctuation">(</span>out<span class="token operator">$</span>original.signal<span class="token punctuation">)</span>
+original.signal <span class="token operator">&lt;-</span> out<span class="token operator">$</span>original.signal
+reconstruction <span class="token operator">&lt;-</span> out<span class="token operator">$</span>reconstruction
+t <span class="token operator">&lt;-</span> out<span class="token operator">$</span>t
+f <span class="token operator">&lt;-</span> out<span class="token operator">$</span>f
+
+par<span class="token punctuation">(</span>mfrow <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> pty <span class="token operator">=</span> <span class="token string">"m"</span><span class="token punctuation">)</span>
+par<span class="token punctuation">(</span>mai <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">0.9</span><span class="token punctuation">,</span> <span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">0.2</span><span class="token punctuation">,</span> <span class="token number">0.4</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+plot<span class="token punctuation">(</span>
+  original.signal<span class="token punctuation">[</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> type<span class="token operator">=</span><span class="token string">"l"</span><span class="token punctuation">,</span> col <span class="token operator">=</span> <span class="token string">"blue"</span><span class="token punctuation">,</span>
+  main <span class="token operator">=</span> paste<span class="token punctuation">(</span><span class="token string">"channel: "</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token string">" / "</span> <span class="token punctuation">,</span> n.channnels<span class="token punctuation">,</span> <span class="token string">" (original signal)"</span><span class="token punctuation">,</span>  sep <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  xaxt <span class="token operator">=</span> <span class="token string">"n"</span><span class="token punctuation">,</span> ylab <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">,</span> xlab <span class="token operator">=</span> <span class="token string">"time [sec]"</span>
+<span class="token punctuation">)</span>
+
+len <span class="token operator">&lt;-</span> length<span class="token punctuation">(</span>original.signal<span class="token punctuation">[</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+lab <span class="token operator">&lt;-</span> seq<span class="token punctuation">(</span>t<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> t<span class="token punctuation">[</span>len<span class="token punctuation">]</span> <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">/</span> f<span class="token punctuation">,</span> length.out <span class="token operator">=</span> <span class="token number">11</span><span class="token punctuation">)</span>
+axis<span class="token punctuation">(</span>side <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> las <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> cex.axis <span class="token operator">=</span> <span class="token number">0.9</span><span class="token punctuation">,</span> at <span class="token operator">=</span> seq<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> len<span class="token punctuation">,</span> length.out <span class="token operator">=</span> <span class="token number">11</span><span class="token punctuation">)</span><span class="token punctuation">,</span> labels <span class="token operator">=</span> lab<span class="token punctuation">)</span>
+
+plot<span class="token punctuation">(</span>
+  reconstruction<span class="token punctuation">[</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> type<span class="token operator">=</span><span class="token string">"l"</span><span class="token punctuation">,</span> col <span class="token operator">=</span> <span class="token string">"blue"</span><span class="token punctuation">,</span>
+  main <span class="token operator">=</span> paste<span class="token punctuation">(</span><span class="token string">"channel: "</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token string">" / "</span> <span class="token punctuation">,</span> n.channnels<span class="token punctuation">,</span> <span class="token string">" (reconstructed signal)"</span><span class="token punctuation">,</span>  sep <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  xaxt <span class="token operator">=</span> <span class="token string">"n"</span><span class="token punctuation">,</span> ylab <span class="token operator">=</span> <span class="token string">""</span><span class="token punctuation">,</span> xlab <span class="token operator">=</span> <span class="token string">"time [sec]"</span>
+<span class="token punctuation">)</span>
+
+axis<span class="token punctuation">(</span>side <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> las <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> cex.axis <span class="token operator">=</span> <span class="token number">0.9</span><span class="token punctuation">,</span> at <span class="token operator">=</span> seq<span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span> len<span class="token punctuation">,</span> length.out <span class="token operator">=</span> <span class="token number">11</span><span class="token punctuation">)</span><span class="token punctuation">,</span> labels <span class="token operator">=</span> lab<span class="token punctuation">)</span>
+<span class="token comment">## End(Not run)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Reads%20data%20from%20a%20SQLite%20file%20created%20by%20the%20Matching%20Pursuit_files/prism.js"></script>
+</body></html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html><head><title>R: A wrapper function for 'signal::butter' function</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/katex.css">
+<script type="text/javascript" src="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/katex-config.js"></script>
+<script defer="defer" src="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>filters.coeff {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>A wrapper function for <code>signal::butter</code> function</h2>
+
+<h3>Description</h3>
+
+<p>Implements notch, low-pass, high-pass, band-pass, and band-stop 
+filters with desired frequency ranges and Butterworth filter order.
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">filters.coeff<span class="token punctuation">(</span>
+  fs <span class="token operator">=</span> <span class="token number">256</span><span class="token punctuation">,</span>
+  notch <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">49</span><span class="token punctuation">,</span> <span class="token number">51</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  notch.order <span class="token operator">=</span> <span class="token number">2</span><span class="token punctuation">,</span>
+  lowpass <span class="token operator">=</span> <span class="token number">30</span><span class="token punctuation">,</span>
+  lowpass.order <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span>
+  highpass <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  highpass.order <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span>
+  bandpass <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">40</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  bandpass.order <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">,</span>
+  bandstop <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">40</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  bandstop.order <span class="token operator">=</span> <span class="token number">4</span>
+<span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="fs">fs</code></td>
+<td>
+<p>Sampling rate.</p>
+</td></tr>
+<tr><td><code id="notch">notch</code></td>
+<td>
+<p>Vector of two frequencies for notch filter.</p>
+</td></tr>
+<tr><td><code id="notch.order">notch.order</code></td>
+<td>
+<p>Notch filter order.</p>
+</td></tr>
+<tr><td><code id="lowpass">lowpass</code></td>
+<td>
+<p>Low-pass filter frequency.</p>
+</td></tr>
+<tr><td><code id="lowpass.order">lowpass.order</code></td>
+<td>
+<p>Low-pass filter order.</p>
+</td></tr>
+<tr><td><code id="highpass">highpass</code></td>
+<td>
+<p>High-pass filter frequency.</p>
+</td></tr>
+<tr><td><code id="highpass.order">highpass.order</code></td>
+<td>
+<p>High-pass filter order.</p>
+</td></tr>
+<tr><td><code id="bandpass">bandpass</code></td>
+<td>
+<p>Vector of two frequencies for band-pass filter.</p>
+</td></tr>
+<tr><td><code id="bandpass.order">bandpass.order</code></td>
+<td>
+<p>Band-pass filter order.</p>
+</td></tr>
+<tr><td><code id="bandstop">bandstop</code></td>
+<td>
+<p>Vector of two frequencies for band-stop filter.</p>
+</td></tr>
+<tr><td><code id="bandstop.order">bandstop.order</code></td>
+<td>
+<p>Band-stop filter order.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Value</h3>
+
+<p>List with parameters of individual filters.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/filters.coeff">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">sampling.rate <span class="token operator">&lt;-</span> <span class="token number">250</span>
+
+fc <span class="token operator">&lt;-</span> filters.coeff<span class="token punctuation">(</span>
+  fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">,</span>
+  notch <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">49</span><span class="token punctuation">,</span> <span class="token number">51</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  lowpass <span class="token operator">=</span> <span class="token number">40</span><span class="token punctuation">,</span>
+  highpass <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span>
+  bandpass <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">0.5</span><span class="token punctuation">,</span> <span class="token number">40</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+  bandstop <span class="token operator">=</span> c<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">50</span><span class="token punctuation">)</span>
+<span class="token punctuation">)</span>
+
+fc
+
+signal<span class="token operator">::</span>freqz<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.notch<span class="token punctuation">,</span> Fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">)</span>
+signal<span class="token operator">::</span>freqz<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.low<span class="token punctuation">,</span> Fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">)</span>
+signal<span class="token operator">::</span>freqz<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.high<span class="token punctuation">,</span> Fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">)</span>
+signal<span class="token operator">::</span>freqz<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.bandpass<span class="token punctuation">,</span> Fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">)</span>
+signal<span class="token operator">::</span>freqz<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.bandstop<span class="token punctuation">,</span> Fs <span class="token operator">=</span> sampling.rate<span class="token punctuation">)</span>
+
+file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"EEG_data_10sec.edf"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+sigs <span class="token operator">&lt;-</span> read.edf.signals<span class="token punctuation">(</span>file<span class="token punctuation">,</span> resampling <span class="token operator">=</span> <span class="token boolean">FALSE</span><span class="token punctuation">)</span>
+
+plot<span class="token punctuation">(</span>sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> type <span class="token operator">=</span> <span class="token string">"l"</span><span class="token punctuation">,</span> panel.first <span class="token operator">=</span> grid<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">for</span> <span class="token punctuation">(</span>m <span class="token keyword">in</span> <span class="token number">1</span><span class="token operator">:</span>ncol<span class="token punctuation">(</span>sigs<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+  sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span> <span class="token operator">=</span> signal<span class="token operator">::</span>filtfilt<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.notch<span class="token punctuation">,</span> sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment"># 50Hz notch filter</span>
+  sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span> <span class="token operator">=</span> signal<span class="token operator">::</span>filtfilt<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.low<span class="token punctuation">,</span> sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment"># Low pass IIR Butterworth</span>
+  sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span> <span class="token operator">=</span> signal<span class="token operator">::</span>filtfilt<span class="token punctuation">(</span>fc<span class="token operator">$</span>bf.high<span class="token punctuation">,</span> sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> m<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment"># High pass IIR Butterwoth</span>
+<span class="token punctuation">}</span>
+
+plot<span class="token punctuation">(</span>sigs<span class="token punctuation">[</span><span class="token punctuation">,</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">,</span> type <span class="token operator">=</span> <span class="token string">"l"</span><span class="token punctuation">,</span> panel.first <span class="token operator">=</span> grid<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20A%20wrapper%20function%20for%20'signal__butter'%20function_files/prism.js"></script>
+</body></html>

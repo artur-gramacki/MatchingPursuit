@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html><head><title>R: Reading the atom parameters</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<link href="R_%20Reading%20the%20atom%20parameters_files/prism.css" rel="stylesheet">
+<link rel="stylesheet" href="R_%20Reading%20the%20atom%20parameters_files/katex.css">
+<script type="text/javascript" src="R_%20Reading%20the%20atom%20parameters_files/katex-config.js"></script>
+<script defer="defer" src="R_%20Reading%20the%20atom%20parameters_files/katex.js" onload="processMathHTML();"></script>
+<link rel="stylesheet" type="text/css" href="R_%20Reading%20the%20atom%20parameters_files/R.css">
+</head><body><div class="container"><main>
+
+<table style="width: 100%;"><tbody><tr><td>atom.params {MatchingPursuit}</td><td style="text-align: right;">R Documentation</td></tr></tbody></table>
+
+<h2>Reading the atom parameters</h2>
+
+<h3>Description</h3>
+
+<p>Returns a data frame with atom parameters.
+</p>
+
+
+<h3>Usage</h3>
+
+<div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r">atom.params<span class="token punctuation">(</span>db.file<span class="token punctuation">)</span>
+</code></pre><div class="toolbar"></div></div>
+
+
+<h3>Arguments</h3>
+
+<table role="presentation">
+<tbody><tr><td><code id="db.file">db.file</code></td>
+<td>
+<p>The SQLite file created after executing the <code>empi.execute</code> function.</p>
+</td></tr>
+</tbody></table>
+
+
+<h3>Value</h3>
+
+<p>Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the <code>empi.execute</code> function.
+</p>
+
+
+<h3>Examples</h3>
+
+<p><a href="http://127.0.0.1:19485/library/MatchingPursuit/Example/atom.params">Run examples</a></p><div class="code-toolbar"><pre class="language-r" tabindex="0"><code class="language-r"><span class="token comment"># The file contains data from 18 channels.</span>
+file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"EEG_data_10sec.db"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+out <span class="token operator">&lt;-</span> atom.params<span class="token punctuation">(</span>file<span class="token punctuation">)</span>
+out<span class="token punctuation">[</span>which<span class="token punctuation">(</span>out<span class="token operator">$</span>channel_id <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">]</span>
+out<span class="token punctuation">[</span>which<span class="token punctuation">(</span>out<span class="token operator">$</span>channel_id <span class="token operator">==</span> <span class="token number">18</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token punctuation">]</span>
+
+<span class="token comment"># Only 1 channel is in the file.</span>
+file <span class="token operator">&lt;-</span> system.file<span class="token punctuation">(</span><span class="token string">"extdata"</span><span class="token punctuation">,</span> <span class="token string">"sample1.db"</span><span class="token punctuation">,</span> package <span class="token operator">=</span> <span class="token string">"MatchingPursuit"</span><span class="token punctuation">)</span>
+out <span class="token operator">&lt;-</span> atom.params<span class="token punctuation">(</span>file<span class="token punctuation">)</span>
+out
+
+</code></pre><div class="toolbar"></div></div>
+
+<hr><div style="text-align: center;">[Package <em>MatchingPursuit</em> version 1.0.0 <a href="http://127.0.0.1:19485/library/MatchingPursuit/html/00Index.html">Index</a>]</div></main>
+
+</div>
+<script src="R_%20Reading%20the%20atom%20parameters_files/prism.js"></script>
+</body></html>
