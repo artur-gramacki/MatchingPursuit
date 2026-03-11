@@ -225,8 +225,8 @@ empi2tf <- function(
       A  <- energy[n] * f
 
     # from Heisenberg rule: delta_t x delta_omega >= 1/2
-    radius.x = (scale[n] / 2) / shortening.factor.x
-    radius.y = 1 / ((scale[n])) / shortening.factor.y
+    radius.x <- (scale[n] / 2) / shortening.factor.x
+    radius.y <- 1 / ((scale[n])) / shortening.factor.y
 
     x0 <- position[n]
     y0 <- frequency[n]
@@ -420,3 +420,4 @@ empi2tf <- function(
     channel = channel,
     freq.divide = freq.divide)
 }
+
