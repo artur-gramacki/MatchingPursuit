@@ -14,7 +14,9 @@
 #'
 #' @examples
 #' ## Not run:
-#' empi.download()
+#' if (interactive()) {
+#'   empi.download()
+#' }
 #' ## End(Not run)
 #'
 #' @export

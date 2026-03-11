@@ -25,12 +25,14 @@
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read.csv(file, header = TRUE)
 #'
+#'if (interactive()) {
 #' empi.out <- empi.execute (
 #'   signal = signal,
 #'   sampling.rate = 128,
 #'   empi.options = NULL,
 #'   write.to.file = FALSE
 #' )
+#' }
 #' ## End(Not run)
 #'
 empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE) {
@@ -54,11 +56,30 @@ empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.fi
     options <- empi.options
   }
 
-  if (!dir.exists(dir.name)) empi.download()
+  if (!dir.exists(dir.name)) {
+    if (interactive()) {
+      ans <- readline("Note: downloading an external tool from the internet is required. Do you agree? (y/n): ")
+      if (tolower(ans) != "y") {
+        stop("\n--> Operation aborted by user. <--")
+      } else {
+        empi.download()
+      }
+    }
+  }
+
+  sys <- Sys.info()[["sysname"]]
+  if (sys == "Windows") {
+    exec = "empi.exe"
+  } else {
+    exec = "empi"
+    Sys.chmod(paste(dir.name, "/empi", sep = ""), mode = "0755")
+  }
 
   command <- paste(
     dir.name,
-    "/empi.exe ",
+    "/",
+    exec,
+    " ",
     file.bin,
     " ",
     file.db,

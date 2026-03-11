@@ -22,7 +22,9 @@ The program (sources and binaries for different OSs) is available for download a
 }
 \examples{
 ## Not run:
-empi.download()
+if (interactive()) {
+  empi.download()
+}
 ## End(Not run)
 
 }
