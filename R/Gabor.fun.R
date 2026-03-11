@@ -21,7 +21,15 @@
 #' sigma <- 0.5
 #' frequency <- 5.0
 #' normalization = TRUE
-#' out <- Gabor.fun(number.of.samples, sampling.frequency, mean, phase, sigma, frequency, normalization)
+#' out <- Gabor.fun(
+#'   number.of.samples,
+#'   sampling.frequency,
+#'   mean,
+#'   phase,
+#'   sigma,
+#'   frequency,
+#'   normalization
+#' )
 #'
 #' # If normalization = TRUE, norm of atom = 1, we can check it
 #' crossprod(out$gabor)

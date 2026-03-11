@@ -21,6 +21,7 @@
 #' @export
 #'
 #' @examples
+#' ## Not run:
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read.csv(file, header = TRUE)
 #'
@@ -30,6 +31,7 @@
 #'   empi.options = NULL,
 #'   write.to.file = FALSE
 #' )
+#' ## End(Not run)
 #'
 empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = TRUE) {
 
