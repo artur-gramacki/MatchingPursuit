@@ -2,7 +2,7 @@
 % Please edit documentation in R/empi.download.R
 \name{empi.download}
 \alias{empi.download}
-\title{Downloading the required software}
+\title{Downloading the required external software}
 \usage{
 empi.download()
 }

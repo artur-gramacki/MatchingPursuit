@@ -2,9 +2,9 @@
 #'
 #' Returns a data frame with atom parameters.
 #'
-#' @param db.file The SQLite file created after executing the \code{empi.execute} function.
+#' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
 #'
-#' @return Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the \code{empi.execute} function.
+#' @return Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the \code{empi.execute()} function.
 #'
 #' @export
 #'
@@ -36,7 +36,7 @@ atom.params <- function(db.file) {
 
   atoms <- round(as.data.frame(atoms), 3)
 
-  colnames(atoms) <- c("channel_id", "atom_number", "amplitude", "energy", "freqency", "phase", "scale", "position")
+  colnames(atoms) <- c("channel_id", "atom_number", "amplitude", "energy", "frequency", "phase", "scale", "position")
 
 
   return(atoms)

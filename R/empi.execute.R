@@ -12,7 +12,7 @@
 #'
 #' @param sampling.rate Sampling rate of the given signal (must be the same for every channel).
 #'
-#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download} function.
+#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download()} function.
 #'
 #' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.
 #'
@@ -58,7 +58,13 @@ empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.fi
 
   if (!dir.exists(dir.name)) {
     if (interactive()) {
-      ans <- readline("Note: downloading an external tool from the internet is required. Do you agree? (y/n): ")
+      cat(
+        "###################### Important note ######################", "\n",
+        "Downloading an external tool from the internet is required.", "\n",
+        "Details can be found on the `empi.download `help page.", "\n",
+        "###################### Important note ######################", "\n",
+        sep = "")
+      ans <- readline("Do you agree? (y/n): ")
       if (tolower(ans) != "y") {
         stop("\n--> Operation aborted by user. <--")
       } else {

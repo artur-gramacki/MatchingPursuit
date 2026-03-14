@@ -1,4 +1,4 @@
-#' Downloading the required software
+#' Downloading the required external software
 #'
 #' Downloads \emph{Enhanced Matching Pursuit Implementation} program \href{https://github.com/develancer/empi}{empi}.
 #'

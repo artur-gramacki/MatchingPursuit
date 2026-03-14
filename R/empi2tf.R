@@ -9,9 +9,9 @@
 #' @importFrom imager as.cimg resize
 #' @importFrom raster resample
 #'
-#' @param db.file The SQLite file created after executing the \code{empi.execute} function. In this case, the \code{db.list} parameter must be NULL.
+#' @param db.file The SQLite file created after executing the \code{empi.execute()} function. In this case, the \code{db.list} parameter must be NULL.
 #'
-#' @param db.list The list created after executing the \code{empi.execute} function. In this case, the \code{db.file} parameter must be NULL.
+#' @param db.list The list created after executing the \code{empi.execute()} function. In this case, the \code{db.file} parameter must be NULL.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
@@ -33,16 +33,16 @@
 #'
 #' @param crosses.color Colour of small crosses.
 #'
-#' @param palette Palette from the list returned by \code{hcl.pals} function or the string \code{"my custom palette"}.
+#' @param palette Palette from the list returned by \code{hcl.pals()} function or the string \code{"my custom palette"}.
 #'
-#' @param rev \code{rev} param in \code{hcl.colors} function.
+#' @param rev \code{rev} param in \code{hcl.colors()} function.
 #'
 #' @param out.mode One of the following:
 #'   \itemize{
 #'      \item \code{"plot"} - draws a TF map on the screen.
 #'      \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
-#'      \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize} function.
-#'      \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample} function.
+#'      \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize()} function.
+#'      \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample()} function.
 #'    }
 #'
 #' @param file.name Name of the png file.
@@ -57,9 +57,23 @@
 #'
 #' @return Depending on the \code{out.mode} parameter the function returns:
 #'    \itemize{
-#'    \item a time-Frequency map plotted on the screen.
-#'    \item a time-Frequency map saved in a png file.
-#'    \item a time-Frequency map saved as .RData file.
+#'    \item a time-Frequency map plotted on the screen
+#'    \item a time-Frequency map saved in a png file
+#'    \item a time-Frequency map saved as .RData file
+#'   }
+#' Regardless of the above, the function returns the following:
+#'   \itemize{
+#'     \item all the Gabor function
+#'     \item reconstructed signal
+#'     \item original signal
+#'     \item sampling frequency
+#'     \item grid size in t axis
+#'     \item grid size in f axi
+#'     \item epch size in samples
+#'     \item length of the signal in seconds
+#'     \item fime-frequency map
+#'     \item channel number
+#'     \item frequency divide
 #'   }
 #'
 #' @export
@@ -107,10 +121,10 @@ empi2tf <- function(
     stop("\n--> Incorrect value for 'out.mode' parameter.' <--")
 
   if (is.null(db.file) & is.null(db.list))
-    stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute' function. <--")
+    stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function. <--")
 
   if (!is.null(db.file) & !is.null(db.list))
-    stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute' function. <--")
+    stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function. <--")
 
   if (palette == 'my custom palette') {
     col <-  c(
@@ -177,12 +191,6 @@ empi2tf <- function(
   original.signal <- out$original.signal[, channel]
   reconstruction <- out$reconstruction[, channel]
   gabors <- out$gabors[[channel]]
-
-  cat("Channel: ", channel, "\n", sep = "")
-  cat("Number of atoms: ", length(rows), "\n", sep = "")
-  cat("Sampling rate: ", f, "\n", sep = "")
-  cat("Epoch size (in points): ", epochSize, "\n", sep = "")
-  cat("Signal length (in seconds): ", s, "\n", sep = "")
 
   # Empty chart on which the ellipses will appear
   if (draw.ellipses) {
@@ -329,7 +337,7 @@ empi2tf <- function(
     # At the centres of the atoms, the atom numbers
     if (display.atom.numbers) {
       for (n in 1:num.atoms) {
-        text(position[n], frequency[n], n, col = "black", cex = 1)
+        text(position[n], frequency[n], n, col = "white", cex = 1)
       }
     }
 
@@ -405,6 +413,12 @@ empi2tf <- function(
   o <- round(sum(original.signal^2), 2)
   r <- round(sum(reconstruction^2), 2)
 
+  cat("Channel: ", channel, "\n", sep = "")
+  cat("Number of atoms: ", length(rows), "\n", sep = "")
+  cat("Sampling rate: ", f, "\n", sep = "")
+  cat("Epoch size (in points): ", epochSize, "\n", sep = "")
+  cat("Signal length (in seconds): ", s, "\n", sep = "")
+
   cat("\nEnergy of the original signal:      ",o , "\n", sep = "")
   cat("Signal energy after reconstruction: ",r , "\n", sep = "")
   cat("reconstruction / original %:        ", r / o * 100, "\n", sep = "")
@@ -414,6 +428,7 @@ empi2tf <- function(
     reconstruction = reconstruction,
     original.signal = original.signal,
     f = f,
+    t = t,
     epochSize = epochSize,
     number.of.secs = s,
     tf.map = tf.map,

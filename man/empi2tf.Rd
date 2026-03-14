@@ -77,9 +77,23 @@ empi2tf(
 \value{
 Depending on the \code{out.mode} parameter the function returns:
    \itemize{
-   \item a time-Frequency map plotted on the screen.
-   \item a time-Frequency map saved in a png file.
-   \item a time-Frequency map saved as .RData file.
+   \item a time-Frequency map plotted on the screen
+   \item a time-Frequency map saved in a png file
+   \item a time-Frequency map saved as .RData file
+  }
+Regardless of the above, the function returns the following:
+  \itemize{
+    \item all the Gabor function
+    \item reconstructed signal
+    \item original signal
+    \item sampling frequency
+    \item grid size in t axis
+    \item grid size in f axi
+    \item epch size in samples
+    \item length of the signal in seconds
+    \item fime-frequency map
+    \item channel number
+    \item frequency divide
   }
 }
 \description{
