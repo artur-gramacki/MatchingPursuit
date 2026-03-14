@@ -7,10 +7,10 @@
 atom.params(db.file)
 }
 \arguments{
-\item{db.file}{The SQLite file created after executing the \code{empi.execute} function.}
+\item{db.file}{The SQLite file created after executing the \code{empi.execute()} function.}
 }
 \value{
-Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the \code{empi.execute} function.
+Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the \code{empi.execute()} function.
 }
 \description{
 Returns a data frame with atom parameters.

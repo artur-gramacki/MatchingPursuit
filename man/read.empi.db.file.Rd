@@ -30,7 +30,7 @@ par(mfrow = c(2, 1), pty = "m")
 par(mai = c(0.9, 0.5, 0.2, 0.4))
 
 plot(
-  original.signal[,1], type="l", col = "blue",
+  original.signal[,1], type = "l", col = "blue",
   main = paste("channel: ", 1, " / " , n.channnels, " (original signal)",  sep = ""),
   xaxt = "n", ylab = "", xlab = "time [sec]"
 )
@@ -40,7 +40,7 @@ lab <- seq(t[1], t[len] + 1 / f, length.out = 11)
 axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 
 plot(
-  reconstruction[,1], type="l", col = "blue",
+  reconstruction[,1], type = "l", col = "blue",
   main = paste("channel: ", 1, " / " , n.channnels, " (reconstructed signal)",  sep = ""),
   xaxt = "n", ylab = "", xlab = "time [sec]"
 )

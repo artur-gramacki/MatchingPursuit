@@ -28,9 +28,9 @@ empi2tf(
 )
 }
 \arguments{
-\item{db.file}{The SQLite file created after executing the \code{empi.execute} function. In this case, the \code{db.list} parameter must be NULL.}
+\item{db.file}{The SQLite file created after executing the \code{empi.execute()} function. In this case, the \code{db.list} parameter must be NULL.}
 
-\item{db.list}{The list created after executing the \code{empi.execute} function. In this case, the \code{db.file} parameter must be NULL.}
+\item{db.list}{The list created after executing the \code{empi.execute()} function. In this case, the \code{db.file} parameter must be NULL.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
@@ -52,16 +52,16 @@ empi2tf(
 
 \item{crosses.color}{Colour of small crosses.}
 
-\item{palette}{Palette from the list returned by \code{hcl.pals} function or the string \code{"my custom palette"}.}
+\item{palette}{Palette from the list returned by \code{hcl.pals()} function or the string \code{"my custom palette"}.}
 
-\item{rev}{\code{rev} param in \code{hcl.colors} function.}
+\item{rev}{\code{rev} param in \code{hcl.colors()} function.}
 
 \item{out.mode}{One of the following:
 \itemize{
    \item \code{"plot"} - draws a TF map on the screen.
    \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
-   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize} function.
-   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample} function.
+   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize()} function.
+   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample()} function.
  }}
 
 \item{file.name}{Name of the png file.}

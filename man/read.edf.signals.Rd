@@ -4,18 +4,27 @@
 \alias{read.edf.signals}
 \title{Reads a selected EDF or EDF+ file and returns all signals data}
 \usage{
-read.edf.signals(file, resampling = TRUE, f.new = NULL, from = NULL, to = NULL)
+read.edf.signals(
+  file,
+  resampling = TRUE,
+  f.new = NULL,
+  from = NULL,
+  to = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
-\item{file}{the full path to the EDF/EDF+ file to be read.}
+\item{file}{The full path to the EDF/EDF+ file to be read.}
 
-\item{resampling}{logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
+\item{resampling}{Logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
 
-\item{f.new}{a new frequency.}
+\item{f.new}{A new frequency.}
 
-\item{from}{loading a signal \code{from} the given second.}
+\item{from}{Loading a signal \code{from} the given second.}
 
-\item{to}{loading a signal \code{to} the given second.}
+\item{to}{Loading a signal \code{to} the given second.}
+
+\item{verbose}{Flag to print out progress information.}
 }
 \value{
 A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a result of executing \code{edf::read.edf()} function.

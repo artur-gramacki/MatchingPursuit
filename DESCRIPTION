@@ -28,7 +28,11 @@ Imports:
   raster,
   graphics,
   grDevices,
-  utils
+  utils,
+  latex2exp
+Suggests: 
+  knitr,
+  rmarkdown
 VignetteBuilder: knitr  
 Depends: R (>= 3.5.0)
 License:  GPL (>= 2)

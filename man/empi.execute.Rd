@@ -11,7 +11,7 @@ empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE)
 
 \item{sampling.rate}{Sampling rate of the given signal (must be the same for every channel).}
 
-\item{empi.options}{If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download} function.}
+\item{empi.options}{If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download()} function.}
 
 \item{write.to.file}{If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.}
 }

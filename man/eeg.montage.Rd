@@ -32,7 +32,7 @@ A dataframe with final montage (rows = samples, columns = channels).
 An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed relative to each other during interpretation of an electroencephalogram. The same EEG recording can look very different depending on the montage use. The function implements the three most frequently used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
 }
 \details{
-To find out what names the individual channels have in the analysed EEG set, it is worth executing the \code{read.edf.params} function.
+To find out what names the individual channels have in the analysed EEG set, it is worth executing the \code{read.edf.params()} function.
 }
 \examples{
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")

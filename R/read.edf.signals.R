@@ -3,11 +3,12 @@
 #' The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
 #' Also resampling can be done (upsampling or downsampling).
 #'
-#' @param file the full path to the EDF/EDF+ file to be read.
-#' @param resampling logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
-#' @param f.new a new frequency.
-#' @param from loading a signal \code{from} the given second.
-#' @param to loading a signal \code{to} the given second.
+#' @param file The full path to the EDF/EDF+ file to be read.
+#' @param resampling Logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
+#' @param f.new A new frequency.
+#' @param from Loading a signal \code{from} the given second.
+#' @param to Loading a signal \code{to} the given second.
+#' @param verbose Flag to print out progress information.
 #'
 #' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a result of executing \code{edf::read.edf()} function.
 #'
@@ -27,7 +28,7 @@
 #' head(sigs2)
 #'
 
-read.edf.signals <- function(file, resampling = TRUE, f.new = NULL, from = NULL, to = NULL) {
+read.edf.signals <- function(file, resampling = TRUE, f.new = NULL, from = NULL, to = NULL, verbose = FALSE) {
 
   if(resampling == TRUE & !is.numeric(f.new)) {
     stop("\n--> `f.new` variable must be a numeric value. <--")
@@ -56,14 +57,17 @@ read.edf.signals <- function(file, resampling = TRUE, f.new = NULL, from = NULL,
       sig.len <- length(sig) / f
       sig.new <- signal::resample(sig, p = f.new, q = f, d = 5)
       t.new <- seq(0, sig.len - (1 / f.new), by = 1 / f.new)
-      cat(
-        "Processing channel '", lab, "', ",
-        "original sampling rate: ", freq, " Hz, ",
-        "number of samples: ", length(sig), ", ",
-        "signal length: ", length(sig) / f, " sec.",
-        "\n",
-        sep = "")
-      flush.console()
+      if (verbose) {
+        cat(
+          "Channel '", lab, "', ",
+          "original sampling rate: ", freq, " Hz, ",
+          "new sampling rate: ", f.new, " Hz, ",
+          "number of samples: ", length(sig), ", ",
+          "signal length: ", length(sig) / f, " sec.",
+          "\n",
+          sep = "")
+        flush.console()
+      }
     } else {
       sig.new <- sig
       t.new <- t
@@ -83,8 +87,10 @@ read.edf.signals <- function(file, resampling = TRUE, f.new = NULL, from = NULL,
     }
   }
 
+  if (is.null(f.new)) f.new <- f
+
   if (!is.null(from) & !is.null(to)) {
-    edf.mtx <- edf.mtx[seq(from * f + 1, to * f), ]
+    edf.mtx <- edf.mtx[seq(from * f + 1, to * f / (f / f.new)), ]
   }
 
   return(signals = as.data.frame(edf.mtx))
