@@ -53,23 +53,23 @@ sampling.rate
 # The classical double banana montage.
 pairs <- list(
  c("Fp2", "F4"),
- c("F4", "C4"),
- c("C4", "P4"),
- c("P4", "O2"),
+ c("F4",  "C4"),
+ c("C4",  "P4"),
+ c("P4",  "O2"),
  c("Fp1", "F3"),
- c("F3", "C3"),
- c("C3", "P3"),
- c("P3", "O1"),
+ c("F3",  "C3"),
+ c("C3",  "P3"),
+ c("P3",  "O1"),
  c("Fp2", "F8"),
- c("F8", "T4"),
- c("T4", "T6"),
- c("T6", "O2"),
+ c("F8",  "T4"),
+ c("T4",  "T6"),
+ c("T6",  "O2"),
  c("Fp1", "F7"),
- c("F7", "T3"),
- c("T3", "T5"),
- c("T5", "O1"),
- c("Fz", "Cz"),
- c("Cz", "Pz")
+ c("F7",  "T3"),
+ c("T3",  "T5"),
+ c("T5",  "O1"),
+ c("Fz",  "Cz"),
+ c("Cz",  "Pz")
 )
 
 bip.mont <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)

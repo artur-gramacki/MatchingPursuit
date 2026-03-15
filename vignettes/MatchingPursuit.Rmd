@@ -90,7 +90,7 @@ x1 <- sin(2 * pi * (10 + 40 * t) * t)                            # linear chirp
 x2 <- sin(2 * pi * (20 * t^2) * t)                               # nonlinear chirp
 x3 <- (1 + 0.5 * sin(2 * pi * 2 * t))  *  sin(2 * pi * 30 * t)   # AM
 x4 <- sin(2 * pi * 50 * t + 5 * sin(2 * pi * 3 * t))             # FM
-x5 <- exp(-2 * t)  *  sin(2 * pi * 60 * t)                       # attenuated signal
+x5 <- exp(-2 * t)  *  sin(2 * pi * 60 * t)                       # variable amplitude
 x6 <- sin(2 * pi * (5 + 20 * sin(2 * pi * t)) * t)               # frequency modulated sine wave
 x7 <- t * sin(2 * pi * 40 * t)                                   # increasing amplitude
 
@@ -98,21 +98,24 @@ signal <- data.frame(x = x1 + x2 + x3 + x4 + x5 + x6 + x7)
 range <- range(signal)
 
 par(mfrow = c(8, 1), pty = "m")
-par(mai = c(0.2, 0.4, 0.1, 0.1))
+par(mai = c(0.2, 0.4, 0.2, 0.1))
 
 plot(t, signal$x, type = "l", col = "blue", main = "", xlab = "", ylab = "")
-plot(t, x1, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x2, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x3, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x4, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
-plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s")
+plot(t, x1, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "linear chirp")
+plot(t, x2, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "nonlinear chirp")
+plot(t, x3, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "AM")
+plot(t, x4, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "FM")
+plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "decreasing  amplitude")
+plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "frequency modulated sine wave")
+plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "increasing amplitude")
 ```
 
 Data must my stored in data frame: rows = samples for all channels, columns = channels. Our first demo dataset consists of only one channel (one column).
 
 ```{r signal, include = TRUE, echo = TRUE, warning = FALSE}
+file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read.csv(file, header = TRUE)
+
 class(signal)
 
 head(signal)
@@ -120,20 +123,19 @@ head(signal)
 
 **STEP 2:**
 
-The input data (data frame `signal`) is passed as an input parameter to the `empi.execute()` function which generates a file in `SQLite` format (`empi.db`) that stores all atom parameters. This `.db` file is stored in a temporary directory created by `tempfile()` function.
+The input data (`signal`) is passed as an input parameter to the `empi.execute()` function which generates a file in `SQLite` format (`empi.db`) that stores all atom parameters. This `.db` file is stored in a temporary directory created by `tempfile()` function.
 
-The function first downloads and then runs an external program from the internet, which is a very fast and efficient implementation of the Matching Pursuit algorithm. The author calls it **Enhanced Matching Pursuit Implementation**, or **empi** for short, see @Rozanski-2024 and @Tropp-2008 for details. The download link and name of the downloaded resource are displayed below (if running in Linux and macOS systems, appropriate binary versions are downloaded).
+The function first downloads (if it hasn't been downloaded before) and then runs an external program from the internet. This program is a very fast and efficient implementation of the Matching Pursuit algorithm. The author calls it **Enhanced Matching Pursuit Implementation**, or **empi** for short, see @Rozanski-2024 and @Tropp-2008 for details. The download link and name of the downloaded resource are displayed below (if running in Linux and macOS systems, appropriate binary versions are downloaded).
 
 ```{r locate_empi, include = TRUE, echo = TRUE, warning = FALSE}
 locate.empi()
 ```
 
 **Important note:**
-The code to run the `empi.execute()` function has been commented out because CRAN's code verification rules prevent automatic binary downloads. This function should not be run here. 
-However, When this function is run by the user in interactive mode (the `interactive` function returns `TRUE`), the user is asked if they agree to download the external binary. If they agree, the required files are downloaded and saved in the current directory.
+The code in the below chunk has been commented out because CRAN's code verification rules prevent automatic binary downloads. Therefore, this function should not be run here. However, when this function is run by the user in interactive mode (if the `interactive()` function returns `TRUE`), the user is asked if they agree to download the external binary. If they agree, the required files are downloaded and saved in the current directory.
 
 
-Due to CRAN limitations (discussed above), this file was generated by the authors and stored in the package. In the next chunk, the `empi2ft()` function uses this file as input (the `db.file` parameter).
+Due to CRAN limitations (discussed above), this file was generated by the authors and stored in the package (`sample1.db`) . In the next chunk, the `empi2ft()` function uses this file as input (the `db.file` parameter).
 
 
 ```{r empi_execute, include = TRUE, echo = TRUE, warning = FALSE}
@@ -175,7 +177,7 @@ Furthermore, the energy of the input signal and the signal reconstructed from th
 
 **STEP 4 (not obligatory):**
 
-With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `sample1.db` file stores only one channel. The signal was decomposed into 43 atoms. By analyzing the `position` and `frequency` parameters, you can easily find the so-called blobs corresponding to these atoms in the TF map shown above.
+With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `sample1.db` file stores only one channel. The signal was decomposed into 43 atoms. By analysing the `position` and `frequency` parameters, you can easily find the so-called blobs corresponding to these atoms in the T-F map shown above.
 
 ```{r atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
@@ -185,6 +187,8 @@ file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 **STEP 5 (not obligatory):**
 
 The `sig2bin()` function can be used to write input data to a binary file. This function is is used internally in the `empi.execute()` function. The binary data are floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, first come the samples for all channels at `t = 0`, then for all channels at `t = Δt`, and so forth. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
+
+**Note:** The user does not work directly with `.bin` files. Binary files are used only in the `empi.execute()` function. The external **empi** program executed inside this function requires binary data as input. Moreover, the ability to convert text files to binary form may be useful if someone wants to work with **empi** independently of the R environment.
 
 ```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
 signal.bin <- sig2bin(data = signal, write.to.file = FALSE)
@@ -199,7 +203,7 @@ head(signal.bin, 16)
 
 **STEP 6 (not obligatory):**
 
-Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. Original and the reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable from each other. This indicates that the atoms match the signal very well.
+Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. Original and the reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable from each other. This means that atoms are very good at reconstructing the analysed signal.
 
 ```{r read_empi_db_file, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
@@ -235,11 +239,11 @@ axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), label
 
 ## Electroencephalogram (EEG) analysis
 
-In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ (European Data Format). You can also perform three different types of montage and filter the signals.
+In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages as well as filtering the signals.
 
 **STEP 1:**
 
-Reading an example EEG signals (EDF file). The signal is 10 seconds long. The sampling rate is 256 Hz. The channels have standard names, which are displayed below. 
+Reading an example EEG signals (EDF file). The signal is 10 seconds long and consists of 20 channels.e The sampling rate is 256 Hz. The channels have standard names, which are displayed below. 
 
 ```{r eeg_edf_reading, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
@@ -257,7 +261,7 @@ read.edf.params(file)
 
 **STEP 2 (sometimes required):**
 
-Sometimes it is necessary to change the sampling frequency (increase - upsampling or decrease - downsampling). The `read.edf.signals()` function implements this functionality. In the example the original sampling frequency is reduced from 256 Hz to 64 Hz.
+Sometimes it is necessary to change the sampling frequency (increase -- *upsampling* or decrease -- *downsampling*). The `read.edf.signals()` function implements this functionality. In the example below the original sampling frequency is reduced from 256 Hz to 64 Hz.
 
 ```{r eeg_edf_reading_resampling, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
@@ -311,9 +315,16 @@ pairs <- list(
 
 # Make the bipolar montage.
 bip.montage <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
+
+# Original signal.
+head(signal[, 1:6])
+
+# Signal after banana montage.
+head(bip.montage[, 1:6])
+
 ```
 
-**STEP 3:**
+**STEP 4 (usually required):**
 
 EEG signals are rarely analysed without first being filtered. Using the `filters.coeff()` function, you define filter parameters and then filter the signal. The filter parameters given below have typical values recommended in the literature.
 
@@ -335,8 +346,6 @@ for (m in 1:ncol(bip.montage)) {
   bip.montage.filt[, m] = signal::filtfilt(fc$bf.high, bip.montage.filt[, m]) # High pass IIR Butterwoth
 }
 ```
-
-**STEP 4:**
 
 For the selected channel (after bipolar montage it is named `r ch <- 1; colnames(bip.montage.filt)[ch]`), the original and filtered signals are displayed. Clearly, the filtering effect is positive.
 
@@ -441,9 +450,9 @@ K(\gamma) e^{- \pi \left( \frac{t-\mu}{\sigma} \right) ^2}
 \cos(\omega (t - \mu) + \phi)
 $$
 
-where $\gamma = (\mu, \omega, \sigma, \phi)$ constitute a four-dimmensional space and $K(\gamma)$ is such that $||g_{\gamma}|| = 1$. It is easy to see that Gabor functions are constructed by multiplying Gaussian envelopes with cosine oscillations of different frequencies $\omega$ and phases offset $\phi$. By multiplying these two functions, we can obtain a wide variety of shapes depending on their parameters. A few examples of Gabor function are presented in figure below. 
+where $\gamma = (\mu, \omega, \sigma, \phi)$ constitute a four-dimmensional space and $K(\gamma)$ is such that $||g_{\gamma}|| = 1$. It is easy to see that Gabor functions are constructed by multiplying Gaussian envelopes with cosine oscillations of different frequencies $\omega$ and phases offset $\phi$. By multiplying these two functions, we can obtain a wide variety of shapes depending on their parameters. A few examples of Gabor function are presented in figure below (in blue). The sinusoidal plane wave (in gray) is modulated by a Gaussian envelope (in red).
 
-```{r Gabor_fun, include = TRUE, echo = FALSE, fig.width = 6, fig.height = 4, fig.align = 'center'}
+```{r Gabor_fun, include = TRUE, echo = FALSE, fig.width = 7, fig.height = 5, fig.align = 'center'}
 library(latex2exp)
 N <- 512
 fs <- 256
@@ -479,13 +488,13 @@ for (i in c(1:n)) {
 
   plot(
     gb$t, 
-    gb$gauss, type="l", ylim = c(-1, 1), col = "grey", 
+    gb$gauss, type="l", ylim = c(-1, 1), col = "red", 
     xlab= "", ylab= "",
     xaxt = "t", yaxt = "t", bty = "or",
-    cex.axis = 1,
+    cex.axis = 1, lwd = 2,
     main = main)
   lines(gb$t, gb$cosinus, type = "l", col = "grey")
-  lines(gb$t, gb$gabor, col="black", lwd = 2)
+  lines(gb$t, gb$gabor, col="blue", lwd = 2)
   
   s <- s + gb$gabor
 }

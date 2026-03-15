@@ -15,8 +15,10 @@
 #' will additionally be created and saved in the current directory.
 #'
 #' @note The user does not work directly with \code{.bin} files. Binary files are used only in the
-#' `empi.execute()` function. The external program (\emph{Enhanced Matching Pursuit Implementation},
+#' \code{empi.execute()} function. The external program (\emph{Enhanced Matching Pursuit Implementation},
 #' or \emph{empi} for short) executed inside this function requires binary data as input.
+#' Moreover, the ability to convert text files to binary form may be useful if someone wants to work
+#' with \emph{empi} independently of the R environment.
 #'
 #' @export
 #'
