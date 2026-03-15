@@ -13,7 +13,7 @@
 #' @param phase Phase.
 #' @param sigma Scale / width of the Gaussian window.
 #' @param frequency Frequency of the sinusoid.
-#' @param normalization If TRUE, norm of the generated atom equals 1.
+#' @param normalization If \code{TRUE}, norm of the generated atom equals 1.
 #'
 #' @return List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
 #'
@@ -25,6 +25,7 @@
 #' sigma <- 0.5
 #' frequency <- 5.0
 #' normalization = TRUE
+#'
 #' out <- Gabor.fun(
 #'   number.of.samples,
 #'   sampling.frequency,

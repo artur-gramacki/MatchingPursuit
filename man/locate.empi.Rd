@@ -6,11 +6,8 @@
 \usage{
 locate.empi()
 }
-\value{
-URL links and zip file names.
-}
 \description{
-Returns \emph{Enhanced Matching Pursuit Implementation} \href{https://github.com/develancer/empi}{empi}
+Returns \emph{Enhanced Matching Pursuit Implementation} \url{https://github.com/develancer/empi}
 binary locations for the following operation systems: Windows, Linux, MacOS-x64, MacOS-arm64.
 }
 \examples{

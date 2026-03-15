@@ -11,10 +11,10 @@
 #' @importFrom raster resample
 #'
 #' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
-#' In this case, the \code{db.list} parameter must be NULL.
+#' In this case, the \code{db.list} parameter must be \code{NULL}.
 #'
 #' @param db.list The list created after executing the \code{empi.execute()} function.
-#' In this case, the \code{db.file} parameter must be NULL.
+#' In this case, the \code{db.file} parameter must be \code{NULL}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
@@ -62,7 +62,7 @@
 #'
 #' @param plot.signals Whether the original and reconstructed signals should also be displayed.
 #'
-#' @param plot.atoms If TRUE, plot all atoms into \code{Atoms.pdf} file.
+#' @param plot.atoms If \code{TRUE}, plot all atoms into \code{Atoms.pdf} file.
 #'
 #' @return Depending on the \code{out.mode} parameter the function returns:
 #'    \itemize{
@@ -103,7 +103,6 @@
 #'   out.mode = "plot"
 #' )
 #'
-
 empi2tf <- function(
     db.file = NULL,
     db.list = NULL,

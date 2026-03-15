@@ -29,10 +29,10 @@ empi2tf(
 }
 \arguments{
 \item{db.file}{The SQLite file created after executing the \code{empi.execute()} function.
-In this case, the \code{db.list} parameter must be NULL.}
+In this case, the \code{db.list} parameter must be \code{NULL}.}
 
 \item{db.list}{The list created after executing the \code{empi.execute()} function.
-In this case, the \code{db.file} parameter must be NULL.}
+In this case, the \code{db.file} parameter must be \code{NULL}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
@@ -80,7 +80,7 @@ sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 
 \item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
 
-\item{plot.atoms}{If TRUE, plot all atoms into \code{Atoms.pdf} file.}
+\item{plot.atoms}{If \code{TRUE}, plot all atoms into \code{Atoms.pdf} file.}
 }
 \value{
 Depending on the \code{out.mode} parameter the function returns:

@@ -1,10 +1,9 @@
 #' Get required external software localization
 #'
 #' @description
-#' Returns \emph{Enhanced Matching Pursuit Implementation} \href{https://github.com/develancer/empi}{empi}
+#' Returns \emph{Enhanced Matching Pursuit Implementation} \url{https://github.com/develancer/empi}
 #' binary locations for the following operation systems: Windows, Linux, MacOS-x64, MacOS-arm64.
 #'
-#' @return URL links and zip file names.
 #'
 #' @importFrom utils download.file unzip
 #'

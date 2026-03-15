@@ -3,10 +3,10 @@
 #' Runs the \emph{empi} program for the given data.
 #'
 #' @details
-#' The \emph{empi} program (sources and binaries for different OSs) is available for download at
+#' The \emph{empi} program (sources and binaries for different OSs) is available for download from
 #' \url{https://github.com/develancer/empi}. Details are presented in a journal paper:
 #' Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
-#' ACM Transactions on Mathematical Software, vol.50, issue = 3, pp. 1-17,
+#' ACM Transactions on Mathematical Software, Volume 50, Issue 3, Article No. 17, pp. 1-17,
 #' \url{https://doi.org/10.1145/3674832}.
 #'
 #' @param signal Must be a data frame: rows = samples for all channels, columns = channels.
@@ -14,11 +14,11 @@
 #'
 #' @param sampling.rate Sampling rate of the given signal (must be the same for every channel).
 #'
-#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}.
-#' Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading
-#' the \emph{empi} program using \code{empi.download()} function.
+#' @param empi.options If \code{NULL}, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}
+#' parameters. Otherwise, user can specify any command-line options. See \code{README.md} file
+#' after downloading the \emph{empi} program using \code{empi.download()} function.
 #'
-#' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved
+#' @param  write.to.file If \code{TRUE}, the SQLite database file \code{empi.db} will be created and saved
 #' in the current directory. This file stores the results of signal decomposition using the
 #' Matching Pursuit algorithm.
 #'

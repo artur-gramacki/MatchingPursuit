@@ -8,13 +8,15 @@
 #'
 #' @param eeg.data Must be a dataframe: rows = samples, columns = channels.The data frame must
 #' have correct column names (channel names).
+#'
 #' @param montage.type A character string representing montage type.
 #' \itemize{
-#'    \item \code{average} - each electrode is referenced to the average of all electrodes
-#'    \item \code{reference} - each active electrode is compared to a single common reference electrode
-#'    \item \code{bipolar} - each channel compares two adjacent electrodes
+#'    \item \code{"average"} - each electrode is referenced to the average of all electrodes
+#'    \item \code{"reference"} - each active electrode is compared to a single common reference electrode
+#'    \item \code{"bipolar"} - each channel compares two adjacent electrodes
 #'}
-#' @param ref.channel Name of the reference channel for \code{reference} montage.
+#' @param ref.channel Name of the reference channel for \code{"reference"} montage.
+#'
 #' @param bipolar.pairs List of electrodes pairs. See example below.
 #'
 #' @return A dataframe with final montage (rows = samples, columns = channels).

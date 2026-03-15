@@ -17,12 +17,12 @@ have correct column names (channel names).}
 
 \item{montage.type}{A character string representing montage type.
 \itemize{
-   \item \code{average} - each electrode is referenced to the average of all electrodes
-   \item \code{reference} - each active electrode is compared to a single common reference electrode
-   \item \code{bipolar} - each channel compares two adjacent electrodes
+   \item \code{"average"} - each electrode is referenced to the average of all electrodes
+   \item \code{"reference"} - each active electrode is compared to a single common reference electrode
+   \item \code{"bipolar"} - each channel compares two adjacent electrodes
 }}
 
-\item{ref.channel}{Name of the reference channel for \code{reference} montage.}
+\item{ref.channel}{Name of the reference channel for \code{"reference"} montage.}
 
 \item{bipolar.pairs}{List of electrodes pairs. See example below.}
 }

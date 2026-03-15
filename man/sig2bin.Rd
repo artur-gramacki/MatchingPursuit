@@ -20,7 +20,7 @@ Input signal(s) must be a data frame: rows = samples for all channels, columns =
 The data frame should have column names. Te function is used internally in the \code{empi.execute}
 function. The binary data are floating-point values in the byte order  of the current machine
 (no byte-order conversion is performed). For multichannel signals, first come the samples for all
-channels at \code{t=0}, then for all channels at \code{t=Δt}, and so forth. In other words,
+channels at \code{t=0}, then for all channels at \code{t=\eqn{\Delta}t} and so forth. In other words,
 the signal should be written in column-major order (rows = channels, columns = samples).
 }
 \note{
@@ -41,7 +41,7 @@ class(signal.bin)
 # First 4 elements of the signal
 head(signal, 4)
 
-# First 4 elements of the signal in binary (float, 4 bytes)
+# The same first 4 elements of the signal but in binary (float, 4 bytes)
 head(signal.bin, 16)
 ## End(Not run)
 

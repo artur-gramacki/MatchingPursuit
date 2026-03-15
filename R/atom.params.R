@@ -4,18 +4,19 @@
 #'
 #' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
 #'
-#' @return Data frame with all the atoms' parameters saved in a given SQLite file. The file can be generated using the \code{empi.execute()} function.
+#' @return Data frame with all the atom parameters saved in a given SQLite file.
+#' The file can be generated using the \code{empi.execute()} function.
 #'
 #' @export
 #'
 #' @examples
-#' # The file contains data from 18 channels.
+#' # The file contains data with 18 channels.
 #' file <- system.file("extdata", "EEG_data_10sec.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out[which(out$channel_id == 1), ]
 #' out[which(out$channel_id == 18), ]
 #'
-#' # Only 1 channel is in the file.
+#' # This file contains data with only  1 channel.
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out

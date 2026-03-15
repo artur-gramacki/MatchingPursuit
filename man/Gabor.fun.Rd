@@ -27,7 +27,7 @@ Gabor.fun(
 
 \item{frequency}{Frequency of the sinusoid.}
 
-\item{normalization}{If TRUE, norm of the generated atom equals 1.}
+\item{normalization}{If \code{TRUE}, norm of the generated atom equals 1.}
 }
 \value{
 List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
@@ -47,6 +47,7 @@ phase <- pi
 sigma <- 0.5
 frequency <- 5.0
 normalization = TRUE
+
 out <- Gabor.fun(
   number.of.samples,
   sampling.frequency,

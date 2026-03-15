@@ -26,7 +26,7 @@
 #' f <- out$f
 #'
 #' par(mfrow = c(2, 1), pty = "m")
-#' par(mai = c(0.9, 0.5, 0.2, 0.4))
+#' par(mai = c(0.9, 0.5, 0.3, 0.4))
 #'
 #' plot(
 #'   original.signal[,1], type = "l", col = "blue",
