@@ -4,15 +4,26 @@
 #' Also resampling can be done (upsampling or downsampling).
 #'
 #' @param file The full path to the EDF/EDF+ file to be read.
-#' @param resampling Logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
+#'
+#' @param resampling Logical TRUE or FALSE. If TRUE the frequency of all signals will be
+#' upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
+#'
 #' @param f.new A new frequency.
+#'
 #' @param from Loading a signal \code{from} the given second.
+#'
 #' @param to Loading a signal \code{to} the given second.
+#'
 #' @param verbose Flag to print out progress information.
 #'
-#' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a result of executing \code{edf::read.edf()} function.
+#' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
+#' result of executing \code{edf::read.edf()} function.
 #'
-#' @details If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled, depending on the actual sampling rate of the individual channels and the set value of the \code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The function does not provide the functionality to independently change the sampling rate for each channel.
+#' @details If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled,
+#' depending on the actual sampling rate of the individual channels and the set value of the
+#' \code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different
+#' rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The
+#' function does not provide the functionality to independently change the sampling rate for each channel.
 #'
 #' @importFrom edf read.edf
 #' @importFrom signal resample

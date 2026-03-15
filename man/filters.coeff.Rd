@@ -45,7 +45,8 @@ filters.coeff(
 List with parameters of individual filters.
 }
 \description{
-Implements notch, low-pass, high-pass, band-pass, and band-stop filters with desired frequency ranges and Butterworth filter order.
+Implements notch, low-pass, high-pass, band-pass, and band-stop filters with desired frequency
+ranges and Butterworth filter order.
 }
 \examples{
 sampling.rate <- 250

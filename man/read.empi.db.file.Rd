@@ -10,7 +10,12 @@ read.empi.db.file(db.file)
 \item{db.file}{SQLite file.}
 }
 \value{
-1) Detailed parameters of all the generated atoms. 2) Analysed input signal(s). 3) Reconstructed signal (as the sum of generated atoms. 4) Generated Gabor atoms.
+\itemize{
+   \item detailed parameters of all the generated atoms
+   \item original input signal(s)
+   \item reconstructed signal(s), as the sum of generated atoms
+   \item generated Gabor atoms
+}
 }
 \description{
 Reads data from a SQLite file created by the Matching Pursuit algorithm

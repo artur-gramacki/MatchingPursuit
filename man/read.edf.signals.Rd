@@ -16,7 +16,8 @@ read.edf.signals(
 \arguments{
 \item{file}{The full path to the EDF/EDF+ file to be read.}
 
-\item{resampling}{Logical TRUE or FALSE. If TRUE the frequency of all signals will be upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
+\item{resampling}{Logical TRUE or FALSE. If TRUE the frequency of all signals will be
+upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
 
 \item{f.new}{A new frequency.}
 
@@ -27,14 +28,19 @@ read.edf.signals(
 \item{verbose}{Flag to print out progress information.}
 }
 \value{
-A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a result of executing \code{edf::read.edf()} function.
+A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
+result of executing \code{edf::read.edf()} function.
 }
 \description{
 The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
 Also resampling can be done (upsampling or downsampling).
 }
 \details{
-If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled, depending on the actual sampling rate of the individual channels and the set value of the \code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The function does not provide the functionality to independently change the sampling rate for each channel.
+If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled,
+depending on the actual sampling rate of the individual channels and the set value of the
+\code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different
+rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The
+function does not provide the functionality to independently change the sampling rate for each channel.
 }
 \examples{
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")

@@ -2,7 +2,13 @@
 #'
 #'@param db.file SQLite file.
 #'
-#' @return 1) Detailed parameters of all the generated atoms. 2) Analysed input signal(s). 3) Reconstructed signal (as the sum of generated atoms. 4) Generated Gabor atoms.
+#' @return
+#' \itemize{
+#'    \item detailed parameters of all the generated atoms
+#'    \item original input signal(s)
+#'    \item reconstructed signal(s), as the sum of generated atoms
+#'    \item generated Gabor atoms
+#' }
 #'
 #' @importFrom RSQLite dbConnect dbDisconnect dbListTables dbGetQuery
 #'

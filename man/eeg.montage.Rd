@@ -12,27 +12,33 @@ eeg.montage(
 )
 }
 \arguments{
-\item{eeg.data}{Must be a dataframe: rows = samples, columns = channels.The data frame must have correct column names (channel names).}
+\item{eeg.data}{Must be a dataframe: rows = samples, columns = channels.The data frame must
+have correct column names (channel names).}
 
 \item{montage.type}{A character string representing montage type.
 \itemize{
-   \item \code{average} - each electrode is referenced to the average of all electrodes.
-   \item \code{reference} - each active electrode is compared to a single common reference electrode.
-   \item \code{bipolar} - each channel compares two adjacent electrodes.
+   \item \code{average} - each electrode is referenced to the average of all electrodes
+   \item \code{reference} - each active electrode is compared to a single common reference electrode
+   \item \code{bipolar} - each channel compares two adjacent electrodes
 }}
 
-\item{ref.channel}{name of the reference channel for \code{reference} montage.}
+\item{ref.channel}{Name of the reference channel for \code{reference} montage.}
 
-\item{bipolar.pairs}{list of electrodes pairs. See example below.}
+\item{bipolar.pairs}{List of electrodes pairs. See example below.}
 }
 \value{
 A dataframe with final montage (rows = samples, columns = channels).
 }
 \description{
-An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed relative to each other during interpretation of an electroencephalogram. The same EEG recording can look very different depending on the montage use. The function implements the three most frequently used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
+An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed
+relative to each other during interpretation of an electroencephalogram. The same EEG recording can
+look very different depending on the montage use. The function implements the three most frequently
+used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage
+and 3) Average Reference Montage.
 }
 \details{
-To find out what names the individual channels have in the analysed EEG set, it is worth executing the \code{read.edf.params()} function.
+To find out what names the individual channels have in the analysed EEG set,
+it is worth executing the \code{read.edf.params()} function.
 }
 \examples{
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")

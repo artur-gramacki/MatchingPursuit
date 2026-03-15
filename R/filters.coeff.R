@@ -1,7 +1,8 @@
 #' A wrapper function for \code{signal::butter} function
 #'
 #' @description
-#' Implements notch, low-pass, high-pass, band-pass, and band-stop filters with desired frequency ranges and Butterworth filter order.
+#' Implements notch, low-pass, high-pass, band-pass, and band-stop filters with desired frequency
+#' ranges and Butterworth filter order.
 #'
 #' @param fs Sampling rate.
 #'

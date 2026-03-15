@@ -12,7 +12,8 @@ sig2bin(data, write.to.file = FALSE)
 \item{write.to.file}{If TRUE, the file \code{signal.bin} will be created and saved in the current directory.}
 }
 \value{
-Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin} will conditionally be created and saved in the current directory.
+Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
+will additionally be created and saved in the current directory.
 }
 \description{
 Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
@@ -21,6 +22,11 @@ function. The binary data are floating-point values in the byte order  of the cu
 (no byte-order conversion is performed). For multichannel signals, first come the samples for all
 channels at \code{t=0}, then for all channels at \code{t=Δt}, and so forth. In other words,
 the signal should be written in column-major order (rows = channels, columns = samples).
+}
+\note{
+The user does not work directly with \code{.bin} files. Binary files are used only in the
+`empi.execute()` function. The external program (\emph{Enhanced Matching Pursuit Implementation},
+or \emph{empi} for short) executed inside this function requires binary data as input.
 }
 \examples{
 ## Not run:

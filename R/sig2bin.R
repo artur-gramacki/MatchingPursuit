@@ -11,7 +11,12 @@
 #' @param data Data frame with the input signal(s).
 #' @param write.to.file If TRUE, the file \code{signal.bin} will be created and saved in the current directory.
 #'
-#' @return Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin} will conditionally be created and saved in the current directory.
+#' @return Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
+#' will additionally be created and saved in the current directory.
+#'
+#' @note The user does not work directly with \code{.bin} files. Binary files are used only in the
+#' `empi.execute()` function. The external program (\emph{Enhanced Matching Pursuit Implementation},
+#' or \emph{empi} for short) executed inside this function requires binary data as input.
 #'
 #' @export
 #'

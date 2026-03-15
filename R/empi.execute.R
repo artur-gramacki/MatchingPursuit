@@ -4,19 +4,27 @@
 #'
 #' @details
 #' The \emph{empi} program (sources and binaries for different OSs) is available for download at
-#' \url{https://github.com/develancer/empi}. Details are presented in a journal paper: Różański, P.T. (2024).
-#' \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}. ACM Transactions on Mathematical Software,
-#'  vol.50, issue = 3, pp. 1-17, \url{https://doi.org/10.1145/3674832}.
+#' \url{https://github.com/develancer/empi}. Details are presented in a journal paper:
+#' Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
+#' ACM Transactions on Mathematical Software, vol.50, issue = 3, pp. 1-17,
+#' \url{https://doi.org/10.1145/3674832}.
 #'
-#' @param signal Must be a data frame: rows = samples for all channels, columns = channels. The data frame must have column names (channel names).
+#' @param signal Must be a data frame: rows = samples for all channels, columns = channels.
+#' The data frame must have column names (channel names).
 #'
 #' @param sampling.rate Sampling rate of the given signal (must be the same for every channel).
 #'
-#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}. Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading the \emph{empi} program using \code{empi.download()} function.
+#' @param empi.options If NULL, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}.
+#' Otherwise, user can spacify any command-line options. See \code{README.md} file after downloading
+#' the \emph{empi} program using \code{empi.download()} function.
 #'
-#' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved in the current directory. This file stores the results of signal decomposition using the Matching Pursuit algorithm.
+#' @param  write.to.file If TRUE, the SQLite database file \code{empi.db} will be created and saved
+#' in the current directory. This file stores the results of signal decomposition using the
+#' Matching Pursuit algorithm.
 #'
-#' @return Results of signal decomposition using the Matching Pursuit algorithm. If \code{write.to.file=TRUE} additionally, these results are written to the \code{empi.db} disk file in the working directory.
+#' @return Results of signal decomposition using the Matching Pursuit algorithm. If
+#' \code{write.to.file=TRUE} additionally, these results are written to the \code{empi.db} disk
+#' file in the working directory.
 #'
 #' @export
 #'

@@ -28,17 +28,22 @@ empi2tf(
 )
 }
 \arguments{
-\item{db.file}{The SQLite file created after executing the \code{empi.execute()} function. In this case, the \code{db.list} parameter must be NULL.}
+\item{db.file}{The SQLite file created after executing the \code{empi.execute()} function.
+In this case, the \code{db.list} parameter must be NULL.}
 
-\item{db.list}{The list created after executing the \code{empi.execute()} function. In this case, the \code{db.file} parameter must be NULL.}
+\item{db.list}{The list created after executing the \code{empi.execute()} function.
+In this case, the \code{db.file} parameter must be NULL.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
 \item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}.}
 
-\item{freq.divide}{For setting frequency range. For example, when sampling frequency is \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the frequency is  \code{f/2/freq.divide}.}
+\item{freq.divide}{For setting frequency range. For example, when sampling frequency is
+\code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the
+frequency is  \code{f/2/freq.divide}.}
 
-\item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most sensible are non-negative integers (e.g. 2, 4, 5, 8).}
+\item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
+sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 
 \item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
 
@@ -52,7 +57,8 @@ empi2tf(
 
 \item{crosses.color}{Colour of small crosses.}
 
-\item{palette}{Palette from the list returned by \code{hcl.pals()} function or the string \code{"my custom palette"}.}
+\item{palette}{Palette from the list returned by \code{hcl.pals()} function or the string
+\code{"my custom palette"}.}
 
 \item{rev}{\code{rev} param in \code{hcl.colors()} function.}
 
@@ -60,8 +66,10 @@ empi2tf(
 \itemize{
    \item \code{"plot"} - draws a TF map on the screen.
    \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
-   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{imager::resize()} function.
-   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name} (as R's matrix) resampling using \code{raster::resample()} function.
+   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name}
+   (as R's matrix) resampling using \code{imager::resize()} function.
+   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name}
+   (as R's matrix) resampling using \code{raster::resample()} function.
  }}
 
 \item{file.name}{Name of the png file.}
@@ -97,7 +105,8 @@ Regardless of the above, the function returns the following:
   }
 }
 \description{
-The map can be displayed on the screen, saved to a \code{png} file, or saved as an RData object (as a matrix).
+The map can be displayed on the screen, saved to a \code{png} file, or saved as an RData object
+(as a matrix).
 }
 \examples{
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")
