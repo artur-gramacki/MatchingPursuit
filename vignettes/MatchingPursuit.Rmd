@@ -53,8 +53,8 @@ cat(
 ```{r instalation, include = TRUE, echo = TRUE, warning = FALSE}
 # Install and load required R packages
 pkgs <- c(
-  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", 
-  "graphics", "grDevices", "utils", "knitr", "rmarkdown", "latex2exp")
+  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", 
+  "grDevices", "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown")
 
 to_install = !pkgs %in% installed.packages()
 
@@ -404,7 +404,7 @@ out <- empi2tf(
   db.file = db.file,
   channel = 1,
   mode = "sqrt",
-  freq.divide = 8,
+  freq.divide = 6,
   increase.factor= 4,
   display.crosses = TRUE,
   display.atom.numbers = FALSE,
@@ -534,7 +534,7 @@ After $N$ iterations, the signal $f$ is approximated as
 
 
 $$
-f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} + \sum_{n = 0}^{N} a_n g_{\gamma_n}
+f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N} a_n g_{\gamma_n}
 $$
 
 or equivalently
