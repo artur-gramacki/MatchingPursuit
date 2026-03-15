@@ -35,11 +35,11 @@ Imports:
   raster,
   graphics,
   grDevices,
-  utils,
-  latex2exp
+  utils
 Suggests: 
   knitr,
-  rmarkdown
+  rmarkdown,
+  latex2exp
 VignetteBuilder: knitr  
 Depends: R (>= 3.5.0)
 License:  GPL (>= 2)
