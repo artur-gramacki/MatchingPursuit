@@ -42,7 +42,7 @@ it is worth executing the \code{read.edf.params()} function.
 }
 \examples{
 file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
-signal <- read.edf.signals(file, resampling = FALSE, from = 2, to = 6)
+signal <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
 
 pars <- read.edf.params(file)
 pars

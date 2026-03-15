@@ -15,15 +15,20 @@
 #'
 #' Example datasets available through the \code{system.file()} function are:
 #' \itemize{
-#'    \item EEG_data_10sec.edf
-#'    \item EEG_data_10sec.csv
-#'    \item EEG_data_10sec.db
-#'    \item EEG_data_10sec_bipolar_filtered.csv
-#'    \item EEG_data_10sec_bipolar_filtered.db
-#'    \item sample1.csv
-#'    \item sample1.db
-#'    \item sample2.csv
-#'    \item sample2.db
+#'    \item \code{EEG_data_10sec.edf}
+#'    \item \code{EEG_data_10sec.csv} (19 EEG channels + 1 channel with time points, sampling
+#'          frequency: 256 HZ, signal length: 10 sec.)
+#'    \item \code{EEG_data_10sec.db}
+#'
+#'    \item \code{EEG_data_10sec_bipolar_filtered.csv} (18 EEG channels, sampling
+#'          frequency: 256 HZ, signal length: 10 sec.)
+#'    \item \code{EEG_data_10sec_bipolar_filtered.db}
+#'
+#'    \item \code{sample1.csv} (one channel, sampling frequency: 1024 HZ, signal length: 1 sec.)
+#'    \item \code{sample1.db}
+#'
+#'    \item \code{sample2.csv} (one channel, sampling frequency: 128 HZ, signal length: 10 sec.)
+#'    \item \code{sample2.db}
 #' }
 #
 #' @docType package
