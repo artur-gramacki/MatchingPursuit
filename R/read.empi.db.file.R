@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' ## Not run:
-#' file <- system.file("extdata", "EEG_data_10sec.db", package = "MatchingPursuit")
+#' file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
 #' out <- read.empi.db.file(file)
 #'
 #' n.channnels <- ncol(out$original.signal)

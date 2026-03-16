@@ -52,7 +52,7 @@
 #' signal::freqz(fc$bf.bandpass, Fs = sampling.rate)
 #' signal::freqz(fc$bf.bandstop, Fs = sampling.rate)
 #'
-#' file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
+#' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' sigs <- read.edf.signals(file, resampling = FALSE)
 #'
 #' plot(sigs[, 1], type = "l", panel.first = grid())

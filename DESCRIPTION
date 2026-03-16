@@ -39,7 +39,8 @@ Imports:
 Suggests: 
   knitr,
   rmarkdown,
-  latex2exp
+  latex2exp,
+  remotes
 VignetteBuilder: knitr  
 Depends: R (>= 3.5.0)
 License:  GPL (>= 2)

@@ -18,7 +18,7 @@ Returns a data frame with atom parameters.
 }
 \examples{
 # The file contains data with 18 channels.
-file <- system.file("extdata", "EEG_data_10sec.db", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
 out <- atom.params(file)
 out[which(out$channel_id == 1), ]
 out[which(out$channel_id == 18), ]

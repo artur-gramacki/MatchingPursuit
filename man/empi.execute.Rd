@@ -41,12 +41,12 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read.csv(file, header = TRUE)
 
 if (interactive()) {
-empi.out <- empi.execute (
-  signal = signal,
-  sampling.rate = 128,
-  empi.options = NULL,
-  write.to.file = FALSE
-)
+  empi.out <- empi.execute (
+    signal = signal,
+    sampling.rate = 128,
+    empi.options = NULL,
+    write.to.file = FALSE
+  )
 }
 ## End(Not run)
 

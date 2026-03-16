@@ -16,7 +16,7 @@
 #' @export
 #'
 #' @examples
-#' file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
+#' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' read.edf.params(file)
 #'
 read.edf.params <- function(file) {

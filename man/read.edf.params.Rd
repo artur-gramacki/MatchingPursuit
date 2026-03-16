@@ -20,7 +20,7 @@ files (such as interrupted recordings, time-stamped annotations) is not used in 
 package and is therefore not read.
 }
 \examples{
-file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 read.edf.params(file)
 
 }

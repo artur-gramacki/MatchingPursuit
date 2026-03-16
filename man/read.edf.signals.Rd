@@ -43,7 +43,7 @@ rate. Therefore, it may happen that some channels are upsampled and others are d
 function does not provide the functionality to independently change the sampling rate for each channel.
 }
 \examples{
-file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 sigs1  <- read.edf.signals(file, resampling = FALSE)
 head(sigs1)
 sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128)

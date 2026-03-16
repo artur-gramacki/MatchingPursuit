@@ -14,23 +14,26 @@
 #' available at \url{https://github.com/develancer/empi}.
 #'
 #' Example datasets available through the \code{system.file()} function are:
-#' \itemize{
-#'    \item \code{EEG_data_10sec.edf}
-#'    \item \code{EEG_data_10sec.csv} (19 EEG channels + 1 channel with time points, sampling
-#'          frequency: 256 Hz, signal length: 10 sec.)
-#'    \item \code{EEG_data_10sec.db}
 #'
-#'    \item \code{EEG_data_10sec_bipolar_filtered.csv} (18 EEG channels, sampling
-#'          frequency: 256 Hz, signal length: 10 sec.)
-#'    \item \code{EEG_data_10sec_bipolar_filtered.db}
-#'
-#'    \item \code{sample1.csv} (one channel, sampling frequency: 1024 Hz, signal length: 1 sec.)
-#'    \item \code{sample1.db}
-#'
-#'    \item \code{sample2.csv} (one channel, sampling frequency: 128 Hz, signal length: 10 sec.)
-#'    \item \code{sample2.db}
+#'  \itemize{
+#'    \item \code{EEG.edf}
+#'      \itemize{
+#'        \item 19 EEG channels + 1 EDF Annotations channel
+#'        \item sampling frequency: 256 Hz, signal length: 10 sec.
+#'        \item channel names: Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations
+#'      }
+#'    \item \code{sample1.csv}
+#'      \itemize{
+#'        \item 1 channel
+#'        \item sampling frequency: 1024 Hz, signal length: 1 sec.
+#'      }
+#'    \item \code{sample2.csv}
+#'      \itemize{
+#'        \item 1 channel
+#'        \item sampling frequency: 128 Hz Hz, signal length: 1 sec.
+##'      }
 #' }
-#
+#'
 #' @docType package
 #'
 #' @name MatchingPursuit

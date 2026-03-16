@@ -41,7 +41,7 @@ To find out what names the individual channels have in the analysed EEG set,
 it is worth executing the \code{read.edf.params()} function.
 }
 \examples{
-file <- system.file("extdata", "EEG_data_10sec.edf", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 signal <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
 
 pars <- read.edf.params(file)
