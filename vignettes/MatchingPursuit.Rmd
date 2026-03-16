@@ -90,7 +90,7 @@ x1 <- sin(2 * pi * (10 + 40 * t) * t)                            # linear chirp
 x2 <- sin(2 * pi * (20 * t^2) * t)                               # nonlinear chirp
 x3 <- (1 + 0.5 * sin(2 * pi * 2 * t))  *  sin(2 * pi * 30 * t)   # AM
 x4 <- sin(2 * pi * 50 * t + 5 * sin(2 * pi * 3 * t))             # FM
-x5 <- exp(-2 * t)  *  sin(2 * pi * 60 * t)                       # variable amplitude
+x5 <- exp(-2 * t)  *  sin(2 * pi * 60 * t)                       # decreasing amplitude
 x6 <- sin(2 * pi * (5 + 20 * sin(2 * pi * t)) * t)               # frequency modulated sine wave
 x7 <- t * sin(2 * pi * 40 * t)                                   # increasing amplitude
 
@@ -105,7 +105,7 @@ plot(t, x1, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "li
 plot(t, x2, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "nonlinear chirp")
 plot(t, x3, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "AM")
 plot(t, x4, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "FM")
-plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "decreasing  amplitude")
+plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "decreasing amplitude")
 plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "frequency modulated sine wave")
 plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "increasing amplitude")
 ```
