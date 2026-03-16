@@ -20,7 +20,7 @@ The program (sources and binaries for different OSs) is available for download f
 \url{https://github.com/develancer/empi}. Details are presented in a journal paper: Różański, P.T. (2024).
 \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
 ACM Transactions on Mathematical Software, Volume 50, Issue 3, Article No. 17, pp. 1-17,
-\url{https://doi.org/10.1145/3674832}.
+\doi{10.1145/3674832}.
 }
 \examples{
 ## Not run:
