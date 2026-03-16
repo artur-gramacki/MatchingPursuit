@@ -36,10 +36,7 @@ atom.params <- function(db.file) {
   )
 
   atoms <- round(as.data.frame(atoms), 3)
-
   colnames(atoms) <- c("channel_id", "atom_number", "amplitude", "energy", "frequency", "phase", "scale", "position")
-
-
   return(atoms)
 }
 

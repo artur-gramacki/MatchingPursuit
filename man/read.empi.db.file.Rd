@@ -11,10 +11,10 @@ read.empi.db.file(db.file)
 }
 \value{
 \itemize{
-   \item detailed parameters of all the generated atoms
-   \item original input signal(s)
-   \item reconstructed signal(s), as the sum of generated atoms
-   \item generated Gabor atoms
+   \item Detailed parameters of all the generated atoms.
+   \item Original input signal(s).
+   \item Reconstructed signal(s), as the sum of generated atoms.
+   \item Generated Gabor atoms.
 }
 }
 \description{

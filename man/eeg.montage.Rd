@@ -27,7 +27,7 @@ have correct column names (channel names).}
 \item{bipolar.pairs}{List of electrodes pairs. See example below.}
 }
 \value{
-A dataframe with final montage (rows = samples, columns = channels).
+A data frame with final montage (rows = samples, columns = channels).
 }
 \description{
 An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed

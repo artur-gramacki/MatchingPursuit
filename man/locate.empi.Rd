@@ -6,6 +6,9 @@
 \usage{
 locate.empi()
 }
+\value{
+List with URL of the empi binaries and zip file name.
+}
 \description{
 Returns \emph{Enhanced Matching Pursuit Implementation} \url{https://github.com/develancer/empi}
 binary locations for the following operation systems: Windows, Linux, MacOS-x64, MacOS-arm64.

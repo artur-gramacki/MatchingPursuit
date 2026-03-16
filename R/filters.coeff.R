@@ -46,11 +46,11 @@
 #'
 #' fc
 #'
-#' signal::freqz(fc$bf.notch, Fs = sampling.rate)
-#' signal::freqz(fc$bf.low, Fs = sampling.rate)
-#' signal::freqz(fc$bf.high, Fs = sampling.rate)
-#' signal::freqz(fc$bf.bandpass, Fs = sampling.rate)
-#' signal::freqz(fc$bf.bandstop, Fs = sampling.rate)
+#' signal::freqz(fc$notch, Fs = sampling.rate)
+#' signal::freqz(fc$low, Fs = sampling.rate)
+#' signal::freqz(fc$high, Fs = sampling.rate)
+#' signal::freqz(fc$bandpass, Fs = sampling.rate)
+#' signal::freqz(fc$bandstop, Fs = sampling.rate)
 #'
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' sigs <- read.edf.signals(file, resampling = FALSE)
@@ -58,9 +58,9 @@
 #' plot(sigs[, 1], type = "l", panel.first = grid())
 #'
 #' for (m in 1:ncol(sigs)) {
-#'   sigs[, m] = signal::filtfilt(fc$bf.notch, sigs[, m]); # 50Hz notch filter
-#'   sigs[, m] = signal::filtfilt(fc$bf.low, sigs[, m]); # Low pass IIR Butterworth
-#'   sigs[, m] = signal::filtfilt(fc$bf.high, sigs[, m]); # High pass IIR Butterwoth
+#'   sigs[, m] = signal::filtfilt(fc$notch, sigs[, m]); # 50Hz notch filter
+#'   sigs[, m] = signal::filtfilt(fc$low, sigs[, m]); # Low pass IIR Butterworth
+#'   sigs[, m] = signal::filtfilt(fc$high, sigs[, m]); # High pass IIR Butterwoth
 #' }
 #'
 #' plot(sigs[, 1], type = "l", panel.first = grid())
@@ -74,26 +74,25 @@ filters.coeff <- function (
     bandstop = c(0.5, 40), bandstop.order = 4)
 {
   ## Notch filter
-  bf.notch <- butter(notch.order, notch / (fs / 2), "stop")
+  notch <- butter(notch.order, notch / (fs / 2), "stop")
 
   # Low pass IIR Butterworth, cutoff at 'lowpass' Hz
-  bf.low <- butter(lowpass.order, lowpass / (fs / 2), "low")
+  low <- butter(lowpass.order, lowpass / (fs / 2), "low")
 
   # High pass IIR Butterwoth, cutoff at 'highpass' Hz
-  bf.high <- butter(highpass.order, highpass / (fs / 2), "high")
+  high <- butter(highpass.order, highpass / (fs / 2), "high")
 
   # Bandpass filter IIR Butterworth
-  bf.bandpass <- butter(bandpass.order, bandpass / (fs / 2), type = "pass")
+  bandpass <- butter(bandpass.order, bandpass / (fs / 2), type = "pass")
 
   # Bandstop filter IIR Butterworth
-  bf.bandstop <- butter(bandstop.order, bandstop / (fs / 2), type = "stop")
-
+  bandstop <- butter(bandstop.order, bandstop / (fs / 2), type = "stop")
 
   list(
-    bf.notch = bf.notch,
-    bf.low = bf.low,
-    bf.high = bf.high,
-    bf.bandpass = bf.bandpass,
-    bf.bandstop = bf.bandstop)
+    notch = notch,
+    low = low,
+    high = high,
+    bandpass = bandpass,
+    bandstop = bandstop)
 }
 

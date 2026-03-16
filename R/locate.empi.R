@@ -7,6 +7,8 @@
 #'
 #' @importFrom utils download.file unzip
 #'
+#'@return List with URL of the empi binaries and zip file name.
+#'
 #' @export
 #'
 #' @examples

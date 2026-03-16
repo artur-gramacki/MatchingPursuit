@@ -19,7 +19,7 @@
 #'
 #' @param bipolar.pairs List of electrodes pairs. See example below.
 #'
-#' @return A dataframe with final montage (rows = samples, columns = channels).
+#' @return A data frame with final montage (rows = samples, columns = channels).
 #'
 #' @details To find out what names the individual channels have in the analysed EEG set,
 #' it is worth executing the \code{read.edf.params()} function.

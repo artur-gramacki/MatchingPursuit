@@ -345,9 +345,9 @@ fc <- filters.coeff(
 bip.montage.filt <- bip.montage 
 
 for (m in 1:ncol(bip.montage)) {
-  bip.montage.filt[, m] = signal::filtfilt(fc$bf.notch, bip.montage[, m])     # 50Hz notch filter
-  bip.montage.filt[, m] = signal::filtfilt(fc$bf.low, bip.montage.filt[, m])  # Low pass IIR Butterworth
-  bip.montage.filt[, m] = signal::filtfilt(fc$bf.high, bip.montage.filt[, m]) # High pass IIR Butterwoth
+  bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])     # 50Hz notch filter
+  bip.montage.filt[, m] = signal::filtfilt(fc$low, bip.montage.filt[, m])  # Low pass IIR Butterworth
+  bip.montage.filt[, m] = signal::filtfilt(fc$high, bip.montage.filt[, m]) # High pass IIR Butterwoth
 }
 ```
 

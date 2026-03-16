@@ -85,21 +85,21 @@ sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 \value{
 Depending on the \code{out.mode} parameter the function returns:
    \itemize{
-   \item a time-Frequency map plotted on the screen
-   \item a time-Frequency map saved in a png file
-   \item a time-Frequency map saved as .RData file
+     \item Time-Frequency map plotted on the screen
+     \item Time-Frequency map saved in a .png file
+     \item Time-Frequency map saved as .RData file
   }
 Regardless of the above, the function returns the following:
   \itemize{
-    \item all the Gabor function
+    \item all the Gabor functions
     \item reconstructed signal
     \item original signal
     \item sampling frequency
     \item grid size in t axis
-    \item grid size in f axi
-    \item epch size in samples
+    \item grid size in f axis
+    \item epoch size in samples
     \item length of the signal in seconds
-    \item fime-frequency map
+    \item time-frequency map
     \item channel number
     \item frequency divide
   }

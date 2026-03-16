@@ -16,9 +16,6 @@
 #'
 #' @param verbose Flag to print out progress information.
 #'
-#' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
-#' result of executing \code{edf::read.edf()} function.
-#'
 #' @details If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled,
 #' depending on the actual sampling rate of the individual channels and the set value of the
 #' \code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different
@@ -28,6 +25,9 @@
 #' @importFrom edf read.edf
 #' @importFrom signal resample
 #' @importFrom utils flush.console
+#'
+#' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
+#' result of executing \code{edf::read.edf()} function.
 #'
 #' @export
 #'
