@@ -3,6 +3,7 @@
 #'
 check.checksum <- function (dest) {
 
+  out <-  locate.empi()
   digest::digest(file = dest, algo = "md5")
 
 
