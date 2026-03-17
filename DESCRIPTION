@@ -35,7 +35,8 @@ Imports:
   raster,
   graphics,
   grDevices,
-  utils
+  utils,
+  digest
 Suggests: 
   knitr,
   rmarkdown,

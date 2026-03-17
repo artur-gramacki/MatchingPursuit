@@ -26,7 +26,7 @@
 #' @examples
 #' ## Not run:
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-#' signal <- read.csv(file, header = TRUE)
+#' signal <- read.csv.signals(file)
 #' signal.bin <- sig2bin(data = signal, write.to.file = FALSE)
 #'
 #' class(signal.bin)

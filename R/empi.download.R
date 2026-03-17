@@ -11,8 +11,12 @@
 #' ACM Transactions on Mathematical Software, Volume 50, Issue 3, Article No. 17, pp. 1-17,
 #' \doi{10.1145/3674832}.
 #'
+#' Note: the checksum of the downloaded file is checked.
+#'
 #' @return The function downloads the \emph{empi} program in a version compatible with the operating
 #' system used (Windows, Linux, MacOS-x64, MacOS-arm64) and saves it in the current directory.
+#'
+#'@importFrom digest digest
 #'
 #' @examples
 #' ## Not run:
@@ -24,14 +28,20 @@
 #' @export
 #'
 empi.download <- function() {
+
   out <-  locate.empi()
-  dest <- file.path(tempdir(), out$fname)
+
+  destfile <- file.path(tempdir(), out$fname)
+
   if (interactive()) {
     download.file(
       url = out$url,
-      destfile = dest,
+      destfile = destfile,
       mode = "wb"
     )
-    unzip(dest)
+
+    check.checksum(destfile)
+
+    unzip(destfile)
   }
 }

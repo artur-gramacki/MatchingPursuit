@@ -28,6 +28,7 @@ h1, h2, h3, h4 {
   border-bottom: none;
 }
 
+
 </style>
 
 ```{r setup, include = TRUE, echo = FALSE}
@@ -52,13 +53,13 @@ cat(
 )
 ```
 
-## Instalation
+## Installation
 
 ```{r instalation, include = TRUE, echo = TRUE, warning = FALSE}
 # Install and load required R packages
 pkgs <- c(
   "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", "grDevices", 
-  "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown", "remotes")
+  "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown", "remotes",  "digest")
 
 to_install = !pkgs %in% installed.packages()
 
@@ -81,7 +82,7 @@ The presented package allows you to analyse any time-series signals using the Ma
 
 Let's generate an example mixing of seven different non-stationary signals. The resulting signal (highlighted in blue below) will be used to demonstrate the basic functionality of the package.
 
-**STEP 1:**
+### Step 1 {.unnumbered}
 
 ```{r 7_non_stationary, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 fs <- 1024
@@ -114,18 +115,19 @@ plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "fr
 plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "increasing amplitude")
 ```
 
-Data must my stored in data frame: rows = samples for all channels, columns = channels. Our first demo dataset consists of only one channel (one column).
+Data must my stored in data frame: rows = samples for all channels, columns = channels. Our first demo dataset consists of only one channel (one column). The `read.csv.signals()` function checks if the data has correct structure. The first line of the file must contain two numbers: the sampling rate in Hz (\code{f}) and the signal length in seconds (\code{s}) This checks whether the file actually contains \code{f*s} samples.
 
 ```{r signal, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read.csv(file, header = TRUE)
+
+signal <- read.csv.signals(file)
 
 class(signal)
 
 head(signal)
 ```
 
-**STEP 2:**
+### Step 2 {.unnumbered}
 
 The input data (`signal`) is passed as an input parameter to the `empi.execute()` function which generates a file in `SQLite` format (`empi.db`) that stores all atom parameters. This `.db` file is stored in a temporary directory created by `tempfile()` function.
 
@@ -155,7 +157,7 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 # )
 ```
 
-**STEP 3:**
+### Step 3 {.unnumbered}
 
 Generating the final time-frequency map (T-F) for the selected channel. The centres of atoms (in the sense of time and frequency coordinates) are marked with the numbers of subsequent atoms, sorted from the highest to the lowest energy. 
 
@@ -163,11 +165,11 @@ Comparing the two signal waveforms under the T-F map, it can be seen that the or
 
 ```{r sample1, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
-db.file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
 # Create time-frequency map based on MP atoms.
 out <- empi2tf(
-  db.file = db.file,
+  db.file = file,
   channel = 1,
   mode = "sqrt",
   freq.divide = 4,
@@ -182,73 +184,11 @@ Below the plot, basic signal parameters are displayed, along with information ab
 
 Furthermore, the energy of the input signal and the signal reconstructed from the atoms are also calculated. The obtained result shows that more of the energy of the original signal was "explained" by the generated atoms (94.05%). Of course, the number of generated atoms can be increased, then the energy of the reconstructed signal will most likely be closer to 100%.
 
-**STEP 4 (not obligatory):**
-
-With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `sample1.db` file stores only one channel. The signal was decomposed into 43 atoms. By analysing the `position` and `frequency` parameters, you can easily find the so-called blobs corresponding to these atoms in the T-F map shown above.
-
-```{r atom_params, include = TRUE, echo = TRUE, warning = FALSE}
-file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-(ap <- atom.params(file))
-```
-
-**STEP 5 (not obligatory):**
-
-The `sig2bin()` function can be used to write input data to a binary file. This function is is used internally in the `empi.execute()` function. The binary data are floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, first come the samples for all channels at `t = 0`, then for all channels at `t = Δt`, and so forth. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
-
-**Note:** The user does not work directly with `.bin` files. Binary files are used only in the `empi.execute()` function. The external **empi** program executed inside this function requires binary data as input. Moreover, the ability to convert text files to binary form may be useful if someone wants to work with **empi** independently of the R environment.
-
-```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
-signal.bin <- sig2bin(data = signal, write.to.file = FALSE)
-class(signal.bin)
-
-# First 4 elements of the signal.
-head(signal, 4)
-
-# The same first 4 elements of the signal in binary (float, 4 bytes).
-head(signal.bin, 16)
-```
-
-**STEP 6 (not obligatory):**
-
-Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. Original and the reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable from each other. This means that atoms are very good at reconstructing the analysed signal.
-
-```{r read_empi_db_file, include = TRUE, echo = TRUE, warning = FALSE}
-file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-out <- read.empi.db.file(file)
-```
-
-```{r display_original_and_reconstrction, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-n.channnels <- ncol(out$original.signal)
-original.signal <- out$original.signal
-reconstruction <- out$reconstruction
-t <- out$t
-f <- out$f
-len <- length(original.signal[, 1])
-lab <- seq(t[1], t[len] + 1 / f, length.out = 11)
-
-par(mfrow = c(2, 1), pty = "m")
-par(mai = c(0.8, 0.5, 0.5, 0.5))
-
-plot(
-  original.signal[,1], type = "l", col = "blue",
-  main = "Original signal",
-  xaxt = "n", ylab = "", xlab = "time [sec]"
-)
-axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
-
-plot(
-  reconstruction[,1], type = "l", col = "blue",
-  main = "Rconstructed signal",
-  xaxt = "n", ylab = "", xlab = "time [sec]"
-)
-axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
-```
-
 ## Electroencephalogram (EEG) analysis
 
 In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages as well as filtering the signals.
 
-**STEP 1:**
+### Step 1 {.unnumbered}
 
 Reading an example EEG signals (EDF file). The signal is 10 seconds long and consists of 20 channels.e The sampling rate is 256 Hz. The channels have standard names, which are displayed below. 
 
@@ -266,7 +206,7 @@ sampling.rate <- pars$frequency[1]
 read.edf.params(file)
 ```
 
-**STEP 2 (sometimes required):**
+### Step 2 (sometimes required) {.unnumbered}
 
 Sometimes it is necessary to change the sampling frequency (increase -- *upsampling* or decrease -- *downsampling*). The `read.edf.signals()` function implements this functionality. In the example below the original sampling frequency is reduced from 256 Hz to 64 Hz.
 
@@ -308,7 +248,7 @@ plot(
 ```
 
 
-**STEP 3 (usually required):**
+### Step 3 (usually required) {.unnumbered}
 
 A bipolar montage is created (the classical *double banana* montage). Each channel compares two adjacent electrodes. In the first step, you define the pairs of electrodes to be connected (`pairs` list). In the second step function `eeg.montage()` generates the required montage. 
 
@@ -331,7 +271,7 @@ head(bip.montage[, 1:7])
 
 ```
 
-**STEP 4 (usually required):**
+### Step 4 (usually required) {.unnumbered}
 
 EEG signals are rarely analysed without first being filtered. Using the `filters.coeff()` function, you define filter parameters and then filter the signal. The filter parameters given below have typical values recommended in the literature.
 
@@ -384,7 +324,7 @@ plot(
 )
 ```
 
-**STEP 5:**
+### Step 5 {.unnumbered}
 
 **Important note:** The code below has been commented out. See the explanation given [here](#important_note).
 
@@ -407,11 +347,11 @@ Comparing the two signal twaveforms under the T-F map, it can be seen that the o
 
 ```{r eeg_TF, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
-db.file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 
 # Generate time-frequency map based on MP atoms.
 out <- empi2tf(
-  db.file = db.file,
+  db.file = file,
   channel = 1,
   mode = "sqrt",
   freq.divide = 6,
@@ -426,9 +366,19 @@ Below the plot, basic signal parameters are displayed, along with information ab
 
 Furthermore, the energy of the input signal and the signal reconstructed from the generated atoms are also calculated. The obtained result shows that almost all of the energy of the original signal was “explained” by the generated atoms (97.75%).
 
-**STEP 6 (not obligatory):**
 
-With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `EEG_bipolar_filtered.db` file stores 18 channels. To keep the result short, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms = 50,  number of channels = 18, 50 x 18 = 900).
+## Selected auxilary functions
+
+### `atom.params()` {.unnumbered}
+
+With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `sample1.db` file stores only one channel. The signal was decomposed into 43 atoms. By analysing the `position` and `frequency` parameters, you can easily find the so-called blobs corresponding to these atoms in the T-F maps.
+
+```{r atom_params, include = TRUE, echo = TRUE, warning = FALSE}
+file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+(ap <- atom.params(file))
+```
+
+In this example note that the `EEG_bipolar_filtered.db` file stores 18 channels. To keep the result short, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms = 50,  number of channels = 18, 50 x 18 = 900).
 
 **Important:** It should be clearly emphasized that in general, the number of atoms generated for each channel need not be the same. However, in our example, we have a special situation where the number of atoms in each channel is exactly the same.
 
@@ -438,6 +388,62 @@ ap <- atom.params(file)
 head(ap, 6)
 tail(ap, 6)
 ```
+
+### `sig2bin()` {.unnumbered}
+
+The `sig2bin()` function can be used to write input data to a binary file. This function is is used internally in the `empi.execute()` function. The binary data are floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, first come the samples for all channels at `t = 0`, then for all channels at `t = Δt`, and so forth. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
+
+**Note:** The user does not work directly with `.bin` files. Binary files are used only in the `empi.execute()` function. The external **empi** program executed inside this function requires binary data as input. Moreover, the ability to convert text files to binary form may be useful if someone wants to work with **empi** independently of the R environment.
+
+```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
+file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read.csv.signals(file)
+signal.bin <- sig2bin(data = signal, write.to.file = FALSE)
+class(signal.bin)
+
+# First 4 elements of the signal.
+head(signal, 4)
+
+# The same first 4 elements of the signal in binary (float, 4 bytes).
+head(signal.bin, 16)
+```
+
+### `read.empi.db.file()` {.unnumbered}
+
+Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. Original and the reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable from each other. This means that atoms are very good at reconstructing the analysed signal.
+
+```{r read_empi_db_file, include = TRUE, echo = TRUE, warning = FALSE}
+file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+out <- read.empi.db.file(file)
+```
+
+```{r display_original_and_reconstrction, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
+n.channnels <- ncol(out$original.signal)
+original.signal <- out$original.signal
+reconstruction <- out$reconstruction
+t <- out$t
+f <- out$f
+len <- length(original.signal[, 1])
+lab <- seq(t[1], t[len] + 1 / f, length.out = 11)
+
+par(mfrow = c(2, 1), pty = "m")
+par(mai = c(0.8, 0.5, 0.5, 0.5))
+
+plot(
+  original.signal[,1], type = "l", col = "blue",
+  main = "Original signal",
+  xaxt = "n", ylab = "", xlab = "time [sec]"
+)
+axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
+
+plot(
+  reconstruction[,1], type = "l", col = "blue",
+  main = "Rconstructed signal",
+  xaxt = "n", ylab = "", xlab = "time [sec]"
+)
+axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
+```
+
 
 ## The Matching Pursuit algorithm in a nutshell
 The Matching Pursuit algorithm is well-known and described in the literature Its purpose is to approximate the analyzed signal using so-called atoms. (the text below is adopted from @Kunik-2025).

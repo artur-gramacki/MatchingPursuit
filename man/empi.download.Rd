@@ -21,6 +21,8 @@ The program (source and binary files for various operating systems) can be downl
 Różański, P.T. (2024).\emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
 ACM Transactions on Mathematical Software, Volume 50, Issue 3, Article No. 17, pp. 1-17,
 \doi{10.1145/3674832}.
+
+Note: the checksum of the downloaded file is checked.
 }
 \examples{
 ## Not run:
