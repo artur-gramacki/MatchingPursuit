@@ -38,7 +38,7 @@
 #' if (interactive()) {
 #'   empi.out <- empi.execute (
 #'     signal = signal,
-#'     sampling.rate = 128,
+#'     sampling.rate = 1024,
 #'     empi.options = NULL,
 #'     write.to.file = FALSE
 #'   )
