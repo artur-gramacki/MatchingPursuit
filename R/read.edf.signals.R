@@ -3,16 +3,16 @@
 #' The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
 #' Also resampling can be done (upsampling or downsampling).
 #'
-#' @param file The full path to the EDF/EDF+ file to be read.
+#' @param file The path to the EDF / EDF+ file to be read.
 #'
-#' @param resampling Logical TRUE or FALSE. If TRUE the frequency of all signals will be
+#' @param resampling Logical \code{TRUE} or \code{FALSE}. If \code{TRUE} the frequency of all signals will be
 #' upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
 #'
 #' @param f.new A new frequency.
 #'
-#' @param from Loading a signal \code{from} the given second.
+#' @param from Loading a signal \code{from} (given as a second).
 #'
-#' @param to Loading a signal \code{to} the given second.
+#' @param to Loading a signal \code{to} (given as a second).
 #'
 #' @param verbose Flag to print out progress information.
 #'
@@ -26,8 +26,9 @@
 #' @importFrom signal resample
 #' @importFrom utils flush.console
 #'
-#' @return A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
-#' result of executing \code{edf::read.edf()} function.
+#' @return A data frame with all signals data is returned as a result of executing
+#' \code{edf::read.edf()} function.  It should be added here that an additional column is
+#' created in the resulting data frame (as the last one) which contains time stamps.
 #'
 #' @export
 #'

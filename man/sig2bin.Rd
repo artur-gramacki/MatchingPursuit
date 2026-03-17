@@ -9,13 +9,14 @@ sig2bin(data, write.to.file = FALSE)
 \arguments{
 \item{data}{Data frame with the input signal(s).}
 
-\item{write.to.file}{If TRUE, the file \code{signal.bin} will be created and saved in the current directory.}
+\item{write.to.file}{If \code{TRUE}, the file \code{signal.bin} will be created and saved in the current directory.}
 }
 \value{
 Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
 will additionally be created and saved in the current directory.
 }
 \description{
+Saves the given data (signals) in binary form.
 Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
 The data frame should have column names. Te function is used internally in the \code{empi.execute}
 function. The binary data are floating-point values in the byte order  of the current machine

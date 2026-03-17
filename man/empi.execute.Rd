@@ -10,30 +10,32 @@ empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE)
 \item{signal}{Must be a data frame: rows = samples for all channels, columns = channels.
 The data frame must have column names (channel names).}
 
-\item{sampling.rate}{Sampling rate of the given signal (must be the same for every channel).}
+\item{sampling.rate}{Sampling rate of the given signal (it is assumed to be the same for
+each channel).}
 
-\item{empi.options}{If \code{NULL}, the \emph{empi} program runs with \code{"-o local --gabor -i 50"}
-parameters. Otherwise, user can specify any command-line options. See \code{README.md} file
-after downloading the \emph{empi} program using \code{empi.download()} function.}
+\item{empi.options}{If \code{NULL}, the \emph{empi} program runs with
+\code{"-o local --gabor -i 50"} parameters. Otherwise, user can specify any command-line
+options. See \code{README.md} file after downloading the \emph{empi} program using
+\code{empi.download()} function.}
 
-\item{write.to.file}{If \code{TRUE}, the SQLite database file \code{empi.db} will be created and saved
-in the current directory. This file stores the results of signal decomposition using the
-Matching Pursuit algorithm.}
+\item{write.to.file}{If \code{TRUE}, a SQLite database file \code{empi.db} will be created
+and saved in the current directory. This file stores the results of signal decomposition
+using the MP algorithm.}
 }
 \value{
-Results of signal decomposition using the Matching Pursuit algorithm. If
-\code{write.to.file=TRUE} additionally, these results are written to the \code{empi.db} disk
-file in the working directory.
+Signal decomposition results using the MP algorithm. If \code{write.to.file=TRUE}
+is specified, the results are additionally written to the \code{empi.db} file on disk
+\code{empi.db} in the working directory.
 }
 \description{
 Runs the \emph{empi} program for the given data.
 }
 \details{
-The \emph{empi} program (sources and binaries for different OSs) is available for download from
-\url{https://github.com/develancer/empi}. Details are presented in a journal paper:
-Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
-ACM Transactions on Mathematical Software, Volume 50, Issue 3, Article No. 17, pp. 1-17,
-\doi{10.1145/3674832}.
+The \emph{empi} program (source and binary files for various operating systems) can be
+downloaded from \url{https://github.com/develancer/empi}. Details are presented in the
+journal paper: Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with
+Continuous Dictionaries}.ACM Transactions on Mathematical Software, Volume 50, Issue 3,
+Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 }
 \examples{
 ## Not run:

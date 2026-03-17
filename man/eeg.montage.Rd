@@ -12,7 +12,7 @@ eeg.montage(
 )
 }
 \arguments{
-\item{eeg.data}{Must be a dataframe: rows = samples, columns = channels.The data frame must
+\item{eeg.data}{Must be a data frame: rows = samples, columns = channels.The data frame must
 have correct column names (channel names).}
 
 \item{montage.type}{A character string representing montage type.

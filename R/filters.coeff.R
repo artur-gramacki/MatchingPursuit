@@ -44,7 +44,7 @@
 #'   bandstop = c(10, 50)
 #' )
 #'
-#' fc
+#' print(fc)
 #'
 #' signal::freqz(fc$notch, Fs = sampling.rate)
 #' signal::freqz(fc$low, Fs = sampling.rate)

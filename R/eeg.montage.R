@@ -6,7 +6,7 @@
 #' used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage
 #' and 3) Average Reference Montage.
 #'
-#' @param eeg.data Must be a dataframe: rows = samples, columns = channels.The data frame must
+#' @param eeg.data Must be a data frame: rows = samples, columns = channels.The data frame must
 #' have correct column names (channel names).
 #'
 #' @param montage.type A character string representing montage type.

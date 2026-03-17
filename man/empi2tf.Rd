@@ -36,7 +36,8 @@ In this case, the \code{db.file} parameter must be \code{NULL}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
-\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}.}
+\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. It determines the intensity
+with which the so-called blobs are displayed on the T-F map.}
 
 \item{freq.divide}{For setting frequency range. For example, when sampling frequency is
 \code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the
@@ -45,9 +46,11 @@ frequency is  \code{f/2/freq.divide}.}
 \item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
 sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 
-\item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
+\item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will
+be appropriate.}
 
-\item{shortening.factor.y}{Usually, for better visualization of atoms, a value of 2 will be appropriate.}
+\item{shortening.factor.y}{Usually, for better visualization of atoms, a value of 2 will
+be appropriate.}
 
 \item{display.crosses}{Whether small crosses should be displayed in the canters of atoms.}
 
@@ -64,19 +67,19 @@ sensible are non-negative integers (e.g. 2, 4, 5, 8).}
 
 \item{out.mode}{One of the following:
 \itemize{
-   \item \code{"plot"} - draws a TF map on the screen.
-   \item \code{"file"} - saves a TF map to file \code{file.name} (as png file).
-   \item \code{"RData"} - saves the TF map of \code{file.size} in the \code{file.name}
-   (as R's matrix) resampling using \code{imager::resize()} function.
-   \item \code{"RData2"} - saves the TF map of \code{file.size} in the \code{file.name}
-   (as R's matrix) resampling using \code{raster::resample()} function.
+   \item \code{"plot"} - draws a T-F map on the screen.
+   \item \code{"file"} - saves a T-F map to file \code{file.name} (as png file).
+   \item \code{"RData"} - saves the T-F map of \code{file.size} in the \code{file.name}
+   (as R's matrix), resampling is performed using the function \code{imager::resize()} function.
+   \item \code{"RData2"} - saves the T-F map of \code{file.size} in the \code{file.name}
+   (as R's matrix), resampling is performed using the function using \code{raster::resample()} function.
  }}
 
 \item{file.name}{Name of the png file.}
 
 \item{file.size}{File size in pixels.}
 
-\item{draw.ellipses}{Only for testing.}
+\item{draw.ellipses}{Only for testing. User can set it to \code{TRUE} to see the effect.}
 
 \item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
 
@@ -105,8 +108,9 @@ Regardless of the above, the function returns the following:
   }
 }
 \description{
-The map can be displayed on the screen, saved to a \code{png} file, or saved as an RData object
-(as a matrix).
+Creates a time-frequency map using atoms from the Matching Pursuit algorithm.
+The created map can be 1) displayed on the screen, 2) saved in \code{.png} file,
+or 3) saved as an \code{.RData} object (as a matrix).
 }
 \examples{
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")

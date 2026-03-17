@@ -1,6 +1,7 @@
 #' Reads input signal(s) from a data frame and returns them in binary format
 #'
 #' @description
+#' Saves the given data (signals) in binary form.
 #' Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
 #' The data frame should have column names. Te function is used internally in the \code{empi.execute}
 #' function. The binary data are floating-point values in the byte order  of the current machine
@@ -9,7 +10,7 @@
 #' the signal should be written in column-major order (rows = channels, columns = samples).
 #'
 #' @param data Data frame with the input signal(s).
-#' @param write.to.file If TRUE, the file \code{signal.bin} will be created and saved in the current directory.
+#' @param write.to.file If \code{TRUE}, the file \code{signal.bin} will be created and saved in the current directory.
 #'
 #' @return Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
 #' will additionally be created and saved in the current directory.

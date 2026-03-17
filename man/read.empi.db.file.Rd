@@ -18,7 +18,10 @@ read.empi.db.file(db.file)
 }
 }
 \description{
-Reads data from a SQLite file created by the Matching Pursuit algorithm
+Reads data from a SQLite file (\code{.db}) created by the Matching Pursuit algorithm.
+The reconstructed signal(s) and Gabor function(s) are also returned. These features
+are not stored directly in the SQLite file; instead, they are computed based on
+the parameters of individual atoms.
 }
 \examples{
 ## Not run:

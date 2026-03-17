@@ -1,7 +1,7 @@
 #' Gabor function implementation
 #'
 #' @description
-#' A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is
+#' Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is
 #' widely used as a basic building block for representing signals that are localized in both time and
 #' frequency. Matching Pursuit algorithm uses a redundant dictionary of the so called \emph{Gabor atoms}.
 #' Gabor atoms are ideal for Matching Pursuit because they: 1) provide optimal time–frequency

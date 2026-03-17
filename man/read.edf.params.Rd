@@ -7,13 +7,13 @@
 read.edf.params(file)
 }
 \arguments{
-\item{file}{The full path to the EDF/EDF+ file to be read.}
+\item{file}{The path to the EDF/EDF+ file to be read.}
 }
 \value{
-A data frame is returned containing the most basic parameters of the EDF / EDF(+) file.
+A data frame is returned containing the most basic parameters of the EDF / EDF+ file.
 }
 \description{
-The function reads a selected EDF or EDF+ file and returns selected signals parameters
+Reads a selected EDF or EDF+ file and returns selected signals parameters
 (channel names, frequency of each channel, number of samples in each channel
 and the length of each channel in seconds). Additional information stored in EDF+
 files (such as interrupted recordings, time-stamped annotations) is not used in the

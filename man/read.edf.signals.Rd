@@ -14,22 +14,23 @@ read.edf.signals(
 )
 }
 \arguments{
-\item{file}{The full path to the EDF/EDF+ file to be read.}
+\item{file}{The path to the EDF / EDF+ file to be read.}
 
-\item{resampling}{Logical TRUE or FALSE. If TRUE the frequency of all signals will be
+\item{resampling}{Logical \code{TRUE} or \code{FALSE}. If \code{TRUE} the frequency of all signals will be
 upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
 
 \item{f.new}{A new frequency.}
 
-\item{from}{Loading a signal \code{from} the given second.}
+\item{from}{Loading a signal \code{from} (given as a second).}
 
-\item{to}{Loading a signal \code{to} the given second.}
+\item{to}{Loading a signal \code{to} (given as a second).}
 
 \item{verbose}{Flag to print out progress information.}
 }
 \value{
-A matrix \code{edf.mtx} with all signals data is returned and a list \code{edf} as a
-result of executing \code{edf::read.edf()} function.
+A data frame with all signals data is returned as a result of executing
+\code{edf::read.edf()} function.  It should be added here that an additional column is
+created in the resulting data frame (as the last one) which contains time stamps.
 }
 \description{
 The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.

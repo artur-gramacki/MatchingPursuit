@@ -14,7 +14,7 @@ Data frame with all the atom parameters saved in a given SQLite file.
 The file can be generated using the \code{empi.execute()} function.
 }
 \description{
-Returns a data frame with atom parameters.
+Returns a data frame with atom parameters read from a SQLite file.
 }
 \examples{
 # The file contains data with 18 channels.
