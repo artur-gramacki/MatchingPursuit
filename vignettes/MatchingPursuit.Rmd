@@ -35,15 +35,19 @@ knitr::opts_chunk$set(collapse = TRUE)
 ```
 
 ## R version and generation time
+```{r Setlocale, include = FALSE, echo = FALSE}
+Sys.setlocale("LC_ALL", "en_US")
+```
+
 ```{r R_version, include = TRUE, echo = FALSE}
 out <- version
 cat(
-  "Generated on: ", 
-  format(Sys.time(), "%d-%m-%Y"), 
-  "\n", 
   "R version:    ", 
   out$major, ".", 
   out$minor, 
+  "\n", 
+  "Generated on: ", 
+  format(Sys.time(), "%d-%B-%Y"), 
   sep = ""
 )
 ```
