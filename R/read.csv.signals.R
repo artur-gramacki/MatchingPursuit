@@ -7,6 +7,8 @@
 #'
 #' @param col.names Vector with column names. If not specified, default names will be created.
 #'
+#' @importFrom utils read.csv
+#'
 #' @return Data frame where rows = samples for all channels, columns = channels.
 #'
 #' @export
