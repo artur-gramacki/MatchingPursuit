@@ -40,7 +40,7 @@ Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 \examples{
 ## Not run:
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read.csv(file, header = TRUE)
+signal <- read.csv.signals(file)
 
 if (interactive()) {
   empi.out <- empi.execute (

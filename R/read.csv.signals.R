@@ -13,7 +13,8 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-#' signal <- read.csv.signals(file)
+#' signal <- read.csv.signals(file, col.names = "signal_1")
+#' head(signal)
 #'
 read.csv.signals <- function(file, col.names = NULL) {
   line <- readLines(file, n = 1)
@@ -36,12 +37,14 @@ read.csv.signals <- function(file, col.names = NULL) {
   if (!is.null(col.names)) {
     if (length(col.names) != ncol(all.lines)) {
       stop("`col.names` has wrong length. It must be ", ncol(all.lines), ".")
+    } else {
+      colnames(all.lines) <- col.names
     }
-  }
-
-  if (is.null(col.names)) {
-    cols <- paste0("v", seq_len(ncol(all.lines)))
-    colnames(all.lines) <- cols
+  } else {
+    if (is.null(col.names)) {
+      cols <- paste0("v", seq_len(ncol(all.lines)))
+      colnames(all.lines) <- cols
+    }
   }
 
   return(all.lines)

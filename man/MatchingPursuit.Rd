@@ -38,6 +38,9 @@ Example datasets available through the \code{system.file()} function are:
        \item sampling frequency: 128 Hz Hz, signal length: 1 sec.
      }
 }
+The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{f})
+and the signal length in seconds (\code{s}). \code{read.csv.signals} function checks
+whether the file actually contains \code{f*s} samples.
 }
 \references{
 Mallat, S. & Zhang, Z. (1993). \emph{Matching Pursuits with Time-Frequency Dictionaries}.
@@ -57,8 +60,8 @@ ACM Transactions on Mathematical Software, vol.50, issue = 3, pp. 1-17, \doi{10.
 
 Other contributors:
 \itemize{
-  \item Jarosław Gramacki \email{j.gramacki@gmail.com} (\href{https://orcid.org/0000-0001-5032-1353}{ORCID}) [contributor]
-  \item Piotr T. Różański \email{piotr@develancer.pl} (\href{https://orcid.org/0000-0002-0457-6731}{ORCID}) [contributor]
+  \item Jaroslaw Gramacki \email{j.gramacki@gmail.com} (\href{https://orcid.org/0000-0001-5032-1353}{ORCID}) [contributor]
+  \item Piotr T. Rózanski \email{piotr@develancer.pl} (\href{https://orcid.org/0000-0002-0457-6731}{ORCID}) [contributor]
 }
 
 }

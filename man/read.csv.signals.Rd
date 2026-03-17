@@ -2,13 +2,14 @@
 % Please edit documentation in R/read.csv.signals.R
 \name{read.csv.signals}
 \alias{read.csv.signals}
-\title{Check if the csv file has the correct structure}
+\title{Checks if the csv file has the correct structure}
 \usage{
 read.csv.signals(file, col.names = NULL)
 }
 \arguments{
-\item{file}{File to be checked. The first line of the file must contain two numbers: the sampling rate
-in Hz (f) and the signal length in seconds (s). This checks whether the file actually contains f * s samples.}
+\item{file}{File to be checked. The first line of the file must contain two numbers:
+the sampling rate in Hz (\code{f}) and the signal length in seconds (\code{s}).
+This checks whether the file actually contains \code{f*s} samples.}
 
 \item{col.names}{Vector with column names. If not specified, default names will be created.}
 }
@@ -16,10 +17,11 @@ in Hz (f) and the signal length in seconds (s). This checks whether the file act
 Data frame where rows = samples for all channels, columns = channels.
 }
 \description{
-Check if the csv file has the correct structure
+Checks if the csv file has the correct structure
 }
 \examples{
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read.csv.signals(file)
+signal <- read.csv.signals(file, col.names = "signal_1")
+head(signal)
 
 }
