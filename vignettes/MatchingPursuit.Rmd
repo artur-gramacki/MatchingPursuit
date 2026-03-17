@@ -53,8 +53,8 @@ cat(
 ```{r instalation, include = TRUE, echo = TRUE, warning = FALSE}
 # Install and load required R packages
 pkgs <- c(
-  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", 
-  "grDevices", "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown")
+  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", "grDevices", 
+  "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown", "remotes")
 
 to_install = !pkgs %in% installed.packages()
 
