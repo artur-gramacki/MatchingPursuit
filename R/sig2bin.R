@@ -51,10 +51,10 @@ sig2bin <- function(data, write.to.file = FALSE, file.name = NULL) {
 
   if (write.to.file) {
     if (is.null(file.name)) {
-      file.copy(file.db, "empi.db", overwrite = TRUE)
+      file.copy(signal.raw, "empi.db", overwrite = TRUE)
       cat("\n--> Note: input signals were also saved in the 'signal.bin' file in the current directory <--\n\n")
     } else {
-      file.copy(file.db, file.name, overwrite = TRUE)
+      file.copy(signal.raw, file.name, overwrite = TRUE)
       cat("\n--> Note: input signals were also saved in the '", file.name, "' file in the current directory <--\n\n", sep = "")
     }
   }
