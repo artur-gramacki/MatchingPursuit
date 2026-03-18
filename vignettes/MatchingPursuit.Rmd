@@ -77,6 +77,7 @@ The presented package allows you to analyse any time-series signals using the Ma
 2. Performing 3 typical EEG montages
 3. Pre-filtering the signals
 
+[Back to menu](#top) 
 
 ## Quick start 
 
@@ -127,6 +128,8 @@ class(signal)
 head(signal)
 ```
 
+[Back to menu](#top) 
+
 ### Step 2 {.unnumbered}
 
 The input data (`signal`) is passed as an input parameter to the `empi.execute()` function which generates a file in `SQLite` format (`empi.db`) that stores all atom parameters. This `.db` file is stored in a temporary directory created by `tempfile()` function.
@@ -157,6 +160,8 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 # )
 ```
 
+[Back to menu](#top) 
+
 ### Step 3 {.unnumbered}
 
 Generating the final time-frequency map (T-F) for the selected channel. The centres of atoms (in the sense of time and frequency coordinates) are marked with the numbers of subsequent atoms, sorted from the highest to the lowest energy. 
@@ -184,6 +189,8 @@ Below the plot, basic signal parameters are displayed, along with information ab
 
 Furthermore, the energy of the input signal and the signal reconstructed from the atoms are also calculated. The obtained result shows that more of the energy of the original signal was "explained" by the generated atoms (94.05%). Of course, the number of generated atoms can be increased, then the energy of the reconstructed signal will most likely be closer to 100%.
 
+[Back to menu](#top) 
+
 ## Electroencephalogram (EEG) analysis
 
 In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages as well as filtering the signals.
@@ -205,6 +212,8 @@ sampling.rate <- pars$frequency[1]
 # Read signal parameters and display them in a tabular form.
 read.edf.params(file)
 ```
+
+[Back to menu](#top) 
 
 ### Step 2 (sometimes required) {.unnumbered}
 
@@ -247,6 +256,7 @@ plot(
 )
 ```
 
+[Back to menu](#top) 
 
 ### Step 3 (usually required) {.unnumbered}
 
@@ -270,6 +280,8 @@ head(signal[, 1:7])
 head(bip.montage[, 1:7])
 
 ```
+
+[Back to menu](#top) 
 
 ### Step 4 (usually required) {.unnumbered}
 
@@ -324,6 +336,8 @@ plot(
 )
 ```
 
+[Back to menu](#top) 
+
 ### Step 5 {.unnumbered}
 
 **Important note:** The code below has been commented out. See the explanation given [here](#important_note).
@@ -366,6 +380,7 @@ Below the plot, basic signal parameters are displayed, along with information ab
 
 Furthermore, the energy of the input signal and the signal reconstructed from the generated atoms are also calculated. The obtained result shows that almost all of the energy of the original signal was “explained” by the generated atoms (97.75%).
 
+[Back to menu](#top) 
 
 ## Selected auxilary functions
 
@@ -444,6 +459,7 @@ plot(
 axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 ```
 
+[Back to menu](#top) 
 
 ## The Matching Pursuit algorithm in a nutshell
 The Matching Pursuit algorithm is well-known and described in the literature Its purpose is to approximate the analyzed signal using so-called atoms. (the text below is adopted from @Kunik-2025).
@@ -567,6 +583,7 @@ It should be mentioned here that finding an optimal approximation (1) is an NP-h
 $$
 ||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2
 $$
+[Back to menu](#top) 
 
 ## Bibliogaphy
 

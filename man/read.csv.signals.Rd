@@ -8,8 +8,8 @@ read.csv.signals(file, col.names = NULL)
 }
 \arguments{
 \item{file}{File to be checked. The first line of the file must contain two numbers:
-the sampling rate in Hz (\code{f}) and the signal length in seconds (\code{s}).
-This checks whether the file actually contains \code{f*s} samples.}
+the sampling rate in Hz (\code{freq}) and the signal length in seconds (\code{sec}).
+This checks whether the file actually contains \code{freq*sec} samples.}
 
 \item{col.names}{Vector with column names. If not specified, default names will be created.}
 }
