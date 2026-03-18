@@ -10,7 +10,10 @@
 #' the signal should be written in column-major order (rows = channels, columns = samples).
 #'
 #' @param data Data frame with the input signal(s).
+#'
 #' @param write.to.file If \code{TRUE}, the file \code{signal.bin} will be created and saved in the current directory.
+#'
+#' @param file.name The name of the file to generate if \code{write.to.file=TRUE}.
 #'
 #' @return Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
 #' will additionally be created and saved in the current directory.
@@ -38,7 +41,7 @@
 #' head(signal.bin, 16)
 #' ## End(Not run)
 #'
-sig2bin <- function(data, write.to.file = FALSE) {
+sig2bin <- function(data, write.to.file = FALSE, file.name = NULL) {
 
   signal.raw = raw()
   for (m in 1:nrow(data)) {
@@ -47,8 +50,13 @@ sig2bin <- function(data, write.to.file = FALSE) {
   }
 
   if (write.to.file) {
-    writeBin(signal.raw, "signal.bin")
-    cat("\n--> Note: input signals were also saved in the 'signal.bin' file in the current directory <--\n\n")
+    if (is.null(file.name)) {
+      file.copy(file.db, "empi.db", overwrite = TRUE)
+      cat("\n--> Note: input signals were also saved in the 'signal.bin' file in the current directory <--\n\n")
+    } else {
+      file.copy(file.db, file.name, overwrite = TRUE)
+      cat("\n--> Note: input signals were also saved in the '", file.name, "' file in the current directory <--\n\n", sep = "")
+    }
   }
 
   return(signal.raw)

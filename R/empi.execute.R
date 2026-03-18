@@ -20,13 +20,15 @@
 #' options. See \code{README.md} file after downloading the \emph{empi} program using
 #' \code{empi.download()} function.
 #'
-#' @param  write.to.file If \code{TRUE}, a SQLite database file \code{empi.db} will be created
+#' @param  write.to.file If \code{TRUE}, a SQLite database file will be created
 #' and saved in the current directory. This file stores the results of signal decomposition
 #' using the MP algorithm.
 #'
+#' @param file.name The name of the file to generate if \code{write.to.file=TRUE}.
+#'
 #' @return Signal decomposition results using the MP algorithm. If \code{write.to.file=TRUE}
-#' is specified, the results are additionally written to the \code{empi.db} file on disk
-#' \code{empi.db} in the working directory.
+#' is specified, the results are additionally written to the file \code{.db} on disk
+#' in the working directory.
 #'
 #' @export
 #'
@@ -40,12 +42,13 @@
 #'     signal = signal,
 #'     sampling.rate = 1024,
 #'     empi.options = NULL,
-#'     write.to.file = FALSE
+#'     write.to.file = FALSE,
+#'     file.name = NULL
 #'   )
 #' }
 #' ## End(Not run)
 #'
-empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE) {
+empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE, file.name = NULL) {
 
   empi.loc <-  locate.empi()
   dir.name <- tools::file_path_sans_ext((empi.loc$fname))
@@ -113,8 +116,13 @@ empi.execute <- function(signal, sampling.rate, empi.options = NULL, write.to.fi
   system(command)
 
   if (write.to.file) {
-    file.copy(file.db, "empi.db", overwrite = TRUE)
-    cat("\n--> Note: results were also saved in the 'empi.db' file in the current directory (in SQLite format). <--\n")
+    if (is.null(file.name)) {
+      file.copy(file.db, "empi.db", overwrite = TRUE)
+      cat("\n--> Note: results were also saved in the 'empi.db' file in the current directory (in SQLite format). <--\n")
+    } else {
+      file.copy(file.db, file.name, overwrite = TRUE)
+      cat("\n--> Note: results were also saved in the '", file.name, "' file in the current directory (in SQLite format). <--\n", sep = "")
+    }
   }
 
   out <- read.empi.db.file(file.db)

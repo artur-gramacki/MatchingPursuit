@@ -4,7 +4,13 @@
 \alias{empi.execute}
 \title{Launching the Matching Pursuit algorithm}
 \usage{
-empi.execute(signal, sampling.rate, empi.options = NULL, write.to.file = FALSE)
+empi.execute(
+  signal,
+  sampling.rate,
+  empi.options = NULL,
+  write.to.file = FALSE,
+  file.name = NULL
+)
 }
 \arguments{
 \item{signal}{Must be a data frame: rows = samples for all channels, columns = channels.
@@ -18,14 +24,16 @@ each channel).}
 options. See \code{README.md} file after downloading the \emph{empi} program using
 \code{empi.download()} function.}
 
-\item{write.to.file}{If \code{TRUE}, a SQLite database file \code{empi.db} will be created
+\item{write.to.file}{If \code{TRUE}, a SQLite database file will be created
 and saved in the current directory. This file stores the results of signal decomposition
 using the MP algorithm.}
+
+\item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}.}
 }
 \value{
 Signal decomposition results using the MP algorithm. If \code{write.to.file=TRUE}
-is specified, the results are additionally written to the \code{empi.db} file on disk
-\code{empi.db} in the working directory.
+is specified, the results are additionally written to the file \code{.db} on disk
+in the working directory.
 }
 \description{
 Runs the \emph{empi} program for the given data.
@@ -47,7 +55,8 @@ if (interactive()) {
     signal = signal,
     sampling.rate = 1024,
     empi.options = NULL,
-    write.to.file = FALSE
+    write.to.file = FALSE,
+    file.name = NULL
   )
 }
 ## End(Not run)

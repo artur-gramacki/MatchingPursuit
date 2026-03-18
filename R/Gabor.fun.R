@@ -26,7 +26,7 @@
 #' frequency <- 5.0
 #' normalization = TRUE
 #'
-#' out <- Gabor.fun(
+#' out <- gabor.fun(
 #'   number.of.samples,
 #'   sampling.frequency,
 #'   mean,
@@ -43,7 +43,7 @@
 #'
 #' @export
 #'
-Gabor.fun <- function(
+gabor.fun <- function(
     number.of.samples,
     sampling.frequency,
     mean,

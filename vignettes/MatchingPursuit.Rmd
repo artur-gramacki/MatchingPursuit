@@ -55,7 +55,7 @@ cat(
 
 ## Installation
 
-```{r instalation, include = TRUE, echo = TRUE, warning = FALSE}
+```{r instalation, include = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
 # Install and load required R packages
 pkgs <- c(
   "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", "grDevices", 
@@ -71,7 +71,7 @@ library(MatchingPursuit)
 ```
 
 ## The purpose of the package
-The presented package allows you to analyse any time-series signals using the Matching Pursuit (MP) algorithm (see @Mallat-1993, @Tropp-2008). Additionally, you can work with EEG electroencephalogram signals by: 
+The presented package enables the analysis of time-series signals using the Matching Pursuit (MP) algorithm (see @Mallat-1993, @Tropp-2008). Additionally, it supports working with EEG (electroencephalogram) signals by:
 
 1. Loading files in EDF and EDF+ formats
 2. Performing 3 typical EEG montages
@@ -81,17 +81,17 @@ The presented package allows you to analyse any time-series signals using the Ma
 
 ## Quick start 
 
-Let's generate an example mixing of seven different non-stationary signals. The resulting signal (highlighted in blue below) will be used to demonstrate the basic functionality of the package.
-
 ### Step 1 {.unnumbered}
 
-```{r 7_non_stationary, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
+Let’s generate an example by mixing seven different non-stationary signals. The resulting signal (highlighted in blue below) will be used to demonstrate the basic functionality of the package.
+
+```{r 7_non_stationary, include = TRUE, echo = TRUE, warning = FALSE}
 fs <- 1024
 T <- 1
 t <- seq(0, T - 1 / fs, 1 / fs)
 N <- length(t)
 
-# 7 non-stationary signals
+# 7 non-stationary signals.
 x1 <- sin(2 * pi * (10 + 40 * t) * t)                            # linear chirp
 x2 <- sin(2 * pi * (20 * t^2) * t)                               # nonlinear chirp
 x3 <- (1 + 0.5 * sin(2 * pi * 2 * t))  *  sin(2 * pi * 30 * t)   # AM
@@ -101,6 +101,9 @@ x6 <- sin(2 * pi * (5 + 20 * sin(2 * pi * t)) * t)               # frequency mod
 x7 <- t * sin(2 * pi * 40 * t)                                   # increasing amplitude
 
 signal <- data.frame(x = x1 + x2 + x3 + x4 + x5 + x6 + x7)
+```
+
+```{r 7_non_stationary_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 range <- range(signal)
 
 par(mfrow = c(8, 1), pty = "m")
@@ -116,11 +119,10 @@ plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "fr
 plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "increasing amplitude")
 ```
 
-Data must my stored in data frame: rows = samples for all channels, columns = channels. Our first demo dataset consists of only one channel (one column). The `read.csv.signals()` function checks if the data has correct structure. The first line of the file must contain two numbers: the sampling rate in Hz (\code{f}) and the signal length in seconds (\code{s}) This checks whether the file actually contains \code{f*s} samples.
+Data must be stored in a data frame: rows represent samples for all channels, and columns represent channels. Our first demo dataset consists of only one channel (one column). The `read.csv.signals()` function checks whether the data has the correct structure. The first line of the file must contain two numbers: the sampling rate in Hz (`freq`) and the signal length in seconds (`sec`). This allows verification that the file actually contains `freq * sec` samples.
 
 ```{r signal, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-
 signal <- read.csv.signals(file)
 
 class(signal)
@@ -132,9 +134,9 @@ head(signal)
 
 ### Step 2 {.unnumbered}
 
-The input data (`signal`) is passed as an input parameter to the `empi.execute()` function which generates a file in `SQLite` format (`empi.db`) that stores all atom parameters. This `.db` file is stored in a temporary directory created by `tempfile()` function.
+The input data (`signal`) is passed as an argument to the `empi.execute()` function, which generates the final output file in `SQLite` format (`empi.db`) containing all atom parameters. This `.db` file is stored in a temporary directory created by the `tempfile()` function.
 
-The function first downloads (if it hasn't been downloaded before) and then runs an external program from the internet. This program is a very fast and efficient implementation of the Matching Pursuit algorithm. The author calls it **Enhanced Matching Pursuit Implementation**, or **empi** for short, see @Rozanski-2024 for details. The download link and name of the downloaded resource are displayed below (if running in Linux and macOS systems, appropriate binary versions are downloaded).
+The function first downloads (if it has not been downloaded previously) and then runs an external program from the Internet. This program is a fast and efficient implementation of the Matching Pursuit algorithm. The author refers to it as **Enhanced Matching Pursuit Implementation**, or **empi** for short (see @Rozanski-2024 for details). The download link and resource name are displayed below. The appropriate binary version is downloaded depending on the operating system (Windows, Linux, or macOS).
 
 ```{r locate_empi, include = TRUE, echo = TRUE, warning = FALSE}
 locate.empi()
@@ -142,12 +144,11 @@ locate.empi()
 
 <div id="important_note"></div>
 **Important note:**
-The code in the below chunk has been commented out because CRAN's code verification rules prevent automatic binary downloads. Therefore, this function should not be run here. However, when this function is run by the user in interactive mode (if the `interactive()` function returns `TRUE`), the user is asked if they agree to download the external binary. If they agree, the required files are downloaded and saved in the current directory.
+The code in the chunk below has been commented out because CRAN's verification rules prohibit automatic binary downloads. Therefore, this function should not be executed in this context. However, when the function is run in interactive mode (i.e., when `interactive()` returns `TRUE`), the user is prompted to confirm whether they agree to download the external binary resource. If they consent, the required files are downloaded and saved in the current directory. Due to CRAN limitations, the output of the `empi.execute()` function (the `sample1.db` file) has been generated in advance and included in the package.
 
+In the next chunk, the `empi2ft()` function uses this file as input (the `db.file` parameter).
 
-Due to CRAN limitations (discussed above), this file was generated by the authors and stored in the package (`sample1.db`) . In the next chunk, the `empi2ft()` function uses this file as input (the `db.file` parameter).
-
-Notice the `empi.options` parameter in the `empi.execute()` function. You can specify the value `NULL` there, and *empi* program will run with the default values  set in the function (`"-o local --gabor -i 50"`). It is also worth noting that it has a wide range of configuration options. Details can be found in the `README.md` (in the directory where the *empi* program was saved) file. In our example, parameters were entered that tell the program to find 25 atoms.
+Notice the `empi.options` parameter in the `empi.execute()` function. You can specify `NULL` for this parameter, and the *empi* program will run with the default values set in the function (`"-o local --gabor -i 50"`). It is also worth noting that the program offers a wide range of configuration options. Details can be found in the `README.md` file located in the directory where the *empi* program was saved. In our example, parameters were set to instruct the program to find 25 atoms.
 
 ```{r empi_execute, include = TRUE, echo = TRUE, warning = FALSE}
 # empi.download()
@@ -156,7 +157,8 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 #   signal = signal,
 #   sampling.rate = 1024,
 #   empi.options = "-o local --gabor -i 25",
-#   write.to.file = TRUE
+#   write.to.file = TRUE,
+#   file.name = "sample1.db"
 # )
 ```
 
@@ -164,9 +166,9 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 
 ### Step 3 {.unnumbered}
 
-Generating the final time-frequency map (T-F) for the selected channel. The centres of atoms (in the sense of time and frequency coordinates) are marked with the numbers of subsequent atoms, sorted from the highest to the lowest energy. 
+Generating the final time-frequency (T-F) map for the selected channel. The centers of the atoms (in terms of time and frequency coordinates) are marked with the numbers of successive atoms, sorted from highest to lowest energy.  
 
-Comparing the two signal waveforms under the T-F map, it can be seen that the original signal and the one after reconstruction differ only minimally.
+By comparing the two signal waveforms below the T-F map, it can be seen that the original signal and the reconstructed signal differ only minimally.
 
 ```{r sample1, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
@@ -185,19 +187,19 @@ out <- empi2tf(
 )
 ```
 
-Below the plot, basic signal parameters are displayed, along with information about the number of atoms into which the input signal was decomposed.
+Below the plot, basic signal parameters are displayed, along with information about the number of atoms into which the input signal was decomposed.  
 
-Furthermore, the energy of the input signal and the signal reconstructed from the atoms are also calculated. The obtained result shows that more of the energy of the original signal was "explained" by the generated atoms (94.05%). Of course, the number of generated atoms can be increased, then the energy of the reconstructed signal will most likely be closer to 100%.
+Additionally, the energy of the input signal and the reconstructed signal (from the atoms) is calculated. The results show that 94.05% of the original signal's energy is "explained" by the generated atoms. Naturally, increasing the number of generated atoms will likely bring the energy of the reconstructed signal closer to 100%.
 
 [Back to menu](#top) 
 
 ## Electroencephalogram (EEG) analysis
 
-In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages as well as filtering the signals.
+In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages and apply filtering to the signals.
 
 ### Step 1 {.unnumbered}
 
-Reading an example EEG signals (EDF file). The signal is 10 seconds long and consists of 20 channels.e The sampling rate is 256 Hz. The channels have standard names, which are displayed below. 
+Reading an example EEG signal (EDF file). The signal is 10 seconds long and consists of 20 channels. The sampling rate is 256 Hz. The channels have standard names, which are displayed below.
 
 ```{r eeg_edf_reading, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
@@ -217,7 +219,7 @@ read.edf.params(file)
 
 ### Step 2 (sometimes required) {.unnumbered}
 
-Sometimes it is necessary to change the sampling frequency (increase -- *upsampling* or decrease -- *downsampling*). The `read.edf.signals()` function implements this functionality. In the example below the original sampling frequency is reduced from 256 Hz to 64 Hz.
+Sometimes it is necessary to change the sampling frequency (increase — *upsampling* or decrease — *downsampling*). The `read.edf.signals()` function provides this functionality. In the example below, the original sampling frequency is reduced from 256 Hz to 64 Hz.
 
 ```{r eeg_edf_reading_resampling, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
@@ -260,7 +262,7 @@ plot(
 
 ### Step 3 (usually required) {.unnumbered}
 
-A bipolar montage is created (the classical *double banana* montage). Each channel compares two adjacent electrodes. In the first step, you define the pairs of electrodes to be connected (`pairs` list). In the second step function `eeg.montage()` generates the required montage. 
+A bipolar montage is created (the classical *double banana* montage), where each channel compares two adjacent electrodes. In the first step, you define the pairs of electrodes to be connected using the `pairs` list. In the second step, the `eeg.montage()` function generates the required montage.
 
 ```{r montage, include = TRUE, echo = TRUE, warning = FALSE}
 # Pairs of signals for bipolar montage (so called "double banana").
@@ -285,7 +287,7 @@ head(bip.montage[, 1:7])
 
 ### Step 4 (usually required) {.unnumbered}
 
-EEG signals are rarely analysed without first being filtered. Using the `filters.coeff()` function, you define filter parameters and then filter the signal. The filter parameters given below have typical values recommended in the literature.
+EEG signals are rarely analyzed without prior filtering. Using the `filters.coeff()` function, you can define the filter parameters and then apply the filter to the signal. The filter parameters given below use typical values recommended in the literature.
 
 ```{r filtering, include = TRUE, echo = TRUE, warning = FALSE}
 # Filter parameters that will be used (quite typical in filtering EEG signals).
@@ -306,7 +308,7 @@ for (m in 1:ncol(bip.montage)) {
 }
 ```
 
-For the selected channel (after bipolar montage it is named `r ch <- 1; colnames(bip.montage.filt)[ch]`), the original and filtered signals are displayed. Clearly, the filtering effect is positive.
+For the selected channel (after the bipolar montage, it is named `r ch <- 1; colnames(bip.montage.filt)[ch]`), both the original and filtered signals are displayed. The effect of filtering is clearly beneficial, as noise—typically without diagnostic significance—has been removed from the signal.
 
 ```{r no_filtering_and_filtering_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
 ch <- 1
@@ -357,7 +359,7 @@ plot(
 
 Generating the final time-frequency map for the selected channel (`r ch <- 1; colnames(bip.montage.filt)[ch]`). The canters of atoms (in the sense of time and frequency coordinates) are marked with white crosses. 
 
-Comparing the two signal twaveforms under the T-F map, it can be seen that the original signal and the one after reconstruction differ only minimally.
+Comparing the two signal waveforms under the T-F map, it can be seen that the original and reconstructed signals  differ only minimally.
 
 ```{r eeg_TF, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
@@ -376,9 +378,9 @@ out <- empi2tf(
 )
 ```
 
-Below the plot, basic signal parameters are displayed, along with information about the number of atoms into which the input signal was decomposed.
+Below the plot, basic signal parameters are displayed, along with information about the number of atoms into which the input signal was decomposed.  
 
-Furthermore, the energy of the input signal and the signal reconstructed from the generated atoms are also calculated. The obtained result shows that almost all of the energy of the original signal was “explained” by the generated atoms (97.75%).
+Additionally, the energy of the input signal and the reconstructed signal (from the generated atoms) is calculated. The results show that nearly all of the energy of the original signal (97.75%) is “explained” by the generated atoms.
 
 [Back to menu](#top) 
 
@@ -386,16 +388,15 @@ Furthermore, the energy of the input signal and the signal reconstructed from th
 
 ### `atom.params()` {.unnumbered}
 
-With the `atom.params()` function all the atom parameters can be displayed in a tabular form. Note that the `sample1.db` file stores only one channel. The signal was decomposed into 43 atoms. By analysing the `position` and `frequency` parameters, you can easily find the so-called blobs corresponding to these atoms in the T-F maps.
+Using the `atom.params()` function, all atom parameters can be displayed in a tabular form. Note that the `sample1.db` file contains only one channel. The signal was decomposed into 25 atoms. By analyzing the `position` and `frequency` parameters, you can easily identify the so-called blobs corresponding to these atoms in the T-F maps.
 
 ```{r atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 (ap <- atom.params(file))
 ```
+In this example, note that the `EEG_bipolar_filtered.db` file contains 18 channels. To keep the output concise, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms per channel = 50, number of channels = 18, 50 × 18 = 900).  
 
-In this example note that the `EEG_bipolar_filtered.db` file stores 18 channels. To keep the result short, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms = 50,  number of channels = 18, 50 x 18 = 900).
-
-**Important:** It should be clearly emphasized that in general, the number of atoms generated for each channel need not be the same. However, in our example, we have a special situation where the number of atoms in each channel is exactly the same.
+**Important:** It should be emphasized that, in general, the number of atoms generated for each channel does not need to be the same. However, in our example, the number of atoms in each channel is exactly the same.
 
 ```{r eeg_atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
@@ -406,9 +407,9 @@ tail(ap, 6)
 
 ### `sig2bin()` {.unnumbered}
 
-The `sig2bin()` function can be used to write input data to a binary file. This function is is used internally in the `empi.execute()` function. The binary data are floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, first come the samples for all channels at `t = 0`, then for all channels at `t = Δt`, and so forth. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
+The `sig2bin()` function can be used to convert input data (in plain text file format) to a binary file. This function is used internally by the `empi.execute()` function. The binary data consist of floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, the samples are arranged such that first come all channels at `t = 0`, then all channels at `t = Δt`, and so on. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
 
-**Note:** The user does not work directly with `.bin` files. Binary files are used only in the `empi.execute()` function. The external **empi** program executed inside this function requires binary data as input. Moreover, the ability to convert text files to binary form may be useful if someone wants to work with **empi** independently of the R environment.
+**Note:** Users do not work directly with `.bin` files. Binary files are used only by the `empi.execute()` function. The external **empi** program executed within this function requires binary data as input. Additionally, the ability to convert text files to binary form can be useful for those who wish to use **empi** independently of the R environment.
 
 ```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -425,7 +426,7 @@ head(signal.bin, 16)
 
 ### `read.empi.db.file()` {.unnumbered}
 
-Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. Original and the reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable from each other. This means that atoms are very good at reconstructing the analysed signal.
+Data from the generated `SQLite` file can be easily read using the `read.empi.db.file()` function. Below, data from a sample `.db` file is read. The original and reconstructed signals are then extracted and displayed. The two signals are virtually indistinguishable, indicating that the atoms are highly effective at reconstructing the analyzed signal.
 
 ```{r read_empi_db_file, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
@@ -462,7 +463,8 @@ axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), label
 [Back to menu](#top) 
 
 ## The Matching Pursuit algorithm in a nutshell
-The Matching Pursuit algorithm is well-known and described in the literature Its purpose is to approximate the analyzed signal using so-called atoms. (the text below is adopted from @Kunik-2025).
+
+The Matching Pursuit algorithm is well-known and described in the literature. Its purpose is to approximate the analyzed signal using so-called atoms. (the text below is adapted from @Kunik-2025).
 
 Given a signal $f \in \mathbb{R}^n$, and a (possibly overcomplete) large redundant dictionary $D =\{g_{\gamma}\}_{\gamma \in \Gamma}$ of normalized atoms $\|g_{\gamma}\|=1$ MP finds a sparse signal representation
 
@@ -472,9 +474,9 @@ f \approx \sum_{n = 0}^{N} a_n g_{\gamma_n}
 $$
 where $a_n \in \mathbb{R}$ are coefficients, $g_{\gamma_n} \in D$ are atoms selected from the dictionary and $N$ is the desired number of iterations (or stopping threshold). In most practical cases $ N \ll size(D)$. Also, $g_{\gamma}$ is the dictionary atom indexed by $\gamma$ and $\Gamma$ is the set of all indices in the directory.
 
-In the ideal situation linear expansion (1) should contain all the atoms $g_{\gamma_n}$ that represent relevant structures of the signal $f$. In real signals, such an ideal situation is rarely possible and a kind of approximation is needed. This task can be performed in a very elegant way using the MP algorithm. This algorithm was first proposed by @Mallat-1993 in the context of signal processing. 
+In the ideal case, the linear expansion (1) should include all atoms $g_{\gamma_n}$ that represent the relevant structures of the signal $f$. For real signals, such an ideal scenario is rarely possible, and some form of approximation is required. This task can be accomplished elegantly using the MP algorithm, which was first proposed by @Mallat-1993 in the context of signal processing.
 
-Each atom $g_{\gamma}$ is typically a time-frequency shifted and scaled version of a prototype function, such as the Gabor function (often called a Gaussian-windowed sinusoid). The dictionary is constructed to span a wide range of time and frequency characteristics. Real-valued Gabor function has the following form
+Each atom $g_{\gamma}$ is typically a time-frequency shifted, scaled version of a prototype function, such as the Gabor function (often called a Gaussian-windowed sinusoid). The dictionary is constructed to cover a wide range of time and frequency characteristics. The real-valued Gabor function has the following form:
 
 $$
 g_{\gamma}(t) = 
@@ -516,7 +518,7 @@ for (i in c(1:n)) {
   )
   )
   
-  gb <- Gabor.fun(N, fs, mean, phase, sigma, frequency, normalization = F)
+  gb <- gabor.fun(N, fs, mean, phase, sigma, frequency, normalization = F)
 
   plot(
     gb$t, 
@@ -577,8 +579,7 @@ $$
 
 The procedure stops when $\|R^{n+1}\|$ is below a threshold or after a fixed number of iterations.
 
-It should be mentioned here that finding an optimal approximation (1) is an NP-hard problem. A suboptimal solution can be found by means of an iterative procedure, such as the MP algorithm. Also, a key property of MP is energy conservation. The total energy of the signal is preserved in the MP decomposition
-
+It should be noted that finding an optimal approximation (1) is an NP-hard problem. A suboptimal solution can be obtained using an iterative procedure, such as the MP algorithm. Another key property of MP is energy conservation: the total energy of the signal is preserved in the MP decomposition.
 
 $$
 ||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2

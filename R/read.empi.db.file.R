@@ -134,7 +134,7 @@ read.empi.db.file <- function(db.file) {
     n.atoms <- length(which(data.frames[[1]]$channel_id == (k - 1)))
     g <- matrix(0, nrow = epochSize, ncol = n.atoms)
     for (i in 1:n.atoms) {
-      gab <- Gabor.fun(
+      gab <- gabor.fun(
         number.of.samples = epochSize,
         sampling.frequency = f,
         mean = atoms.channel$position[i],
