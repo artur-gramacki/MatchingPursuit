@@ -32,9 +32,9 @@
 #'        \item sampling frequency: 128 Hz Hz, signal length: 1 sec.
 #'      }
 #' }
-#' The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{f})
-#' and the signal length in seconds (\code{s}). \code{read.csv.signals} function checks
-#' whether the file actually contains \code{f*s} samples.
+#' The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{freq})
+#' and the signal length in seconds (\code{sec}). \code{read.csv.signals} function checks
+#' whether the file actually contains \code{freq*sec} samples.
 #'
 #' @docType package
 #'
