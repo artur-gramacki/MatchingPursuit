@@ -23,7 +23,6 @@
 #' function does not provide the functionality to independently change the sampling rate for each channel.
 #'
 #' @importFrom edf read.edf
-#' @importFrom signal resample
 #' @importFrom utils flush.console
 #'
 #' @return A data frame with all signals data is returned as a result of executing

@@ -9,7 +9,6 @@
 #' @importFrom utils tail
 #' @importFrom DescTools DrawEllipse
 #' @importFrom imager as.cimg resize
-#' @importFrom raster resample
 #'
 #' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
 #' In this case, the \code{db.list} parameter must be \code{NULL}.

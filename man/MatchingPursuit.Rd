@@ -8,8 +8,8 @@
 \description{
 Tools for analyzing and decomposing time-series data using the
 \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition technique that represents
-complex signals as a linear combination of simpler functions (called atoms) selected from an
-overcomplete dictionary.
+complex signals as a linear combination of simpler functions (called atoms) selected from a
+redundant dictionary.
 }
 \details{
 In addition to working with generic time-series data, the package also supports direct loading of

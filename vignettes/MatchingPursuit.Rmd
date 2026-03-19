@@ -372,8 +372,8 @@ out <- empi2tf(
   mode = "sqrt",
   freq.divide = 6,
   increase.factor= 4,
-  display.crosses = TRUE,
-  display.atom.numbers = FALSE,
+  display.crosses = FALSE,
+  display.atom.numbers = TRUE,
   out.mode = "plot"
 )
 ```
