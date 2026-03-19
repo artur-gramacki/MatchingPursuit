@@ -46,7 +46,10 @@ function does not provide the functionality to independently change the sampling
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 sigs1  <- read.edf.signals(file, resampling = FALSE)
+
 head(sigs1)
+
+# Note that the last column (t) changes after resampling.
 sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128)
 head(sigs2)
 

@@ -34,7 +34,10 @@
 #' @examples
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' sigs1  <- read.edf.signals(file, resampling = FALSE)
+#'
 #' head(sigs1)
+#'
+#' # Note that the last column (t) changes after resampling.
 #' sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128)
 #' head(sigs2)
 #'
