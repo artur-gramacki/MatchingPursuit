@@ -53,13 +53,16 @@ cat(
 )
 ```
 
+@Durka-2007
+
 ## Installation
 
 ```{r instalation, include = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
 # Install and load required R packages
 pkgs <- c(
-  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", "graphics", "grDevices", 
-  "utils", "knitr", "rmarkdown", "latex2exp", "knitr", "rmarkdown", "remotes",  "digest")
+  "edf", "signal", "RSQLite", "DescTools", "imager", "raster", 
+  "graphics", "grDevices", "utils", "knitr", "rmarkdown", "latex2exp", 
+  "knitr", "rmarkdown", "remotes",  "digest", "signal")
 
 to_install = !pkgs %in% installed.packages()
 
@@ -462,6 +465,63 @@ axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), label
 
 [Back to menu](#top) 
 
+## One specific example
+
+In this chapter, we present a specific data example adapted from the work of Durka (2007). The signal consists of a mixture of seven components: (a) four Gabor functions with different parameters, (b) a unit impulse, (c) a sinusoidal waveform, and (d) a chirp signal.
+
+```{r chirp_def, include = TRUE, echo = FALSE, warning = FALSE}
+n <- 1280
+f <- 128
+t1 = n / f
+t <- seq(from = 0, to = n - 1, by = 1) / f
+
+g1 <- gabor.fun(n, f, mean = 2, phase = 0, sigma = 1, frequency = 50, normalization = F)
+g2 <- gabor.fun(n, f, mean = 8, phase = 0, sigma = 1.5, frequency = 25, normalization = F)
+g3 <- gabor.fun(n, f, mean = 2, phase = 0, sigma = 2, frequency = 30, normalization = F)
+g4 <- gabor.fun(n, f, mean = 7, phase = 0, sigma = 0.5, frequency = 15, normalization = F)
+imp <- rep(0, n)
+imp[n / 2] <- 4
+sine <- 0.2 * sin(2 * pi * 3 * t)
+chirp <- signal::chirp(t = t, f0 = 0, t1 = t1, f1 = 50, form = c("linear"), phase = 0)
+signal <- g1$gabor + g2$gabor + g3$gabor + g4$gabor + imp  + chirp + sine
+```
+
+```{r chirp_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
+par(mfcol=c(8, 1), pty="m") #bottom, left, top, right
+par(mai=c(0.2, 0.1, 0.2, 0.1))
+
+ylim <- c(-2, 2)
+plot(t, signal,   ylim = ylim, xaxt = "s", yaxt = "n", bty = "o", col = "blue",  type = "l", xlab = "", ylab = "", main = "The sum of the below functions")
+plot(t, g1$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 50Hz, mean = 2, sigma = 1")
+plot(t, g2$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 25Hz, mean = 8, sigma = 1.5")
+plot(t, g3$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 30Hz, mean = 2, sigma = 2")
+plot(t, g4$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 15Hz, mean = 7, sigma = 0.5")
+plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Unit impulse")
+plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Sine wave: 3 Hz")
+plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Linear-frequency chirp (0Hz-50Hz)")
+```
+
+In the T–F map, all signal components—except for the chirp—are represented clearly and accurately (i.e., blobs for Gabor functions, a horizontal line for the sine wave, and a vertical line for the unit impulse). However, the chirp signal is decomposed into several separate blobs. This behavior arises from the discrete nature of the atom dictionary used in the MP algorithm, which prevents a continuous representation of a signal with smoothly varying frequency. This limitation (and, in some respects, a drawback) of the MP algorithm should be taken into account.
+
+```{r chirp_plot_tf, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 6}
+file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")
+
+out <- empi2tf(
+  db.file = file,
+  channel = 1,
+  mode = "sqrt",
+  freq.divide = 1,
+  increase.factor= 4,
+  display.crosses = TRUE,
+  display.atom.numbers = FALSE,
+  out.mode = "plot",
+  plot.signals = FALSE
+)
+
+```
+
+[Back to menu](#top) 
+
 ## The Matching Pursuit algorithm in a nutshell
 
 The Matching Pursuit algorithm is well-known and described in the literature. Its purpose is to approximate the analyzed signal using so-called atoms. (the text below is adapted from @Kunik-2025).
@@ -585,6 +645,7 @@ $$
 ||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2
 $$
 [Back to menu](#top) 
+
 
 ## Bibliogaphy
 
