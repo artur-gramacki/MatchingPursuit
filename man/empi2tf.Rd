@@ -103,6 +103,8 @@ Regardless of the above, the function returns the following:
     \item epoch size in samples
     \item length of the signal in seconds
     \item time-frequency map
+    \item time-frequency map after resampling
+    (if \code{out.mode==RData} or if \code{out.mode==RData2}, otherwise, NULL is returned)
     \item channel number
     \item frequency divide
   }

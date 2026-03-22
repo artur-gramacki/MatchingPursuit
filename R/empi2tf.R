@@ -84,6 +84,8 @@
 #'     \item epoch size in samples
 #'     \item length of the signal in seconds
 #'     \item time-frequency map
+#'     \item time-frequency map after resampling
+#'     (if \code{out.mode==RData} or if \code{out.mode==RData2}, otherwise, \code{NULL} is returned)
 #'     \item channel number
 #'     \item frequency divide
 #'   }
@@ -136,6 +138,9 @@ empi2tf <- function(
 
   if (!is.null(db.file) & !is.null(db.list))
     stop("\n--> Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function. <--")
+
+  if (out.mode != "RData" & out.mode != "RData2")
+    tf.map.resampled <- NULL
 
   if (palette == 'my custom palette') {
     col <-  c(
