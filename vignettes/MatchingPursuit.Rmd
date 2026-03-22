@@ -53,8 +53,6 @@ cat(
 )
 ```
 
-@Durka-2007
-
 ## Installation
 
 ```{r instalation, include = TRUE, echo = TRUE, warning = FALSE, message = FALSE}
@@ -601,19 +599,16 @@ $$
 R^0 = f \\
 f^0 = 0
 $$
-
 For each iteration $n = \{0,1,\ldots, N\}$ we find $g_{\gamma_n} \in D$ such that the following inner product $\langle \cdot, \cdot \rangle$ is maximized
 
 $$
 g_{\gamma_n} = \arg \max_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle |
 $$
-
 The coefficients $a_n$ in (1) are 
 
 $$
 a_n = \langle R^{n}, g_{\gamma_n} \rangle 
 $$
-
 and updated function approximation is defined as
 
 $$
@@ -626,17 +621,14 @@ R^{n+1} = R^{n} - a_n g_{\gamma_n}
 $$
 After $N$ iterations, the signal $f$ is approximated as
 
-
 $$
 f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N} a_n g_{\gamma_n}
 $$
-
 or equivalently
 
 $$
 f = \sum_{n = 0}^{N} \langle R^n   g_{\gamma_n} \rangle g_{\gamma_n} + R^{N+1}
 $$
-
 The procedure stops when $\|R^{n+1}\|$ is below a threshold or after a fixed number of iterations.
 
 It should be noted that finding an optimal approximation (1) is an NP-hard problem. A suboptimal solution can be obtained using an iterative procedure, such as the MP algorithm. Another key property of MP is energy conservation: the total energy of the signal is preserved in the MP decomposition.
@@ -645,7 +637,6 @@ $$
 ||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2
 $$
 [Back to menu](#top) 
-
 
 ## Bibliogaphy
 

@@ -444,6 +444,7 @@ empi2tf <- function(
     epochSize = epochSize,
     number.of.secs = s,
     tf.map = tf.map,
+    tf.map.resampled = tf.map.resampled,
     channel = channel,
     freq.divide = freq.divide)
 }
