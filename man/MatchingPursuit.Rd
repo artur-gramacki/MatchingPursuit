@@ -47,7 +47,7 @@ Example datasets available through the \code{system.file()} function are:
 }
 The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{freq})
 and the signal length in seconds (\code{sec}). \code{read.csv.signals} function checks
-whether the file actually contains \code{freq*sec} samples. The two numbers
+whether the file actually contains \code{round(freq*sec)} samples. The two numbers
 must by separated by one or more whitespace characters.
 }
 \references{
