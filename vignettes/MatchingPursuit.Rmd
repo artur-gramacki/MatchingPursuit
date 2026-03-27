@@ -563,7 +563,6 @@ $$
 where $\gamma = (\mu, \omega, \sigma, \phi)$ constitute a four-dimmensional space and $K(\gamma)$ is such that $||g_{\gamma}|| = 1$. It is easy to see that Gabor functions are constructed by multiplying Gaussian envelopes with cosine oscillations of different frequencies $\omega$ and phases offset $\phi$. By multiplying these two functions, we can obtain a wide variety of shapes depending on their parameters. A few examples of Gabor function are presented in figure below (in blue). The sinusoidal plane wave (in gray) is modulated by a Gaussian envelope (in red).
 
 ```{r Gabor_fun, include = TRUE, echo = FALSE, fig.width = 7, fig.height = 5, fig.align = 'center'}
-library(latex2exp)
 N <- 512
 fs <- 256
 # normalization = T --> signal's norm = 1
@@ -585,7 +584,7 @@ for (i in c(1:n)) {
   frequency <- frequencies[i]
   phase <- phases[i]
   mean <- means[i]
-  main <- TeX(paste(
+  main <- latex2exp::TeX(paste(
     "$\\mu=$", means[i], ", ", 
     "$\\sigma=$", sigmas[i], ", ",
     "$\\f=$", frequencies[i], ", ",

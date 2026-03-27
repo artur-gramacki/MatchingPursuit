@@ -36,7 +36,7 @@ Imports:
   graphics,
   grDevices,
   utils,
-  digest
+  digest  
 Suggests: 
   knitr,
   rmarkdown,
