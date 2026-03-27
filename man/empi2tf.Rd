@@ -39,9 +39,9 @@ In this case, the \code{db.file} parameter must be \code{NULL}.}
 \item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. It determines the intensity
 with which the so-called blobs are displayed on the T-F map.}
 
-\item{freq.divide}{For setting frequency range. For example, when sampling frequency is
-\code{f=256Hz}, the maximum frequency is \code{f/2} (Nyquist rule) and the limited the
-frequency is  \code{f/2/freq.divide}.}
+\item{freq.divide}{Specifies how many times the displayed frequency in the T-F map
+should be decreased. For example, if the sampling frequency is \code{f=256Hz}, the maximum
+frequency in the T-F map will be \code{f/2/freq.divide} (f/2 is the Nyquist rule).}
 
 \item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
 sensible are non-negative integers (e.g. 2, 4, 5, 8).}
@@ -68,7 +68,7 @@ be appropriate.}
 \item{out.mode}{One of the following:
 \itemize{
    \item \code{"plot"} - draws a T-F map on the screen.
-   \item \code{"file"} - saves a T-F map to file \code{file.name} (as png file).
+   \item \code{"file"} - saves a T-F map to file \code{file.name} (as \code{png} file).
    \item \code{"RData"} - saves the T-F map of \code{size} in the \code{file.name}
    (as R's matrix), resampling is performed using the function \code{imager::resize()} function.
    \item \code{"RData2"} - saves the T-F map of \code{size} in the \code{file.name}
@@ -78,7 +78,8 @@ be appropriate.}
 \item{path}{Path where \code{png} or \code{RData} files will be written. If \code{NULL},
 files will be written to the cache directory.}
 
-\item{size}{File size in pixels.}
+\item{size}{\code{png} file size in pixels (if \code{out.mode="file"}) or size of the T-F matrix
+(if \code{out.mode="RData"} of \code{out.mode="RData2"}).}
 
 \item{draw.ellipses}{Only for testing. User can set it to \code{TRUE} to see the effect.}
 
@@ -105,15 +106,15 @@ Regardless of the above, the function returns the following:
     \item length of the signal in seconds
     \item time-frequency map
     \item time-frequency map after resampling
-    (if \code{out.mode==RData} or if \code{out.mode==RData2}, otherwise, \code{NULL} is returned)
-    \item channel number
+    (if \code{out.mode="RData"} or if \code{out.mode="RData2"}, otherwise, \code{NULL} is returned)
+    \item channel number processed
     \item frequency divide
   }
 }
 \description{
 Creates a time-frequency map using atoms from the Matching Pursuit algorithm.
-The created map can be 1) displayed on the screen, 2) saved in \code{.png} file,
-or 3) saved as an \code{.RData} object (as a matrix).
+The created map can be: 1) displayed on the screen, 2) saved in \code{.png} file,
+or 3) saved as an \code{.RData} object.
 }
 \examples{
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")

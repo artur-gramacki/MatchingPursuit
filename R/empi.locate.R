@@ -1,10 +1,10 @@
 #' Get required external software localization
 #'
 #' @description
-#' Returns \emph{Enhanced Matching Pursuit Implementation} \url{https://github.com/develancer/empi}
-#' binary locations for the following operation systems: Windows, Linux, MacOS-x64, MacOS-arm64.
+#' Returns \strong{Enhanced Matching Pursuit Implementation} binary locations for
+#' the following operation systems: Windows, Linux, MacOS-x64, MacOS-arm64.
 #'
-#' @return List with URL of the \emph{empi} binaries and zip file name.
+#' @return List with URL of the EMPI binaries and zip file name.
 #'
 #' @export
 #'

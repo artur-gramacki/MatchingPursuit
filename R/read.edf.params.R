@@ -7,7 +7,7 @@
 #' files (such as interrupted recordings, time-stamped annotations) is not used in the
 #' package and is therefore not read.
 #'
-#' @param file The path to the EDF/EDF+ file to be read.
+#' @param file The path to the EDF / EDF+ file to be read.
 #'
 #' @return A data frame is returned containing the most basic parameters of the EDF / EDF+ file.
 #'

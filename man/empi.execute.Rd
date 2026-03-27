@@ -14,35 +14,35 @@ empi.execute(
 }
 \arguments{
 \item{signal}{List returned from \code{read.csv.signals()} function. The list stores
-signal(s) in a data frame: rows = samples for all channels, columns = channels and
-sampling frequency. The data should have logical column names (channel names).}
+the signal in a data frame along with its sampling frequency.
+The data should have logical column names (channel names).}
 
-\item{empi.options}{If \code{NULL}, the \emph{empi} program runs with
+\item{empi.options}{If \code{NULL}, the EMPI program runs with
 \code{"-o local --gabor -i 50"} parameters. Otherwise, user can specify any command-line
-options. See \code{README.md} file after downloading the \emph{empi} program using
-\code{empi.download()} function.}
+options. See \code{README.md} file after downloading the EMPI program using
+\code{empi.install()} function.}
 
 \item{write.to.file}{If \code{TRUE}, a SQLite database file will be created
 and saved in the \code{file.dest} directory or, (if \code{file.dest=NULL}), in the
 cache directory. This file stores the results of signal decomposition using the MP algorithm.}
 
-\item{file.dest}{Directory where to save a SQLite database file.
-If \code{file.dest=NULL}), the file is saved in the cache directory.}
+\item{file.dest}{Directory in which to save the SQLite database file.
+If \code{file.dest=NULL}, the file will be saved in the cache directory.}
 
 \item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}.}
 }
 \value{
-Signal decomposition results using the MP algorithm. If \code{write.to.file=TRUE}
-is specified, the results are additionally written to the file \code{.db} on disk
-in the working directory.
+Results of signal decomposition using the MP algorithm. If \code{write.to.file=TRUE}
+is specified, the results are also written to a SQLite file on disk in the \code{file.dest}
+directory.
 }
 \description{
-Runs the \emph{empi} program for the given data (signal).
+Runs the EMPI program for the given data (signal).
 }
 \details{
-The \emph{empi} program (source and binary files for various operating systems) can be
+The EMPI program (source and binary files for various operating systems) can be
 downloaded from \url{https://github.com/develancer/empi}. Details are presented in the
-journal paper: Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with
+journal paper: Różański, P. T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with
 Continuous Dictionaries}.ACM Transactions on Mathematical Software, Volume 50, Issue 3,
 Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 }

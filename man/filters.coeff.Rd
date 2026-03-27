@@ -2,7 +2,7 @@
 % Please edit documentation in R/filters.coeff.R
 \name{filters.coeff}
 \alias{filters.coeff}
-\title{A wrapper function for \code{signal::butter} function}
+\title{A wrapper function for \code{signal::butter()} function}
 \usage{
 filters.coeff(
   fs = 256,
@@ -66,8 +66,8 @@ fc <- filters.coeff(
 print(fc)
 
 signal::freqz(fc$notch, Fs = sampling.rate)
-signal::freqz(fc$low, Fs = sampling.rate)
-signal::freqz(fc$high, Fs = sampling.rate)
+signal::freqz(fc$lowpass, Fs = sampling.rate)
+signal::freqz(fc$highpass, Fs = sampling.rate)
 signal::freqz(fc$bandpass, Fs = sampling.rate)
 signal::freqz(fc$bandstop, Fs = sampling.rate)
 
@@ -77,8 +77,8 @@ signal.filt <- signal
 
 for (m in 1:ncol(signal)) {
   signal.filt[, m] = signal::filtfilt(fc$notch, signal.filt[, m]); # 50Hz notch filter
-  signal.filt[, m] = signal::filtfilt(fc$low, signal.filt[, m]); # Low pass IIR Butterworth
-  signal.filt[, m] = signal::filtfilt(fc$high, signal.filt[, m]); # High pass IIR Butterwoth
+  signal.filt[, m] = signal::filtfilt(fc$lowpass, signal.filt[, m]); # Low pass IIR Butterworth
+  signal.filt[, m] = signal::filtfilt(fc$highpass, signal.filt[, m]); # High pass IIR Butterwoth
 }
 
 plot(signal.filt[, 1], type = "l", panel.first = grid())

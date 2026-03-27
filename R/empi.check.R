@@ -1,12 +1,12 @@
 #' Checks if EMPI external software is installed
 #'
-#' The EMPI program is installed using the \code{empi.install()} function and is loaded into the
-#' cache directory. This function checks whether the EMPI program is still there (the user
-#' has free access to the cache directory and can, for example, delete it).
+#' The EMPI program is installed using the \code{empi.install()} function and is stored in the
+#' cache directory. This function checks whether the EMPI program is still there (the user has
+#' free access to the cache directory and can, for example, delete it at any time).
 #'
 #' @return
-#' If the EMPI program is found, it returns its full path. Otherwise, it displays a message
-#' to the user asking them to install it using the \code{empi.install()} function.
+#' If the EMPI program is found, its full path is returned. Otherwise, a message is displayed,
+#' prompting the user to install it using the \code{empi.install()} function.
 #'
 #' @export
 #'

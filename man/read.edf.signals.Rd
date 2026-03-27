@@ -16,10 +16,10 @@ read.edf.signals(
 \arguments{
 \item{file}{The path to the EDF / EDF+ file to be read.}
 
-\item{resampling}{Logical \code{TRUE} or \code{FALSE}. If \code{TRUE} the frequency of all signals will be
+\item{resampling}{If \code{TRUE} the frequency of all signals will be
 upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
 
-\item{f.new}{A new frequency.}
+\item{f.new}{A new frequency (used for upsampling or downsampling).}
 
 \item{from}{Loading a signal \code{from} (given as a second).}
 
@@ -29,15 +29,13 @@ upsampling or downsampling, depending on the actual sampling rate of subsequent 
 }
 \value{
 A list is returned with:
-1) data frame with all signals data stored in given edf file,
+1) data frame with all signals stored in the given \code{edf} file,
 2) complete result returned by the \code{edf::read.edf()} function,
 3) sampling rate of the data after possible resampling (upsampled or downsampled),
 4) time stamps of the data after possible resampling (upsampled or downsampled).
-It should be added here that an additional column is
-created in the resulting data frame (as the last one) which contains time stamps.
 }
 \description{
-The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
+The function reads a selected EDF or EDF+ file.
 Also resampling can be done (upsampling or downsampling).
 }
 \details{
@@ -55,7 +53,7 @@ lapply(sigs1, class)
 sigs1$sampling.rate
 
 # Note that the last column (t) changes after resampling.
-sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128)
+sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 
 lapply(sigs2, class)
 sigs2$sampling.rate

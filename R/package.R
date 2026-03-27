@@ -9,9 +9,10 @@
 #' In addition to working with generic time-series data, the package also supports direct loading of
 #' data stored in EDF and EDF(+) files. These formats are widely used for storing physiological signals
 #' such as EEG, EMG, or ECG recordings. By enabling the import of EDF and EDF(+) files, the package
-#' facilitates the analysis of biomedical signals. This package requires an external tool \strong{Enhanced
-#' Matching Pursuit Implementation}, or \strong{EMPI} for short. This tool is the implementation of the Matching
-#' Pursuit algorithm by \strong{Piotr Różański}, available at \url{https://github.com/develancer/empi}.
+#' facilitates the analysis of biomedical signals. The package requires the installation of an external
+#' program, \strong{Enhanced Matching Pursuit Implementation} (EMPI). This tool implements the Matching
+#' Pursuit algorithm developed by \strong{Piotr T. Różański} and is available
+#' at \url{https://github.com/develancer/empi}
 #'
 #' Example datasets available through the \code{system.file()} function are:
 #'
@@ -34,7 +35,7 @@
 #'      }
 #'    \item \code{sample3.csv}
 #'      \itemize{
-#'        \item 3 channels (random numbers from 0 to 1)
+#'        \item 3 channels (random numbers from 0 to 1 in each channel)
 #'        \item sampling frequency: 128 Hz Hz, signal length: 2 sec.
 #'      }
 #' }
@@ -58,7 +59,7 @@
 #' \emph{Deep learning epileptic seizure detection based on matching pursuit algorithm and its time-frequency
 #' graphical representation}. International Journal of Applied Mathematics & Computer Science,
 #' vol. 35, no. 4, pp. 617-630, \doi{10.61822/amcs-2025-0044}
-
+#'
 #' Mallat, S. & Zhang, Z. (1993). \emph{Matching Pursuits with Time-Frequency Dictionaries}.
 #' IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397-3415, \doi{10.1109/78.258082}
 #'

@@ -1,9 +1,9 @@
-#' Checks if the csv file has the correct structure
+#' Reads and checks if the csv file has the correct structure
 #'
 #'
-#' @param file File to be checked. The first line of the file must contain two numbers:
+#' @param file File to be read and check. The first line of the file must contain two numbers:
 #' the sampling rate in Hz (\code{freq}) and the signal length in seconds (\code{sec}).
-#' This checks whether the file actually contains \code{freq*sec} samples. The two numbers
+#' The function checks whether the file actually contains \code{round(freq*sec)} samples. The two numbers
 #' must by separated by one or more whitespace characters.
 #'
 #' @param col.names Vector with column names. If not specified, default names will be created.
@@ -44,8 +44,8 @@ read.csv.signals <- function(file, col.names = NULL) {
 
   signal <- read.table(file, skip = 1, header = FALSE)
 
-  if (nrow(signal) != sr * sl)
-    stop("The signal must be ", sr * sl, " elements long. Now it is ", nrow(signal), " elements long.")
+  if (nrow(signal) != round(sr * sl))
+    stop("The signal must be ", round(sr * sl), " elements long. Now it is ", nrow(signal), " elements long.")
 
   if (!is.null(col.names)) {
     if (length(col.names) != ncol(signal)) {

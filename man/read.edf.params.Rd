@@ -7,7 +7,7 @@
 read.edf.params(file)
 }
 \arguments{
-\item{file}{The path to the EDF/EDF+ file to be read.}
+\item{file}{The path to the EDF / EDF+ file to be read.}
 }
 \value{
 A data frame is returned containing the most basic parameters of the EDF / EDF+ file.

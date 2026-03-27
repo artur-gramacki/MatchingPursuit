@@ -1,14 +1,14 @@
 #' Reads a selected EDF or EDF+ file and returns all signals data
 #'
-#' The function reads a selected EDF or EDF+ file and returns all signals data as a matrix.
+#' The function reads a selected EDF or EDF+ file.
 #' Also resampling can be done (upsampling or downsampling).
 #'
 #' @param file The path to the EDF / EDF+ file to be read.
 #'
-#' @param resampling Logical \code{TRUE} or \code{FALSE}. If \code{TRUE} the frequency of all signals will be
+#' @param resampling If \code{TRUE} the frequency of all signals will be
 #' upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
 #'
-#' @param f.new A new frequency.
+#' @param f.new A new frequency (used for upsampling or downsampling).
 #'
 #' @param from Loading a signal \code{from} (given as a second).
 #'
@@ -26,12 +26,10 @@
 #' @importFrom utils flush.console
 #'
 #' @return A list is returned with:
-#' 1) data frame with all signals data stored in given edf file,
+#' 1) data frame with all signals stored in the given \code{edf} file,
 #' 2) complete result returned by the \code{edf::read.edf()} function,
 #' 3) sampling rate of the data after possible resampling (upsampled or downsampled),
 #' 4) time stamps of the data after possible resampling (upsampled or downsampled).
-#' It should be added here that an additional column is
-#' created in the resulting data frame (as the last one) which contains time stamps.
 #'
 #' @export
 #'
@@ -43,7 +41,7 @@
 #' sigs1$sampling.rate
 #'
 #' # Note that the last column (t) changes after resampling.
-#' sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128)
+#' sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 #'
 #' lapply(sigs2, class)
 #' sigs2$sampling.rate
@@ -92,11 +90,11 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
       t.new <- seq(0, sig.len - (1 / f.new), by = 1 / f.new)
       if (verbose) {
         message(
-          "Channel '", lab, "', ",
-          "original sampling rate: ", freq, " Hz, ",
-          "new sampling rate: ", f.new, " Hz, ",
-          "number of samples: ", length(sig), ", ",
-          "signal length: ", length(sig) / f, " sec.")
+          "Ch", i, ": '", lab, "', ",
+          "Fs original: ", freq, " Hz, ",
+          "Fs new: ", f.new, " Hz, ",
+          "samples: ", length(sig.new), ", ",
+          "length: ", length(sig) / f, " sec.")
 
         flush.console()
       }

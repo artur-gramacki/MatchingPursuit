@@ -2,14 +2,14 @@
 % Please edit documentation in R/read.csv.signals.R
 \name{read.csv.signals}
 \alias{read.csv.signals}
-\title{Checks if the csv file has the correct structure}
+\title{Reads and checks if the csv file has the correct structure}
 \usage{
 read.csv.signals(file, col.names = NULL)
 }
 \arguments{
-\item{file}{File to be checked. The first line of the file must contain two numbers:
+\item{file}{File to be read and check. The first line of the file must contain two numbers:
 the sampling rate in Hz (\code{freq}) and the signal length in seconds (\code{sec}).
-This checks whether the file actually contains \code{freq*sec} samples. The two numbers
+The function checks whether the file actually contains \code{round(freq*sec)} samples. The two numbers
 must by separated by one or more whitespace characters.}
 
 \item{col.names}{Vector with column names. If not specified, default names will be created.}
@@ -19,10 +19,17 @@ A list is returned with:
 1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
 }
 \description{
-Checks if the csv file has the correct structure
+Reads and checks if the csv file has the correct structure
 }
 \examples{
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+
+# The first line of the file must contain two numbers:
+# a) the sampling rate in Hz
+# b) the signal length in seconds
+out <- read.csv(file, header = FALSE)
+head(out)
+
 signal <- read.csv.signals(file, col.names = "signal_1")
 head(signal$signal)
 signal$sampling.rate

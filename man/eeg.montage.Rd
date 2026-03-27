@@ -24,17 +24,17 @@ have correct column names (channel names).}
 
 \item{ref.channel}{Name of the reference channel for \code{"reference"} montage.}
 
-\item{bipolar.pairs}{List of electrodes pairs. See example below.}
+\item{bipolar.pairs}{List of electrodes pairs for \code{"bipolar"} montage. See example below.}
 }
 \value{
 A data frame with final montage (rows = samples, columns = channels).
 }
 \description{
-An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed
-relative to each other during interpretation of an electroencephalogram. The same EEG recording can
-look very different depending on the montage use. The function implements the three most frequently
-used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage
-and 3) Average Reference Montage.
+An EEG montage refers to the specific arrangement of EEG electrodes and the way their signals
+are displayed relative to each other during the interpretation of an electroencephalogram.
+The same EEG recording can look very different depending on the montage use. The function
+implements the three most frequently used montage methods in practice, i.e.
+1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
 }
 \details{
 To find out what names the individual channels have in the analysed EEG set,

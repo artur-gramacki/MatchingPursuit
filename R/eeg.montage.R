@@ -1,10 +1,10 @@
 #' Performs bipolar, reference or average EEG montage
 #'
-#' An EEG montage is the specific way EEG electrodes are arranged and how their signals are displayed
-#' relative to each other during interpretation of an electroencephalogram. The same EEG recording can
-#' look very different depending on the montage use. The function implements the three most frequently
-#' used montage methods in practice, i.e. 1) Bipolar Montage, 2) Referential (Monopolar) Montage
-#' and 3) Average Reference Montage.
+#' An EEG montage refers to the specific arrangement of EEG electrodes and the way their signals
+#' are displayed relative to each other during the interpretation of an electroencephalogram.
+#' The same EEG recording can look very different depending on the montage use. The function
+#' implements the three most frequently used montage methods in practice, i.e.
+#' 1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
 #'
 #' @param eeg.data Must be a data frame: rows = samples, columns = channels.The data frame must
 #' have correct column names (channel names).
@@ -17,7 +17,7 @@
 #'}
 #' @param ref.channel Name of the reference channel for \code{"reference"} montage.
 #'
-#' @param bipolar.pairs List of electrodes pairs. See example below.
+#' @param bipolar.pairs List of electrodes pairs for \code{"bipolar"} montage. See example below.
 #'
 #' @return A data frame with final montage (rows = samples, columns = channels).
 #'

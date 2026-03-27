@@ -4,18 +4,15 @@
 \alias{empi.install}
 \title{Installs the required external program}
 \usage{
-empi.install(dest.dir = NULL)
-}
-\arguments{
-\item{dest.dir}{User-specified directory where the external EMPI program is to be stored.}
+empi.install()
 }
 \value{
 The function downloads the EMPI program in a version compatible with the operating
-system used (Windows, Linux, MacOS-x64, MacOS-arm64) and stores it in the cache or user-specified directory.
+system used (Windows, Linux, MacOS-x64, MacOS-arm64) and stores it in the cache directory.
 }
 \description{
-Downloads \emph{Enhanced Matching Pursuit Implementation} external program (or EMPI for short)
-and stores it in the cache directory (if \code{dest.dir=NULL}) or in a directory specified by the user.
+Downloads \strong{Enhanced Matching Pursuit Implementation} external program (or EMPI for short)
+and stores it in the cache directory.
 }
 \examples{
 ## Not run:

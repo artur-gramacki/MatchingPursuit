@@ -1,4 +1,4 @@
-#' A wrapper function for \code{signal::butter} function
+#' A wrapper function for \code{signal::butter()} function
 #'
 #' @description
 #' Implements notch, low-pass, high-pass, band-pass, and band-stop filters with desired frequency
