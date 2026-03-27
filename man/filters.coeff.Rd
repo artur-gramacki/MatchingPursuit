@@ -49,7 +49,10 @@ Implements notch, low-pass, high-pass, band-pass, and band-stop filters with des
 ranges and Butterworth filter order.
 }
 \examples{
-sampling.rate <- 250
+file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
+out <- read.edf.signals(file, resampling = FALSE)
+signal <- out$signals
+sampling.rate <- out$sampling.rate
 
 fc <- filters.coeff(
   fs = sampling.rate,
@@ -68,19 +71,16 @@ signal::freqz(fc$high, Fs = sampling.rate)
 signal::freqz(fc$bandpass, Fs = sampling.rate)
 signal::freqz(fc$bandstop, Fs = sampling.rate)
 
-file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-out <- read.edf.signals(file, resampling = FALSE)
-signal <- out$signals
-
 plot(signal[, 1], type = "l", panel.first = grid())
 
-signal.filtr <- signal
+signal.filt <- signal
+
 for (m in 1:ncol(signal)) {
-  signal.filtr[, m] = signal::filtfilt(fc$notch, signal.filtr[, m]); # 50Hz notch filter
-  signal.filtr[, m] = signal::filtfilt(fc$low, signal.filtr[, m]); # Low pass IIR Butterworth
-  signal.filtr[, m] = signal::filtfilt(fc$high, signal.filtr[, m]); # High pass IIR Butterwoth
+  signal.filt[, m] = signal::filtfilt(fc$notch, signal.filt[, m]); # 50Hz notch filter
+  signal.filt[, m] = signal::filtfilt(fc$low, signal.filt[, m]); # Low pass IIR Butterworth
+  signal.filt[, m] = signal::filtfilt(fc$high, signal.filt[, m]); # High pass IIR Butterwoth
 }
 
-plot(signal.filtr[, 1], type = "l", panel.first = grid())
+plot(signal.filt[, 1], type = "l", panel.first = grid())
 
 }

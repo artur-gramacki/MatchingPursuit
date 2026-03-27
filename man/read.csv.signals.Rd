@@ -15,7 +15,8 @@ must by separated by one or more whitespace characters.}
 \item{col.names}{Vector with column names. If not specified, default names will be created.}
 }
 \value{
-A list is returned: 1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
+A list is returned with:
+1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
 }
 \description{
 Checks if the csv file has the correct structure

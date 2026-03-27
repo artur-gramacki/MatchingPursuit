@@ -69,12 +69,12 @@ pairs <- list(
   c("Cz",  "Pz")
 )
 
-bip.mont <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
-ref.mont <- eeg.montage(signal, montage.type = c("reference"), ref.channel = "O1")
-avg.mont <- eeg.montage(signal, montage.type = c("average"))
+signal.bip.mont <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
+signal.ref.mont <- eeg.montage(signal, montage.type = c("reference"), ref.channel = "O1")
+signal.avg.mont <- eeg.montage(signal, montage.type = c("average"))
 
-head(bip.mont)
-head(ref.mont)
-head(avg.mont)
+head(signal.bip.mont)
+head(signal.ref.mont)
+head(signal.avg.mont)
 
 }

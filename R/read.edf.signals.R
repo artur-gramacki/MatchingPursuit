@@ -28,7 +28,8 @@
 #' @return A list is returned with:
 #' 1) data frame with all signals data stored in given edf file,
 #' 2) complete result returned by the \code{edf::read.edf()} function,
-#' 3) sampling rate of the data after possible resampling (upsampled or downsampled).
+#' 3) sampling rate of the data after possible resampling (upsampled or downsampled),
+#' 4) time stamps of the data after possible resampling (upsampled or downsampled).
 #' It should be added here that an additional column is
 #' created in the resulting data frame (as the last one) which contains time stamps.
 #'
@@ -105,17 +106,19 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     }
 
     if (i == 1) {
-      edf.mtx <- matrix(NaN, nrow = length(sig.new), ncol = n.sigs + 1)
-      colnames(edf.mtx) <- rep("", n.sigs + 1)
+      #edf.mtx <- matrix(NaN, nrow = length(sig.new), ncol = n.sigs + 1)
+      #colnames(edf.mtx) <- rep("", n.sigs + 1)
+      edf.mtx <- matrix(NaN, nrow = length(sig.new), ncol = n.sigs)
+      colnames(edf.mtx) <- rep("", n.sigs)
     }
 
     colnames(edf.mtx)[i] <- lab
     edf.mtx[, i] <- sig.new
 
-    if (i == n.sigs) {
-      edf.mtx[, i + 1] <- t.new
-      colnames(edf.mtx)[i + 1] <- "t"
-    }
+    # if (i == n.sigs) {
+    #   edf.mtx[, i + 1] <- t.new
+    #   colnames(edf.mtx)[i + 1] <- "t"
+    # }
   } # for (i in 1:n.sigs)
 
   if (is.null(f.new)) f.new <- f
@@ -126,7 +129,8 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
 
   return(list(
     signals = as.data.frame(edf.mtx),
-    edf = edf,
-    sampling.rate = f.new)
+    sampling.rate = f.new,
+    time.stamps = t.new,
+    edf = edf)
   )
 }

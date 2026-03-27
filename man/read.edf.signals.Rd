@@ -29,9 +29,10 @@ upsampling or downsampling, depending on the actual sampling rate of subsequent 
 }
 \value{
 A list is returned with:
-1) data frame with all signals data stored in .edf file,
+1) data frame with all signals data stored in given edf file,
 2) complete result returned by the \code{edf::read.edf()} function,
-3) sampling rate of the data  after possible resampling.
+3) sampling rate of the data after possible resampling (upsampled or downsampled),
+4) time stamps of the data after possible resampling (upsampled or downsampled).
 It should be added here that an additional column is
 created in the resulting data frame (as the last one) which contains time stamps.
 }

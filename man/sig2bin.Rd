@@ -9,9 +9,10 @@ sig2bin(data, write.to.file = FALSE, file.name = NULL)
 \arguments{
 \item{data}{Data frame with the input signal(s).}
 
-\item{write.to.file}{If \code{TRUE}, the file \code{signal.bin} will be created and saved in the current directory.}
+\item{write.to.file}{If \code{TRUE}, the \code{.bin} will be created and saved in the cache directory.}
 
-\item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}.}
+\item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}. If not specified,
+\code{signal.bin} file will be created.}
 }
 \value{
 Input signal saved as the \code{raw}. If \code{write.to.file=TRUE}, the file \code{signal.bin}
