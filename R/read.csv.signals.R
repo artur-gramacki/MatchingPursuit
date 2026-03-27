@@ -10,7 +10,8 @@
 #'
 #' @importFrom utils read.table
 #'
-#' @return A list is returned: 1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
+#' @return A list is returned with:
+#' 1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
 #'
 #' @export
 #'

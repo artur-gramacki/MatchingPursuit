@@ -28,8 +28,11 @@ upsampling or downsampling, depending on the actual sampling rate of subsequent 
 \item{verbose}{Flag to print out progress information.}
 }
 \value{
-A data frame with all signals data is returned as a result of executing
-\code{edf::read.edf()} function.  It should be added here that an additional column is
+A list is returned with:
+1) data frame with all signals data stored in .edf file,
+2) complete result returned by the \code{edf::read.edf()} function,
+3) sampling rate of the data  after possible resampling.
+It should be added here that an additional column is
 created in the resulting data frame (as the last one) which contains time stamps.
 }
 \description{
