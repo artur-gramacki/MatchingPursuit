@@ -1,0 +1,75 @@
+#' Processing Time Series Data Using the Matching Pursuit Algorithm
+#'
+#' Tools for analyzing and decomposing time-series data using the
+#' \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition technique that represents
+#' complex signals as a linear combination of simpler functions (called atoms) selected from a
+#' redundant dictionary.
+#'
+#' @details
+#' In addition to working with generic time-series data, the package also supports direct loading of
+#' data stored in EDF and EDF(+) files. These formats are widely used for storing physiological signals
+#' such as EEG, EMG, or ECG recordings. By enabling the import of EDF and EDF(+) files, the package
+#' facilitates the analysis of biomedical signals. This package requires an external tool \strong{Enhanced
+#' Matching Pursuit Implementation}, or \strong{EMPI} for short. This tool is the implementation of the Matching
+#' Pursuit algorithm by \strong{Piotr Różański}, available at \url{https://github.com/develancer/empi}.
+#'
+#' Example datasets available through the \code{system.file()} function are:
+#'
+#'  \itemize{
+#'    \item \code{EEG.edf}
+#'      \itemize{
+#'        \item 19 EEG channels + 1 EDF Annotations channel
+#'        \item sampling frequency: 256 Hz, signal length: 10 sec.
+#'        \item channel names: Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations
+#'      }
+#'    \item \code{sample1.csv}
+#'      \itemize{
+#'        \item 1 channel
+#'        \item sampling frequency: 1024 Hz, signal length: 1 sec.
+#'      }
+#'    \item \code{sample2.csv}
+#'      \itemize{
+#'        \item 1 channel
+#'        \item sampling frequency: 128 Hz Hz, signal length: 10 sec.
+#'      }
+#'    \item \code{sample3.csv}
+#'      \itemize{
+#'        \item 3 channels (random numbers from 0 to 1)
+#'        \item sampling frequency: 128 Hz Hz, signal length: 2 sec.
+#'      }
+#' }
+#' The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{freq})
+#' and the signal length in seconds (\code{sec}). \code{read.csv.signals} function checks
+#' whether the file actually contains \code{freq*sec} samples. The two numbers
+#' must by separated by one or more whitespace characters.
+#'
+#' @docType package
+#'
+#' @name MatchingPursuit
+#'
+#' @references
+#' Durka, P. J. (2007). \emph{Matching Pursuit and Unification in EEG Analysis}. Artech House, Engineering
+#' in Medicine and Biology. Boston. ISBN: 978-1596932497
+#'
+#' Elad, M. (2010). \emph{Sparse and Redundant Representations: From Theory to Applications in Signal
+#' and Image Processing}. Springer. ISBN 978-1-4419-7010-7, \doi{10.1007/978-1-4419-7011-4}
+#'
+#' Gramacki, A. & Kunik, M. (2025).
+#' \emph{Deep learning epileptic seizure detection based on matching pursuit algorithm and its time-frequency
+#' graphical representation}. International Journal of Applied Mathematics & Computer Science,
+#' vol. 35, no. 4, pp. 617-630, \doi{10.61822/amcs-2025-0044}
+
+#' Mallat, S. & Zhang, Z. (1993). \emph{Matching Pursuits with Time-Frequency Dictionaries}.
+#' IEEE Transactions on Signal Processing, vol. 41, no. 12, pp. 3397-3415, \doi{10.1109/78.258082}
+#'
+#' Pati, Y.C. & Rezaiifar, R. & Krishnaprasad, P.S. (1993). \emph{Orthogonal Matching Pursuit: Recursive
+#' Function Approximation with Applications to Wavelet Decomposition}. Proceedings of the 27th Asilomar
+#' Conference on Signals, Systems and Computers, vol. 1, pp. 40-44 \doi{10.1109/ACSSC.1993.342465}
+#'
+#' Różański, P.T. (2024). \emph{empi: GPU-Accelerated Match ing Pursuit with Continuous Dictionaries}.
+#' ACM Transactions on Mathematical Software, vol.50, no. 3, pp. 1-17, \doi{10.1145/3674832}
+#'
+
+
+#' @keywords internal
+"_PACKAGE"
