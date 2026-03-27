@@ -1,0 +1,50 @@
+Package: MatchingPursuit
+Type: Package
+Title: Processing Time Series Data Using the Matching Pursuit Algorithm
+Version: 1.0.0
+Author: 
+  Artur Gramacki [aut, cre] (ORCID: <https://orcid.org/0000-0002-1610-9743>),
+  Jarosław Gramacki [ctb] (ORCID: <https://orcid.org/0000-0001-5032-1353>),
+  Piotr T. Różański [ctb] (ORCID: <https://orcid.org/0000-0002-0457-6731>)
+Authors@R: c(
+  person(
+    "Artur", "Gramacki", 
+    role = c("aut","cre"), 
+    comment = c(ORCID = "0000-0002-1610-9743"),
+    email = "a.gramacki@gmail.com"),
+  person(
+    "Jarosław", "Gramacki", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0001-5032-1353"),
+    email = "j.gramacki@gmail.com"),
+  person(
+    "Piotr T.", "Różański", 
+    role = c("ctb"), 
+    comment = c(ORCID = "0000-0002-0457-6731"),
+    email = "piotr@develancer.pl")    
+  )
+Maintainer: Artur Gramacki <a.gramacki@gmail.com>
+Description: Provides tools for analysing and decomposing time series data using the Matching Pursuit (MP) algorithm, a greedy signal decomposition technique that represents complex signals as a linear combination of simpler functions (called atoms) selected from a redundant dictionary. For more details see Mallat and Zhang (1993) <doi:10.1109/78.258082>, Pati et al. (1993) <doi:10.1109/ACSSC.1993.342465>, Elad (2010) <doi:10.1007/978-1-4419-7011-4> and Różański (2024) <doi:10.1145/3674832>.
+SystemRequirements: external tool (installed via empi.install() function. The package uses the implementation of the Matching Pursuit algorithm by Piotr Różański, available at https://github.com/develancer/empi) 
+Imports: 
+  edf, 
+  signal,
+  RSQLite,
+  DescTools,
+  imager,
+  raster,
+  graphics,
+  grDevices,
+  utils,
+  digest
+Suggests: 
+  knitr,
+  rmarkdown,
+  latex2exp,
+  remotes
+VignetteBuilder: knitr  
+Depends: R (>= 3.5.0)
+License:  GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.3
