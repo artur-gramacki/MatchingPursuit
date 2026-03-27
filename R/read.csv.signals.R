@@ -17,6 +17,13 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+#'
+#' # The first line of the file must contain two numbers:
+#' # a) the sampling rate in Hz
+#' # b) the signal length in seconds
+#' out <- read.csv(file, header = FALSE)
+#' head(out)
+#'
 #' signal <- read.csv.signals(file, col.names = "signal_1")
 #' head(signal$signal)
 #' signal$sampling.rate

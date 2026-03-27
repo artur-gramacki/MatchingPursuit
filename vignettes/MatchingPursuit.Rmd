@@ -126,6 +126,7 @@ Data must be stored in a data frame: rows represent samples for all channels, an
 
 ```{r signal, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+
 out <- read.csv(file, header = FALSE)
 head(out)
 
@@ -177,7 +178,7 @@ Below the plot, basic signal parameters are displayed, along with information ab
 Additionally, the energy of the input signal and the reconstructed signal (from the atoms) is calculated. The results show that 94.05% of the original signal's energy is "explained" by the generated atoms. Naturally, increasing the number of generated atoms will likely bring the energy of the reconstructed signal closer to 100%.
 
 ```{r sample1, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-# Reading a SQLite file where all the generated atom's parameters are stored.
+# Reading a SQLite file in which all generated atom parameters are stored.
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
 # Create time-frequency map based on MP atoms.
@@ -197,18 +198,14 @@ out <- empi2tf(
 
 ## Electroencephalogram (EEG) analysis
 
-In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package includes a dedicated function for reading files saved in EDF and EDF+ formats (European Data Format). You can also perform three different types of montages and apply filtering to the signals.
+In this section, we demonstrate how to analyze electroencephalography (EEG) signals using the Matching Pursuit algorithm. The package provides a dedicated function for reading files in EDF and EDF+ (European Data Format). It also supports three types of EEG montages and allows for signal filtering.
 
 ### Step 1 {.unnumbered}
 
-Reading an example EEG signal (EDF file). The signal is 10 seconds long and consists of 20 channels. The sampling rate is 256 Hz. The channels have standard names, which are displayed below.
+Reading an example EEG signal (EDF file). The signal is 10 seconds long and consists of 20 channels (19 plus a special channel called the annotation channel that does not contain EEG signal data). The sampling rate is 256 Hz for each channel with EEG data. The channels have standard names.
 
 ```{r eeg_edf_reading, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-
-# Extract signals from EDF file.
-out <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-signal <- out$signals
 
 # Read signal parameters and display them in a tabular form.
 read.edf.params(file)
@@ -225,10 +222,13 @@ Sometimes it is necessary to change the sampling frequency (increase — *upsamp
 out1 <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
 signal <- out1$signals
 sampling.rate <- out1$sampling.rate
+sampling.rate
 
 # Resampled signal
 out2 <- read.edf.signals(file, resampling = TRUE, f.new = 64,  from = 0, to = 10)
 signal.resampled <- out2$signals
+sampling.rate.resampled <- out2$sampling.rate
+sampling.rate.resampled
 ```
 
 ```{r sampling, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
@@ -292,7 +292,7 @@ head(bip.montage[, 1:7])
 
 ### Step 4 (usually required) {.unnumbered}
 
-EEG signals are rarely analyzed without prior filtering. Using the `filters.coeff()` function, you can define the filter parameters and then apply the filter to the signal. The filter parameters given below use typical values recommended in the literature.
+EEG signals are rarely analyzed without prior filtering. Using the `filters.coeff()` function, you can define the filter parameters and then apply the filter to the signal. The filter parameters listed below use typical values recommended in the literature for EEG signal analysis.
 
 ```{r filtering, include = TRUE, echo = TRUE, warning = FALSE}
 # Filter parameters that will be used (quite typical in filtering EEG signals).
@@ -308,8 +308,8 @@ bip.montage.filt <- bip.montage
 
 for (m in 1:ncol(bip.montage)) {
   bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])     # 50Hz notch filter
-  bip.montage.filt[, m] = signal::filtfilt(fc$low, bip.montage.filt[, m])  # Low pass IIR Butterworth
-  bip.montage.filt[, m] = signal::filtfilt(fc$high, bip.montage.filt[, m]) # High pass IIR Butterwoth
+  bip.montage.filt[, m] = signal::filtfilt(fc$lowpass, bip.montage.filt[, m])  # Low pass IIR Butterworth
+  bip.montage.filt[, m] = signal::filtfilt(fc$highpass, bip.montage.filt[, m]) # High pass IIR Butterwoth
 }
 ```
 
@@ -367,8 +367,9 @@ par(old.par)
 #   file.name = "EEG_bipolar_filtered.db"
 # ) 
 ```
+### Step 6 {.unnumbered}
 
-Generating the final time-frequency map for the selected channel (`r ch <- 1; colnames(bip.montage.filt)[ch]`). The canters of atoms (in the sense of time and frequency coordinates) are marked with white crosses. 
+Generating the final time-frequency map for the selected channel (`r ch <- 1; colnames(bip.montage.filt)[ch]`). The canters of atoms (in the sense of time and frequency coordinates) are now marked with white crosses. 
 
 Comparing the two signal waveforms under the T-F map, it can be seen that the original and reconstructed signals  differ only minimally.
 
@@ -387,8 +388,8 @@ out <- empi2tf(
   mode = "sqrt",
   freq.divide = 6,
   increase.factor= 4,
-  display.crosses = FALSE,
-  display.atom.numbers = TRUE,
+  display.crosses = TRUE,
+  display.atom.numbers = FALSE,
   out.mode = "plot"
 )
 ```
@@ -405,34 +406,34 @@ Using the `atom.params()` function, all atom parameters can be displayed in a ta
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 atom.params(file)
 ```
-In this example, note that the `EEG_bipolar_filtered.db` file contains 18 channels. To keep the output concise, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms per channel = 50, number of channels = 18, 50 × 18 = 900).  
+In the next example, note that the `EEG_bipolar_filtered.db` file contains info on 18 channels. To keep the output concise, only the first 5 and last 5 atoms are displayed below. The total number of atoms generated is 900 (number of atoms per channel = 50, number of channels = 18, so 50 × 18 = 900).  
 
 **Important:** It should be emphasized that, in general, the number of atoms generated for each channel does not need to be the same. However, in our example, the number of atoms in each channel is exactly the same.
 
 ```{r eeg_atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 ap <- atom.params(file)
-head(ap, 6)
-tail(ap, 6)
+head(ap, 5)
+tail(ap, 5)
 ```
 
 ### `sig2bin()` {.unnumbered}
 
-The `sig2bin()` function can be used to convert input data (in plain text file format) to a binary file. The binary data consist of floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, the samples are arranged such that first come all channels at `t = 0`, then all channels at `t = Δt`, and so on. In other words, the signal should be written in column-major order (rows = channels, columns = samples).
+The `sig2bin()` function can be used to convert input data (in plain text file format) to a binary file. The binary data consist of floating-point values in the byte order of the current machine (no byte-order conversion is performed). For multichannel signals, the samples are arranged such that first come all channels at `t = 0`, then all channels at `t = Δt`, and so on. 
 
 **Note:** Users do not work directly with `.bin` files. Binary files are used only internally by the `empi.execute()` function. The external EMPI program executed within this function requires binary data as input. Additionally, the ability to convert text files to binary form can be useful for those who wish to use EMPI independently of the R environment.
 
 ```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
-file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 out <- read.csv.signals(file)
 
 signal.bin <- sig2bin(data = out$signal, write.to.file = FALSE)
 
-# First 4 elements of the signal.
+# We have 3 channels. The first 4 time points.
 head(out$signal, 4)
 
-# The same first 4 elements of the signal in binary (float, 4 bytes).
-head(signal.bin, 16)
+# The same elements of the signal in binary (floats are stored in 4 bytes).
+head(signal.bin, 48)
 ```
 
 ### `read.empi.db.file()` {.unnumbered}
@@ -506,13 +507,13 @@ par(mai=c(0.2, 0.1, 0.2, 0.1))
 
 ylim <- c(-2, 2)
 plot(t, signal,   ylim = ylim, xaxt = "s", yaxt = "n", bty = "o", col = "blue",  type = "l", xlab = "", ylab = "", main = "The sum of the below functions")
-plot(t, g1$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 50Hz, mean = 2, sigma = 1")
-plot(t, g2$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 25Hz, mean = 8, sigma = 1.5")
-plot(t, g3$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 30Hz, mean = 2, sigma = 2")
-plot(t, g4$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 15Hz, mean = 7, sigma = 0.5")
-plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Unit impulse")
-plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Sine wave: 3 Hz")
-plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Linear-frequency chirp (0Hz-50Hz)")
+plot(t, g1$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 50Hz, mean = 2, sigma = 1, phase = 0")
+plot(t, g2$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 25Hz, mean = 8, sigma = 1.5, phase = 0")
+plot(t, g3$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 30Hz, mean = 2, sigma = 2, phase = 0")
+plot(t, g4$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 15Hz, mean = 7, sigma = 0.5, phase = 0")
+plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "unit impulse")
+plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "sine wave: 3 Hz")
+plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "linear-frequency chirp (0Hz - 50Hz)")
 ```
 
 In the T–F map, all signal components—except for the chirp—are represented clearly and accurately (i.e., blobs for Gabor functions, a horizontal line for the sine wave, and a vertical line for the unit impulse). However, the chirp signal is decomposed into several separate blobs. This behavior arises from the discrete nature of the atom dictionary used in the MP algorithm, which prevents a continuous representation of a signal with smoothly varying frequency. This limitation (and, in some respects, a drawback) of the MP algorithm should be taken into account.

@@ -447,15 +447,15 @@ empi2tf <- function(
   o <- round(sum(original.signal^2), 2)
   r <- round(sum(reconstruction^2), 2)
 
-  message("Channel: ", channel)
+  message("Channel #: ", channel)
   message("Number of atoms: ", length(rows))
   message("Sampling rate: ", f)
   message("Epoch size (in points): ", epochSize)
   message("Signal length (in seconds): ", s)
 
-  message("\nEnergy of the original signal:      ",o)
-  message("Signal energy after reconstruction: ",r)
-  message("reconstruction / original %:        ", round(r / o * 100, digits = 2))
+  message("\nEnergy of the original signal:       ",o)
+  message("nEnergy of the reconstructed signal: ",r)
+  message("reconstruction / original %:         ", round(r / o * 100, digits = 2))
 
   # Restore
   par(old.par)

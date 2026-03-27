@@ -50,8 +50,8 @@
 #' print(fc)
 #'
 #' signal::freqz(fc$notch, Fs = sampling.rate)
-#' signal::freqz(fc$low, Fs = sampling.rate)
-#' signal::freqz(fc$high, Fs = sampling.rate)
+#' signal::freqz(fc$lowpass, Fs = sampling.rate)
+#' signal::freqz(fc$highpass, Fs = sampling.rate)
 #' signal::freqz(fc$bandpass, Fs = sampling.rate)
 #' signal::freqz(fc$bandstop, Fs = sampling.rate)
 #'
@@ -61,8 +61,8 @@
 #'
 #' for (m in 1:ncol(signal)) {
 #'   signal.filt[, m] = signal::filtfilt(fc$notch, signal.filt[, m]); # 50Hz notch filter
-#'   signal.filt[, m] = signal::filtfilt(fc$low, signal.filt[, m]); # Low pass IIR Butterworth
-#'   signal.filt[, m] = signal::filtfilt(fc$high, signal.filt[, m]); # High pass IIR Butterwoth
+#'   signal.filt[, m] = signal::filtfilt(fc$lowpass, signal.filt[, m]); # Low pass IIR Butterworth
+#'   signal.filt[, m] = signal::filtfilt(fc$highpass, signal.filt[, m]); # High pass IIR Butterwoth
 #' }
 #'
 #' plot(signal.filt[, 1], type = "l", panel.first = grid())
@@ -79,10 +79,10 @@ filters.coeff <- function (
   notch <- butter(notch.order, notch / (fs / 2), "stop")
 
   # Low pass IIR Butterworth, cutoff at 'lowpass' Hz
-  low <- butter(lowpass.order, lowpass / (fs / 2), "low")
+  lowpass <- butter(lowpass.order, lowpass / (fs / 2), "low")
 
   # High pass IIR Butterwoth, cutoff at 'highpass' Hz
-  high <- butter(highpass.order, highpass / (fs / 2), "high")
+  highpass <- butter(highpass.order, highpass / (fs / 2), "high")
 
   # Bandpass filter IIR Butterworth
   bandpass <- butter(bandpass.order, bandpass / (fs / 2), type = "pass")
@@ -92,8 +92,8 @@ filters.coeff <- function (
 
   list(
     notch = notch,
-    low = low,
-    high = high,
+    lowpass = lowpass,
+    highpass = highpass,
     bandpass = bandpass,
     bandstop = bandstop)
 }
