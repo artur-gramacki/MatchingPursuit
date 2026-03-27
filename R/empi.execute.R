@@ -50,7 +50,7 @@
 #'
 empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, file.dest = NULL, file.name = NULL) {
 
-  empi.path <- empi.find()
+  empi.path <- empi.check()
 
   sig <- signal[[1]]
   sampling.rate <- signal[[2]]

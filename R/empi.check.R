@@ -12,10 +12,10 @@
 #'
 #' @examples
 #' ## Not run:
-#' empi.find()
+#' empi.check()
 #' ## End(Not run)
 #'
-empi.find <- function() {
+empi.check <- function() {
   cache_dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
   cache_dir <- normalizePath(cache_dir, winslash = "/")
 

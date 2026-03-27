@@ -2,8 +2,8 @@
 
 export(atom.params)
 export(eeg.montage)
+export(empi.check)
 export(empi.execute)
-export(empi.find)
 export(empi.install)
 export(empi.locate)
 export(empi2tf)

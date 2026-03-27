@@ -70,7 +70,7 @@ generating this vignette.
 
 User can check whether the EMPI program is installed; if not, an error message is displayed indicating that installation is required. This chunk is also commented out to prevent interruption of vignette generation.
 ```{r empi_find, include = TRUE, echo = TRUE}
-# empi.find()
+# empi.check()
 ```
 
 ## The purpose of the package
