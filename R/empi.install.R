@@ -39,7 +39,7 @@ empi.install <- function() {
     }
   }
 
-  message("Downloading 'EMPI' for ", sys, " ", mach, "...")
+  message("Downloading 'EMPI' (third-party software) for ", sys, " ", mach, "...")
 
   download.file(url = out$url,  destfile = archive, mode = "wb")
   check.checksum(archive)

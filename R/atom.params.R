@@ -24,15 +24,15 @@
 atom.params <- function(db.file) {
   out <- read.empi.db.file(db.file)
 
-  atoms <- cbind(
-    out$atoms$channel_id,
-    out$atoms$atom_number,
-    out$atoms$amplitude,
-    out$atoms$energy,
-    out$atoms$frequency,
-    out$atoms$phase,
-    out$atoms$scale,
-    out$atoms$position
+  atoms <- data.frame(
+    channel_id = out$atoms$channel_id,
+    atom_number = out$atoms$atom_number,
+    amplitude = out$atoms$amplitude,
+    energy = out$atoms$energy,
+    frequency = out$atoms$frequency,
+    phase = out$atoms$phase,
+    scale = out$atoms$scale,
+    position = out$atoms$position
   )
 
   atoms <- round(as.data.frame(atoms), 3)
