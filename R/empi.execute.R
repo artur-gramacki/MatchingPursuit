@@ -52,6 +52,14 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
 
   empi.path <- empi.check()
 
+  if(is.null(empi.path)) {
+    stop(
+      "The 'EMPI' tool is not available. ",
+      "Run empi.install() to install it.",
+      call. = FALSE
+    )
+  }
+
   sig <- signal[[1]]
   sampling.rate <- signal[[2]]
 
@@ -62,6 +70,9 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
   file.bin <- tempfile(fileext = ".bin")
   file.db <- tempfile(fileext = ".db")
 
+  # cleanup if error
+  on.exit(file.remove(file.bin, file.db), add = TRUE)
+
   writeBin(signal.raw, file.bin)
 
   if (is.null(empi.options)) {
@@ -71,11 +82,11 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
   }
 
   command <- paste(
-    empi.path,
+    shQuote(empi.path),
     " ",
-    file.bin,
+    shQuote(file.bin),
     " ",
-    file.db,
+    shQuote(file.db),
     " ",
     "-f ",
     sampling.rate,
@@ -87,25 +98,28 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
     options,
     sep = "")
 
-  system(command)
+  status <- system(command)
+
+  if (status != 0) {
+    stop("EMPI execution failed.", call. = FALSE)
+  }
 
   if (write.to.file) {
 
     if (is.null(file.dest)) {
-      dest.dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
-      dest.dir <- normalizePath(dest.dir, winslash = "/")
+      dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
     } else {
       dest.dir <- file.dest
     }
 
     if (is.null(file.name)) {
-      temp <- paste(dest.dir, "/empi.db", sep = "")
+      temp <- file.path(dest.dir, "empi.db")
       file.copy(file.db, temp, overwrite = TRUE)
       message("Results of the Matching Pursuit decomposition were saved in the '", temp, "' file (in SQLite format).")
     } else {
-      temp <- paste(dest.dir, "/", file.name, sep = "")
+      temp <- file.path(dest.dir, file.name)
       file.copy(file.db, temp, overwrite = TRUE)
-      message("Results of the Matching Pursuit decomposition were saved in the '", temp, "' file (in SQLite format).", sep = "")
+      message("Results of the Matching Pursuit decomposition were saved in the '", temp, "' file (in SQLite format).")
     }
   }
 

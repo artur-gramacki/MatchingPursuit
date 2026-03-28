@@ -19,8 +19,7 @@ empi.install <- function() {
 
   out <-  empi.locate()
 
-  dest.dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
-  dest.dir <- normalizePath(dest.dir, winslash = "/")
+  dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
   dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
   archive <- paste(dest.dir, "/", out$fname, sep = "")
 

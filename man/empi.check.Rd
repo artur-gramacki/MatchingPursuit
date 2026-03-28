@@ -16,8 +16,6 @@ cache directory. This function checks whether the EMPI program is still there (t
 free access to the cache directory and can, for example, delete it at any time).
 }
 \examples{
-## Not run:
 empi.check()
-## End(Not run)
 
 }

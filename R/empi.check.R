@@ -11,13 +11,10 @@
 #' @export
 #'
 #' @examples
-#' ## Not run:
 #' empi.check()
-#' ## End(Not run)
 #'
 empi.check <- function() {
-  cache_dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
-  cache_dir <- normalizePath(cache_dir, winslash = "/")
+  cache_dir <- tools::R_user_dir("MatchingPursuit", "cache")
 
   sys <- Sys.info()[["sysname"]]
 
@@ -31,9 +28,11 @@ empi.check <- function() {
       return(exec.path)
   }
 
-  stop(
-    "\n\nThe 'EMPI' tool is not available.\n",
-    "Run empi.install() to install it.\n\n"
-  )
+  # Moved this stop() to empi.execute()
+  # stop(
+  #   "The 'EMPI' tool is not available. ",
+  #   "Run empi.install() to install it."
+  # )
+  return(NULL)
 }
 

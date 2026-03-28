@@ -42,7 +42,7 @@
 #'
 sig2bin <- function(data, write.to.file = FALSE, file.name = NULL) {
 
-  dest.dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
+  dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
 
   signal.raw = raw()
   for (m in 1:nrow(data)) {

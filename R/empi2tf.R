@@ -147,8 +147,7 @@ empi2tf <- function(
 
   if (out.mode != "plot") {
     if (is.null(path)) {
-      dest.dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"))
-      dest.dir <- normalizePath(dest.dir, winslash = "/")
+      dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
       file.name <- paste(dest.dir, "/TFmap", ext, sep = "")
     } else {
       file.name <- paste(path, "/TFmap", ext, sep = "")
