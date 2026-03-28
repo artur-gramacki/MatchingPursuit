@@ -11,9 +11,9 @@
 #' @export
 #'
 #' @examples
-#' ## Not run:
-#' empi.install()
-#' ## End(Not run)
+#' if (interactive()) {
+#'   empi.install()
+#' }
 #'
 empi.install <- function() {
 

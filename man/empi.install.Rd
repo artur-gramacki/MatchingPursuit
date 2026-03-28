@@ -15,8 +15,8 @@ Downloads \strong{Enhanced Matching Pursuit Implementation} external program (or
 and stores it in the cache directory.
 }
 \examples{
-## Not run:
-empi.install()
-## End(Not run)
+if (interactive()) {
+  empi.install()
+}
 
 }
