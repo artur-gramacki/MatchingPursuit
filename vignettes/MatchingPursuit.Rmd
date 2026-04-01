@@ -36,7 +36,7 @@ knitr::opts_chunk$set(collapse = TRUE)
 ```
 
 ```{r old_par, include = FALSE}
-old.par <- par("mfrow", "mai")
+old.par <- par("mfrow", "mai", "pty")
 ```
 
 ## R version and generation time
@@ -69,9 +69,9 @@ function cannot be executed while generating this vignette.
 # empi.install()
 ```
 
-User can check whether the EMPI program is installed; if not, an error message is displayed indicating that installation is required. This chunk is also commented out to prevent interruption of vignette generation.
+User can check whether the EMPI program is installed; if not, an error message is displayed indicating that installation is required. 
 ```{r empi_find, include = TRUE, echo = TRUE}
-# empi.check()
+empi.check()
 ```
 
 ## The purpose of the package
@@ -110,17 +110,18 @@ signal <- data.frame(x = x1 + x2 + x3 + x4 + x5 + x6 + x7)
 ```{r 7_non_stationary_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 range <- range(signal)
 
-par(mfrow = c(8, 1), pty = "m")
-par(mai = c(0.2, 0.4, 0.2, 0.1))
+par(mfrow = c(8, 1), pty = "m", mai = c(0.2, 0.4, 0.2, 0.1))
 
 plot(t, signal$x, type = "l", col = "blue", main = "", xlab = "", ylab = "")
-plot(t, x1, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "linear chirp")
-plot(t, x2, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "nonlinear chirp")
+plot(t, x1, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Linear chirp")
+plot(t, x2, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Nonlinear chirp")
 plot(t, x3, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "AM")
 plot(t, x4, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "FM")
-plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "decreasing amplitude")
-plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "frequency modulated sine wave")
-plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "increasing amplitude")
+plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Decreasing amplitude")
+plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Frequency modulated sine wave")
+plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Increasing amplitude")
+
+par(old.par)
 ```
 
 Data must be stored in a data frame: rows represent samples for all channels, and columns represent channels. Our first demo dataset consists of only one channel (one column). The `read.csv.signals()` function checks whether the data has the correct structure. The first line of the file must contain two numbers: the sampling rate in Hz (`freq`) and the signal length in seconds (`sec`). This allows verification that the file actually contains `freq*sec` samples.
@@ -233,11 +234,7 @@ sampling.rate.resampled
 ```
 
 ```{r sampling, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-
-old.par <- par("mfrow", "mai")
-
-par(mfrow = c(2, 1), pty = "m")
-par(mai = c(0.8, 0.5, 0.5, 0.5))
+par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
@@ -317,11 +314,8 @@ for (m in 1:ncol(bip.montage)) {
 For the selected channel (after the bipolar montage, it is named `r ch <- 1; colnames(bip.montage.filt)[ch]`), both the original and filtered signals are displayed. The effect of filtering is clearly beneficial, as noise—typically without diagnostic significance—has been removed from the signal.
 
 ```{r no_filtering_and_filtering_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-old.par <- par("mfrow", "mai")
-
 ch <- 1
-par(mfrow = c(2, 1), pty = "m")
-par(mai = c(0.8, 0.5, 0.5, 0.5))
+par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
@@ -449,8 +443,6 @@ str(out)
 ```
 
 ```{r display_original_and_reconstrction, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-old.par <- par("mfrow", "mai")
-
 n.channnels <- ncol(out$original.signal)
 original.signal <- out$original.signal
 reconstruction <- out$reconstruction
@@ -459,8 +451,7 @@ f <- out$f
 len <- length(original.signal[, 1])
 lab <- seq(t[1], t[len] + 1 / f, length.out = 11)
 
-par(mfrow = c(2, 1), pty = "m")
-par(mai = c(0.8, 0.5, 0.5, 0.5))
+par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 plot(
   original.signal[,1], type = "l", col = "blue",
@@ -503,8 +494,7 @@ signal <- g1$gabor + g2$gabor + g3$gabor + g4$gabor + imp  + chirp + sine
 ```
 
 ```{r chirp_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
-par(mfcol=c(8, 1), pty="m") #bottom, left, top, right
-par(mai=c(0.2, 0.1, 0.2, 0.1))
+par(mfcol = c(8, 1), pty = "m", mai = c(0.2, 0.1, 0.2, 0.1)) 
 
 ylim <- c(-2, 2)
 plot(t, signal,   ylim = ylim, xaxt = "s", yaxt = "n", bty = "o", col = "blue",  type = "l", xlab = "", ylab = "", main = "The sum of the below functions")
@@ -512,9 +502,11 @@ plot(t, g1$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown",
 plot(t, g2$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 25Hz, mean = 8, sigma = 1.5, phase = 0")
 plot(t, g3$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 30Hz, mean = 2, sigma = 2, phase = 0")
 plot(t, g4$gabor, ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Gabor: f = 15Hz, mean = 7, sigma = 0.5, phase = 0")
-plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "unit impulse")
-plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "sine wave: 3 Hz")
-plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "linear-frequency chirp (0Hz - 50Hz)")
+plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Unit impulse")
+plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Sine wave: 3 Hz")
+plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Linear-frequency chirp (0Hz - 50Hz)")
+
+par(old.par)
 ```
 
 In the T–F map, all signal components—except for the chirp—are represented clearly and accurately (i.e., blobs for Gabor functions, a horizontal line for the sine wave, and a vertical line for the unit impulse). However, the chirp signal is decomposed into several separate blobs. This behavior arises from the discrete nature of the atom dictionary used in the MP algorithm, which prevents a continuous representation of a signal with smoothly varying frequency. This limitation (and, in some respects, a drawback) of the MP algorithm should be taken into account.
@@ -567,8 +559,7 @@ N <- 512
 fs <- 256
 # normalization = T --> signal's norm = 1
 
-par(mfrow = c(2,2), pty="m")
-par(mai=c(0.4, 0.4, 0.3, 0.2))
+par(mfrow = c(2,2), pty = "m", mai = c(0.4, 0.4, 0.3, 0.2))
 
 n <- 4
 
@@ -607,6 +598,8 @@ for (i in c(1:n)) {
   
   s <- s + gb$gabor
 }
+
+par(old.par)
 ```
 
 In the MP algorithm, the decomposition process is iterative. At each step, the algorithm selects an atom $g_{\gamma_n}$ from the dictionary $D$ that best matches the current residual signal $R$.

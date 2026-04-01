@@ -52,11 +52,11 @@ sig2bin <- function(data, write.to.file = FALSE, file.name = NULL) {
 
   if (write.to.file) {
     if (is.null(file.name)) {
-      temp <- paste(dest.dir, "/signal.bin", sep = "")
+      temp <- file.path(dest.dir, "signal.bin")
       writeBin(signal.raw, temp)
       message("Input signals were also saved in the '", temp, "' file.")
     } else {
-      temp <- paste(dest.dir, "/", file.name, sep = "")
+      temp <- file.path(dest.dir, file.name)
       writeBin(signal.raw, temp)
       message("Input signals were also saved in the '", temp, "' file.")
     }

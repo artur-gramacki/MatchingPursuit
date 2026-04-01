@@ -54,14 +54,7 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
   empi.path <- empi.check()
 
   if(is.null(empi.path)) {
-    # stop() fails CRAN test, so changed to message()
-    # stop(
-    #   "The 'EMPI' tool is not available. ",
-    #   "Run empi.install() to install it.",
-    #   call. = FALSE
-    # )
-    message("The 'EMPI' tool is not available. ", "Run empi.install() to install it.")
-    return(NULL)
+    return()
   }
 
   sig <- signal[[1]]
@@ -128,7 +121,7 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
   }
 
   out <- read.empi.db.file(file.db)
-  file.remove(file.bin, file.db)
+  # file.remove(file.bin, file.db)
 
   return(out)
 }

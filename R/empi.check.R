@@ -28,11 +28,6 @@ empi.check <- function() {
       return(exec.path)
   }
 
-  # Moved this stop() to empi.execute()
-  # stop(
-  #   "The 'EMPI' tool is not available. ",
-  #   "Run empi.install() to install it."
-  # )
-  return(NULL)
+  message("The EMPI tool is not available. Run empi.install() to install it.")
 }
 

@@ -16,17 +16,17 @@ empi.locate <- function() {
   mach <- Sys.info()[["machine"]]
 
   if (sys == "Windows") {
-    url <- "https://drive.google.com/uc?export=download&id=1L1ZEBMW0dcb1-jCC3kur8VceijWogCJm"
+    url <- "https://github.com/develancer/empi/releases/download/1.0.3/empi-1.0.3-windows-x64.zip"
     fname <- "empi-1.0.3-windows-x64.zip"
   } else if (sys == "Linux") {
-    url <- "https://drive.google.com/uc?export=download&id=1_WPNnEeRGGzDQou763aWlQs3P1LBqzJk"
+    url <- "https://github.com/develancer/empi/releases/download/1.0.3/empi-1.0.3-linux-x64.zip"
     fname <- "empi-1.0.3-linux-x64.zip"
   } else if (sys == "Darwin") {
     if (mach == "arm64") {
-      url <- "https://drive.google.com/uc?export=download&id=1VAelJfQDghnKGyfiMCo5--uK3fIGF4WO"
+      url <- "https://github.com/develancer/empi/releases/download/1.0.3/empi-1.0.3-macos-arm64.zip"
       fname <- "empi-1.0.3-macos-arm64.zip"
     } else if (mach  == "x86_64") {
-      url <- "https://drive.google.com/uc?export=download&id=1MKP7INoPglKvyLGPkkolFn0_juaspPy1"
+      url <- "https://github.com/develancer/empi/releases/download/1.0.3/empi-1.0.3-macos-x64.zip"
       fname <- "empi-1.0.3-macos-x64.zip"
     }
   } else {

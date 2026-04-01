@@ -112,7 +112,7 @@ eeg.montage <- function(
       ch2 <- bipolar.pairs[[i]][2]
 
       if (!(ch1 %in% colnames(eeg.data)) || !(ch2 %in% colnames(eeg.data))) {
-        stop(paste("Incorrect pair:", ch1, ch2))
+        stop(paste("Incorrect pair: ", ch1, " ", ch2, sep = ""))
       }
 
       result[, i] <- eeg.data[, ch1] - eeg.data[, ch2]

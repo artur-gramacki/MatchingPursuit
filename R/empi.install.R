@@ -21,7 +21,7 @@ empi.install <- function() {
 
   dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
   dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
-  archive <- paste(dest.dir, "/", out$fname, sep = "")
+  archive <- file.path(dest.dir, out$fname)
 
   sys <- Sys.info()[["sysname"]]
   mach <- Sys.info()[["machine"]]
@@ -39,12 +39,12 @@ empi.install <- function() {
     }
   }
 
-  message("Downloading 'EMPI' (third-party software) for ", sys, " ", mach, "...")
+  message("Downloading EMPI (third-party software) for ", sys, " ", mach, "...")
 
   download.file(url = out$url,  destfile = archive, mode = "wb")
   check.checksum(archive)
 
-  message("Extracting 'EMPI' to '", dest.dir, "' ...")
+  message("Extracting EMPI to '", dest.dir, "' ...")
   unzip(zipfile = archive, exdir = dest.dir, junkpaths = TRUE)
 
   # chmod na Unix
@@ -53,7 +53,7 @@ empi.install <- function() {
     Sys.chmod(exec, "0755")
   }
 
-  message("Installation complete. 'EMPI' program is in '", dest.dir, "'")
+  message("Installation complete. EMPI program is in '", dest.dir, "'")
 
 }
 

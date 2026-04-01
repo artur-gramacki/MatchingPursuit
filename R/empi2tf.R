@@ -132,6 +132,7 @@ empi2tf <- function(
 
   # Store
   old.par <- par("mfrow", "pty", "mai", "mgp", "las", "xaxs", "yaxs")
+  on.exit(par(old.par))
 
   if (out.mode != "plot" & out.mode != "file" & out.mode != "RData" & out.mode != "RData2")
     stop("Incorrect value for 'out.mode' parameter.'")
@@ -148,9 +149,9 @@ empi2tf <- function(
   if (out.mode != "plot") {
     if (is.null(path)) {
       dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
-      file.name <- paste(dest.dir, "/TFmap", ext, sep = "")
+      file.name <- file.path(dest.dir, paste0("TFmap", ext))
     } else {
-      file.name <- paste(path, "/TFmap", ext, sep = "")
+      file.name <- file.path(path, paste0("TFmap", ext))
     }
   }
 
@@ -225,8 +226,7 @@ empi2tf <- function(
 
   # Empty chart on which the ellipses will appear
   if (draw.ellipses) {
-    par(mfrow = c(1, 1), pty = "m")
-    par(mai = c(0.9, 0.9, 0.2, 0.4))
+    par(mfrow = c(1, 1), pty = "m", mai = c(0.9, 0.9, 0.2, 0.4))
     plot(0, xlim = c(0, tail(t, 1)), ylim = c(0, tail(y, 1)), type = "n", las = 1,
          xlab = "Time [s]", ylab = "Frequency [Hz]", yaxs = "i", xaxs = "i")
   }
@@ -288,11 +288,9 @@ empi2tf <- function(
     pdf("Atoms.pdf", width = 15, height = 30)
 
     nn <- num.atoms
-    par(mfrow = c(nn, 1), pty = "m")
     # mai: c(bottom, left, top, right)
-    par(pty = "m", mai = c(0.05, 4, 0.0, 0.1))
-    par(mgp = c(0, 0, 0))
-    par(las = 1)
+    par(mfrow = c(nn, 1), pty = "m", mai = c(0.05, 4, 0.0, 0.1), mgp = c(0, 0, 0), las = 1)
+
     for (m in 1:num.atoms) {
       if (m %% 2 == 0) cc = "blue" else cc = "red"
       if (m == 1) {
@@ -327,12 +325,9 @@ empi2tf <- function(
       grid.matrix <- cbind(c(1, 1, 1, 2, 3))
       layout(grid.matrix, widths = c(1, 1, 1), heights = c(2, 1, 1))
       # mai: c(bottom, left, top, right)
-      par(pty = "m", mai = c(0.4, 0.7, 0.2, 0.4))
-      par(xaxs = "i", yaxs = "i")
+      par(pty = "m", mai = c(0.4, 0.7, 0.2, 0.4), xaxs = "i", yaxs = "i")
     } else {
-      par(mfrow = c(1, 1), pty = "m")
-      par(mai = c(0.9, 0.9, 0.2, 0.4))
-      par(xaxs = "i", yaxs = "i")
+      par(mfrow = c(1, 1), pty = "m", mai = c(0.9, 0.9, 0.2, 0.4), xaxs = "i", yaxs = "i")
     }
 
     # Drawing with graphics::image() is very slow, especially for large matrices.
@@ -416,7 +411,7 @@ empi2tf <- function(
     }
 
     # Remove extension
-    file.name <- paste(tools::file_path_sans_ext(file.name), ".RData", sep = "")
+    file.name <- file.path(paste0(tools::file_path_sans_ext(file.name), ".RData"))
     save(tf.map.resampled, file = file.name)
     message("RData file saved in '", file.name, "'")
   }
@@ -438,7 +433,7 @@ empi2tf <- function(
     }
 
     # Remove extension
-    file.name <- paste(tools::file_path_sans_ext(file.name), ".RData", sep = "")
+    file.name <- file.path(paste0(tools::file_path_sans_ext(file.name), ".RData"))
     save(tf.map.resampled, file = file.name)
     message("RData file saved in '", file.name, "'")
   } # if (out.mode == "RData2")
