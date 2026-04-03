@@ -189,7 +189,7 @@ out <- empi2tf(
   channel = 1,
   mode = "sqrt",
   freq.divide = 4,
-  increase.factor= 4,
+  increase.factor = 4,
   display.crosses = FALSE,
   display.atom.numbers = TRUE,
   out.mode = "plot"
@@ -358,7 +358,7 @@ par(old.par)
 #   signal = sig,
 #   empi.options = NULL,
 #   write.to.file = TRUE,
-#   file.dest = NULL,
+#   path = NULL,
 #   file.name = "EEG_bipolar_filtered.db"
 # ) 
 ```

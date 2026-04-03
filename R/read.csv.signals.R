@@ -39,7 +39,7 @@ read.csv.signals <- function(file, col.names = NULL) {
   sr <- suppressWarnings(as.numeric(items[1]))
   sl <- suppressWarnings(as.numeric(items[2]))
 
-  if (is.na(sr) | is.na(sl))
+  if (is.na(sr) || is.na(sl))
     stop("The first line in the file must contain 2 numbers, the first is the sampling rate, the second is the signal length in seconds.")
 
   signal <- read.table(file, skip = 1, header = FALSE)

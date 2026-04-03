@@ -20,16 +20,16 @@
 #' \code{empi.install()} function.
 #'
 #' @param  write.to.file If \code{TRUE}, a SQLite database file will be created
-#' and saved in the \code{file.dest} directory or, (if \code{file.dest=NULL}), in the
+#' and saved in the \code{path} directory or, (if \code{path=NULL}), in the
 #' cache directory. This file stores the results of signal decomposition using the MP algorithm.
 #'
-#' @param file.dest Directory in which to save the SQLite database file.
-#' If \code{file.dest=NULL}, the file will be saved in the cache directory.
+#' @param path Directory in which to save the SQLite database file.
+#' If it is \code{NULL}, the file will be saved in the cache directory.
 #'
 #' @param file.name The name of the file to generate if \code{write.to.file=TRUE}.
 #'
 #' @return Results of signal decomposition using the MP algorithm. If \code{write.to.file=TRUE}
-#' is specified, the results are also written to a SQLite file on disk in the \code{file.dest}
+#' is specified, the results are also written to a SQLite file on disk in the \code{path}
 #' directory.
 #'
 #' @export
@@ -39,17 +39,16 @@
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read.csv.signals(file)
 #'
-#'
 #' empi.out <- empi.execute (
 #'   signal = signal,
 #'   empi.options = NULL,
 #'   write.to.file = FALSE,
-#'   file.dest = NULL,
+#'   path = NULL,
 #'   file.name = NULL
 #' )
 #' ## End(Not run)
 #'
-empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, file.dest = NULL, file.name = NULL) {
+empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, path = NULL, file.name = NULL) {
 
   empi.path <- empi.check()
 
@@ -57,8 +56,8 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
     return()
   }
 
-  sig <- signal[[1]]
-  sampling.rate <- signal[[2]]
+  sig <- signal$signal
+  sampling.rate <- signal$sampling.rate
 
   n.channels <- ncol(sig)
 
@@ -103,25 +102,31 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, fil
 
   if (write.to.file) {
 
-    if (is.null(file.dest)) {
+    if (is.null(path)) {
       dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
+      dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
     } else {
-      dest.dir <- file.dest
+      dest.dir <- path
+      if (!dir.exists(dest.dir)) {
+        ok <- dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
+        if (!ok && !dir.exists(path)) {
+          stop("Cannot create directory '", dest.dir, "'.")
+        }
+      }
     }
 
     if (is.null(file.name)) {
       temp <- file.path(dest.dir, "empi.db")
       file.copy(file.db, temp, overwrite = TRUE)
-      message("Results of the Matching Pursuit decomposition were saved in the '", temp, "' file (in SQLite format).")
+      message("Results of the Matching Pursuit decomposition saved to '", temp, "'.")
     } else {
       temp <- file.path(dest.dir, file.name)
       file.copy(file.db, temp, overwrite = TRUE)
-      message("Results of the Matching Pursuit decomposition were saved in the '", temp, "' file (in SQLite format).")
+      message("Results of the Matching Pursuit decomposition saved to '", temp, "'.")
     }
   }
 
   out <- read.empi.db.file(file.db)
-  # file.remove(file.bin, file.db)
 
   return(out)
 }

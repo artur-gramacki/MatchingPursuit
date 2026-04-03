@@ -52,7 +52,6 @@ sigs1  <- read.edf.signals(file, resampling = FALSE)
 lapply(sigs1, class)
 sigs1$sampling.rate
 
-# Note that the last column (t) changes after resampling.
 sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 
 lapply(sigs2, class)

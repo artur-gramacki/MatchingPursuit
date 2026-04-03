@@ -57,17 +57,22 @@
 #'      (as R's matrix), resampling is performed using the function using \code{raster::resample()} function.
 #'    }
 #'
-#' @param path Path where \code{png} or \code{RData} files will be written. If \code{NULL},
+#' @param path Path where \code{png}, \code{RData} or \code{pdf} files will be written. If \code{NULL},
 #' files will be written to the cache directory.
+#'
+#' @param file.name Name of the \code{png} file (if \code{out.mode="file}) or name of the \code{RData}
+#' file (if \code{out.mode="RData"} or \code{out.mode="RData2})
 #'
 #' @param size \code{png} file size in pixels (if \code{out.mode="file"}) or size of the T-F matrix
 #' (if \code{out.mode="RData"} of \code{out.mode="RData2"}).
 #'
 #' @param draw.ellipses Only for testing. User can set it to \code{TRUE} to see the effect.
+#' Works properly only if \code{out.mode="plot"}.
 #'
 #' @param plot.signals Whether the original and reconstructed signals should also be displayed.
 #'
-#' @param plot.atoms If \code{TRUE}, plot all atoms into \code{Atoms.pdf} file.
+#' @param write.atoms If \code{TRUE}, writes all atom plots into \code{Atoms.pdf} file
+#' (to the cache directory or user specified one - depending on \code{path} variable)
 #'
 #' @return Depending on the \code{out.mode} parameter the function returns:
 #'    \itemize{
@@ -125,33 +130,61 @@ empi2tf <- function(
     rev = TRUE,
     out.mode = "plot",
     path = NULL,
+    file.name = NULL,
     size = c(512, 512),
     draw.ellipses = FALSE,
     plot.signals = TRUE,
-    plot.atoms = FALSE) {
+    write.atoms = FALSE) {
 
   # Store
   old.par <- par("mfrow", "pty", "mai", "mgp", "las", "xaxs", "yaxs")
   on.exit(par(old.par))
 
-  if (out.mode != "plot" & out.mode != "file" & out.mode != "RData" & out.mode != "RData2")
+  if (out.mode != "plot" && out.mode != "file" && out.mode != "RData" && out.mode != "RData2")
     stop("Incorrect value for 'out.mode' parameter.'")
 
-  if (is.null(db.file) & is.null(db.list))
+  if (is.null(db.file) && is.null(db.list))
     stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
 
-  if (!is.null(db.file) & !is.null(db.list))
+  if (!is.null(db.file) && !is.null(db.list))
     stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
 
-  if  (out.mode == "file") ext <- ".png"
-  if  (out.mode == "RData" | out.mode == "RData2") ext <- ".RData"
+  if (is.null(file.name)) {
+    if  (out.mode == "file") fn <- "TFmap.png"
+    if  (out.mode == "RData" || out.mode == "RData2") fn <- "TFmap.RData"
+  } else {
+    fn <- file.name
+  }
 
   if (out.mode != "plot") {
     if (is.null(path)) {
       dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
-      file.name <- file.path(dest.dir, paste0("TFmap", ext))
+      dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
+      file.name <- file.path(dest.dir, fn)
     } else {
-      file.name <- file.path(path, paste0("TFmap", ext))
+      if (!dir.exists(path)) {
+        ok <- dir.create(path, recursive = TRUE, showWarnings = FALSE)
+        if (!ok && !dir.exists(path)) {
+          stop("Cannot create directory '", path, "'.")
+        }
+      }
+      file.name <- file.path(path, fn)
+    }
+  }
+
+  if (write.atoms) {
+    if (is.null(path)) {
+      dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
+      dir.create(dest.dir, recursive = TRUE, showWarnings = FALSE)
+      atoms.file.name <- file.path(dest.dir, "Atoms.pdf")
+    } else {
+      if (!dir.exists(path)) {
+        ok <- dir.create(path, recursive = TRUE, showWarnings = FALSE)
+        if (!ok && !dir.exists(path)) {
+          stop("Cannot create directory '", path, "'.")
+        }
+      }
+      atoms.file.name <- file.path(path, "Atoms.pdf")
     }
   }
 
@@ -224,8 +257,61 @@ empi2tf <- function(
   reconstruction <- out$reconstruction[, channel]
   gabors <- out$gabors[[channel]]
 
+  # Signal energy
+  o <- round(sum(original.signal^2), 2)
+  r <- round(sum(reconstruction^2), 2)
+
+  message("Channel #: ", channel)
+  message("Number of atoms: ", length(rows))
+  message("Sampling rate: ", f)
+  message("Epoch size (in points): ", epochSize)
+  message("Signal length (in seconds): ", s)
+
+  message("\nEnergy of the original signal:       ",o)
+  message("nEnergy of the reconstructed signal: ",r)
+  message("reconstruction / original %:         ", round(r / o * 100, digits = 2), "\n")
+
+  if(write.atoms) {
+    graphics.off()
+    pdf(atoms.file.name, width = 15, height = 30)
+    message("Atom plots saved in '", atoms.file.name, "'")
+
+    nn <- num.atoms
+    # mai: c(bottom, left, top, right)
+    par(mfrow = c(nn, 1), pty = "m", mai = c(0.05, 4, 0.0, 0.1), mgp = c(0, 0, 0), las = 1)
+
+    for (m in 1:num.atoms) {
+      if (m %% 2 == 0) cc = "blue" else cc = "red"
+      if (m == 1) {
+        plot(gabors[, m], xlab = "", ylab = "", xaxt = "n", yaxt = "n", type = "l", bty = "n", col = cc)
+        lab <- seq(from = 0, to = ceiling(tail(t, 1)), length.out = 11)
+        axis(
+          side = 1, las = 1, cex.axis = 0.9,
+          at = seq(from = 0, to = ceiling(tail(t * f, 1)), length.out = 11),
+          labels = c(formatC(lab, format = "f", digits = 2))
+        )
+      } else {
+        plot(gabors[, m], xlab = "", ylab = "", xaxt = "n", yaxt = "n", type = "l", bty = "n", col = cc)
+      }
+
+      txt <- paste(
+        "A", m,
+        ", f=",
+        round(frequency[m], 2), "Hz",
+        ", t=",
+        round(position[m], 2), "s",
+        ", sd=",
+        round(scale[m], 2), "s",
+        ", E=", round(energy[m], 3),
+        sep = "")
+      mtext(txt, side = 2, line = 0, las = 1, cex = 1)
+    }
+    dev.off()
+  } # if(write.atoms)
+
+
   # Empty chart on which the ellipses will appear
-  if (draw.ellipses) {
+  if (draw.ellipses && out.mode == "plot") {
     par(mfrow = c(1, 1), pty = "m", mai = c(0.9, 0.9, 0.2, 0.4))
     plot(0, xlim = c(0, tail(t, 1)), ylim = c(0, tail(y, 1)), type = "n", las = 1,
          xlab = "Time [s]", ylab = "Frequency [Hz]", yaxs = "i", xaxs = "i")
@@ -233,7 +319,7 @@ empi2tf <- function(
 
   for (n in 1:num.atoms) {
 
-    if (draw.ellipses) {
+    if (draw.ellipses && out.mode == "plot") {
       ellipse <- DrawEllipse(
         x = position[n],
         y = frequency[n],
@@ -282,43 +368,6 @@ empi2tf <- function(
     tf.map <- tf.map + z.mtx
 
   } # for (n in 1:num.atoms)
-
-  if(plot.atoms) {
-    graphics.off()
-    pdf("Atoms.pdf", width = 15, height = 30)
-
-    nn <- num.atoms
-    # mai: c(bottom, left, top, right)
-    par(mfrow = c(nn, 1), pty = "m", mai = c(0.05, 4, 0.0, 0.1), mgp = c(0, 0, 0), las = 1)
-
-    for (m in 1:num.atoms) {
-      if (m %% 2 == 0) cc = "blue" else cc = "red"
-      if (m == 1) {
-        plot(gabors[, m], xlab = "", ylab = "", xaxt = "n", yaxt = "n", type = "l", bty = "n", col = cc)
-        lab <- seq(from = 0, to = ceiling(tail(t, 1)), length.out = 11)
-        axis(
-          side = 1, las = 1, cex.axis = 0.9,
-          at = seq(from = 0, to = ceiling(tail(t * f, 1)), length.out = 11),
-          labels = c(formatC(lab, format = "f", digits = 2))
-        )
-      } else {
-        plot(gabors[, m], xlab = "", ylab = "", xaxt = "n", yaxt = "n", type = "l", bty = "n", col = cc)
-      }
-
-      txt <- paste(
-        "A", m,
-        ", f=",
-        round(frequency[m], 2), "Hz",
-        ", t=",
-        round(position[m], 2), "s",
-        ", sd=",
-        round(scale[m], 2), "s",
-        ", E=", round(energy[m], 3),
-        sep = "")
-      mtext(txt, side = 2, line = 0, las = 1, cex = 1)
-    }
-    dev.off()
-  }
 
   if (out.mode == "plot") {
     if (plot.signals) {
@@ -410,8 +459,6 @@ empi2tf <- function(
       tf.map.resampled <- (tf.map.resampled - min(tf.map.resampled)) / (max(tf.map.resampled) - min(tf.map.resampled))
     }
 
-    # Remove extension
-    file.name <- file.path(paste0(tools::file_path_sans_ext(file.name), ".RData"))
     save(tf.map.resampled, file = file.name)
     message("RData file saved in '", file.name, "'")
   }
@@ -432,25 +479,9 @@ empi2tf <- function(
       tf.map.resampled <- (tf.map.resampled - min(tf.map.resampled)) / (max(tf.map.resampled) - min(tf.map.resampled))
     }
 
-    # Remove extension
-    file.name <- file.path(paste0(tools::file_path_sans_ext(file.name), ".RData"))
     save(tf.map.resampled, file = file.name)
     message("RData file saved in '", file.name, "'")
   } # if (out.mode == "RData2")
-
-  # Signal energy
-  o <- round(sum(original.signal^2), 2)
-  r <- round(sum(reconstruction^2), 2)
-
-  message("Channel #: ", channel)
-  message("Number of atoms: ", length(rows))
-  message("Sampling rate: ", f)
-  message("Epoch size (in points): ", epochSize)
-  message("Signal length (in seconds): ", s)
-
-  message("\nEnergy of the original signal:       ",o)
-  message("nEnergy of the reconstructed signal: ",r)
-  message("reconstruction / original %:         ", round(r / o * 100, digits = 2))
 
   # Restore
   par(old.par)

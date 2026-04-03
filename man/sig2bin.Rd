@@ -4,16 +4,12 @@
 \alias{sig2bin}
 \title{Reads input signal(s) from a data frame and returns them in binary format}
 \usage{
-sig2bin(data, write.to.file = FALSE, file.name = NULL)
+sig2bin(data, write.to.file = FALSE)
 }
 \arguments{
 \item{data}{Data frame with the input signal(s).}
 
-\item{write.to.file}{If \code{TRUE} and if \code{file.name=NULL}, the \code{signal.bin} will be created
-and saved in the cache directory.}
-
-\item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}. If not specified,
-\code{signal.bin} file will be created.}
+\item{write.to.file}{If \code{TRUE} the bin file will be created and saved in the cache directory.}
 }
 \value{
 Input signal returned as the \code{raw}. If \code{write.to.file=TRUE}, the \code{.bin} file

@@ -14,14 +14,14 @@
 #' empi.check()
 #'
 empi.check <- function() {
-  cache_dir <- tools::R_user_dir("MatchingPursuit", "cache")
+  dest.dir <- file.path(tools::R_user_dir("MatchingPursuit", "cache"), "empi")
 
   sys <- Sys.info()[["sysname"]]
 
   exec.path <- if (sys == "Windows") {
-    file.path(cache_dir, "empi.exe")
+    file.path(dest.dir, "empi.exe")
   } else {
-    file.path(cache_dir, "empi")
+    file.path(dest.dir, "empi")
   }
 
   if (file.exists(exec.path)) {

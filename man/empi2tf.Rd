@@ -21,10 +21,11 @@ empi2tf(
   rev = TRUE,
   out.mode = "plot",
   path = NULL,
+  file.name = NULL,
   size = c(512, 512),
   draw.ellipses = FALSE,
   plot.signals = TRUE,
-  plot.atoms = FALSE
+  write.atoms = FALSE
 )
 }
 \arguments{
@@ -75,17 +76,22 @@ be appropriate.}
    (as R's matrix), resampling is performed using the function using \code{raster::resample()} function.
  }}
 
-\item{path}{Path where \code{png} or \code{RData} files will be written. If \code{NULL},
+\item{path}{Path where \code{png}, \code{RData} or \code{pdf} files will be written. If \code{NULL},
 files will be written to the cache directory.}
+
+\item{file.name}{Name of the \code{png} file (if \code{out.mode="file}) or name of the \code{RData}
+file (if \code{out.mode="RData"} or \code{out.mode="RData2})}
 
 \item{size}{\code{png} file size in pixels (if \code{out.mode="file"}) or size of the T-F matrix
 (if \code{out.mode="RData"} of \code{out.mode="RData2"}).}
 
-\item{draw.ellipses}{Only for testing. User can set it to \code{TRUE} to see the effect.}
+\item{draw.ellipses}{Only for testing. User can set it to \code{TRUE} to see the effect.
+Works properly only if \code{out.mode="plot"}.}
 
 \item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
 
-\item{plot.atoms}{If \code{TRUE}, plot all atoms into \code{Atoms.pdf} file.}
+\item{write.atoms}{If \code{TRUE}, writes all atom plots into \code{Atoms.pdf} file
+(to the cache directory or user specified one - depending on \code{path} variable)}
 }
 \value{
 Depending on the \code{out.mode} parameter the function returns:

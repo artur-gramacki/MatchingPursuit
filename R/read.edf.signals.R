@@ -40,7 +40,6 @@
 #' lapply(sigs1, class)
 #' sigs1$sampling.rate
 #'
-#' # Note that the last column (t) changes after resampling.
 #' sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 #'
 #' lapply(sigs2, class)
@@ -49,7 +48,7 @@
 
 read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL, to = NULL, verbose = FALSE) {
 
-  if(resampling == TRUE & !is.numeric(f.new)) {
+  if(resampling && !is.numeric(f.new)) {
     stop("`f.new` variable must be a numeric value.")
   }
 

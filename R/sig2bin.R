@@ -11,11 +11,7 @@
 #'
 #' @param data Data frame with the input signal(s).
 #'
-#' @param write.to.file If \code{TRUE} and if \code{file.name=NULL}, the \code{signal.bin} will be created
-#' and saved in the cache directory.
-#'
-#' @param file.name The name of the file to generate if \code{write.to.file=TRUE}. If not specified,
-#' \code{signal.bin} file will be created.
+#' @param write.to.file If \code{TRUE} the bin file will be created and saved in the cache directory.
 #'
 #' @return Input signal returned as the \code{raw}. If \code{write.to.file=TRUE}, the \code{.bin} file
 #' will additionally be created and saved in the current directory.
@@ -40,26 +36,23 @@
 #' # The same elements of the signal in binary (floats are stored in 4 bytes).
 #' head(signal.bin, 48)
 #'
-sig2bin <- function(data, write.to.file = FALSE, file.name = NULL) {
+sig2bin <- function(data, write.to.file = FALSE) {
 
-  dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
+  if (!is.data.frame(data)) {
+    stop("data must be a data.frame.")
+  }
 
   signal.raw = raw()
   for (m in 1:nrow(data)) {
     data.row <- as.numeric(data[m, ])
-    signal.raw <- c(signal.raw, writeBin(data.row, raw(), size = 4))
+    signal.raw <- c(signal.raw, writeBin(data.row, raw(), size = 4, endian = "little"))
   }
 
   if (write.to.file) {
-    if (is.null(file.name)) {
-      temp <- file.path(dest.dir, "signal.bin")
-      writeBin(signal.raw, temp)
-      message("Input signals were also saved in the '", temp, "' file.")
-    } else {
-      temp <- file.path(dest.dir, file.name)
-      writeBin(signal.raw, temp)
-      message("Input signals were also saved in the '", temp, "' file.")
-    }
+    dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
+    temp <- file.path(dest.dir, "signal.bin")
+    writeBin(signal.raw, temp)
+    message("Binary file saved to '", temp, "'.")
   }
 
   return(signal.raw)
