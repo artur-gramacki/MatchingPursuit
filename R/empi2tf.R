@@ -222,6 +222,8 @@ empi2tf <- function(
     out <- db.list
   }
 
+  total.channels <- length(unique(out$atoms$channel_id))
+
   if (length(which(out$atoms$channel_id == channel)) == 0)
     stop("There is no channel number ", channel, ".")
 
@@ -251,7 +253,7 @@ empi2tf <- function(
   # atoms params
   energy <- out$atoms$energy[rows]
   scale <- out$atoms$scale[rows]
-  position <- out$atoms$position
+  position <- out$atoms$position[rows]
   frequency <- out$atoms$frequency[rows]
   original.signal <- out$original.signal[, channel]
   reconstruction <- out$reconstruction[, channel]
@@ -262,6 +264,7 @@ empi2tf <- function(
   r <- round(sum(reconstruction^2), 2)
 
   message("Channel #: ", channel)
+  message("Total channels: ", total.channels)
   message("Number of atoms: ", length(rows))
   message("Sampling rate: ", f)
   message("Epoch size (in points): ", epochSize)
@@ -419,7 +422,7 @@ empi2tf <- function(
     # We display small crosses in the centres of atoms
     for (n in 1:num.atoms) {
       if (display.crosses) {
-        points(position[n], frequency[n], pch = 3, col = crosses.color, cex = 1)
+        points(position[n], frequency[n], pch = 3, col = crosses.color, cex = 0.8)
       }
     }
 

@@ -15,7 +15,8 @@ empi.execute(
 \arguments{
 \item{signal}{List returned from \code{read.csv.signals()} function. The list stores
 the signal in a data frame along with its sampling frequency.
-The data should have logical column names (channel names).}
+The data should have logical column names (channel names).
+The elements of the list must be named \code{"signal"} and \code{"sampling.rate"}.}
 
 \item{empi.options}{If \code{NULL}, the EMPI program runs with
 \code{"-o local --gabor -i 50"} parameters. Otherwise, user can specify any command-line

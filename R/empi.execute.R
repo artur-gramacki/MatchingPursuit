@@ -12,6 +12,7 @@
 #' @param signal List returned from \code{read.csv.signals()} function. The list stores
 #' the signal in a data frame along with its sampling frequency.
 #' The data should have logical column names (channel names).
+#' The elements of the list must be named \code{"signal"} and \code{"sampling.rate"}.
 #'
 #'
 #' @param empi.options If \code{NULL}, the EMPI program runs with
@@ -54,6 +55,10 @@ empi.execute <- function(signal, empi.options = NULL, write.to.file = FALSE, pat
 
   if(is.null(empi.path)) {
     return()
+  }
+
+  if (!all(c("signal", "sampling.rate") %in% names(signal))) {
+    stop("Input list must contain 'signal' and 'sampling.rate'.")
   }
 
   sig <- signal$signal

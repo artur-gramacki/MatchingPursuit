@@ -353,6 +353,7 @@ par(old.par)
 # run with the parameters "-o local --gabor -i 50"
 
 # sig <- list(bip.montage.filt, out1$sampling.rate)
+# names(sig) <- c("signal", "sampling.rate")
 
 # empi.out <- empi.execute (
 #   signal = sig,
@@ -360,7 +361,7 @@ par(old.par)
 #   write.to.file = TRUE,
 #   path = NULL,
 #   file.name = "EEG_bipolar_filtered.db"
-# ) 
+# )
 ```
 ### Step 6 {.unnumbered}
 
@@ -429,6 +430,13 @@ head(out$signal, 4)
 
 # The same elements of the signal in binary (floats are stored in 4 bytes).
 head(signal.bin, 48)
+
+# After decoding four sample numbers into numeric values.
+# Of course we get the same values ​​as in out$signal.
+readBin(signal.bin[1:4], what = "numeric", size = 4, endian = "little")
+readBin(signal.bin[5:8], what = "numeric", size = 4, endian = "little")
+readBin(signal.bin[41:44], what = "numeric", size = 4, endian = "little")
+readBin(signal.bin[45:48], what = "numeric", size = 4, endian = "little")
 ```
 
 ### `read.empi.db.file()` {.unnumbered}

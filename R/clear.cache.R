@@ -21,10 +21,20 @@ clear.cache <- function() {
   }
 
   files <- list.files(cache.dir, full.names = TRUE, recursive = TRUE)
+  files2 <- list.files(cache.dir, full.names = FALSE, recursive = TRUE)
 
   if (length(files) == 0) {
     message("No files to remove in: '", cache.dir, "'.")
     return(invisible(TRUE))
+  }
+
+  print(files2)
+  answer <- readline(prompt = paste0("Found ", length(files), " file(s) in cache. Delete them? [y/N]: "))
+
+
+  if (!tolower(answer) %in% c("y", "yes")) {
+    message("Operation cancelled by user.")
+    return(invisible(FALSE))
   }
 
   ok <- file.remove(files)
