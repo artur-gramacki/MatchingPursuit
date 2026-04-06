@@ -162,7 +162,7 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 #   signal = signal,
 #   empi.options = "-o local --gabor -i 25",
 #   write.to.file = TRUE,
-#   file.dest = NULL,
+#   path = NULL,
 #   file.name = "sample1.db"
 # )
 ```
@@ -305,7 +305,7 @@ fc <- filters.coeff(
 bip.montage.filt <- bip.montage 
 
 for (m in 1:ncol(bip.montage)) {
-  bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])     # 50Hz notch filter
+  bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])         # 50Hz notch filter
   bip.montage.filt[, m] = signal::filtfilt(fc$lowpass, bip.montage.filt[, m])  # Low pass IIR Butterworth
   bip.montage.filt[, m] = signal::filtfilt(fc$highpass, bip.montage.filt[, m]) # High pass IIR Butterwoth
 }
