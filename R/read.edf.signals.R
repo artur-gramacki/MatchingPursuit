@@ -52,7 +52,7 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     stop("`f.new` variable must be a numeric value.")
   }
 
-  if (!is.null(from) & !is.null(to)) {
+  if (!is.null(from) && !is.null(to)) {
     if (from >= to) stop("`from` varaible must by smaller than `to`")
   }
 
@@ -70,7 +70,7 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
   }
   eq <- length(unique(ff)) == 1
 
-  if (!eq & !resampling) {
+  if (!eq && !resampling) {
     warning(
       "It has been detected that individual channels do not have the same sampling rate. Therefore, it is not possible to save all channels' data in a single data frame. Run the function again by setting 'resampling = TRUE' and specifying a new frequency value 'f.new'.")
     return(edf)
@@ -120,7 +120,7 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
 
   if (is.null(f.new)) f.new <- f
 
-  if (!is.null(from) & !is.null(to)) {
+  if (!is.null(from) && !is.null(to)) {
     edf.mtx <- edf.mtx[seq(from * f + 1, to * f / (f / f.new)), ]
   }
 

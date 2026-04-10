@@ -24,7 +24,7 @@
 #' file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
 #' out <- read.empi.db.file(file)
 #'
-#' n.channnels <- ncol(out$original.signal)
+#' n.channels <- ncol(out$original.signal)
 #' original.signal <- out$original.signal
 #' reconstruction <- out$reconstruction
 #' t <- out$t
@@ -38,7 +38,7 @@
 #'
 #' plot(
 #'   original.signal[,1], type = "l", col = "blue",
-#'   main = paste("channel: ", 1, " / " , n.channnels, " (original signal)",  sep = ""),
+#'   main = paste("channel: ", 1, " / " , n.channels, " (original signal)",  sep = ""),
 #'   xaxt = "n", ylab = "", xlab = "time [sec]"
 #' )
 #'
@@ -48,7 +48,7 @@
 #'
 #' plot(
 #'   reconstruction[,1], type = "l", col = "blue",
-#'   main = paste("channel: ", 1, " / " , n.channnels, " (reconstructed signal)",  sep = ""),
+#'   main = paste("channel: ", 1, " / " , n.channels, " (reconstructed signal)",  sep = ""),
 #'   xaxt = "n", ylab = "", xlab = "time [sec]"
 #' )
 #'
@@ -61,6 +61,7 @@
 read.empi.db.file <- function(db.file) {
 
   con <- dbConnect(drv = RSQLite::SQLite(), dbname = db.file)
+  on.exit(DBI::dbDisconnect(con), add = TRUE)
 
   ## list all tables
   tables <- dbListTables(con)
@@ -68,7 +69,7 @@ read.empi.db.file <- function(db.file) {
   ## create a data.frame for each table
   data.frames <- vector("list", length = length(tables))
 
-   for (i in seq(along = tables)) {
+  for (i in seq(along = tables)) {
     data.frames[[i]] <- dbGetQuery(conn = con, statement = paste("SELECT * FROM '", tables[[i]], "'", sep = ""))
   }
 
@@ -84,13 +85,13 @@ read.empi.db.file <- function(db.file) {
   s <- epochSize / f
 
   # number of channels
-  n.channnels <- length(data.frames[[3]]$channel_id)
+  n.channels <- length(data.frames[[3]]$channel_id)
 
   # parameters of individual atoms
   atoms <- matrix(nrow = length(data.frames[[1]][["segment_id"]]), ncol = 9)
   atoms <- as.data.frame(atoms)
   k <- 0
-  for (i in 1:n.channnels) {
+  for (i in 1:n.channels) {
     # number of atoms. may be different in each channel
     # in empi channels are numbered from 0
     n.atoms <- length(which(data.frames[[1]]$channel_id == (i - 1)))
@@ -112,9 +113,9 @@ read.empi.db.file <- function(db.file) {
   # We read the input data from the .db file (they are stored there as float32 numbers)
   # For example: c0 74 23 f3  =  -3.81469
 
-  original.signal <- matrix(nrow = epochSize, ncol = n.channnels)
+  original.signal <- matrix(nrow = epochSize, ncol = n.channels)
 
-  for (k in 1:n.channnels) {
+  for (k in 1:n.channels) {
     temp <- data.frames[[3]][["samples_float32"]][k]
     utemp <- (unlist(temp))
     for (i in 1:epochSize) {
@@ -130,10 +131,10 @@ read.empi.db.file <- function(db.file) {
   # head(atoms)
   # tail(atoms)
 
-  reconstruction <- matrix(0, nrow = epochSize, ncol = n.channnels)
+  reconstruction <- matrix(0, nrow = epochSize, ncol = n.channels)
   gabors <- list()
 
-  for (k in 1:n.channnels) {
+  for (k in 1:n.channels) {
     rows <- which(atoms$channel_id == k)
     atoms.channel <- atoms[rows,]
     colnames(atoms.channel) <- c("channel_id", "atom_number", "amplitude", "energy", "envelope", "frequency", "phase", "scale", "position")

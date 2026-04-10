@@ -25,6 +25,7 @@ check.checksum <- function (dest) {
     stop("Checksum does not match! The program file could not be downloaded.")
   }
 
-
   message("Checksum is correct.")
+
+  invisible(TRUE)
 }

@@ -33,11 +33,13 @@ read.csv.signals <- function(file, col.names = NULL) {
   items <- strsplit(line, "\\s+")[[1]]
 
   if (length(items) != 2) {
-    stop("The first line in the file must contain 2 numbers separeted by one or more more whitespace characters. characters.")
+    stop("The first line in the file must contain 2 numbers separeted by one or more whitespace characters.")
   }
 
   sr <- suppressWarnings(as.numeric(items[1]))
   sl <- suppressWarnings(as.numeric(items[2]))
+
+  if (sr <= 0 || sl <= 0) stop("Numbers in the first line must be positive.")
 
   if (is.na(sr) || is.na(sl))
     stop("The first line in the file must contain 2 numbers, the first is the sampling rate, the second is the signal length in seconds.")

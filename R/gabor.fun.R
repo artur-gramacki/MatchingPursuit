@@ -56,11 +56,11 @@ gabor.fun <- function(
 
   omega <- 2 * pi * frequency
   t <- seq(from = 0, to = number.of.samples - 1, by = 1) / sampling.frequency
-  v <- exp(-pi * ((t - mean) / sigma)^2)
-  u <- cos(omega * (t - mean) + phase)
-  gabor <- u * v
+  gauss <- exp(-pi * ((t - mean) / sigma)^2)
+  cosinus <- cos(omega * (t - mean) + phase)
+  gabor <- cosinus * gauss
   if (normalization) {
     gabor <- vec.norm(gabor)
   }
-  list(cosinus = u, gauss = v, gabor = gabor, t = t)
+  list(cosinus = cosinus, gauss = gauss, gabor = gabor, t = t)
 }

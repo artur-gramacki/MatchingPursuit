@@ -75,20 +75,23 @@ filters.coeff <- function (
     bandpass = c(0.5, 40), bandpass.order = 4,
     bandstop = c(0.5, 40), bandstop.order = 4)
 {
+
+  nyq <- fs / 2
+
   ## Notch filter
-  notch <- butter(notch.order, notch / (fs / 2), "stop")
+  notch <- butter(notch.order, notch / nyq, "stop")
 
   # Low pass IIR Butterworth, cutoff at 'lowpass' Hz
-  lowpass <- butter(lowpass.order, lowpass / (fs / 2), "low")
+  lowpass <- butter(lowpass.order, lowpass / nyq, "low")
 
   # High pass IIR Butterwoth, cutoff at 'highpass' Hz
-  highpass <- butter(highpass.order, highpass / (fs / 2), "high")
+  highpass <- butter(highpass.order, highpass / nyq, "high")
 
   # Bandpass filter IIR Butterworth
-  bandpass <- butter(bandpass.order, bandpass / (fs / 2), type = "pass")
+  bandpass <- butter(bandpass.order, bandpass / nyq, type = "pass")
 
   # Bandstop filter IIR Butterworth
-  bandstop <- butter(bandstop.order, bandstop / (fs / 2), type = "stop")
+  bandstop <- butter(bandstop.order, bandstop / nyq, type = "stop")
 
   list(
     notch = notch,
