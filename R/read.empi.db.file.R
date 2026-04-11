@@ -61,7 +61,6 @@
 read.empi.db.file <- function(db.file) {
 
   con <- dbConnect(drv = RSQLite::SQLite(), dbname = db.file)
-  on.exit(DBI::dbDisconnect(con), add = TRUE)
 
   ## list all tables
   tables <- dbListTables(con)

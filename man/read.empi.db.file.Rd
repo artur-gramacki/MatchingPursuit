@@ -28,7 +28,7 @@ The reconstructed signal(s) and Gabor function(s) are also returned.
 file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
 out <- read.empi.db.file(file)
 
-n.channnels <- ncol(out$original.signal)
+n.channels <- ncol(out$original.signal)
 original.signal <- out$original.signal
 reconstruction <- out$reconstruction
 t <- out$t
@@ -42,7 +42,7 @@ par(mai = c(0.9, 0.5, 0.3, 0.4))
 
 plot(
   original.signal[,1], type = "l", col = "blue",
-  main = paste("channel: ", 1, " / " , n.channnels, " (original signal)",  sep = ""),
+  main = paste("channel: ", 1, " / " , n.channels, " (original signal)",  sep = ""),
   xaxt = "n", ylab = "", xlab = "time [sec]"
 )
 
@@ -52,7 +52,7 @@ axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), label
 
 plot(
   reconstruction[,1], type = "l", col = "blue",
-  main = paste("channel: ", 1, " / " , n.channnels, " (reconstructed signal)",  sep = ""),
+  main = paste("channel: ", 1, " / " , n.channels, " (reconstructed signal)",  sep = ""),
   xaxt = "n", ylab = "", xlab = "time [sec]"
 )
 

@@ -2,17 +2,24 @@
 % Please edit documentation in R/empi.install.R
 \name{empi.install}
 \alias{empi.install}
-\title{Installs the required external program}
+\title{Installs the EMPI external program}
 \usage{
 empi.install()
 }
 \value{
-The function downloads the EMPI program in a version compatible with the operating
-system used (Windows, Linux, MacOS-x64, MacOS-arm64) and stores it in the cache directory.
+The function downloads the EMPI program in a version compatible
+with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64)
+and stores it in the package cache directory.
 }
 \description{
-Downloads \strong{Enhanced Matching Pursuit Implementation} external program (or EMPI for short)
-and stores it in the cache directory.
+Downloads \strong{Enhanced Matching Pursuit Implementation} external program
+(or EMPI for short) binary compatible with the current operating system and
+stores it in the package cache directory.
+}
+\details{
+The function detects the operating system (Windows, Linux, macOS x64,
+macOS arm64), downloads the appropriate archive from the official
+repository, verifies its integrity using a checksum, and extracts it.
 }
 \examples{
 if (interactive()) {
