@@ -44,7 +44,7 @@ head(out$signal, 4)
 head(signal.bin, 48)
 
 # After decoding to numeric.
-# Of course we get the same values ​​as in out$signal.
+# Of course we get the same values as in out$signal.
 readBin(signal.bin[1:4], what = "numeric", size = 4, endian = "little")
 readBin(signal.bin[5:8], what = "numeric", size = 4, endian = "little")
 readBin(signal.bin[41:44], what = "numeric", size = 4, endian = "little")
