@@ -6,7 +6,7 @@
 
 * The `read.csv.files()` function also supports files where the channel names are given in the second line.
 
-* The `read.empi.db.file()` and `empi.execute()` funcions now return object of class `empi`.
+* The `read.empi.db.file()` and `empi.execute()` functions now return object of class `empi`.
 
 # MatchingPursuit 1.0.1
 
