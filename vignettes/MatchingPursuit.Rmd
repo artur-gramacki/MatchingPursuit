@@ -8,7 +8,7 @@ output:
     number_sections: true  
     fig_caption: true
 vignette: >
-  %\VignetteIndexEntry{Introduction to `MatchingPursuit` package}
+  %\VignetteIndexEntry{Introduction to `sifter` package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -188,7 +188,6 @@ out <- empi2tf(
   db.file = file,
   channel = 1,
   mode = "sqrt",
-  freq.divide = 4,
   increase.factor = 4,
   display.crosses = FALSE,
   display.atom.numbers = TRUE,
@@ -380,10 +379,9 @@ file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPur
 # Generate time-frequency map based on MP atoms.
 out <- empi2tf(
   db.file = file,
-  channel = 1,
+  channel = 2,
   mode = "sqrt",
-  freq.divide = 6,
-  increase.factor= 4,
+  increase.factor= 8,
   display.crosses = TRUE,
   display.atom.numbers = FALSE,
   out.mode = "plot"

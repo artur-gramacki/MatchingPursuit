@@ -4,7 +4,7 @@
 \alias{read.csv.signals}
 \title{Reads and checks if the csv file has the correct structure}
 \usage{
-read.csv.signals(file, col.names = NULL)
+read.csv.signals(file, col.names = NULL, col.names.in.csv = FALSE)
 }
 \arguments{
 \item{file}{File to be read and check. The first line of the file must contain two numbers:
@@ -13,6 +13,8 @@ The function checks whether the file actually contains \code{round(freq*sec)} sa
 must by separated by one or more whitespace characters.}
 
 \item{col.names}{Vector with column names. If not specified, default names will be created.}
+
+\item{col.names.in.csv}{if \code{TRUE}, we assume that the second line contains column names.}
 }
 \value{
 A list is returned with:
@@ -27,10 +29,29 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 # The first line of the file must contain two numbers:
 # a) the sampling rate in Hz
 # b) the signal length in seconds
-out <- read.csv(file, header = FALSE)
+out <- read.table(file, header = FALSE, skip = 1)
 head(out)
 
 signal <- read.csv.signals(file, col.names = "signal_1")
+head(signal$signal)
+signal$sampling.rate
+
+file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
+signal <- read.csv.signals(file, col.names = c("signal_1", "signal_2", "signal_3"))
+head(signal$signal)
+signal$sampling.rate
+
+# Now, the csv file contains signal names in the second line
+file <- system.file("extdata", "EEG.csv", package = "MatchingPursuit")
+signal <- read.csv.signals(file, col.names.in.csv = TRUE)
+head(signal$signal)
+signal$sampling.rate
+
+# Now, the csv file contains signal names in the second line
+# The data here is the same as in the EEG.csv file, but after performing
+# 'double banana' montages and after applying filtering.
+file <- system.file("extdata", "EEG_bipolar_filtered.csv", package = "MatchingPursuit")
+signal <- read.csv.signals(file, col.names.in.csv = TRUE)
 head(signal$signal)
 signal$sampling.rate
 

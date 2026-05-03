@@ -10,6 +10,7 @@ read.empi.db.file(db.file)
 \item{db.file}{SQLite file.}
 }
 \value{
+Object of class \code{empi} is returned with the following items:
 \itemize{
    \item Detailed parameters of all the generated atoms
    \item Original input signal(s)

@@ -25,7 +25,7 @@ empi.check <- function() {
   }
 
   if (file.exists(exec.path)) {
-      return(exec.path)
+    return(exec.path)
   }
 
   message("The EMPI tool is not available. Run empi.install() to install it.")

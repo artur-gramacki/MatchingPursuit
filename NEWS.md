@@ -1,3 +1,13 @@
+# MatchingPursuit 1.0.2
+
+* `plot.empi()` function was added.
+
+* Extended examples added to the package-level documentation.
+
+* The `read.csv.files()` function also supports files where the channel names are given in the second line.
+
+* The `read.empi.db.file()` and `empi.execute()` funcions now return object of class `empi`.
+
 # MatchingPursuit 1.0.1
 
 * Fixed a bug in the `empi2tf()` function that caused TF maps to be displayed incorrectly for channels other than the first one (only applies to signals with more than one channel).

@@ -33,8 +33,9 @@ If it is \code{NULL}, the file will be saved in the cache directory.}
 \item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}.}
 }
 \value{
-Results of signal decomposition using the MP algorithm. If \code{write.to.file=TRUE}
-is specified, the results are also written to a SQLite file on disk in the \code{path}
+Results of signal decomposition using the MP algorithm. Object of class \code{empi}
+is returned. If \code{write.to.file=TRUE} is specified, the results are also written
+to a SQLite file on disk in the \code{path}
 directory.
 }
 \description{
@@ -52,7 +53,7 @@ Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read.csv.signals(file)
 
-empi.out <- empi.execute (
+out <- empi.execute (
   signal = signal,
   empi.options = NULL,
   write.to.file = FALSE,

@@ -29,8 +29,9 @@
 #'
 #' @param file.name The name of the file to generate if \code{write.to.file=TRUE}.
 #'
-#' @return Results of signal decomposition using the MP algorithm. If \code{write.to.file=TRUE}
-#' is specified, the results are also written to a SQLite file on disk in the \code{path}
+#' @return Results of signal decomposition using the MP algorithm. Object of class \code{empi}
+#' is returned. If \code{write.to.file=TRUE} is specified, the results are also written
+#' to a SQLite file on disk in the \code{path}
 #' directory.
 #'
 #' @export
@@ -40,7 +41,7 @@
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read.csv.signals(file)
 #'
-#' empi.out <- empi.execute (
+#' out <- empi.execute (
 #'   signal = signal,
 #'   empi.options = NULL,
 #'   write.to.file = FALSE,

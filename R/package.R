@@ -17,23 +17,30 @@
 #' Example datasets available through the \code{system.file()} function are:
 #'
 #'  \itemize{
-#'    \item \code{EEG.edf}
+#'    \item \code{EEG.edf}, \code{EEG.db}, \code{EEG.csv}
 #'      \itemize{
 #'        \item 19 EEG channels + 1 EDF Annotations channel
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec.
 #'        \item channel names: Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations
 #'      }
-#'    \item \code{sample1.csv}
+#'    \item \code{EEG_bipolar_filtered.db}, \code{EEG_bipolar_filtered.db.csv}
+#'      \itemize{
+#'        \item 18 EEG channels after double banana montage and filtering of the data from \code{EEG.edf}
+#'        \item sampling frequency: 256 Hz, signal length: 10 sec.
+#'        \item channel names: Fp2_F4, F4_C4, C4_P4, P4_O2, Fp1_F3, F3_C3, C3_P3, P3_O1, Fp2_F8, F8_T4,
+#'                             T4_T6, T6_O2, Fp1_F7, F7_T3, T3_T5, T5_O1, Fz_Cz, Cz_Pz
+#'      }
+#'    \item \code{sample1.csv}, \code{sample1.db}
 #'      \itemize{
 #'        \item 1 channel
 #'        \item sampling frequency: 1024 Hz, signal length: 1 sec.
 #'      }
-#'    \item \code{sample2.csv}
+#'    \item \code{sample2.csv}, \code{sample2.db}
 #'      \itemize{
 #'        \item 1 channel
 #'        \item sampling frequency: 128 Hz Hz, signal length: 10 sec.
 #'      }
-#'    \item \code{sample3.csv}
+#'    \item \code{sample3.csv}, \code{sample3.db}
 #'      \itemize{
 #'        \item 3 channels (random numbers from 0 to 1 in each channel)
 #'        \item sampling frequency: 128 Hz Hz, signal length: 2 sec.
@@ -43,6 +50,15 @@
 #' and the signal length in seconds (\code{sec}). \code{read.csv.signals} function checks
 #' whether the file actually contains \code{round(freq*sec)} samples. The two numbers
 #' must by separated by one or more whitespace characters.
+#'
+#' Optionally, channel names can be specified in the second line of the \code{.csv} file.
+#' For such files, when reading their contents using the \code{read.csv.signals()} function,
+#' use the \code{col.names.in.csv=TRUE} parameter.
+#'
+#' Files with the \code{db} extension are in the \code{SQLite} format and are the result of
+#' running the \code{empi.execute()} function.
+#'
+#' @example inst/examples/examples.R
 #'
 #' @docType package
 #'

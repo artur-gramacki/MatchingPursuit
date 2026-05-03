@@ -8,6 +8,8 @@
 #'
 #' @param col.names Vector with column names. If not specified, default names will be created.
 #'
+#' @param col.names.in.csv if \code{TRUE}, we assume that the second line contains column names.
+#'
 #' @importFrom utils read.table
 #'
 #' @return A list is returned with:
@@ -21,14 +23,33 @@
 #' # The first line of the file must contain two numbers:
 #' # a) the sampling rate in Hz
 #' # b) the signal length in seconds
-#' out <- read.csv(file, header = FALSE)
+#' out <- read.table(file, header = FALSE, skip = 1)
 #' head(out)
 #'
 #' signal <- read.csv.signals(file, col.names = "signal_1")
 #' head(signal$signal)
 #' signal$sampling.rate
 #'
-read.csv.signals <- function(file, col.names = NULL) {
+#' file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
+#' signal <- read.csv.signals(file, col.names = c("signal_1", "signal_2", "signal_3"))
+#' head(signal$signal)
+#' signal$sampling.rate
+#'
+#' # Now, the csv file contains signal names in the second line
+#' file <- system.file("extdata", "EEG.csv", package = "MatchingPursuit")
+#' signal <- read.csv.signals(file, col.names.in.csv = TRUE)
+#' head(signal$signal)
+#' signal$sampling.rate
+#'
+#' # Now, the csv file contains signal names in the second line
+#' # The data here is the same as in the EEG.csv file, but after performing
+#' # 'double banana' montages and after applying filtering.
+#' file <- system.file("extdata", "EEG_bipolar_filtered.csv", package = "MatchingPursuit")
+#' signal <- read.csv.signals(file, col.names.in.csv = TRUE)
+#' head(signal$signal)
+#' signal$sampling.rate
+#'
+read.csv.signals <- function(file, col.names = NULL, col.names.in.csv = FALSE) {
   line <- readLines(file, n = 1)
   items <- strsplit(line, "\\s+")[[1]]
 
@@ -44,7 +65,11 @@ read.csv.signals <- function(file, col.names = NULL) {
   if (is.na(sr) || is.na(sl))
     stop("The first line in the file must contain 2 numbers, the first is the sampling rate, the second is the signal length in seconds.")
 
-  signal <- read.table(file, skip = 1, header = FALSE)
+  if (col.names.in.csv) {
+    signal <- read.table(file, skip = 2, header = FALSE)
+  } else {
+    signal <- read.table(file, skip = 1, header = FALSE)
+  }
 
   if (nrow(signal) != round(sr * sl))
     stop("The signal must be ", round(sr * sl), " elements long. Now it is ", nrow(signal), " elements long.")
@@ -55,14 +80,18 @@ read.csv.signals <- function(file, col.names = NULL) {
     } else {
       colnames(signal) <- col.names
     }
-  } else {
-    if (is.null(col.names)) {
-      cols <- paste0("v", seq_len(ncol(signal)))
-      colnames(signal) <- cols
-    }
   }
 
-  return(
-    list(signal = signal, sampling.rate = sr)
-  )
+  if (is.null(col.names) && !col.names.in.csv) {
+    cols <- paste0("v", seq_len(ncol(signal)))
+    colnames(signal) <- cols
+  }
+
+  if (is.null(col.names) && col.names.in.csv) {
+    line <- readLines(file, n = 2)
+    cols <- strsplit(line, "\\s+")[[2]]
+    colnames(signal) <- cols
+  }
+
+  return(list(signal = signal, sampling.rate = sr))
 }

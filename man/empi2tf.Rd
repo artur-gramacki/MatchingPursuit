@@ -6,10 +6,10 @@
 \usage{
 empi2tf(
   db.file = NULL,
-  db.list = NULL,
+  x = NULL,
   channel,
   mode = "sqrt",
-  freq.divide = 1,
+  freq.divide = NULL,
   increase.factor = 1,
   shortening.factor.x = 2,
   shortening.factor.y = 2,
@@ -30,10 +30,10 @@ empi2tf(
 }
 \arguments{
 \item{db.file}{The SQLite file created after executing the \code{empi.execute()} function.
-In this case, the \code{db.list} parameter must be \code{NULL}.}
+In this case, the \code{x} parameter must be \code{NULL}.}
 
-\item{db.list}{The list created after executing the \code{empi.execute()} function.
-In this case, the \code{db.file} parameter must be \code{NULL}.}
+\item{x}{\code{empi} object of class \code{empi} (created after executing the
+\code{empi.execute()} function). In this case, the \code{db.file} parameter must be \code{NULL}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
@@ -41,8 +41,12 @@ In this case, the \code{db.file} parameter must be \code{NULL}.}
 with which the so-called blobs are displayed on the T-F map.}
 
 \item{freq.divide}{Specifies how many times the displayed frequency in the T-F map
-should be decreased. For example, if the sampling frequency is \code{f=256Hz}, the maximum
-frequency in the T-F map will be \code{f/2/freq.divide} (f/2 is the Nyquist rule).}
+should be decreased. At high sampling rates and when we use a low-pass filter with
+a typical cut-off frequency much lower than the sampling frequency, a large part of
+the T-F map does not contain any blobs. If the sampling frequency is \code{f},
+the maximum frequency in the T-F map will be \code{ceiling(f/2/freq.divide)}
+(f/2 is the Nyquist rule). If \code{NULL}, it is determined based on the atom
+with the highest frequency \code{fmax} according to \code{freq.divide=(f/2)/fmax}.}
 
 \item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
 sensible are non-negative integers (e.g. 2, 4, 5, 8).}
@@ -125,11 +129,23 @@ or 3) saved as an \code{.RData} object.
 \examples{
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
+# 'freq.divide' is set arbitrarily
 out <- empi2tf(
   db.file = file,
   channel = 1,
   mode = "sqrt",
   freq.divide = 4,
+  increase.factor= 4,
+  display.crosses = TRUE,
+  display.atom.numbers = FALSE,
+  out.mode = "plot",
+)
+
+# 'freq.divide' is determined based on the atom with the highest frequency
+out <- empi2tf(
+  db.file = file,
+  channel = 1,
+  mode = "sqrt",
   increase.factor= 4,
   display.crosses = TRUE,
   display.atom.numbers = FALSE,

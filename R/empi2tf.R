@@ -4,17 +4,17 @@
 #' The created map can be: 1) displayed on the screen, 2) saved in \code{.png} file,
 #' or 3) saved as an \code{.RData} object.
 #'
-#' @importFrom graphics rasterImage par points text axis mtext layout plot.new plot.window box abline
+#' @importFrom graphics rasterImage par points text axis mtext layout plot.new plot.window box abline title
 #' @importFrom grDevices hcl.colors graphics.off pdf dev.off png
 #' @importFrom utils tail
 #' @importFrom DescTools DrawEllipse
 #' @importFrom imager as.cimg resize
 #'
 #' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
-#' In this case, the \code{db.list} parameter must be \code{NULL}.
+#' In this case, the \code{x} parameter must be \code{NULL}.
 #'
-#' @param db.list The list created after executing the \code{empi.execute()} function.
-#' In this case, the \code{db.file} parameter must be \code{NULL}.
+#' @param x \code{empi} object of class \code{empi} (created after executing the
+#' \code{empi.execute()} function). In this case, the \code{db.file} parameter must be \code{NULL}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
@@ -22,8 +22,12 @@
 #' with which the so-called blobs are displayed on the T-F map.
 #'
 #' @param freq.divide Specifies how many times the displayed frequency in the T-F map
-#' should be decreased. For example, if the sampling frequency is \code{f=256Hz}, the maximum
-#' frequency in the T-F map will be \code{f/2/freq.divide} (f/2 is the Nyquist rule).
+#' should be decreased. At high sampling rates and when we use a low-pass filter with
+#' a typical cut-off frequency much lower than the sampling frequency, a large part of
+#' the T-F map does not contain any blobs. If the sampling frequency is \code{f},
+#' the maximum frequency in the T-F map will be \code{ceiling(f/2/freq.divide)}
+#' (f/2 is the Nyquist rule). If \code{NULL}, it is determined based on the atom
+#' with the highest frequency \code{fmax} according to \code{freq.divide=(f/2)/fmax}.
 #'
 #' @param increase.factor Factor of increasing the number of pixels in the f-axis, the most
 #' sensible are non-negative integers (e.g. 2, 4, 5, 8).
@@ -102,6 +106,7 @@
 #' @examples
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 #'
+#' # 'freq.divide' is set arbitrarily
 #' out <- empi2tf(
 #'   db.file = file,
 #'   channel = 1,
@@ -113,12 +118,23 @@
 #'   out.mode = "plot",
 #' )
 #'
+#' # 'freq.divide' is determined based on the atom with the highest frequency
+#' out <- empi2tf(
+#'   db.file = file,
+#'   channel = 1,
+#'   mode = "sqrt",
+#'   increase.factor= 4,
+#'   display.crosses = TRUE,
+#'   display.atom.numbers = FALSE,
+#'   out.mode = "plot",
+#' )
+#'
 empi2tf <- function(
     db.file = NULL,
-    db.list = NULL,
+    x = NULL,
     channel,
     mode = "sqrt",
-    freq.divide = 1,
+    freq.divide = NULL,
     increase.factor = 1,
     shortening.factor.x = 2,
     shortening.factor.y = 2,
@@ -143,10 +159,10 @@ empi2tf <- function(
   if (out.mode != "plot" && out.mode != "file" && out.mode != "RData" && out.mode != "RData2")
     stop("Incorrect value for 'out.mode' parameter.'")
 
-  if (is.null(db.file) && is.null(db.list))
+  if (is.null(db.file) && is.null(x))
     stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
 
-  if (!is.null(db.file) && !is.null(db.list))
+  if (!is.null(db.file) && !is.null(x))
     stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
 
   if (is.null(file.name)) {
@@ -218,8 +234,17 @@ empi2tf <- function(
     out <- read.empi.db.file(db.file)
   }
 
-  if (!is.null(db.list)) {
-    out <- db.list
+  object <- x
+
+  if (!is.null(object)) {
+    if (!inherits(object, "empi")) {
+      object <- try(x$f, silent = TRUE)
+
+      if (!inherits(object, "empi")) {
+        stop("Object not of class 'empi'.")
+      }
+    }
+    out <- object
   }
 
   total.channels <- length(unique(out$atoms$channel_id))
@@ -229,8 +254,16 @@ empi2tf <- function(
 
   f <- out$f
 
-  # according to the Nyquist criterion
-  maxf <- round((f / 2) / freq.divide)
+  if (is.null(freq.divide)) {
+    rows <- which(out$atoms$channel_id == channel)
+    ff <- max(out$atoms$frequency[rows])
+    freq.divide <- (out$f / 2) / ff
+    # cat("max atom frequency: ", ff, "\n", sep = "")
+    # cat("freq.divide: ", freq.divide, "\n", sep = "")
+  }
+
+  # f/2: according to the Nyquist criterion
+  maxf <- ceiling((f / 2) / freq.divide)
 
   epochSize <- length(out$t)
   s <- epochSize / f
@@ -393,6 +426,8 @@ empi2tf <- function(
     plot.new()
     plot.window(range(t), range(y))
     rasterImage(tf.map.rot90, 0, 0, tail(t, 1), tail(y, 1))
+    main.txt <- paste("channel: ", channel, "/", total.channels, ", sampling rate: ", f, " Hz", sep = "")
+    title(main.txt)
 
     lab <- seq(from = 0, to = ceiling(tail(t, 1)), length.out = 11)
     axis(
@@ -490,6 +525,7 @@ empi2tf <- function(
   par(old.par)
 
   list(
+    atoms = out$atoms,
     gabor.functions = gabors,
     reconstruction = reconstruction,
     original.signal = original.signal,

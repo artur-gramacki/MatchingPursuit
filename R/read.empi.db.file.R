@@ -5,7 +5,7 @@
 #'
 #'@param db.file SQLite file.
 #'
-#' @return
+#' @return  Object of class \code{empi} is returned with the following items:
 #' \itemize{
 #'    \item Detailed parameters of all the generated atoms
 #'    \item Original input signal(s)
@@ -155,12 +155,16 @@ read.empi.db.file <- function(db.file) {
     }
     gabors[[k]] <- g
   }
-  list(
+  output <- list(
     atoms = atoms,
     original.signal = original.signal,
     reconstruction = reconstruction,
     gabors = gabors,
     t = gab$t,
     f = f)
+
+  class(output) <- 'empi'
+  return(output)
+
 }
 
