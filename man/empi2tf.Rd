@@ -5,7 +5,6 @@
 \title{Creates a time-frequency map using atoms from the Matching Pursuit algorithm}
 \usage{
 empi2tf(
-  db.file = NULL,
   x = NULL,
   channel,
   mode = "sqrt",
@@ -29,11 +28,7 @@ empi2tf(
 )
 }
 \arguments{
-\item{db.file}{The SQLite file created after executing the \code{empi.execute()} function.
-In this case, the \code{x} parameter must be \code{NULL}.}
-
-\item{x}{\code{empi} object of class \code{empi} (created after executing the
-\code{empi.execute()} function). In this case, the \code{db.file} parameter must be \code{NULL}.}
+\item{x}{An object of class \code{empi} or a path to an SQLite file created by \code{empi.execute()}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
@@ -128,10 +123,11 @@ or 3) saved as an \code{.RData} object.
 }
 \examples{
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+empi.class <- read.empi.db.file(file)
 
 # 'freq.divide' is set arbitrarily
 out <- empi2tf(
-  db.file = file,
+  x = empi.class,
   channel = 1,
   mode = "sqrt",
   freq.divide = 4,
@@ -143,7 +139,7 @@ out <- empi2tf(
 
 # 'freq.divide' is determined based on the atom with the highest frequency
 out <- empi2tf(
-  db.file = file,
+  x = empi.class,
   channel = 1,
   mode = "sqrt",
   increase.factor= 4,

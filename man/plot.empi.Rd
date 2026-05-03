@@ -22,8 +22,7 @@
 )
 }
 \arguments{
-\item{x}{\code{empi} object created after executing the \code{empi.execute()} function.
-In this case, the \code{db.file} parameter must be \code{NULL}.}
+\item{x}{An object of class \code{empi} created by \code{empi.execute()}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
