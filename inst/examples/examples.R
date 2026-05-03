@@ -15,10 +15,10 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read.csv.signals(file, col.names = "ch1")
 
 # STEP 2 - execute the MP algorithm.
-empi.out <- empi.execute(signal = signal)
+empi.class <- empi.execute(signal = signal)
 
 # STEP 3 - plot a time-frequency map based on MP atoms.
-plot(empi.out)
+plot(empi.class)
 
 ###############################################################################
 # Workflow 2. Data are stored in a EDF file (EEG results).
@@ -65,16 +65,16 @@ signal.EEG.montage.filt <- list(bip.montage.filt, sampling.rate)
 names(signal.EEG.montage.filt) <- c("signal", "sampling.rate")
 
 # STEP 4 - execute the MP algorithm.
-empi.out <- empi.execute(signal = signal.EEG.montage.filt)
+empi.class <- empi.execute(signal = signal.EEG.montage.filt)
 
 # STEP 5 - plot a time-frequency map based on MP atoms.
-plot(empi.out, channel = 2)
+plot(empi.class, channel = 2)
 
 ###############################################################################
 # Saving the empi.execute() results to a SQLite file.
 ###############################################################################
 # Execute the MP algorithm and save the result to a SQLite file.
-empi.out <- empi.execute(
+empi.class <- empi.execute(
   signal = signal,
   write.to.file = TRUE,
   path = ".",
@@ -86,9 +86,9 @@ atom.params(db.file = "sample1.db")
 ###############################################################################
 # empi2tf() function.
 ###############################################################################
-# This function call produces the same effect as plot(empi.out).
+# This function call produces the same effect as plot(empi.class).
 out <- empi2tf(
-  x = empi.out,
+  x = empi.class,
   channel = 1,
   increase.factor = 8,
   out.mode = "plot"
@@ -96,7 +96,7 @@ out <- empi2tf(
 
 # Save the T-F map as a PNG file with the specified dimensions (in pixels).
 out <- empi2tf(
-  x = empi.out,
+  x = empi.class,
   channel = 1,
   increase.factor = 8,
   out.mode = "file",
@@ -107,7 +107,7 @@ out <- empi2tf(
 
 # Save the T-F map as an RData file containing a matrix with the specified dimensions.
 out <- empi2tf(
-  x = empi.out,
+  x = empi.class,
   channel = 1,
   out.mode = "RData",
   path = ".",

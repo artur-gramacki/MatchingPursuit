@@ -10,11 +10,7 @@
 #' @importFrom DescTools DrawEllipse
 #' @importFrom imager as.cimg resize
 #'
-#' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
-#' In this case, the \code{x} parameter must be \code{NULL}.
-#'
-#' @param x \code{empi} object of class \code{empi} (created after executing the
-#' \code{empi.execute()} function). In this case, the \code{db.file} parameter must be \code{NULL}.
+#' @param x An object of class \code{empi} or a path to an SQLite file created by \code{empi.execute()}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
@@ -105,10 +101,11 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+#' empi.class <- read.empi.db.file(file)
 #'
 #' # 'freq.divide' is set arbitrarily
 #' out <- empi2tf(
-#'   db.file = file,
+#'   x = empi.class,
 #'   channel = 1,
 #'   mode = "sqrt",
 #'   freq.divide = 4,
@@ -120,7 +117,7 @@
 #'
 #' # 'freq.divide' is determined based on the atom with the highest frequency
 #' out <- empi2tf(
-#'   db.file = file,
+#'   x = empi.class,
 #'   channel = 1,
 #'   mode = "sqrt",
 #'   increase.factor= 4,
@@ -130,7 +127,6 @@
 #' )
 #'
 empi2tf <- function(
-    db.file = NULL,
     x = NULL,
     channel,
     mode = "sqrt",
@@ -156,14 +152,21 @@ empi2tf <- function(
   old.par <- par("mfrow", "pty", "mai", "mgp", "las", "xaxs", "yaxs")
   on.exit(par(old.par))
 
+  if (inherits(x, "empi")) {
+    out <- x
+  }
+
+  if (!inherits(x, "empi")) {
+    # check if a string is a legal path to an existing file
+    if (is.character(x) &&  length(x) == 1 && !is.na(x) && file.exists(x) && !dir.exists(x)) {
+      out <- read.empi.db.file(x)
+    } else {
+      stop("'x' must be an object of class 'empi' or a path to an SQLite file.")
+    }
+  }
+
   if (out.mode != "plot" && out.mode != "file" && out.mode != "RData" && out.mode != "RData2")
     stop("Incorrect value for 'out.mode' parameter.'")
-
-  if (is.null(db.file) && is.null(x))
-    stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
-
-  if (!is.null(db.file) && !is.null(x))
-    stop("Specify input as SQLite file _OR_ a list returned by the 'empi.execute()' function.")
 
   if (is.null(file.name)) {
     if  (out.mode == "file") fn <- "TFmap.png"
@@ -228,23 +231,6 @@ empi2tf <- function(
       "#991500")
   } else {
     col <- hcl.colors(128, palette, rev = rev)
-  }
-
-  if (!is.null(db.file)) {
-    out <- read.empi.db.file(db.file)
-  }
-
-  object <- x
-
-  if (!is.null(object)) {
-    if (!inherits(object, "empi")) {
-      object <- try(x$f, silent = TRUE)
-
-      if (!inherits(object, "empi")) {
-        stop("Object not of class 'empi'.")
-      }
-    }
-    out <- object
   }
 
   total.channels <- length(unique(out$atoms$channel_id))

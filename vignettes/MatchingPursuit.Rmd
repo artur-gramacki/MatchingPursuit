@@ -158,7 +158,7 @@ Notice the `empi.options` parameter in the `empi.execute()` function. You can sp
 # file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 # signal <- read.csv.signals(file)
 
-# empi.out <- empi.execute (
+# empi.class <- empi.execute (
 #   signal = signal,
 #   empi.options = "-o local --gabor -i 25",
 #   write.to.file = TRUE,
@@ -185,7 +185,7 @@ file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
 # Create time-frequency map based on MP atoms.
 out <- empi2tf(
-  db.file = file,
+  x = file,
   channel = 1,
   mode = "sqrt",
   increase.factor = 4,
@@ -354,7 +354,7 @@ par(old.par)
 # sig <- list(bip.montage.filt, out1$sampling.rate)
 # names(sig) <- c("signal", "sampling.rate")
 
-# empi.out <- empi.execute (
+# empi.class <- empi.execute (
 #   signal = sig,
 #   empi.options = NULL,
 #   write.to.file = TRUE,
@@ -378,7 +378,7 @@ file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPur
 
 # Generate time-frequency map based on MP atoms.
 out <- empi2tf(
-  db.file = file,
+  x = file,
   channel = 2,
   mode = "sqrt",
   increase.factor= 8,
@@ -521,7 +521,7 @@ In the T–F map, all signal components—except for the chirp—are represented
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")
 
 out <- empi2tf(
-  db.file = file,
+  x = file,
   channel = 1,
   mode = "sqrt",
   freq.divide = 1,

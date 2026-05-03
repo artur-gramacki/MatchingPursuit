@@ -2,8 +2,7 @@
 #'
 #' The function is in fact a wrapper for \code{empi2tf()} function where \code{out.mode = "plot"}.
 #'
-#' @param x \code{empi} object created after executing the \code{empi.execute()} function.
-#' In this case, the \code{db.file} parameter must be \code{NULL}.
+#' @param x An object of class \code{empi} created by \code{empi.execute()}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
