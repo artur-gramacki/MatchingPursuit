@@ -150,7 +150,7 @@ The input data (`signal`) is passed as an argument to the `empi.execute()` funct
 
 <div id="important_note"></div>
 **Important note:**
-The code in the chunk below has been commented out because CRAN's verification rules prohibit automatic binary downloads. `empi.execute()` function requires that EMPI is installed, otherwise it terminates with an error message. Therefore, this function can not be executed here.  That is why the `sample1.db` file has been generated in advance and included in the package. In the next chunk, the `empi2ft()` function uses this file as input (the `db.file` parameter).
+The code in the chunk below has been commented out because CRAN's verification rules prohibit automatic binary downloads. `empi.execute()` function requires that EMPI is installed, otherwise it terminates with an error message. Therefore, this function can not be executed here.  That is why the `sample1.db` file has been generated in advance and included in the package. In the next chunk, the `empi2ft()` function uses this file as input (the `x` parameter).
 
 Notice the `empi.options` parameter in the `empi.execute()` function. You can specify `NULL` for this parameter, and the EMPI program will run with the default values set in the function (`"-o local --gabor -i 50"`). It is also worth noting that the program offers a wide range of configuration options. Details can be found in the `README.md` file located in the directory where the EMPI program was installed. In our example, parameters were set to instruct the program to find 25 atoms.
 
@@ -188,11 +188,25 @@ out <- empi2tf(
   x = file,
   channel = 1,
   mode = "sqrt",
+  freq.divide = 4,
   increase.factor = 4,
   display.crosses = FALSE,
   display.atom.numbers = TRUE,
   out.mode = "plot"
 )
+```
+
+### Step 3.bis {.unnumbered}
+
+To display the T–F map, you can also use `plot.empi()`, the `S3` method for the generic `plot()` function. This function requires an object of class `empi`, created by `empi.execute()`. Due to CRAN regulations, the code below has been commented out. See the explanation [here](#important_note). Uncomment it to view the result.
+
+```{r plot_empi, include = TRUE, echo = TRUE, warning = FALSE}
+file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read.csv.signals(file, col.names = "ch1")
+
+# empi.class <- empi.execute(signal = signal)
+
+# plot(empi.class)
 ```
 
 [Back to menu](#top) 
@@ -517,7 +531,7 @@ par(old.par)
 
 In the T–F map, all signal components—except for the chirp—are represented clearly and accurately (i.e., blobs for Gabor functions, a horizontal line for the sine wave, and a vertical line for the unit impulse). However, the chirp signal is decomposed into several separate blobs. This behavior arises from the discrete nature of the atom dictionary used in the MP algorithm, which prevents a continuous representation of a signal with smoothly varying frequency. This limitation (and, in some respects, a drawback) of the MP algorithm should be taken into account.
 
-```{r chirp_plot_tf, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 6}
+```{r chirp_plot_tf, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 6}
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")
 
 out <- empi2tf(

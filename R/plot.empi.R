@@ -48,10 +48,10 @@
 #' signal <- read.csv.signals(file, col.names = "ch1")
 #'
 #' # Execute the MP algorithm.
-#' empi.out <- empi.execute(signal = signal)
+#' empi.class <- empi.execute(signal = signal)
 #'
 #' # Plot a time-frequency map based on MP atoms.
-#' plot(empi.out)
+#' plot(empi.class)
 #'
 #' @export
 plot.empi <- function(
@@ -80,9 +80,10 @@ plot.empi <- function(
     object <- try(x$f, silent = TRUE)
 
     if (!inherits(object, "empi")) {
-      stop("Object not of class 'empi'.")
+      stop("'x' must be an object of class 'empi'.")
     }
   }
+
 
   if (is.null(freq.divide)) {
     rows <- which(object$atoms$channel_id == channel)

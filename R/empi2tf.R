@@ -282,16 +282,16 @@ empi2tf <- function(
   o <- round(sum(original.signal^2), 2)
   r <- round(sum(reconstruction^2), 2)
 
-  message("Channel number: ", channel)
-  message("Total channels: ", total.channels)
-  message("Number of atoms: ", length(rows))
-  message("Sampling rate: ", f, " Hz")
-  message("Epoch size (in points): ", epochSize)
-  message("Signal length (in seconds): ", s)
-
-  message("\nEnergy of the original signal:      ",o)
-  message("Energy of the reconstructed signal: ",r)
-  message("reconstruction / original %:        ", round(r / o * 100, digits = 2), "\n")
+  message(
+    "Channel number: ", channel, "\n",
+    "Total channels: ", total.channels, "\n",
+    "Number of atoms: ", length(rows), "\n",
+    "Sampling rate: ", f, " Hz", "\n",
+    "Epoch size (in points): ", epochSize, "\n",
+    "Signal length (in seconds): ", s, "\n",
+    "\nEnergy of the original signal:      ",o, "\n",
+    "Energy of the reconstructed signal: ",r, "\n",
+    "reconstruction / original %:        ", round(r / o * 100, digits = 2), "\n")
 
   if(write.atoms) {
     graphics.off()

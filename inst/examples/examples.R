@@ -114,5 +114,17 @@ if (interactive()) {
     file.name = "sample1.RData",
     size = c(128, 128)
   )
+
+  # The empi2tf() can, unlike the plot.empi(), accept a path to an SQLite
+  # file created by empi.execute().
+  file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+
+  out <- empi2tf(
+    x = file,
+    channel = 1,
+    increase.factor = 8,
+    out.mode = "plot"
+  )
+
 }
 
