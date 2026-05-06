@@ -3,7 +3,6 @@
 #' A typical ECG paper layout was used, with a small grid of 0.04 s × 0.1 mV and a
 #' large grid of 0.20 s × 0.5 mV.
 #'
-#' @importFrom EGM read_wfdb
 #' @importFrom tools file_path_sans_ext
 #' @importFrom graphics lines segments
 #' @importFrom stats median
