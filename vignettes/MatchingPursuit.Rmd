@@ -464,7 +464,7 @@ out <- empi2tf(
 
 ### Step 4 (optional) {.unnumbered}
 
-The package also includes a function for displaying ECG signals in a layout corresponding to standard paper ECG printouts. A typical ECG paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.ecg()`, the `S3` method for the generic `plot()` function. This function requires an object of class `emg`, created with `EGM::read_wfdb()`. 
+The package also includes a function for displaying ECG signals in a layout corresponding to standard paper ECG printouts. A typical ECG paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.ecg()`, the `S3` method for the generic `plot()` function. This function requires an object of class `ecg`, created with `read.ecg.signals`()`. 
 
 ```{r plot.ecg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 plot(
