@@ -21,7 +21,7 @@ if (interactive()) {
   plot(empi.class)
 
   ###############################################################################
-  # Workflow 2. Data are stored in a EDF file (EEG results).
+  # Workflow 2. Data are stored in a EDF file.
   ###############################################################################
   # STEP 1 - reading a sample EEG file.
   file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
@@ -81,7 +81,39 @@ if (interactive()) {
     file.name = "sample1.db")
 
   # Read the atoms parameters.
-  atom.params(db.file = "sample1.db")
+  atoms <- atom.params(db.file = "sample1.db")
+  print(atoms)
+
+  ###############################################################################
+  # Workflow 3. Data are stored in a WFDB (WaveForm DataBase) format.
+  ###############################################################################
+  # STEP 1 - read sample data.
+  file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
+  out.ecg <- read.ecg.signals(file)
+
+  # Create a list compatible with the empi.execute() function.
+  signal <- list(
+    signal = data.frame(out.ecg$signal),
+    sampling.rate = out.ecg$sampling.rate
+  )
+
+  # STEP 2 - execute the MP algorithm.
+  empi.class <- empi.execute(signal = signal)
+
+  # STEP 3 - plot a time-frequency map based on MP atoms.
+  plot(empi.class)
+
+  # STEP 4 - displaying ECG signals in a layout corresponding to standard paper
+  # ECG printouts. A typical ECG paper layout was used, with a small grid
+  # of 0.04 s × 0.1 mV and a large grid of 0.20 s × 0.5 mV
+  plot(
+    x = out.ecg$ecg.class,
+    begin = 0,
+    end = 10,
+    panel.height = 1,
+    zero.line = FALSE,
+    small.squares = TRUE
+  )
 
   ###############################################################################
   # empi2tf() function.

@@ -7,12 +7,12 @@
 #'
 #' @details
 #' In addition to working with generic time-series data, the package also supports direct loading of
-#' data stored in EDF and EDF(+) files. These formats are widely used for storing physiological signals
-#' such as EEG, EMG, or ECG recordings. By enabling the import of EDF and EDF(+) files, the package
-#' facilitates the analysis of biomedical signals. The package requires the installation of an external
-#' program, \strong{Enhanced Matching Pursuit Implementation} (EMPI). This tool implements the Matching
-#' Pursuit algorithm developed by \strong{Piotr T. Różański} and is available
-#' at \url{https://github.com/develancer/empi}
+#' data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are widely used for
+#' storing physiological signals such as EEG, EMG, or ECG recordings. By enabling the import of EDF/EDF(+)
+#' and WFDB files, the package facilitates the analysis of biomedical signals. The package requires
+#' the installation of an external program, \strong{Enhanced Matching Pursuit Implementation} (EMPI).
+#' This tool implements the Matching Pursuit algorithm developed by \strong{Piotr T. Różański} and is
+#' available at \url{https://github.com/develancer/empi}
 #'
 #' Example datasets available through the \code{system.file()} function are:
 #'
@@ -44,6 +44,12 @@
 #'      \itemize{
 #'        \item 3 channels (random numbers from 0 to 1 in each channel)
 #'        \item sampling frequency: 128 Hz Hz, signal length: 2 sec.
+#'      }
+#'    \item \code{00001_lr.dat}, \code{00001_lr.hea}
+#'      \itemize{
+#'        \item One sample ECG set. Downloaded from the website \url{https://physionet.org/content/ptb-xl/1.0.3/}
+#'        \item 12 ECG leads, 10 sec. 16-bit integers storage format
+#'        \item standard 12 leads: I, II, III, aVR, aVL, aVF, V1–V6
 #'      }
 #' }
 #' The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{freq})

@@ -84,7 +84,6 @@ plot.empi <- function(
     }
   }
 
-
   if (is.null(freq.divide)) {
     rows <- which(object$atoms$channel_id == channel)
     ff <- max(object$atoms$frequency[rows])

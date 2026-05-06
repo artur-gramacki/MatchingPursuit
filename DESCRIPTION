@@ -1,7 +1,7 @@
 Package: MatchingPursuit
 Type: Package
 Title: Processing Time Series Data Using the Matching Pursuit Algorithm
-Version: 1.0.2
+Version: 1.1.0
 Author: 
   Artur Gramacki [aut, cre] (ORCID: <https://orcid.org/0000-0002-1610-9743>),
   Jarosław Gramacki [ctb] (ORCID: <https://orcid.org/0000-0001-5032-1353>),
@@ -36,7 +36,8 @@ Imports:
   graphics,
   grDevices,
   utils,
-  digest  
+  digest,
+  EGM  
 Suggests: 
   knitr,
   rmarkdown,

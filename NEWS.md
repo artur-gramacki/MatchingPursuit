@@ -1,6 +1,12 @@
-# MatchingPursuit 1.0.2
+# MatchingPursuit 1.1.0
+
+* Added the ability to load data in WFDB (WaveForm DataBase) format
 
 * `plot.empi()` function was added.
+
+* `plot.ecg()` function was added.
+
+* `read.ecg.signals()` function was added.
 
 * Extended examples added to the package-level documentation.
 
