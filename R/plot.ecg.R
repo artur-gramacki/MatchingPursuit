@@ -41,7 +41,7 @@
 #' out <- read.ecg.signals(file)
 #'
 #' plot(
-#'   x = out$ecg.class,
+#'   x = out,
 #'   begin = 0,
 #'   end = 10,
 #'   panel.height = 2,
@@ -63,15 +63,18 @@ plot.ecg <- function(
   ## Small grid: 0.04 s x 0.1 mV
   ## Large grid: 0.20 s x 0.5 mV
 
-  channels <- length(x$header$number)
-  ecg <- as.matrix(x$signal[, 2:(channels + 1)])
-  fs <- attr(x$header, "record_line")$frequency
+  # Save current graphical parameters to reset
+  old.par <- par(no.readonly = TRUE)
 
-  main <- paste(
-    "record name: ",
-    attr(x$header, "record_line")$record_name,
-    sep = ""
-  )
+  if (!inherits(x, "ecg")) {
+    stop("'x' must be an object of class 'ecg'.")
+  }
+
+  ecg <- as.matrix(x$signal)
+  fs <- x$sampling.rate
+  channels <- ncol(ecg)
+
+  main <- paste("record name: ", x$record.name, sep = "")
 
   # Each column is centered around its median. In signals like ECG/EGM, this
   # helps remove the base-level offset (DC offset), making channels more comparable.
@@ -158,5 +161,7 @@ plot.ecg <- function(
        labels = seq(begin, end, by = 1),
        lwd = 0,
        lwd.ticks = 1)
+
+  on.exit(par(old.par))
 }
 

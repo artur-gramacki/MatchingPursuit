@@ -10,11 +10,11 @@ read.ecg.signals(file)
 \item{file}{The path to the ECG record to be read.}
 }
 \value{
-A list is returned with:
-1) data frame with all signals stored in the given ECG file,
-3) sampling rate,
-4) lead names,
-4) object of class \code{ecg}.
+An object of class \code{ecg}. The returned value is a list containing:
+  1) a matrix with all signals stored in the ECG file,
+  2) the sampling rate,
+  3) the lead names,
+  4) the record name.
 }
 \description{
 WFDB (WaveForm DataBase) is a standard file format for storing, reading,

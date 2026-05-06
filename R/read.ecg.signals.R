@@ -14,11 +14,11 @@
 #' @importFrom EGM read_wfdb
 #' @importFrom tools file_path_sans_ext
 #'
-#' @return A list is returned with:
-#' 1) data frame with all signals stored in the given ECG file,
-#' 3) sampling rate,
-#' 4) lead names,
-#' 4) object of class \code{ecg}.
+#' @return An object of class \code{ecg}. The returned value is a list containing:
+#'   1) a matrix with all signals stored in the ECG file,
+#'   2) the sampling rate,
+#'   3) the lead names,
+#'   4) the record name.
 #' @export
 #'
 #' @examples
@@ -43,18 +43,20 @@ read.ecg.signals <- function(file) {
      units = "physical"
   )
 
-  class(out) <- "ecg"
-
   channels <- length(out$header$number)
-  ecg <- as.matrix(out$signal[, 2:(channels + 1)])
-  lead.names <- colnames(ecg)
-  colnames(ecg) <- lead.names
-  fs <- attr(out$header, "record_line")$frequency
+  signals <- as.matrix(out$signal[, 2:(channels + 1)])
+  lead.names <- colnames(signals)
+  colnames(signals) <- lead.names
+  sampling.rate <- attr(out$header, "record_line")$frequency
+  record.name <- attr(out$header, "record_line")$record_name
 
-  return(list(
-    signals = ecg,
-    sampling.rate = fs,
+  my.list <- list(
+    signals = signals,
+    sampling.rate = sampling.rate,
     lead.names = lead.names,
-    ecg.class = out)
+    record.name = record.name
   )
+
+  class(my.list) <- "ecg"
+  return(my.list)
 }

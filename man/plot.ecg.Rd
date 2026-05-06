@@ -50,7 +50,7 @@ name <- tools::file_path_sans_ext(basename(file))
 out <- read.ecg.signals(file)
 
 plot(
-  x = out$ecg.class,
+  x = out,
   begin = 0,
   end = 10,
   panel.height = 2,
