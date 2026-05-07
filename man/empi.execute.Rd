@@ -13,8 +13,7 @@ empi.execute(
 )
 }
 \arguments{
-\item{signal}{List returned from \code{read.csv.signals()} function. The list stores
-the signal in a data frame along with its sampling frequency.
+\item{signal}{List which stores the signal in a data frame along with its sampling frequency.
 The data should have logical column names (channel names).
 The elements of the list must be named \code{"signal"} and \code{"sampling.rate"}.}
 
@@ -51,10 +50,10 @@ Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 \examples{
 ## Not run:
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read.csv.signals(file)
+out <- read.csv.signals(file)
 
 out <- empi.execute (
-  signal = signal,
+  signal = out,
   empi.options = NULL,
   write.to.file = FALSE,
   path = NULL,

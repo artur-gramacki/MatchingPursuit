@@ -84,11 +84,11 @@ if (interactive()) {
   # Workflow 1. Data are stored in a CSV file.
   ###############################################################################
   # STEP 1 - read sample data.
-  file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-  signal <- read.csv.signals(file, col.names = "ch1")
+  file.sample1.csv <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+  signal.sample1.csv <- read.csv.signals(file.sample1.csv, col.names = "ch1")
 
   # STEP 2 - execute the MP algorithm.
-  empi.class <- empi.execute(signal = signal)
+  empi.class <- empi.execute(signal = signal.sample1.csv)
 
   # STEP 3 - plot a time-frequency map based on MP atoms.
   plot(empi.class)
@@ -97,9 +97,9 @@ if (interactive()) {
   # Workflow 2. Data are stored in a EDF file.
   ###############################################################################
   # STEP 1 - reading a sample EEG file.
-  file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-  out.EEG <- read.edf.signals(file)
-  signal.EEG <- out.EEG$signals
+  file.EEG.edf <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
+  out.EEG <- read.edf.signals(file.EEG.edf)
+  signal.EEG <- out.EEG$signal
   sampling.rate <- out.EEG$sampling.rate
 
   # STEP 2 - create the EEG montage.
@@ -147,17 +147,17 @@ if (interactive()) {
   # Workflow 3. Data are stored in a WFDB (WaveForm DataBase) format.
   ###############################################################################
   # STEP 1 - read sample data.
-  file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
-  out.ecg <- read.ecg.signals(file)
+  file.00001_lr.hea <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
+  out.ecg <- read.ecg.signals(file.00001_lr.hea)
 
   # Create a list compatible with the empi.execute() function.
-  signal <- list(
+  signal.ecg <- list(
     signal = data.frame(out.ecg$signal),
     sampling.rate = out.ecg$sampling.rate
   )
 
   # STEP 2 - execute the MP algorithm.
-  empi.class <- empi.execute(signal = signal)
+  empi.class <- empi.execute(signal = signal.ecg)
 
   # STEP 3 - plot a time-frequency map based on MP atoms.
   plot(empi.class)
@@ -179,7 +179,7 @@ if (interactive()) {
   ###############################################################################
   # Execute the MP algorithm and save the result to a SQLite file.
   empi.class <- empi.execute(
-    signal = signal,
+    signal = signal.sample1.csv,
     write.to.file = TRUE,
     path = ".",
     file.name = "sample1.db")
@@ -222,10 +222,10 @@ if (interactive()) {
 
   # The empi2tf() can, unlike the plot.empi(), accept a path to an SQLite
   # file created by empi.execute().
-  file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
+  file.sample1.db <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
   out <- empi2tf(
-    x = file,
+    x = file.sample1.db,
     channel = 1,
     increase.factor = 8,
     out.mode = "plot"

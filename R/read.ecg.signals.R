@@ -29,7 +29,7 @@
 #' name <- tools::file_path_sans_ext(basename(file))
 #'
 #' out <- read.ecg.signals(file)
-#' head(out$signals)
+#' head(out$signal)
 #' out$sampling.rate
 #' out$lead.names
 #'
@@ -45,16 +45,16 @@ read.ecg.signals <- function(file) {
   )
 
   channels <- length(out$header$number)
-  signals <- as.matrix(out$signal[, 2:(channels + 1)])
-  lead.names <- colnames(signals)
-  colnames(signals) <- lead.names
+  signal <- as.matrix(out$signal[, 2:(channels + 1)])
+  lead.names <- colnames(signal)
+  colnames(signal) <- lead.names
   sampling.rate <- attr(out$header, "record_line")$frequency
   record.name <- attr(out$header, "record_line")$record_name
 
-  time.stamps <- seq(0, by = 1 / sampling.rate, length.out = nrow(signals))
+  time.stamps <- seq(0, by = 1 / sampling.rate, length.out = nrow(signal))
 
   my.list <- list(
-    signals = signals,
+    signal = signal,
     time.stamps = time.stamps,
     sampling.rate = sampling.rate,
     lead.names = lead.names,

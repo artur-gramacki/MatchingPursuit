@@ -34,7 +34,7 @@ dir <- dirname(file)
 name <- tools::file_path_sans_ext(basename(file))
 
 out <- read.ecg.signals(file)
-head(out$signals)
+head(out$signal)
 out$sampling.rate
 out$lead.names
 

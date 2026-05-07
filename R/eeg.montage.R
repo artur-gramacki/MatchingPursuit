@@ -29,7 +29,7 @@
 #' @examples
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' out <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-#' signal <- out$signals
+#' signal <- out$signal
 #'
 #' read.edf.params(file)
 #'
