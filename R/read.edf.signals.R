@@ -25,25 +25,25 @@
 #' @importFrom edf read.edf
 #' @importFrom utils flush.console
 #'
-#' @return A list is returned with:
+#' @return An object of class \code{edf}. The returned value is a list containing:
 #' 1) data frame with all signals stored in the given \code{edf} file,
-#' 2) complete result returned by the \code{edf::read.edf()} function,
-#' 3) sampling rate of the data after possible resampling (upsampled or downsampled),
-#' 4) time stamps of the data after possible resampling (upsampled or downsampled).
+#' 2) sampling rate of the data after possible resampling (upsampled or downsampled),
+#' 3) time stamps of the data after possible resampling (upsampled or downsampled).
+#' 4) signal names
 #'
 #' @export
 #'
 #' @examples
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-#' sigs1  <- read.edf.signals(file, resampling = FALSE)
+#' out1  <- read.edf.signals(file, resampling = FALSE)
 #'
-#' lapply(sigs1, class)
-#' sigs1$sampling.rate
+#' lapply(out1, class)
+#' out1$sampling.rate
 #'
-#' sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
+#' out2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 #'
-#' lapply(sigs2, class)
-#' sigs2$sampling.rate
+#' lapply(out2, class)
+#' out2$sampling.rate
 #'
 
 read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL, to = NULL, verbose = FALSE) {
@@ -56,7 +56,7 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     if (from >= to) stop("`from` varaible must by smaller than `to`")
   }
 
-  edf <- read.edf(filename = file, read.annotations = FALSE, header.only = FALSE)
+  edf <- edf::read.edf(filename = file, read.annotations = FALSE, header.only = FALSE)
 
   if (nchar(edf[["header.global"]][["reserved"]]) > 0) {
     n.sigs <- edf[["header.global"]][["n.signals"]] - 1 # EDF +
@@ -76,12 +76,15 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     return(edf)
   }
 
+  signal.names <- NA
   for (i in 1:n.sigs) {
     lab <- edf[["header.signal"]][[i]]$label
     freq <- edf[["header.signal"]][[i]]$samplingrate
     sig <- edf[["signal"]][[i]][["data"]]
     t <- edf[["signal"]][[i]][["t"]]
     f <- edf[["header.signal"]][[i]][["samplingrate"]]
+
+    signal.names[i] <- lab
 
     if (resampling) {
       sig.len <- length(sig) / f
@@ -124,10 +127,13 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     edf.mtx <- edf.mtx[seq(from * f + 1, to * f / (f / f.new)), ]
   }
 
-  return(list(
+  my.list <- list(
     signals = as.data.frame(edf.mtx),
     sampling.rate = f.new,
     time.stamps = t.new,
-    edf = edf)
+    signal.names = signal.names
   )
+
+  class(my.list) <- "edf"
+  return(my.list)
 }

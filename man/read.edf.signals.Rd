@@ -28,11 +28,11 @@ upsampling or downsampling, depending on the actual sampling rate of subsequent 
 \item{verbose}{Flag to print out progress information.}
 }
 \value{
-A list is returned with:
+An object of class \code{edf}. The returned value is a list containing:
 1) data frame with all signals stored in the given \code{edf} file,
-2) complete result returned by the \code{edf::read.edf()} function,
-3) sampling rate of the data after possible resampling (upsampled or downsampled),
-4) time stamps of the data after possible resampling (upsampled or downsampled).
+2) sampling rate of the data after possible resampling (upsampled or downsampled),
+3) time stamps of the data after possible resampling (upsampled or downsampled).
+4) signal names
 }
 \description{
 The function reads a selected EDF or EDF+ file.
@@ -47,14 +47,14 @@ function does not provide the functionality to independently change the sampling
 }
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-sigs1  <- read.edf.signals(file, resampling = FALSE)
+out1  <- read.edf.signals(file, resampling = FALSE)
 
-lapply(sigs1, class)
-sigs1$sampling.rate
+lapply(out1, class)
+out1$sampling.rate
 
-sigs2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
+out2 <- read.edf.signals(file, resampling = TRUE, f.new = 128, verbose = TRUE)
 
-lapply(sigs2, class)
-sigs2$sampling.rate
+lapply(out2, class)
+out2$sampling.rate
 
 }

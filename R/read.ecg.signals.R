@@ -17,8 +17,9 @@
 #' @return An object of class \code{ecg}. The returned value is a list containing:
 #'   1) a matrix with all signals stored in the ECG file,
 #'   2) the sampling rate,
-#'   3) the lead names,
-#'   4) the record name.
+#'   3) the time stamps,
+#'   4) the lead names,
+#'   5) the record name.
 #' @export
 #'
 #' @examples
@@ -37,7 +38,7 @@ read.ecg.signals <- function(file) {
   dir <- dirname(file)
   name <- tools::file_path_sans_ext(basename(file))
 
-  out <- read_wfdb(
+  out <- EGM::read_wfdb(
      record = name,
      record_dir = dir,
      units = "physical"
@@ -50,8 +51,11 @@ read.ecg.signals <- function(file) {
   sampling.rate <- attr(out$header, "record_line")$frequency
   record.name <- attr(out$header, "record_line")$record_name
 
+  time.stamps <- seq(0, by = 1 / sampling.rate, length.out = nrow(signals))
+
   my.list <- list(
     signals = signals,
+    time.stamps = time.stamps,
     sampling.rate = sampling.rate,
     lead.names = lead.names,
     record.name = record.name

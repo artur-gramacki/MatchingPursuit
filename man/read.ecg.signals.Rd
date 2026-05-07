@@ -13,8 +13,9 @@ read.ecg.signals(file)
 An object of class \code{ecg}. The returned value is a list containing:
   1) a matrix with all signals stored in the ECG file,
   2) the sampling rate,
-  3) the lead names,
-  4) the record name.
+  3) the time stamps,
+  4) the lead names,
+  5) the record name.
 }
 \description{
 WFDB (WaveForm DataBase) is a standard file format for storing, reading,

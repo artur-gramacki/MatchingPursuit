@@ -144,20 +144,6 @@ if (interactive()) {
   plot(empi.class, channel = 2)
 
   ###############################################################################
-  # Saving the empi.execute() results to a SQLite file.
-  ###############################################################################
-  # Execute the MP algorithm and save the result to a SQLite file.
-  empi.class <- empi.execute(
-    signal = signal,
-    write.to.file = TRUE,
-    path = ".",
-    file.name = "sample1.db")
-
-  # Read the atoms parameters.
-  atoms <- atom.params(db.file = "sample1.db")
-  print(atoms)
-
-  ###############################################################################
   # Workflow 3. Data are stored in a WFDB (WaveForm DataBase) format.
   ###############################################################################
   # STEP 1 - read sample data.
@@ -180,13 +166,27 @@ if (interactive()) {
   # ECG printouts. A typical ECG paper layout was used, with a small grid
   # of 0.04 s × 0.1 mV and a large grid of 0.20 s × 0.5 mV
   plot(
-    x = out.ecg$ecg.class,
+    x = out.ecg,
     begin = 0,
     end = 10,
     panel.height = 1,
     zero.line = FALSE,
     small.squares = TRUE
   )
+
+  ###############################################################################
+  # Saving the empi.execute() results to a SQLite file.
+  ###############################################################################
+  # Execute the MP algorithm and save the result to a SQLite file.
+  empi.class <- empi.execute(
+    signal = signal,
+    write.to.file = TRUE,
+    path = ".",
+    file.name = "sample1.db")
+
+  # Read the atoms parameters.
+  atoms <- atom.params(db.file = "sample1.db")
+  print(atoms)
 
   ###############################################################################
   # empi2tf() function.
