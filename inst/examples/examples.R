@@ -18,7 +18,18 @@ if (interactive()) {
   empi.class <- empi.execute(signal = signal.sample1.csv)
 
   # STEP 3 - Plot the time-frequency map based on MP atoms.
+  # plot.empi() is the S3 method for the generic plot() function.
+  # It requires an object of class empi, created with empi.execute().
   plot(empi.class)
+
+  # STEP 3.bis — This call gives the same result as plot(empi.class).
+  # Uncomment to check.
+  # out <- empi2tf(
+  #  x = empi.class,
+  #  channel = 1,
+  #  increase.factor = 8,
+  #  out.mode = "plot"
+  #)
 
   ###############################################################################
   # Workflow 2. Data stored in an EDF file (EEG data).
@@ -53,9 +64,9 @@ if (interactive()) {
 
   sig.filt <- bip.montage$signal
 
-  for (m in 1:ncol(bip.montage$signal)) {
+  for (m in 1:ncol(sig.filt)) {
     # 50Hz notch filter
-    sig.filt[, m] = signal::filtfilt(fc$notch, bip.montage$signal[, m])
+    sig.filt[, m] = signal::filtfilt(fc$notch, sig.filt[, m])
     # Low pass IIR Butterworth
     sig.filt[, m] = signal::filtfilt(fc$lowpass, sig.filt[, m])
     # High pass IIR Butterwoth
@@ -135,16 +146,8 @@ if (interactive()) {
   print(atoms)
 
   ###############################################################################
-  # empi2tf() function.
+  # Some useful options in empi2tf() function.
   ###############################################################################
-  # This call produces the same result as plot(empi.class).
-  out <- empi2tf(
-    x = empi.class,
-    channel = 1,
-    increase.factor = 8,
-    out.mode = "plot"
-  )
-
   # Save the time-frequency map as a PNG file
   # with the specified dimensions (in pixels).
   out <- empi2tf(

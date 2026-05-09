@@ -57,11 +57,14 @@ cat(
 library(MatchingPursuit)
 ```
 ## Installing the required external software
-The below function downloads **Enhanced Matching Pursuit Implementation** external program (or **EMPI** for short),
-see @Rozanski-2024, and stores it in the cache directory. The function downloads the EMPI program in a version
-compatible with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64). The code in the below chunk 
-has been commented out because CRAN's verification rules prohibit automatic binary downloads. Therefore, this
-function cannot be executed while generating this vignette.
+The below `empi.install()` function downloads **Enhanced Matching Pursuit Implementation** external program (or **EMPI** for short), see @Rozanski-2024, and stores it in the cache directory. The function downloads the EMPI program in a version compatible with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64). 
+
+First, the user can see where EMPI can be downloaded from.
+```{r empi.locate, include = TRUE, echo = TRUE}
+empi.locate()
+```
+
+The code in the below chunk has been commented out because CRAN's verification rules prohibit automatic binary downloads. Therefore, this function cannot be executed while generating this vignette.
 
 ```{r empi.install, include = TRUE, echo = TRUE}
 # empi.install()
@@ -72,12 +75,16 @@ User can check whether the EMPI program is installed; if not, an error message i
 empi.check()
 ```
 
-## The purpose of the package
-The presented package enables the analysis of time-series signals using the Matching Pursuit (MP) algorithm (see @Mallat-1993, @Pati-1993, @Durka-2007, @Elad-2010). Additionally, it supports working with EEG (electroencephalogram) signals by:
+## The purpose and functionality of the package
+The presented package enables the analysis of time-series signals using the Matching Pursuit (MP) algorithm (see @Mallat-1993, @Pati-1993, @Durka-2007, @Elad-2010). Additionally, it supports working with EEG (electroencephalogram) and ECG (electrocardiograph) signals. The functionality of the package includes:
 
 1. Loading files in EDF and EDF+ formats
-2. Performing 3 typical EEG montages (bipolar, referential, average)
-3. Pre-filtering the signals
+2. Loading files in the WFDB (WaveForm DataBase) format
+3. Performing three typical EEG montages (bipolar, referential, and average)
+4. Pre-filtering signals using notch, low-pass, high-pass, band-pass, and band-stop filters
+5. Plotting the signals
+6. Executing the Matching Pursuit (MP) algorithm
+7. Plotting time–frequency maps based on the MP results
 
 [Back to menu](#top) 
 
@@ -107,7 +114,6 @@ signal <- data.frame(x = x1 + x2 + x3 + x4 + x5 + x6 + x7)
 
 ```{r 7.non.stationary.plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 range <- range(signal)
-
 par(mfrow = c(8, 1), pty = "m", mai = c(0.2, 0.4, 0.2, 0.1))
 
 plot(t, signal$x, type = "l", col = "blue", main = "", xlab = "", ylab = "")
@@ -125,18 +131,17 @@ par(old.par)
 Data must be stored in a data frame: rows represent samples for all channels, and columns represent channels. Our first demo dataset consists of only one channel (one column). The `read.csv.signals()` function checks whether the data has the correct structure. The first line of the file must contain two numbers: the sampling rate in Hz (`freq`) and the signal length in seconds (`sec`). This allows verification that the file actually contains `freq*sec` samples.
 
 ```{r sample1.csv, include = TRUE, echo = TRUE, warning = FALSE}
+# The sample1.csv file contains exactly the same data as shown in Step 1.
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 
+# The first line of the file contains two values:
+# the sampling rate in Hz (1024 Hz here) and the signal duration
+# in seconds (1 s here).
 out <- read.csv(file, header = FALSE)
 head(out)
 
-out <- read.csv.signals(file)
-
-str(out)
-
-head(out$signal)
-
-out$sampling.rate
+signal <- read.csv.signals(file)
+str(signal)
 ```
 
 [Back to menu](#top) 
@@ -290,11 +295,11 @@ pairs <- list(
 eeg.m <- eeg.montage(eeg, montage.type = c("bipolar"), bipolar.pairs = pairs)
 signal.eeg.m <- eeg.m$signal
 
-# Original signal.
-head(signal.eeg[, 1:5])
+# Original signal (first 6 rows, first 6 channels).
+signal.eeg[1:6, 1:6]
 
-# Signal after banana montage.
-head(signal.eeg.m[, 1:5])
+# Signal after banana montage (first 6 rows, first 6 channels).
+signal.eeg.m[1:6, 1:6]
 
 ```
 
@@ -317,7 +322,7 @@ fc <- filters.coeff(
 signal.eeg.m.f <- signal.eeg.m
 
 for (m in 1:ncol(signal.eeg.m)) {
-  signal.eeg.m.f[, m] = signal::filtfilt(fc$notch, signal.eeg.m[, m])         # 50Hz notch filter
+  signal.eeg.m.f[, m] = signal::filtfilt(fc$notch, signal.eeg.m[, m])      # 50Hz notch filter
   signal.eeg.m.f[, m] = signal::filtfilt(fc$lowpass, signal.eeg.m.f[, m])  # Low pass IIR Butterworth
   signal.eeg.m.f[, m] = signal::filtfilt(fc$highpass, signal.eeg.m.f[, m]) # High pass IIR Butterwoth
 }
@@ -416,7 +421,7 @@ plot(
   end = 10,
   panel.height = NULL,
   rainbow = FALSE,
-  bg.color = "white",
+  bg.colour = "white",
   txt.col = "blue",
   zero.line = TRUE,
   main = "EEG.edf file after banana montage and after filtering"

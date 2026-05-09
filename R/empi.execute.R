@@ -40,13 +40,15 @@
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' out <- read.csv.signals(file)
 #'
-#' out <- empi.execute(
+#' out.empi <- empi.execute(
 #'   signal = out,
 #'   empi.options = NULL,
 #'   write.to.file = FALSE,
 #'   path = NULL,
 #'   file.name = NULL
 #' )
+#'
+#' plot(out.empi)
 #' ## End(Not run)
 #'
 empi.execute <- function(
