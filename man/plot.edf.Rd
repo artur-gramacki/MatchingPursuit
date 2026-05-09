@@ -20,22 +20,21 @@
 \arguments{
 \item{x}{Object of class \code{edf} (from \code{read.edf.signals()}).}
 
-\item{begin}{Timepoint as representing seconds to start at.}
+\item{begin}{Time point (in seconds) at which to start plotting.}
 
-\item{end}{Timepoint as representing seconds to stop at.}
+\item{end}{Time point (in seconds) at which to stop plotting.}
 
-\item{panel.height}{Controls the vertical distance between individual signals.
-If \code{NULL}, its value is set automatically so that all signals are clearly
-visible and do not overlap}
+\item{panel.height}{Controls the vertical spacing between individual signals.
+If \code{NULL}, the value is chosen automatically so that all signals are clearly
+visible and do not overlap.}
 
-\item{rainbow}{if \code{TRUE}, individual channels will be drawn in different colors}
+\item{rainbow}{If \code{TRUE}, individual channels are drawn in different colours.}
 
-\item{bg.colour}{Background color}
+\item{bg.colour}{Background colour.}
 
-\item{txt.col}{Colour of text elements (X and Y axis, title).}
+\item{txt.col}{Colour of text elements (axis labels and title).}
 
-\item{zero.line}{If \code{TRUE}, the horizontal line representing
-\code{0 mV} will be displayed.}
+\item{zero.line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
 
 \item{main}{The text shown as the plot title.}
 
@@ -45,8 +44,8 @@ visible and do not overlap}
 No return value, called to visualize an EEG graph.
 }
 \description{
-Signals are displayed one below the other. They can be displayed in different
-colors for easier viewing.
+Signals are displayed one below another and may be shown in different
+colours for improved readability.
 }
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
@@ -61,7 +60,7 @@ plot(
   bg.colour = "black",
   txt.col = "white",
   zero.line = TRUE,
-  main = "EEG.edf file after banana montage and after filtering"
+  main = "EEG signals stored in the EEG.edf file"
 )
 
 plot(
@@ -73,6 +72,6 @@ plot(
   bg.colour = "white",
   txt.col = "black",
   zero.line = TRUE,
-  main = "EEG.edf file after banana montage and after filtering"
+  main = "EEG signals stored in the EEG.edf file"
 )
 }

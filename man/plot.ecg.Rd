@@ -17,9 +17,9 @@
 \arguments{
 \item{x}{Object of class \code{ecg} (from \code{read.ecg.signals()}).}
 
-\item{begin}{Timepoint as representing seconds to start at.}
+\item{begin}{Time point (in seconds) at which to start plotting.}
 
-\item{end}{Timepoint as representing seconds to stop at.}
+\item{end}{Time point (in seconds) at which to stop plotting.}
 
 \item{panel.height}{Number of large squares to display (according to standard ECG paper):
 \itemize{
@@ -27,10 +27,9 @@
     \item large grid: 0.20 sec. x 0.5 mV
 }}
 
-\item{small.squares}{If \code{TRUE}, also small grid will be displayed.}
+\item{small.squares}{If \code{TRUE}, the small grid is also displayed.}
 
-\item{zero.line}{If \code{TRUE}, the horizontal line representing
-\code{0 mV} will be displayed.}
+\item{zero.line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
 
 \item{...}{Currently ignored. Required for compatibility with the generic \code{plot()}.}
 }

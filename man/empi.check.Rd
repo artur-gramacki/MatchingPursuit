@@ -11,9 +11,9 @@ If the EMPI program is found, its full path is returned. Otherwise, a message is
 prompting the user to install it using the \code{empi.install()} function.
 }
 \description{
-The EMPI program is installed using the \code{empi.install()} function and is stored in the
-cache directory. This function checks whether the EMPI program is still there (the user has
-free access to the cache directory and can, for example, delete it at any time).
+The EMPI program is installed using the \code{empi.install()} function and stored in the
+cache directory. This function checks whether the EMPI program is still available there
+(users have full access to the cache directory and may remove its contents at any time).
 }
 \examples{
 empi.check()

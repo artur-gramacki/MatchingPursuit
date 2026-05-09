@@ -14,7 +14,7 @@ eeg.montage(
 \arguments{
 \item{x}{Object of class \code{edf} (from \code{read.edf.signals()}).}
 
-\item{montage.type}{A character string representing montage type.
+\item{montage.type}{A character string specifying the montage type.
 \itemize{
    \item \code{"average"} - each electrode is referenced to the average of all electrodes
    \item \code{"reference"} - each active electrode is compared to a single common reference electrode
@@ -29,15 +29,16 @@ eeg.montage(
 An object of class \code{edf}.
 }
 \description{
-An EEG montage refers to the specific arrangement of EEG electrodes and the way their signals
-are displayed relative to each other during the interpretation of an electroencephalogram.
-The same EEG recording can look very different depending on the montage use. The function
-implements the three most frequently used montage methods in practice, i.e.
-1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
+An EEG montage refers to the arrangement of EEG electrodes and the way their signals
+are displayed relative to one another during electroencephalogram interpretation.
+The same EEG recording may appear very different depending on the montage used. This
+function implements the three montage methods most commonly used in practice:
+1) Bipolar Montage, 2) Referential (Monopolar) Montage, and
+3) Average Reference Montage.
 }
 \details{
-To find out what names the individual channels have in the analysed EEG set,
-it is worth executing the \code{read.edf.params()} function.
+To check the channel names in the analysed EEG recording,
+use the \code{read.edf.params()} function.
 }
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")

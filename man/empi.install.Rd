@@ -12,9 +12,9 @@ with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64)
 and stores it in the package cache directory.
 }
 \description{
-Downloads \strong{Enhanced Matching Pursuit Implementation} external program
-(or EMPI for short) binary compatible with the current operating system and
-stores it in the package cache directory.
+Downloads the \strong{Enhanced Matching Pursuit Implementation} (EMPI)
+external program compatible with the current operating system and stores it
+in the package cache directory.
 }
 \details{
 The function detects the operating system (Windows, Linux, macOS x64,

@@ -28,97 +28,95 @@ empi2tf(
 )
 }
 \arguments{
-\item{x}{An object of class \code{empi} or a path to an SQLite file created by \code{empi.execute()}.}
+\item{x}{An object of class \code{empi} or a path to a SQLite file created by \code{empi.execute()}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
-\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. It determines the intensity
+\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. Determines the intensity
 with which the so-called blobs are displayed on the T-F map.}
 
-\item{freq.divide}{Specifies how many times the displayed frequency in the T-F map
-should be decreased. At high sampling rates and when we use a low-pass filter with
-a typical cut-off frequency much lower than the sampling frequency, a large part of
-the T-F map does not contain any blobs. If the sampling frequency is \code{f},
-the maximum frequency in the T-F map will be \code{ceiling(f/2/freq.divide)}
-(f/2 is the Nyquist rule). If \code{NULL}, it is determined based on the atom
-with the highest frequency \code{fmax} according to \code{freq.divide=(f/2)/fmax}.}
+\item{freq.divide}{Specifies how many times the displayed frequency range in the T-F map
+should be reduced. At high sampling rates, especially when a low-pass filter with
+a cut-off frequency much lower than the sampling frequency is used, a large part of
+the T-F map may contain no blobs. If the sampling frequency is \code{f},
+the maximum frequency displayed in the T-F map will be \code{ceiling(f / 2 / freq.divide)}
+(\code{f / 2} follows the Nyquist rule). If \code{NULL}, it is determined from the atom
+with the highest frequency \code{fmax} according to \code{freq.divide = (f / 2) / fmax}.}
 
-\item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
-sensible are non-negative integers (e.g. 2, 4, 5, 8).}
+\item{increase.factor}{Factor controlling the increase in the number of pixels along the
+frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropriate.}
 
-\item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will
-be appropriate.}
+\item{shortening.factor.x}{Usually, a value of 2 provides better atom visualization.}
 
-\item{shortening.factor.y}{Usually, for better visualization of atoms, a value of 2 will
-be appropriate.}
+\item{shortening.factor.y}{Usually, a value of 2 provides better atom visualization.}
 
-\item{display.crosses}{Whether small crosses should be displayed in the canters of atoms.}
+\item{display.crosses}{Whether small crosses should be displayed at the centres of atoms.}
 
 \item{display.atom.numbers}{Whether atom numbers should be displayed in the canters of atoms.}
 
-\item{display.grid}{Whether to draw grid lines.}
+\item{display.grid}{Whether grid lines should be drawn.}
 
-\item{crosses.color}{Colour of small crosses.}
+\item{crosses.color}{Colour of the small crosses.}
 
-\item{palette}{Palette from the list returned by \code{hcl.pals()} function or the string
+\item{palette}{PPalette from the list returned by the \code{hcl.pals()} function or the string
 \code{"my custom palette"}.}
 
-\item{rev}{\code{rev} param in \code{hcl.colors()} function.}
+\item{rev}{Value of the \code{rev} argument passed to the \code{hcl.colors()} function.}
 
 \item{out.mode}{One of the following:
 \itemize{
    \item \code{"plot"} - draws a T-F map on the screen.
-   \item \code{"file"} - saves a T-F map to file \code{file.name} (as \code{png} file).
-   \item \code{"RData"} - saves the T-F map of \code{size} in the \code{file.name}
-   (as R's matrix), resampling is performed using the function \code{imager::resize()} function.
-   \item \code{"RData2"} - saves the T-F map of \code{size} in the \code{file.name}
-   (as R's matrix), resampling is performed using the function using \code{raster::resample()} function.
+   \item \code{"file"} - saves a T-F map to the file \code{file.name} (as a \code{png} file).
+   \item \code{"RData"} - saves the T-F map of size \code{size} to \code{file.name}
+   (as an R matrix); resampling is performed using the \code{imager::resize()} function.
+   \item \code{"RData2"} - saves the T-F map of size \code{size} to \code{file.name}
+   (as an R matrix); resampling is performed using the \code{raster::resample()} function.
  }}
 
-\item{path}{Path where \code{png}, \code{RData} or \code{pdf} files will be written. If \code{NULL},
+\item{path}{Path where \code{png}, \code{RData}, or \code{pdf} files will be written. If \code{NULL},
 files will be written to the cache directory.}
 
-\item{file.name}{Name of the \code{png} file (if \code{out.mode="file}) or name of the \code{RData}
-file (if \code{out.mode="RData"} or \code{out.mode="RData2})}
+\item{file.name}{Name of the \code{png} file (if \code{out.mode = "file"}) or name of the
+\code{RData} file (if \code{out.mode = "RData"} or \code{out.mode = "RData2"}).}
 
-\item{size}{\code{png} file size in pixels (if \code{out.mode="file"}) or size of the T-F matrix
-(if \code{out.mode="RData"} of \code{out.mode="RData2"}).}
+\item{size}{Size of the \code{png} file in pixels (if \code{out.mode = "file"}) or size of
+the T-F matrix (if \code{out.mode = "RData"} or \code{out.mode = "RData2"}).}
 
-\item{draw.ellipses}{Only for testing. User can set it to \code{TRUE} to see the effect.
-Works properly only if \code{out.mode="plot"}.}
+\item{draw.ellipses}{Intended for testing only. Can be set to \code{TRUE} to display
+the effect. Works correctly only if \code{out.mode = "plot"}.}
 
 \item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
 
-\item{write.atoms}{If \code{TRUE}, writes all atom plots into \code{Atoms.pdf} file
-(to the cache directory or user specified one - depending on \code{path} variable)}
+\item{write.atoms}{If \code{TRUE}, writes all atom plots to the \code{Atoms.pdf} file
+(in the cache directory or in a user-specified directory, depending on \code{path}).}
 }
 \value{
-Depending on the \code{out.mode} parameter the function returns:
+Depending on the \code{out.mode} parameter, the function:
    \itemize{
-     \item Time-Frequency map plotted on the screen
-     \item Time-Frequency map saved in a .png file
-     \item Time-Frequency map saved as .RData file
+     \item displays the time-frequency map on the screen
+     \item saves the time-frequency map as a \code{.png} file
+     \item saves the time-frequency map as a \code{.RData} file
   }
-Regardless of the above, the function returns the following:
+Regardless of the output mode, the function also returns:
   \itemize{
-    \item all the Gabor functions
+    \item all Gabor functions
     \item reconstructed signal
     \item original signal
     \item sampling frequency
-    \item grid size in t axis
-    \item grid size in f axis
+    \item grid size along the time axis
+    \item grid size along the frequency axis
     \item epoch size in samples
-    \item length of the signal in seconds
+    \item signal length in seconds
     \item time-frequency map
-    \item time-frequency map after resampling
-    (if \code{out.mode="RData"} or if \code{out.mode="RData2"}, otherwise, \code{NULL} is returned)
-    \item channel number processed
-    \item frequency divide
+    \item resampled time-frequency map
+    (if \code{out.mode = "RData"} or \code{out.mode = "RData2"}; otherwise \code{NULL})
+    \item processed channel number
+    \item frequency division factor
   }
 }
 \description{
 Creates a time-frequency map using atoms from the Matching Pursuit algorithm.
-The created map can be: 1) displayed on the screen, 2) saved in \code{.png} file,
+The resulting map can be: 1) displayed on the screen, 2) saved as a \code{.png} file,
 or 3) saved as an \code{.RData} object.
 }
 \examples{

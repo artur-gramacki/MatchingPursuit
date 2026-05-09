@@ -1,26 +1,27 @@
 #' Reads input signal(s) from a data frame and returns them in binary format
 #'
 #' @description
-#' Saves the given data (signals) in binary form.
-#' Input signal(s) must be a data frame: rows = samples for all channels, columns = channels.
-#' The function is used internally in the \code{empi.execute()} function. The binary data are
-#' floating-point values in the byte order  of the current machine (no byte-order conversion is performed).
-#' For multichannel signals, first come the samples for all channels at \code{t=0}, then for all
-#' channels at \code{t=}\eqn{\Delta}\code{t} and so forth. In other words,
-#' the signal should be written in column-major order (rows = channels, columns = samples).
+#' Saves the given data (signals) in binary form. The input signal(s) must be a data frame:
+#' rows correspond to samples for all channels, and columns correspond to channels.
+#' The function is used internally by \code{empi.execute()}. The binary data consist of
+#' floating-point values in the byte order of the current machine (no byte-order conversion
+#' is performed).
 #'
-#' @param data Data frame with the input signal(s).
+#' For multichannel signals, samples are written in time order: first all channels at \code{t = 0},
+#' then all channels at \code{t=}\eqn{\Delta}\code{t}, and so on. In other words, the signal is
+#' stored in column-major order (rows = channels, columns = samples).
 #'
-#' @param write.to.file If \code{TRUE} the bin file will be created and saved in the cache directory.
+#' @param data Data frame containing the input signal(s).
 #'
-#' @return Input signal returned as the \code{raw}. If \code{write.to.file=TRUE}, the \code{.bin} file
-#' will additionally be created and saved in the current directory.
+#' @param write.to.file If \code{TRUE}, a \code{.bin} file is created and saved in the cache directory.
 #'
-#' @note The user does not work directly with \code{.bin} files. Binary files are used only in the
-#' \code{empi.execute()} function. The external program (\emph{Enhanced Matching Pursuit Implementation},
-#' or EMPI for short) executed inside this function requires binary data as input.
-#' Moreover, the ability to convert text files to binary form may be useful if someone wants to work
-#' with EMPI independently of the R environment.
+#' @return Input signal returned as \code{raw}. If \code{write.to.file = TRUE}, a \code{.bin} file
+#' is additionally created and saved in the current directory.
+#'
+#' @note Users do not work directly with \code{.bin} files. Binary files are used only in
+#' \code{empi.execute()}. The external program \emph{Enhanced Matching Pursuit Implementation}
+#' (EMPI), executed inside this function, requires binary input data. This conversion utility
+#' may also be useful for users who wish to run EMPI outside of the R environment.
 #'
 #' @export
 #'

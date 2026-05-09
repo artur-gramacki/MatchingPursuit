@@ -12,12 +12,12 @@ read.empi.db.file(db.file)
 \value{
 Object of class \code{empi} is returned with the following items:
 \itemize{
-   \item Detailed parameters of all the generated atoms
-   \item Original input signal(s)
-   \item Reconstructed signal(s), as the sum of generated atoms
-   \item Generated Gabor atoms
-   \item time stamps
-   \item sampling rate
+   \item parameters of all generated atoms,
+   \item original input signal(s),
+   \item reconstructed signal(s) obtained as the sum of generated atoms,
+   \item generated Gabor atoms,
+   \item time stamps,
+   \item sampling rate.
 }
 }
 \description{

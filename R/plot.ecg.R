@@ -9,9 +9,9 @@
 #'
 #' @param x Object of class \code{ecg} (from \code{read.ecg.signals()}).
 #'
-#' @param begin Timepoint as representing seconds to start at.
+#' @param begin Time point (in seconds) at which to start plotting.
 #'
-#' @param end Timepoint as representing seconds to stop at.
+#' @param end Time point (in seconds) at which to stop plotting.
 #'
 #' @param panel.height Number of large squares to display (according to standard ECG paper):
 #' \itemize{
@@ -19,10 +19,9 @@
 #'     \item large grid: 0.20 sec. x 0.5 mV
 #' }
 #'
-#' @param small.squares If \code{TRUE}, also small grid will be displayed.
+#' @param small.squares If \code{TRUE}, the small grid is also displayed.
 #'
-#' @param zero.line If \code{TRUE}, the horizontal line representing
-#' \code{0 mV} will be displayed.
+#' @param zero.line If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.
 #'
 #' @param ... Currently ignored. Required for compatibility with the generic \code{plot()}.
 #'

@@ -2,30 +2,36 @@
 % Please edit documentation in R/read.ecg.signals.R
 \name{read.ecg.signals}
 \alias{read.ecg.signals}
-\title{Reads WFDB-compatible signal & header files}
+\title{Reads WFDB-compatible signal and header files}
 \usage{
 read.ecg.signals(file)
 }
 \arguments{
-\item{file}{The path to the ECG record to be read.}
+\item{file}{Path to the ECG record to be read.}
 }
 \value{
 An object of class \code{ecg}. The returned value is a list containing:
-  1) a matrix with all signals stored in the ECG file,
+  1) a matrix of signals stored in the ECG file,
   2) the sampling rate,
-  3) the time stamps,
-  4) the lead names,
-  5) the record name.
+  3) time stamps,
+  4) lead names,
+  5) record name.
 }
 \description{
 WFDB (WaveForm DataBase) is a standard file format for storing, reading,
 and analyzing physiological time-series signals.It is widely used for signals
 such as: ECG, EEG, blood pressure, respiration and other biomedical waveforms.
 It was developed by PhysioNet and is common in research datasets.
-A WFDB record usually contains two main files: \code{.dat} — binary signal
-samples (the waveform values) and \code{.hea} — header file describing how to
-interpret the data. Sometimes there are also annotation files such as
-\code{.atr}, containing beat labels or rhythm annotations.
+WFDB (WaveForm DataBase) is a standard file format for storing, reading,
+and analyzing physiological time-series signals. It is widely used for
+signals such as ECG, EEG, blood pressure, respiration, and other biomedical
+waveforms. It was developed by PhysioNet and is commonly used in research datasets.
+}
+\details{
+A WFDB record typically consists of two main files:
+\code{.dat} - binary signal samples (waveform values),and \code{.hea} - a header
+file describing how to interpret the data. In some cases, additional annotation
+files such as \code{.atr} may be present, containing beat labels or rhythm annotations.
 }
 \examples{
 # ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
@@ -37,5 +43,7 @@ out <- read.ecg.signals(file)
 head(out$signal)
 out$sampling.rate
 out$lead.names
+
+plot(out, begin = 0, end = 10, panel.height = 1.5)
 
 }

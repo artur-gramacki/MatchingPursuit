@@ -1,35 +1,34 @@
-#' Reads a selected EDF or EDF+ file and returns all signals data
+#' Reads a selected EDF or EDF+ file and returns signal data
 #'
-#' The function reads a selected EDF or EDF+ file.
-#' Also resampling can be done (upsampling or downsampling).
+#' The function reads a selected EDF or EDF+ file. Optionally, resampling can be performed
+#' (upsampling or downsampling).
 #'
-#' @param file The path to the EDF / EDF+ file to be read.
+#' @param file Path to the EDF / EDF+ file to be read.
 #'
-#' @param resampling If \code{TRUE} the frequency of all signals will be
-#' upsampling or downsampling, depending on the actual sampling rate of subsequent channel.
+#' @param resampling If \code{TRUE}, all signals are resampled
+#' (either upsampled or downsampled), depending on the original sampling rates of the channels.
 #'
-#' @param f.new A new frequency (used for upsampling or downsampling).
+#' @param f.new Target sampling frequency used for upsampling or downsampling.
 #'
-#' @param from Loading a signal \code{from} (given as a second).
+#' @param from Starting time of the signal to be loaded (in seconds).
 #'
-#' @param to Loading a signal \code{to} (given as a second).
+#' @param to Ending time of the signal to be loaded (in seconds).
 #'
-#' @param verbose Flag to print out progress information.
+#' @param verbose Logical flag indicating whether progress information should be printed.
 #'
-#' @details If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled,
-#' depending on the actual sampling rate of the individual channels and the set value of the
-#' \code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different
-#' rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The
-#' function does not provide the functionality to independently change the sampling rate for each channel.
+#' @details If \code{resampling = TRUE}, signals are resampled according to the target frequency
+#' specified by \code{f.new}. Since the EDF standard allows different sampling rates per channel,
+#' some channels may be upsampled while others are downsampled. The function does not support
+#' independent resampling of individual channels.
 #'
 #' @importFrom edf read.edf
 #' @importFrom utils flush.console
 #'
-#' @return An object of class \code{edf}. The returned value is a list containing:
-#' 1) data frame with all signals stored in the given \code{edf} file,
-#' 2) sampling rate of the data after possible resampling (upsampled or downsampled),
-#' 3) time stamps of the data after possible resampling (upsampled or downsampled).
-#' 4) signal names
+#' @return An object of class \code{edf}, a list containing:
+#' 1) a data frame with all signals stored in the EDF file,
+#' 2) sampling rate after optional resampling,
+#' 3) time stamps after optional resampling,
+#' 4) signal names.
 #'
 #' @export
 #'

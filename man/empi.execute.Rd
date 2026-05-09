@@ -13,38 +13,37 @@ empi.execute(
 )
 }
 \arguments{
-\item{signal}{List which stores the signal in a data frame along with its sampling frequency.
-The data should have logical column names (channel names).
-The elements of the list must be named \code{"signal"} and \code{"sampling.rate"}.}
+\item{signal}{List containing the signal in a data frame together with its sampling frequency.
+The data frame should have meaningful column names (channel names).
+The list must contain elements named \code{"signal"} and \code{"sampling.rate"}.}
 
-\item{empi.options}{If \code{NULL}, the EMPI program runs with
-\code{"-o local --gabor -i 50"} parameters. Otherwise, user can specify any command-line
-options. See \code{README.md} file after downloading the EMPI program using
+\item{empi.options}{If \code{NULL}, the EMPI program is run with
+\code{"-o local --gabor -i 50"} parameters. Otherwise, the user may specify any command-line
+options. See the \code{README.md} file after downloading the EMPI program using the
 \code{empi.install()} function.}
 
 \item{write.to.file}{If \code{TRUE}, a SQLite database file will be created
-and saved in the \code{path} directory or, (if \code{path=NULL}), in the
-cache directory. This file stores the results of signal decomposition using the MP algorithm.}
+and saved in the \code{path} directory or, if \code{path = NULL}, in the
+cache directory. This file stores the results of signal decomposition using the MP algorithm}
 
-\item{path}{Directory in which to save the SQLite database file.
-If it is \code{NULL}, the file will be saved in the cache directory.}
+\item{path}{Directory in which the SQLite database file will be saved.
+If \code{NULL}, the file will be saved in the cache directory.}
 
-\item{file.name}{The name of the file to generate if \code{write.to.file=TRUE}.}
+\item{file.name}{Name of the file to create if \code{write.to.file = TRUE}.}
 }
 \value{
-Results of signal decomposition using the MP algorithm. Object of class \code{empi}
-is returned. If \code{write.to.file=TRUE} is specified, the results are also written
-to a SQLite file on disk in the \code{path}
-directory.
+Results of signal decomposition using the MP algorithm. An object of class
+\code{empi} is returned. If \code{write.to.file = TRUE}, the results are also written
+to a SQLite file in the \code{path} directory.
 }
 \description{
 Runs the EMPI program for the given data (signal).
 }
 \details{
-The EMPI program (source and binary files for various operating systems) can be
+The EMPI program (source code and binary files for multiple operating systems) can be
 downloaded from \url{https://github.com/develancer/empi}. Details are presented in the
 journal paper: Różański, P. T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with
-Continuous Dictionaries}.ACM Transactions on Mathematical Software, Volume 50, Issue 3,
+Continuous Dictionaries}. ACM Transactions on Mathematical Software, Volume 50, Issue 3,
 Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 }
 \examples{
@@ -52,13 +51,15 @@ Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 out <- read.csv.signals(file)
 
-out <- empi.execute (
+out.empi <- empi.execute(
   signal = out,
   empi.options = NULL,
   write.to.file = FALSE,
   path = NULL,
   file.name = NULL
 )
+
+plot(out.empi)
 ## End(Not run)
 
 }

@@ -12,17 +12,18 @@ complex signals as a linear combination of simpler functions (called atoms) sele
 redundant dictionary.
 }
 \details{
-In addition to working with generic time-series data, the package also supports direct loading of
+In addition to generic time-series data, the package supports direct loading of
 data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are widely used for
-storing physiological signals such as EEG or ECG recordings. By enabling the import of EDF/EDF(+)
-and WFDB files, the package facilitates the analysis of biomedical signals.
+physiological signals such as EEG and ECG recordings. Support for EDF/EDF(+) and WFDB
+import facilitates the analysis of biomedical signals.
 
-The package requires
-the installation of an external program, \strong{Enhanced Matching Pursuit Implementation} (EMPI).
-This tool implements the Matching Pursuit algorithm developed by \strong{Piotr T. Różański} and is
-available at \url{https://github.com/develancer/empi}
+The package requires installation of an external program,
+\strong{Enhanced Matching Pursuit Implementation} (EMPI).
+This tool implements the Matching Pursuit algorithm developed by
+\strong{Piotr T. Różański} and is available at
+\url{https://github.com/develancer/empi}
 
-Example datasets available through the \code{system.file()} function are:
+Example datasets available via the \code{system.file()} function:
 
  \itemize{
    \item \code{EEG.edf}, \code{EEG.db}, \code{EEG.csv}
@@ -55,22 +56,21 @@ Example datasets available through the \code{system.file()} function are:
      }
    \item \code{00001_lr.dat}, \code{00001_lr.hea}
      \itemize{
-       \item One sample ECG set. Downloaded from the website \url{https://physionet.org/content/ptb-xl/1.0.3/}
-       \item 12 ECG leads, 10 sec. 16-bit integers storage format
-       \item standard 12 leads: I, II, III, aVR, aVL, aVF, V1–V6
+       \item Example ECG recording from \url{https://physionet.org/content/ptb-xl/1.0.3/}
+       \item 12 ECG leads, 10 sec, 16-bit integer format
+       \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
      }
 }
-The first line of the \code{.csv} file contains two numbers: the sampling rate in Hz (\code{freq})
-and the signal length in seconds (\code{sec}). \code{read.csv.signals} function checks
-whether the file actually contains \code{round(freq*sec)} samples. The two numbers
-must by separated by one or more whitespace characters.
+The first line of a \code{.csv} file contains two numbers: sampling rate in Hz (\code{freq})
+and signal length in seconds (\code{sec}). The \code{read.csv.signals()} function verifies
+whether the file contains exactly \code{round(freq * sec)} samples. The two numbers
+must be separated by one or more whitespace characters.
 
-Optionally, channel names can be specified in the second line of the \code{.csv} file.
-For such files, when reading their contents using the \code{read.csv.signals()} function,
-use the \code{col.names.in.csv=TRUE} parameter.
+Optionally, channel names may be specified in the second line of the \code{.csv} file.
+In such cases, use \code{col.names.in.csv = TRUE} when calling \code{read.csv.signals()}.
 
-Files with the \code{db} extension are in the \code{SQLite} format and are the result of
-running the \code{empi.execute()} function.
+Files with the \code{.db} extension are in \code{SQLite} format and are produced by
+the \code{empi.execute()} function.
 }
 \examples{
 if (interactive()) {
@@ -93,7 +93,18 @@ if (interactive()) {
   empi.class <- empi.execute(signal = signal.sample1.csv)
 
   # STEP 3 - Plot the time-frequency map based on MP atoms.
+  # plot.empi() is the S3 method for the generic plot() function.
+  # It requires an object of class empi, created with empi.execute().
   plot(empi.class)
+
+  # STEP 3.bis — This call gives the same result as plot(empi.class).
+  # Uncomment to check.
+  # out <- empi2tf(
+  #  x = empi.class,
+  #  channel = 1,
+  #  increase.factor = 8,
+  #  out.mode = "plot"
+  #)
 
   ###############################################################################
   # Workflow 2. Data stored in an EDF file (EEG data).
@@ -128,9 +139,9 @@ if (interactive()) {
 
   sig.filt <- bip.montage$signal
 
-  for (m in 1:ncol(bip.montage$signal)) {
+  for (m in 1:ncol(sig.filt)) {
     # 50Hz notch filter
-    sig.filt[, m] = signal::filtfilt(fc$notch, bip.montage$signal[, m])
+    sig.filt[, m] = signal::filtfilt(fc$notch, sig.filt[, m])
     # Low pass IIR Butterworth
     sig.filt[, m] = signal::filtfilt(fc$lowpass, sig.filt[, m])
     # High pass IIR Butterwoth
@@ -210,16 +221,8 @@ if (interactive()) {
   print(atoms)
 
   ###############################################################################
-  # empi2tf() function.
+  # Some useful options in empi2tf() function.
   ###############################################################################
-  # This call produces the same result as plot(empi.class).
-  out <- empi2tf(
-    x = empi.class,
-    channel = 1,
-    increase.factor = 8,
-    out.mode = "plot"
-  )
-
   # Save the time-frequency map as a PNG file
   # with the specified dimensions (in pixels).
   out <- empi2tf(

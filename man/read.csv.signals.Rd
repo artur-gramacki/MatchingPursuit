@@ -2,26 +2,30 @@
 % Please edit documentation in R/read.csv.signals.R
 \name{read.csv.signals}
 \alias{read.csv.signals}
-\title{Reads and checks if the csv file has the correct structure}
+\title{Reads and validates a CSV file structure}
 \usage{
 read.csv.signals(file, col.names = NULL, col.names.in.csv = FALSE)
 }
 \arguments{
-\item{file}{File to be read and check. The first line of the file must contain two numbers:
+\item{file}{File to be read and checked. The first line of the file must contain two numbers:
 the sampling rate in Hz (\code{freq}) and the signal length in seconds (\code{sec}).
-The function checks whether the file actually contains \code{round(freq*sec)} samples. The two numbers
-must by separated by one or more whitespace characters.}
+The function verifies whether the file contains exactly \code{round(freq * sec)} samples.
+The two numbers must be separated by one or more whitespace characters.}
 
-\item{col.names}{Vector with column names. If not specified, default names will be created.}
+\item{col.names}{Optional character vector of column names. If not specified, default names are created.}
 
-\item{col.names.in.csv}{if \code{TRUE}, we assume that the second line contains column names.}
+\item{col.names.in.csv}{iLogical value. If \code{TRUE}, the second line of the file is assumed
+to contain column names.}
 }
 \value{
-A list is returned with:
-1) data frame where rows = samples for all channels, columns = channels, 2) sampling rate.
+A list containing:
+\itemize{
+  \item a data frame (rows = samples, columns = channels),
+  \item sampling rate.
+}
 }
 \description{
-Reads and checks if the csv file has the correct structure
+Reads and validates a CSV file structure
 }
 \examples{
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -29,7 +33,7 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 # The first line of the file must contain two numbers:
 # a) the sampling rate in Hz
 # b) the signal length in seconds
-out <- read.table(file, header = FALSE, skip = 1)
+out <- read.csv(file, header = FALSE)
 head(out)
 
 signal <- read.csv.signals(file, col.names = "signal_1")

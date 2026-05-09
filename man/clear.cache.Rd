@@ -7,8 +7,8 @@
 clear.cache()
 }
 \value{
-Logical scalar. TRUE if all files were successfully removed, FALSE otherwise.
-The return value is invisible.
+Logical scalar. Returns \code{TRUE} if all files were successfully removed,
+and \code{FALSE} otherwise. The return value is invisible.
 }
 \description{
 Deletes all files in the MatchingPursuit cache directory.

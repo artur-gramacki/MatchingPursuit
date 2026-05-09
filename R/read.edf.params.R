@@ -1,15 +1,15 @@
 #' Reads a selected EDF or EDF+ file and returns signal parameters
 #'
 #' @description
-#' Reads a selected EDF or EDF+ file and returns selected signals parameters
-#' (channel names, frequency of each channel, number of samples in each channel
-#' and the length of each channel in seconds). Additional information stored in EDF+
-#' files (such as interrupted recordings, time-stamped annotations) is not used in the
+#' Reads a selected EDF or EDF+ file and returns basic signal parameters
+#' (channel names, sampling frequency of each channel, number of samples per channel,
+#' and signal duration in seconds). Additional information stored in EDF+ files
+#' (such as interrupted recordings or time-stamped annotations) is not used by the
 #' package and is therefore not read.
 #'
-#' @param file The path to the EDF / EDF+ file to be read.
+#' @param file Path to the EDF / EDF+ file to be read.
 #'
-#' @return A data frame is returned containing the most basic parameters of the EDF / EDF+ file.
+#' @return A data frame containing the basic parameters of the EDF / EDF+ file.
 #'
 #' @importFrom edf read.edf
 #'

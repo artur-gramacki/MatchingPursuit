@@ -1,29 +1,28 @@
 #' The function displays EEG signals
 #'
-#' Signals are displayed one below the other. They can be displayed in different
-#' colors for easier viewing.
+#' Signals are displayed one below another and may be shown in different
+#' colours for improved readability.
 #'
 #' @importFrom graphics lines segments
 #' @importFrom stats median
 #'
 #' @param x Object of class \code{edf} (from \code{read.edf.signals()}).
 #'
-#' @param begin Timepoint as representing seconds to start at.
+#' @param begin Time point (in seconds) at which to start plotting.
 #'
-#' @param end Timepoint as representing seconds to stop at.
+#' @param end Time point (in seconds) at which to stop plotting.
 #'
-#' @param panel.height Controls the vertical distance between individual signals.
-#' If \code{NULL}, its value is set automatically so that all signals are clearly
-#' visible and do not overlap
+#' @param panel.height Controls the vertical spacing between individual signals.
+#' If \code{NULL}, the value is chosen automatically so that all signals are clearly
+#' visible and do not overlap.
 #'
-#' @param rainbow if \code{TRUE}, individual channels will be drawn in different colors
+#' @param rainbow If \code{TRUE}, individual channels are drawn in different colours.
 #'
-#' @param bg.colour Background color
+#' @param bg.colour Background colour.
 #'
-#' @param txt.col Colour of text elements (X and Y axis, title).
+#' @param txt.col Colour of text elements (axis labels and title).
 #'
-#' @param zero.line If \code{TRUE}, the horizontal line representing
-#' \code{0 mV} will be displayed.
+#' @param zero.line If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.
 #'
 #' @param main The text shown as the plot title.
 #'

@@ -15,28 +15,29 @@ gabor.fun(
 )
 }
 \arguments{
-\item{number.of.samples}{How many samples should the generated atom consist of?}
+\item{number.of.samples}{Number of samples in the generated atom.}
 
 \item{sampling.frequency}{Sampling frequency.}
 
-\item{mean}{Time position.}
+\item{mean}{Time position of the Gaussian envelope.}
 
-\item{phase}{Phase.}
+\item{phase}{Phase of the sinusoidal component.}
 
-\item{sigma}{Scale / width of the Gaussian window.}
+\item{sigma}{Scale parameter controlling the width of the Gaussian window.}
 
-\item{frequency}{Frequency of the sinusoid.}
+\item{frequency}{Frequency of the sinusoidal component.}
 
-\item{normalization}{If \code{TRUE}, norm of the generated atom equals 1.}
+\item{normalization}{If \code{TRUE}, the resulting atom is normalized to have unit norm.}
 }
 \value{
-List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
+A list containing four numeric vectors of length \code{number.of.samples}:
+cosine, Gaussian envelope, Gabor function, and time axis.
 }
 \description{
-Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is
-widely used as a basic building block for representing signals that are localized in both time and
-frequency. Matching Pursuit algorithm uses a redundant dictionary of the so called \emph{Gabor atoms}.
-Gabor atoms are ideal for Matching Pursuit because they: 1) provide optimal time–frequency
+A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing, it is
+widely used as a basic building block for representing signals localized in both time and frequency.
+The Matching Pursuit algorithm uses a redundant dictionary of so-called \emph{Gabor atoms}.
+These atoms are particularly suitable because they: 1) provide optimal time–frequency
 localization, 2) represent oscillatory signals well, 3) enable adaptive time-frequency decomposition.
 }
 \examples{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/read.edf.signals.R
 \name{read.edf.signals}
 \alias{read.edf.signals}
-\title{Reads a selected EDF or EDF+ file and returns all signals data}
+\title{Reads a selected EDF or EDF+ file and returns signal data}
 \usage{
 read.edf.signals(
   file,
@@ -14,36 +14,35 @@ read.edf.signals(
 )
 }
 \arguments{
-\item{file}{The path to the EDF / EDF+ file to be read.}
+\item{file}{Path to the EDF / EDF+ file to be read.}
 
-\item{resampling}{If \code{TRUE} the frequency of all signals will be
-upsampling or downsampling, depending on the actual sampling rate of subsequent channel.}
+\item{resampling}{If \code{TRUE}, all signals are resampled
+(either upsampled or downsampled), depending on the original sampling rates of the channels.}
 
-\item{f.new}{A new frequency (used for upsampling or downsampling).}
+\item{f.new}{Target sampling frequency used for upsampling or downsampling.}
 
-\item{from}{Loading a signal \code{from} (given as a second).}
+\item{from}{Starting time of the signal to be loaded (in seconds).}
 
-\item{to}{Loading a signal \code{to} (given as a second).}
+\item{to}{Ending time of the signal to be loaded (in seconds).}
 
-\item{verbose}{Flag to print out progress information.}
+\item{verbose}{Logical flag indicating whether progress information should be printed.}
 }
 \value{
-An object of class \code{edf}. The returned value is a list containing:
-1) data frame with all signals stored in the given \code{edf} file,
-2) sampling rate of the data after possible resampling (upsampled or downsampled),
-3) time stamps of the data after possible resampling (upsampled or downsampled).
-4) signal names
+An object of class \code{edf}, a list containing:
+1) a data frame with all signals stored in the EDF file,
+2) sampling rate after optional resampling,
+3) time stamps after optional resampling,
+4) signal names.
 }
 \description{
-The function reads a selected EDF or EDF+ file.
-Also resampling can be done (upsampling or downsampling).
+The function reads a selected EDF or EDF+ file. Optionally, resampling can be performed
+(upsampling or downsampling).
 }
 \details{
-If \code{resampling=TRUE}, the frequency of all signals will be upsampled or downsampled,
-depending on the actual sampling rate of the individual channels and the set value of the
-\code{f.new} parameter. The EDF standard assumes that each channel can be sampled at a different
-rate. Therefore, it may happen that some channels are upsampled and others are downsampled. The
-function does not provide the functionality to independently change the sampling rate for each channel.
+If \code{resampling = TRUE}, signals are resampled according to the target frequency
+specified by \code{f.new}. Since the EDF standard allows different sampling rates per channel,
+some channels may be upsampled while others are downsampled. The function does not support
+independent resampling of individual channels.
 }
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")

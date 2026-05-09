@@ -1,8 +1,8 @@
 #' Installs the EMPI external program
 #'
-#' Downloads \strong{Enhanced Matching Pursuit Implementation} external program
-#' (or EMPI for short) binary compatible with the current operating system and
-#' stores it in the package cache directory.
+#' Downloads the \strong{Enhanced Matching Pursuit Implementation} (EMPI)
+#' external program compatible with the current operating system and stores it
+#' in the package cache directory.
 #'
 #' The function detects the operating system (Windows, Linux, macOS x64,
 #' macOS arm64), downloads the appropriate archive from the official

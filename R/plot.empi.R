@@ -1,40 +1,38 @@
-#' plots T-F map to visualize the empi decomposition
+#' Plots a time-frequency (T-F) map to visualize EMPI decomposition
 #'
-#' The function is in fact a wrapper for \code{empi2tf()} function where \code{out.mode = "plot"}.
+#' This function is a wrapper around \code{empi2tf()} with \code{out.mode = "plot"}.
 #'
 #' @param x An object of class \code{empi} created by \code{empi.execute()}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
-#' @param mode \code{"sqrt"}, \code{"log"}, or \code{"linear"}. It determines the intensity
+#' @param mode \code{"sqrt"}, \code{"log"}, or \code{"linear"}. Determines the intensity
 #' with which the so-called blobs are displayed on the T-F map.
 #'
-#' @param freq.divide Specifies how many times the displayed frequency in the T-F map
-#' should be decreased. At high sampling rates and when we use a low-pass filter with
-#' a typical cut-off frequency much lower than the sampling frequency, a large part of
-#' the T-F map does not contain any blobs. If the sampling frequency is \code{f},
-#' the maximum frequency in the T-F map will be \code{ceiling(f/2/freq.divide)}
-#' (f/2 is the Nyquist rule). If \code{NULL}, it is determined based on the atom
-#' with the highest frequency \code{fmax} according to \code{freq.divide=(f/2)/fmax}.
+#' @param freq.divide Specifies how many times the displayed frequency range in the T-F map
+#' should be reduced. At high sampling rates, and when a low-pass filter with
+#' a cut-off frequency much lower than the sampling frequency is used, a large part of
+#' the T-F map may contain no blobs. If the sampling frequency is \code{f},
+#' the maximum frequency in the T-F map will be \code{ceiling(f / 2 / freq.divide)}
+#' (\code{f / 2} follows the Nyquist rule). If \code{NULL}, it is determined from the atom
+#' with the highest frequency \code{fmax} according to \code{freq.divide = (f / 2) / fmax}.
 #'
-#' @param increase.factor Factor of increasing the number of pixels in the f-axis, the most
-#' sensible are non-negative integers (e.g. 2, 4, 5, 8).
+#' @param increase.factor Factor controlling the increase in the number of pixels along the
+#' frequency axis. Non-negative integers such as 2, 4, 5, or 8 are typically appropriate.
 #'
-#' @param shortening.factor.x Usually, for better visualization of atoms, a value of 2 will
-#' be appropriate.
+#' @param shortening.factor.x Usually, a value of 2 provides better visualization of atoms.
 #'
-#' @param shortening.factor.y Usually, for better visualization of atoms, a value of 2 will
-#' be appropriate.
+#' @param shortening.factor.y Usually, a value of 2 provides better visualization of atoms.
 #'
-#' @param display.crosses Whether small crosses should be displayed in the canters of atoms.
+#' @param display.crosses Whether small crosses should be displayed at the centres of atoms.
 #'
-#' @param display.atom.numbers Whether atom numbers should be displayed in the canters of atoms.
+#' @param display.atom.numbers Whether atom numbers should be displayed at the centres of atoms.
 #'
-#' @param display.grid Whether to draw grid lines.
+#' @param display.grid Whether grid lines should be drawn.
 #'
-#' @param crosses.color Colour of small crosses.
+#' @param crosses.color Colour of the small crosses.
 #'
-#' @param palette Palette from the list returned by \code{hcl.pals()} function or the string
+#' @param palette Palette from the list returned by \code{hcl.pals()} or the string
 #' \code{"my custom palette"}.
 #'
 #' @param plot.signals Whether the original and reconstructed signals should also be displayed.

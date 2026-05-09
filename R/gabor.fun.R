@@ -1,21 +1,22 @@
 #' Gabor function implementation
 #'
 #' @description
-#' Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing it is
-#' widely used as a basic building block for representing signals that are localized in both time and
-#' frequency. Matching Pursuit algorithm uses a redundant dictionary of the so called \emph{Gabor atoms}.
-#' Gabor atoms are ideal for Matching Pursuit because they: 1) provide optimal time–frequency
+#' A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing, it is
+#' widely used as a basic building block for representing signals localized in both time and frequency.
+#' The Matching Pursuit algorithm uses a redundant dictionary of so-called \emph{Gabor atoms}.
+#' These atoms are particularly suitable because they: 1) provide optimal time–frequency
 #' localization, 2) represent oscillatory signals well, 3) enable adaptive time-frequency decomposition.
 #'
-#' @param number.of.samples How many samples should the generated atom consist of?
+#' @param number.of.samples Number of samples in the generated atom.
 #' @param sampling.frequency Sampling frequency.
-#' @param mean Time position.
-#' @param phase Phase.
-#' @param sigma Scale / width of the Gaussian window.
-#' @param frequency Frequency of the sinusoid.
-#' @param normalization If \code{TRUE}, norm of the generated atom equals 1.
+#' @param mean Time position of the Gaussian envelope.
+#' @param phase Phase of the sinusoidal component.
+#' @param sigma Scale parameter controlling the width of the Gaussian window.
+#' @param frequency Frequency of the sinusoidal component.
+#' @param normalization If \code{TRUE}, the resulting atom is normalized to have unit norm.
 #'
-#' @return List of 4 vectors with cosine, gauss, gabor and time waveforms of size \code{number.of.samples}.
+#' @return A list containing four numeric vectors of length \code{number.of.samples}:
+#' cosine, Gaussian envelope, Gabor function, and time axis.
 #'
 #' @examples
 #' number.of.samples <- 512

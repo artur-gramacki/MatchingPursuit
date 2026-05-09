@@ -1,22 +1,21 @@
-#' Reading the atom parameters
+#' Read atom parameters from a SQLite database
 #'
-#' Returns a data frame with atom parameters read from a SQLite file.
+#' Reads atom parameters stored in a SQLite database created by \code{empi.execute()} function.
 #'
-#' @param db.file The SQLite file created after executing the \code{empi.execute()} function.
+#' @param db.file A character string giving the path to a SQLite database file.
 #'
-#' @return Data frame with all the atom parameters saved in a given SQLite file.
-#' The file can be generated using the \code{empi.execute()} function.
+#' @return A data frame containing the atom parameters stored in the database.
 #'
 #' @export
 #'
 #' @examples
-#' # The file contains data with 18 channels.
+#' # Example database containing data from 18 channels
 #' file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out[which(out$channel_id == 1), ]
 #' out[which(out$channel_id == 18), ]
 #'
-#' # This file contains data with only 1 channel.
+#' # Example database containing data from a single channel
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 #' out <- atom.params(file)
 #' out

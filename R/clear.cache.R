@@ -2,8 +2,8 @@
 #'
 #' Deletes all files in the MatchingPursuit cache directory.
 #'
-#' @return Logical scalar. TRUE if all files were successfully removed, FALSE otherwise.
-#' The return value is invisible.
+#' @return Logical scalar. Returns \code{TRUE} if all files were successfully removed,
+#' and \code{FALSE} otherwise. The return value is invisible.
 #'
 #' @export
 #'

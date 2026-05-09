@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.empi.R
 \name{plot.empi}
 \alias{plot.empi}
-\title{plots T-F map to visualize the empi decomposition}
+\title{Plots a time-frequency (T-F) map to visualize EMPI decomposition}
 \usage{
 \method{plot}{empi}(
   x,
@@ -26,35 +26,33 @@
 
 \item{channel}{Channel from the SQLite file to process.}
 
-\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. It determines the intensity
+\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. Determines the intensity
 with which the so-called blobs are displayed on the T-F map.}
 
-\item{freq.divide}{Specifies how many times the displayed frequency in the T-F map
-should be decreased. At high sampling rates and when we use a low-pass filter with
-a typical cut-off frequency much lower than the sampling frequency, a large part of
-the T-F map does not contain any blobs. If the sampling frequency is \code{f},
-the maximum frequency in the T-F map will be \code{ceiling(f/2/freq.divide)}
-(f/2 is the Nyquist rule). If \code{NULL}, it is determined based on the atom
-with the highest frequency \code{fmax} according to \code{freq.divide=(f/2)/fmax}.}
+\item{freq.divide}{Specifies how many times the displayed frequency range in the T-F map
+should be reduced. At high sampling rates, and when a low-pass filter with
+a cut-off frequency much lower than the sampling frequency is used, a large part of
+the T-F map may contain no blobs. If the sampling frequency is \code{f},
+the maximum frequency in the T-F map will be \code{ceiling(f / 2 / freq.divide)}
+(\code{f / 2} follows the Nyquist rule). If \code{NULL}, it is determined from the atom
+with the highest frequency \code{fmax} according to \code{freq.divide = (f / 2) / fmax}.}
 
-\item{increase.factor}{Factor of increasing the number of pixels in the f-axis, the most
-sensible are non-negative integers (e.g. 2, 4, 5, 8).}
+\item{increase.factor}{Factor controlling the increase in the number of pixels along the
+frequency axis. Non-negative integers such as 2, 4, 5, or 8 are typically appropriate.}
 
-\item{shortening.factor.x}{Usually, for better visualization of atoms, a value of 2 will
-be appropriate.}
+\item{shortening.factor.x}{Usually, a value of 2 provides better visualization of atoms.}
 
-\item{shortening.factor.y}{Usually, for better visualization of atoms, a value of 2 will
-be appropriate.}
+\item{shortening.factor.y}{Usually, a value of 2 provides better visualization of atoms.}
 
-\item{display.crosses}{Whether small crosses should be displayed in the canters of atoms.}
+\item{display.crosses}{Whether small crosses should be displayed at the centres of atoms.}
 
-\item{display.atom.numbers}{Whether atom numbers should be displayed in the canters of atoms.}
+\item{display.atom.numbers}{Whether atom numbers should be displayed at the centres of atoms.}
 
-\item{display.grid}{Whether to draw grid lines.}
+\item{display.grid}{Whether grid lines should be drawn.}
 
-\item{crosses.color}{Colour of small crosses.}
+\item{crosses.color}{Colour of the small crosses.}
 
-\item{palette}{Palette from the list returned by \code{hcl.pals()} function or the string
+\item{palette}{Palette from the list returned by \code{hcl.pals()} or the string
 \code{"my custom palette"}.}
 
 \item{plot.signals}{Whether the original and reconstructed signals should also be displayed.}
@@ -65,7 +63,7 @@ be appropriate.}
 No return value, called to visualize the empi decomposition.
 }
 \description{
-The function is in fact a wrapper for \code{empi2tf()} function where \code{out.mode = "plot"}.
+This function is a wrapper around \code{empi2tf()} with \code{out.mode = "plot"}.
 }
 \examples{
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
