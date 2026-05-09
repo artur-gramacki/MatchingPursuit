@@ -5,15 +5,14 @@
 \title{Performs bipolar, reference or average EEG montage}
 \usage{
 eeg.montage(
-  eeg.data,
+  x,
   montage.type = c("average", "reference", "bipolar"),
   ref.channel = NULL,
   bipolar.pairs = NULL
 )
 }
 \arguments{
-\item{eeg.data}{Must be a data frame: rows = samples, columns = channels.The data frame must
-have correct column names (channel names).}
+\item{x}{Object of class \code{edf} (from \code{read.edf.signals()}).}
 
 \item{montage.type}{A character string representing montage type.
 \itemize{
@@ -27,7 +26,7 @@ have correct column names (channel names).}
 \item{bipolar.pairs}{List of electrodes pairs for \code{"bipolar"} montage. See example below.}
 }
 \value{
-A data frame with final montage (rows = samples, columns = channels).
+An object of class \code{edf}.
 }
 \description{
 An EEG montage refers to the specific arrangement of EEG electrodes and the way their signals
@@ -43,7 +42,6 @@ it is worth executing the \code{read.edf.params()} function.
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 out <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-signal <- out$signals
 
 read.edf.params(file)
 
@@ -69,12 +67,12 @@ pairs <- list(
   c("Cz",  "Pz")
 )
 
-signal.bip.mont <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
-signal.ref.mont <- eeg.montage(signal, montage.type = c("reference"), ref.channel = "O1")
-signal.avg.mont <- eeg.montage(signal, montage.type = c("average"))
+signal.bip.mont <- eeg.montage(out, montage.type = c("bipolar"), bipolar.pairs = pairs)
+signal.ref.mont <- eeg.montage(out, montage.type = c("reference"), ref.channel = "O1")
+signal.avg.mont <- eeg.montage(out, montage.type = c("average"))
 
-head(signal.bip.mont)
-head(signal.ref.mont)
-head(signal.avg.mont)
+head(signal.bip.mont$signal)
+head(signal.ref.mont$signal)
+head(signal.avg.mont$signal)
 
 }

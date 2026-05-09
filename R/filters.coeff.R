@@ -35,7 +35,7 @@
 #' @examples
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' out <- read.edf.signals(file, resampling = FALSE)
-#' signal <- out$signals
+#' signal <- out$signal
 #' sampling.rate <- out$sampling.rate
 #'
 #' fc <- filters.coeff(

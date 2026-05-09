@@ -8,8 +8,10 @@
 #' @details
 #' In addition to working with generic time-series data, the package also supports direct loading of
 #' data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are widely used for
-#' storing physiological signals such as EEG, EMG, or ECG recordings. By enabling the import of EDF/EDF(+)
-#' and WFDB files, the package facilitates the analysis of biomedical signals. The package requires
+#' storing physiological signals such as EEG or ECG recordings. By enabling the import of EDF/EDF(+)
+#' and WFDB files, the package facilitates the analysis of biomedical signals.
+#'
+#' The package requires
 #' the installation of an external program, \strong{Enhanced Matching Pursuit Implementation} (EMPI).
 #' This tool implements the Matching Pursuit algorithm developed by \strong{Piotr T. Różański} and is
 #' available at \url{https://github.com/develancer/empi}

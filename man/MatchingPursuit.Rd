@@ -14,8 +14,10 @@ redundant dictionary.
 \details{
 In addition to working with generic time-series data, the package also supports direct loading of
 data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are widely used for
-storing physiological signals such as EEG, EMG, or ECG recordings. By enabling the import of EDF/EDF(+)
-and WFDB files, the package facilitates the analysis of biomedical signals. The package requires
+storing physiological signals such as EEG or ECG recordings. By enabling the import of EDF/EDF(+)
+and WFDB files, the package facilitates the analysis of biomedical signals.
+
+The package requires
 the installation of an external program, \strong{Enhanced Matching Pursuit Implementation} (EMPI).
 This tool implements the Matching Pursuit algorithm developed by \strong{Piotr T. Różański} and is
 available at \url{https://github.com/develancer/empi}
@@ -73,49 +75,50 @@ running the \code{empi.execute()} function.
 \examples{
 if (interactive()) {
   ###############################################################################
-  # Clear the cache directory, install the 'empi' program and
-  # check if the 'empi' program is installed.
+  # Clear the cache directory, install the 'empi' program,
+  # and verify that the installation completed successfully.
   ###############################################################################
   clear.cache()
   empi.install()
   empi.check()
 
   ###############################################################################
-  # Workflow 1. Data are stored in a CSV file.
+  # Workflow 1. Data stored in a CSV file.
   ###############################################################################
-  # STEP 1 - read sample data.
+  # STEP 1 - Read sample data.
   file.sample1.csv <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
   signal.sample1.csv <- read.csv.signals(file.sample1.csv, col.names = "ch1")
 
-  # STEP 2 - execute the MP algorithm.
+  # STEP 2 - Run the MP algorithm.
   empi.class <- empi.execute(signal = signal.sample1.csv)
 
-  # STEP 3 - plot a time-frequency map based on MP atoms.
+  # STEP 3 - Plot the time-frequency map based on MP atoms.
   plot(empi.class)
 
   ###############################################################################
-  # Workflow 2. Data are stored in a EDF file.
+  # Workflow 2. Data stored in an EDF file (EEG data).
   ###############################################################################
-  # STEP 1 - reading a sample EEG file.
+  # STEP 1 - Read a sample EEG file.
   file.EEG.edf <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
   out.EEG <- read.edf.signals(file.EEG.edf)
   signal.EEG <- out.EEG$signal
   sampling.rate <- out.EEG$sampling.rate
 
-  # STEP 2 - create the EEG montage.
-  # This step is usually required while processing EEG data.
-  # Pairs of signals for bipolar montage (so called "double banana").
+  # STEP 2 - Create the EEG montage.
+  # This step is typically required during EEG processing.
+  # Signal pairs used to construct the bipolar montage
+  # (the so-called "double banana" montage).
   pairs <- list(
     c("Fp2", "F4"), c("F4", "C4"), c("C4", "P4"), c("P4", "O2"), c("Fp1", "F3"), c("F3", "C3"),
     c("C3", "P3"), c("P3", "O1"), c("Fp2", "F8"), c("F8", "T4"), c("T4", "T6"), c("T6", "O2"),
     c("Fp1", "F7"), c("F7", "T3"), c("T3", "T5"), c("T5", "O1"), c("Fz", "Cz"), c("Cz", "Pz")
   )
 
-  bip.montage <- eeg.montage(signal.EEG, montage.type = c("bipolar"), bipolar.pairs = pairs)
+  bip.montage <- eeg.montage(out.EEG, montage.type = c("bipolar"), bipolar.pairs = pairs)
 
-  # STEP 3 - filter the data
-  # This step is usually required while processing EEG data.
-  # Filter parameters that will be used (quite typical in filtering EEG signals).
+  # STEP 3 - Filter the data.
+  # This step is typically required during EEG processing.
+  # Define commonly used EEG filtering parameters.
   fc <- filters.coeff(
     fs = sampling.rate,
     notch = c(49, 51),
@@ -123,30 +126,47 @@ if (interactive()) {
     highpass = 1,
   )
 
-  bip.montage.filt <- bip.montage
+  sig.filt <- bip.montage$signal
 
-  for (m in 1:ncol(bip.montage)) {
+  for (m in 1:ncol(bip.montage$signal)) {
     # 50Hz notch filter
-    bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])
+    sig.filt[, m] = signal::filtfilt(fc$notch, bip.montage$signal[, m])
     # Low pass IIR Butterworth
-    bip.montage.filt[, m] = signal::filtfilt(fc$lowpass, bip.montage.filt[, m])
+    sig.filt[, m] = signal::filtfilt(fc$lowpass, sig.filt[, m])
     # High pass IIR Butterwoth
-    bip.montage.filt[, m] = signal::filtfilt(fc$highpass, bip.montage.filt[, m])
+    sig.filt[, m] = signal::filtfilt(fc$highpass, sig.filt[, m])
   }
 
-  signal.EEG.montage.filt <- list(bip.montage.filt, sampling.rate)
+  signal.EEG.montage.filt <- list(sig.filt, sampling.rate)
   names(signal.EEG.montage.filt) <- c("signal", "sampling.rate")
 
-  # STEP 4 - execute the MP algorithm.
+  # STEP 4 - Run the MP algorithm.
   empi.class <- empi.execute(signal = signal.EEG.montage.filt)
 
-  # STEP 5 - plot a time-frequency map based on MP atoms.
+  # STEP 5 - Plot the time-frequency map based on MP atoms.
   plot(empi.class, channel = 2)
 
+  # STEP 6 - Plot EEG signals after applying the bipolar montage
+  # and the filtering procedure.
+  temp <- bip.montage
+  temp$signal <- sig.filt
+
+  plot(
+    x = temp,
+    begin = 0,
+    end = 10,
+    panel.height = NULL,
+    rainbow = FALSE,
+    bg.colour = "white",
+    txt.col = "blue",
+    zero.line = TRUE,
+    main = "EEG.edf file after banana montage and after filtering"
+  )
+
   ###############################################################################
-  # Workflow 3. Data are stored in a WFDB (WaveForm DataBase) format.
+  # Workflow 3. Data stored in WFDB (WaveForm DataBase) format.
   ###############################################################################
-  # STEP 1 - read sample data.
+  # STEP 1 - Read sample data.
   file.00001_lr.hea <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
   out.ecg <- read.ecg.signals(file.00001_lr.hea)
 
@@ -156,15 +176,16 @@ if (interactive()) {
     sampling.rate = out.ecg$sampling.rate
   )
 
-  # STEP 2 - execute the MP algorithm.
+  # STEP 2 - Run the MP algorithm.
   empi.class <- empi.execute(signal = signal.ecg)
 
-  # STEP 3 - plot a time-frequency map based on MP atoms.
+  # STEP 3 - Plot the time-frequency map based on MP atoms.
   plot(empi.class)
 
-  # STEP 4 - displaying ECG signals in a layout corresponding to standard paper
-  # ECG printouts. A typical ECG paper layout was used, with a small grid
-  # of 0.04 s × 0.1 mV and a large grid of 0.20 s × 0.5 mV
+  # STEP 4 - Display ECG signals using a layout corresponding
+  # to standard ECG paper.
+  # A typical ECG paper layout was used, with a small grid
+  # of 0.04 s × 0.1 mV and a large grid of 0.20 s × 0.5 mV.
   plot(
     x = out.ecg,
     begin = 0,
@@ -175,23 +196,23 @@ if (interactive()) {
   )
 
   ###############################################################################
-  # Saving the empi.execute() results to a SQLite file.
+  # Save empi.execute() results to a SQLite file.
   ###############################################################################
-  # Execute the MP algorithm and save the result to a SQLite file.
+  # Run the MP algorithm and save the results to a SQLite file.
   empi.class <- empi.execute(
     signal = signal.sample1.csv,
     write.to.file = TRUE,
     path = ".",
     file.name = "sample1.db")
 
-  # Read the atoms parameters.
+  # Read atom parameters.
   atoms <- atom.params(db.file = "sample1.db")
   print(atoms)
 
   ###############################################################################
   # empi2tf() function.
   ###############################################################################
-  # This function call produces the same effect as plot(empi.class).
+  # This call produces the same result as plot(empi.class).
   out <- empi2tf(
     x = empi.class,
     channel = 1,
@@ -199,7 +220,8 @@ if (interactive()) {
     out.mode = "plot"
   )
 
-  # Save the T-F map as a PNG file with the specified dimensions (in pixels).
+  # Save the time-frequency map as a PNG file
+  # with the specified dimensions (in pixels).
   out <- empi2tf(
     x = empi.class,
     channel = 1,
@@ -210,7 +232,8 @@ if (interactive()) {
     size = c(512, 512)
   )
 
-  # Save the T-F map as an RData file containing a matrix with the specified dimensions.
+  # Save the time-frequency map as an RData file
+  # containing a matrix with the specified dimensions.
   out <- empi2tf(
     x = empi.class,
     channel = 1,
@@ -220,8 +243,8 @@ if (interactive()) {
     size = c(128, 128)
   )
 
-  # The empi2tf() can, unlike the plot.empi(), accept a path to an SQLite
-  # file created by empi.execute().
+  # Unlike plot.empi(), empi2tf() can also accept
+  # a path to a SQLite file created by empi.execute().
   file.sample1.db <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
   out <- empi2tf(

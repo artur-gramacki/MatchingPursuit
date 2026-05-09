@@ -232,16 +232,16 @@ Sometimes it is necessary to change the sampling frequency (increase — *upsamp
 
 ```{r read.edf.signal.resampling, include = TRUE, echo = TRUE, warning = FALSE}
 # Original signal
-out1 <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-signal <- out1$signals
-sampling.rate <- out1$sampling.rate
+eeg <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
+signal.eeg <- eeg$signal
+sampling.rate <- eeg$sampling.rate
 sampling.rate
 
 # Resampled signal
-out2 <- read.edf.signals(file, resampling = TRUE, f.new = 64,  from = 0, to = 10)
-signal.resampled <- out2$signals
-sampling.rate.resampled <- out2$sampling.rate
-sampling.rate.resampled
+eeg.resampled <- read.edf.signals(file, resampling = TRUE, f.new = 64, from = 0, to = 10)
+signal.eeg.r <- eeg.resampled$signal
+sampling.rate.r <- eeg.resampled$sampling.rate
+sampling.rate.r
 ```
 
 ```{r sampling.results, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
@@ -249,7 +249,7 @@ par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
-  signal[, 1],
+  signal.eeg[, 1],
   type = "l",
   panel.first = grid(),
   main = "Original signal (256 Hz), channel #1",
@@ -260,7 +260,7 @@ plot(
 
 # Signal after filtering.
 plot(
-  signal.resampled[, 1],
+  signal.eeg.r[, 1],
   type = "l",
   panel.first = grid(),
   main = "Signal after downsampling (64 Hz), channel #1",
@@ -287,13 +287,14 @@ pairs <- list(
 )
 
 # Make the bipolar montage.
-bip.montage <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
+eeg.m <- eeg.montage(eeg, montage.type = c("bipolar"), bipolar.pairs = pairs)
+signal.eeg.m <- eeg.m$signal
 
 # Original signal.
-head(signal[, 1:5])
+head(signal.eeg[, 1:5])
 
 # Signal after banana montage.
-head(bip.montage[, 1:5])
+head(signal.eeg.m[, 1:5])
 
 ```
 
@@ -313,16 +314,16 @@ fc <- filters.coeff(
 )
 
 # Filtering input signals.
-bip.montage.filt <- bip.montage 
+signal.eeg.m.f <- signal.eeg.m
 
-for (m in 1:ncol(bip.montage)) {
-  bip.montage.filt[, m] = signal::filtfilt(fc$notch, bip.montage[, m])         # 50Hz notch filter
-  bip.montage.filt[, m] = signal::filtfilt(fc$lowpass, bip.montage.filt[, m])  # Low pass IIR Butterworth
-  bip.montage.filt[, m] = signal::filtfilt(fc$highpass, bip.montage.filt[, m]) # High pass IIR Butterwoth
+for (m in 1:ncol(signal.eeg.m)) {
+  signal.eeg.m.f[, m] = signal::filtfilt(fc$notch, signal.eeg.m[, m])         # 50Hz notch filter
+  signal.eeg.m.f[, m] = signal::filtfilt(fc$lowpass, signal.eeg.m.f[, m])  # Low pass IIR Butterworth
+  signal.eeg.m.f[, m] = signal::filtfilt(fc$highpass, signal.eeg.m.f[, m]) # High pass IIR Butterwoth
 }
 ```
 
-For the selected channel (after the bipolar montage, it is named `r ch <- 1; colnames(bip.montage.filt)[ch]`), both the original and filtered signals are displayed. The effect of filtering is clearly beneficial, as noise—typically without diagnostic significance—has been removed from the signal.
+For the selected channel (after the bipolar montage, it is named `r ch <- 1; colnames(signal.eeg.m.f)[ch]`), both the original and filtered signals are displayed. The effect of filtering is clearly beneficial, as noise—typically without diagnostic significance—has been removed from the signal.
 
 ```{r no.filtering.and.filtering.plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
 ch <- 1
@@ -330,10 +331,10 @@ par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
-  bip.montage[, ch],
+  signal.eeg.m[, ch],
   type = "l",
   panel.first = grid(),
-  main = paste(colnames(bip.montage)[ch], " (raw signal, channel #1)", sep = ""),
+  main = paste(colnames(signal.eeg.m)[ch], " (raw signal, channel #1)", sep = ""),
   xlab = "sample points",
   ylab = "",
   col = "blue"
@@ -341,10 +342,10 @@ plot(
 
 # Signal after filtering.
 plot(
-  bip.montage.filt[, ch],
+  signal.eeg.m.f[, ch],
   type = "l",
   panel.first = grid(),
-  main = paste(colnames(bip.montage)[ch], " (filtered signal, channel #1)", sep = ""),
+  main = paste(colnames(signal.eeg.m)[ch], " (filtered signal, channel #1)", sep = ""),
   xlab = "sample points",
   ylab = "",
   col = "blue"
@@ -363,7 +364,7 @@ par(old.par)
 # The empi.options parameter is NULL, so the EMPI program is 
 # run with the parameters "-o local --gabor -i 50"
 
-# sig <- list(bip.montage.filt, out1$sampling.rate)
+# sig <- list(signal.eeg.m.f, sampling.rate)
 # names(sig) <- c("signal", "sampling.rate")
 
 # empi.class <- empi.execute (
@@ -376,7 +377,7 @@ par(old.par)
 ```
 ### Step 6 {.unnumbered}
 
-Generating the final time-frequency map for the selected channel (`r ch <- 1; colnames(bip.montage.filt)[ch]`). The centers of atoms (in the sense of time and frequency coordinates) are now marked with white crosses. 
+Generating the final time-frequency map for the selected channel (`r ch <- 1; colnames(signal.eeg.m.f)[ch]`). The centers of atoms (in the sense of time and frequency coordinates) are now marked with white crosses. 
 
 Comparing the two signal waveforms under the T-F map, it can be seen that the original and reconstructed signals  differ only minimally.
 
@@ -399,6 +400,31 @@ out <- empi2tf(
   out.mode = "plot"
 )
 ```
+
+### Step 7 (optional) {.unnumbered}
+The package also includes a function for displaying EEG signals. To do this, you can use `plot.eeg()`, the `S3` method for the generic `plot()` function. This function requires an object of class `edf`, created with `read.edf.signals()`. 
+
+`panel.height` parameter controls the vertical distance between individual signals. If \code{NULL}, its value is set automatically so that all signals are clearly visible and do not overlap. The calculated value of parameter `panel.height` is displayed below the figure. 
+
+```{r plot.eeg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+temp <- eeg.m
+temp$signal <- signal.eeg.m.f
+
+plot(
+  x = temp,
+  begin = 0,
+  end = 10,
+  panel.height = NULL,
+  rainbow = FALSE,
+  bg.color = "white",
+  txt.col = "blue",
+  zero.line = TRUE,
+  main = "EEG.edf file after banana montage and after filtering"
+)
+```
+
+
+
 
 [Back to menu](#top) 
 
@@ -464,7 +490,7 @@ out <- empi2tf(
 
 ### Step 4 (optional) {.unnumbered}
 
-The package also includes a function for displaying ECG signals in a layout corresponding to standard paper ECG printouts. A typical ECG paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.ecg()`, the `S3` method for the generic `plot()` function. This function requires an object of class `ecg`, created with `read.ecg.signals`()`. 
+The package also includes a function for displaying ECG signals in a layout corresponding to standard paper ECG printouts. A typical ECG paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.ecg()`, the `S3` method for the generic `plot()` function. This function requires an object of class `ecg`, created with `read.ecg.signals()`. 
 
 ```{r plot.ecg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 plot(

@@ -35,7 +35,7 @@
 \item{...}{Currently ignored. Required for compatibility with the generic \code{plot()}.}
 }
 \value{
-No return value, called to visualize an EKG graph.
+No return value, called to visualize an ECG graph.
 }
 \description{
 A typical ECG paper layout was used, with a small grid of 0.04 s × 0.1 mV and a

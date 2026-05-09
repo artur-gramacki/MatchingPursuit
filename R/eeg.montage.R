@@ -6,8 +6,7 @@
 #' implements the three most frequently used montage methods in practice, i.e.
 #' 1) Bipolar Montage, 2) Referential (Monopolar) Montage and 3) Average Reference Montage.
 #'
-#' @param eeg.data Must be a data frame: rows = samples, columns = channels.The data frame must
-#' have correct column names (channel names).
+#' @param x Object of class \code{edf} (from \code{read.edf.signals()}).
 #'
 #' @param montage.type A character string representing montage type.
 #' \itemize{
@@ -19,7 +18,7 @@
 #'
 #' @param bipolar.pairs List of electrodes pairs for \code{"bipolar"} montage. See example below.
 #'
-#' @return A data frame with final montage (rows = samples, columns = channels).
+#' @return An object of class \code{edf}.
 #'
 #' @details To find out what names the individual channels have in the analysed EEG set,
 #' it is worth executing the \code{read.edf.params()} function.
@@ -29,7 +28,6 @@
 #' @examples
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' out <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-#' signal <- out$signal
 #'
 #' read.edf.params(file)
 #'
@@ -55,21 +53,27 @@
 #'   c("Cz",  "Pz")
 #' )
 #'
-#' signal.bip.mont <- eeg.montage(signal, montage.type = c("bipolar"), bipolar.pairs = pairs)
-#' signal.ref.mont <- eeg.montage(signal, montage.type = c("reference"), ref.channel = "O1")
-#' signal.avg.mont <- eeg.montage(signal, montage.type = c("average"))
+#' signal.bip.mont <- eeg.montage(out, montage.type = c("bipolar"), bipolar.pairs = pairs)
+#' signal.ref.mont <- eeg.montage(out, montage.type = c("reference"), ref.channel = "O1")
+#' signal.avg.mont <- eeg.montage(out, montage.type = c("average"))
 #'
-#' head(signal.bip.mont)
-#' head(signal.ref.mont)
-#' head(signal.avg.mont)
+#' head(signal.bip.mont$signal)
+#' head(signal.ref.mont$signal)
+#' head(signal.avg.mont$signal)
 #'
 eeg.montage <- function(
-    eeg.data,
+    x,
     montage.type = c("average", "reference", "bipolar"),
     ref.channel = NULL,
     bipolar.pairs = NULL) {
 
+  if (!inherits(x, "edf")) {
+    stop("'x' must be an object of class 'edf'.")
+  }
+
   montage.type <- match.arg(montage.type)
+
+  eeg.data <- x$signal
 
   if (!is.data.frame(eeg.data)) {
     stop("eeg.data must be a dataframe: rows = samples, columns = channels.")
@@ -120,6 +124,19 @@ eeg.montage <- function(
     }
 
     colnames(result) <- new.names
-    return(as.data.frame(result))
+
+    #return(as.data.frame(result))
+
+    my.list <- list(
+      signal = as.data.frame(result),
+      sampling.rate = x$sampling.rate,
+      time.stamps = x$time.stamps,
+      signal.names = new.names,
+      record.name = x$record.name
+    )
+
+    class(my.list) <- "edf"
+    return(my.list)
+
   }
 }

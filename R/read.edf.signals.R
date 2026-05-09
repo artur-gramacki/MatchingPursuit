@@ -131,7 +131,8 @@ read.edf.signals <- function(file, resampling = FALSE, f.new = NULL, from = NULL
     signal = as.data.frame(edf.mtx),
     sampling.rate = f.new,
     time.stamps = t.new,
-    signal.names = signal.names
+    signal.names = signal.names,
+    record.name = basename(file)
   )
 
   class(my.list) <- "edf"

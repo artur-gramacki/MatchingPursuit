@@ -6,7 +6,6 @@
 #' @importFrom tools file_path_sans_ext
 #' @importFrom graphics lines segments
 #' @importFrom stats median
-#' @importFrom utils head
 #'
 #' @param x Object of class \code{ecg} (from \code{read.ecg.signals()}).
 #'
@@ -27,7 +26,7 @@
 #'
 #' @param ... Currently ignored. Required for compatibility with the generic \code{plot()}.
 #'
-#' @return No return value, called to visualize an EKG graph.
+#' @return No return value, called to visualize an ECG graph.
 #'
 #' @export
 #'
