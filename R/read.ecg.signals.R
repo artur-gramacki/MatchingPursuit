@@ -33,6 +33,8 @@
 #' out$sampling.rate
 #' out$lead.names
 #'
+#' plot(out, begin = 0, end = 10, panel.height = 1.5)
+#'
 read.ecg.signals <- function(file) {
 
   dir <- dirname(file)

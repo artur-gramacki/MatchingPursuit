@@ -23,7 +23,7 @@
 #' # The first line of the file must contain two numbers:
 #' # a) the sampling rate in Hz
 #' # b) the signal length in seconds
-#' out <- read.table(file, header = FALSE, skip = 1)
+#' out <- read.csv(file, header = FALSE)
 #' head(out)
 #'
 #' signal <- read.csv.signals(file, col.names = "signal_1")

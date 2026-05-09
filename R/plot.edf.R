@@ -46,7 +46,7 @@
 #'   bg.colour = "black",
 #'   txt.col = "white",
 #'   zero.line = TRUE,
-#'   main = "EEG.edf file after banana montage and after filtering"
+#'   main = "EEG signals stored in the EEG.edf file"
 #' )
 #'
 #' plot(
@@ -58,7 +58,7 @@
 #'   bg.colour = "white",
 #'   txt.col = "black",
 #'   zero.line = TRUE,
-#'   main = "EEG.edf file after banana montage and after filtering"
+#'   main = "EEG signals stored in the EEG.edf file"
 #' )
 
 plot.edf <- function(
