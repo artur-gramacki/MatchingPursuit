@@ -15,7 +15,7 @@
 #'
 #'
 #' @param empi.options If \code{NULL}, the EMPI program is run with
-#' \code{"-o local --gabor -i 50"} parameters. Otherwise, the user may specify any command-line
+#' \code{"-o local --gabor -i 50 --cpu-workers 8"} parameters. Otherwise, the user may specify any command-line
 #' options. See the \code{README.md} file after downloading the EMPI program using the
 #' \code{empi.install()} function.
 #'
@@ -84,7 +84,7 @@ empi.execute <- function(
   writeBin(signal.raw, file.bin)
 
   if (is.null(empi.options)) {
-    options <-  "-o local --gabor -i 50"
+    options <-  "-o local --gabor -i 50 --cpu-workers 8"
   } else {
     options <- empi.options
   }

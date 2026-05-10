@@ -52,7 +52,7 @@ plot(
   x = out,
   begin = 0,
   end = 10,
-  panel.height = 2,
+  panel.height = 1,
   zero.line = FALSE,
   small.squares = TRUE
 )
