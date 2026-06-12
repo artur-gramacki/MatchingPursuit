@@ -37,7 +37,8 @@ Imports:
   grDevices,
   utils,
   digest,
-  EGM  
+  EGM, 
+  xml2  
 Suggests: 
   knitr,
   rmarkdown,

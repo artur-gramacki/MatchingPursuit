@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+<block>
+<param name="windowLen" value="17"/>
+<param name="windowShift" value="1"/>
+<param name="fftSize" value="32"/>
+</block>
+<block>
+<param name="windowLen" value="27"/>
+<param name="windowShift" value="1"/>
+<param name="fftSize" value="64"/>
+</block>
+<block>
+<param name="windowLen" value="41"/>
+<param name="windowShift" value="2"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="windowLen" value="65"/>
+<param name="windowShift" value="3"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="windowLen" value="103"/>
+<param name="windowShift" value="6"/>
+<param name="fftSize" value="256"/>
+</block>
+<block>
+<param name="windowLen" value="161"/>
+<param name="windowShift" value="9"/>
+<param name="fftSize" value="512"/>
+</block>
+<block>
+<param name="windowLen" value="255"/>
+<param name="windowShift" value="15"/>
+<param name="fftSize" value="512"/>
+</block>
+</dict>

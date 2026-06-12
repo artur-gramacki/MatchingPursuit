@@ -1,34 +1,36 @@
 #' Processing Time Series Data Using the Matching Pursuit Algorithm
 #'
-#' Tools for analyzing and decomposing time-series data using the
-#' \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition technique that represents
-#' complex signals as a linear combination of simpler functions (called atoms) selected from a
-#' redundant dictionary.
+#' Tools for analyzing and decomposing time_series data using the
+#' \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition
+#' technique that represents complex signals as a linear combination of simpler
+#' functions (called atoms) selected from a redundant dictionary. Support
+#' for the \strong{Orthogonal Matching Pursuit (OMP)} variant of the classical MP
+#' algorithm is also provided.
 #'
 #' @details
-#' In addition to generic time-series data, the package supports direct loading of
-#' data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are widely used for
-#' physiological signals such as EEG and ECG recordings. Support for EDF/EDF(+) and WFDB
-#' import facilitates the analysis of biomedical signals.
+#' In addition to generic time_series data, the package supports direct loading of
+#' data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are
+#' widely used for physiological signals such as EEG and ECG recordings. Support
+#' for EDF/EDF(+) and WFDB import facilitates the analysis of biomedical signals.
 #'
 #' The package requires installation of an external program,
-#' \strong{Enhanced Matching Pursuit Implementation} (EMPI).
+#' \strong{Enhanced Matching Pursuit Implementation (EMPI)}.
 #' This tool implements the Matching Pursuit algorithm developed by
 #' \strong{Piotr T. Różański} and is available at
 #' \url{https://github.com/develancer/empi}
 #'
-#' Example datasets available via the \code{system.file()} function:
+#' Example datasets available via the \code{system_file()} function:
 #'
 #'  \itemize{
-#'    \item \code{EEG.edf}, \code{EEG.db}, \code{EEG.csv}
+#'    \item \code{EEG.edf}, \code{EEG.db}
 #'      \itemize{
-#'        \item 19 EEG channels + 1 EDF Annotations channel
+#'        \item 19 EEG channels + 1 EDF_Annotations channel
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec.
 #'        \item channel names: Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations
 #'      }
-#'    \item \code{EEG_bipolar_filtered.db}, \code{EEG_bipolar_filtered.db.csv}
+#'    \item \code{EEG_bipolar_filtered.db}
 #'      \itemize{
-#'        \item 18 EEG channels after double banana montage and filtering of the data from \code{EEG.edf}
+#'        \item 18 EEG channels after double_banana montage and filtering of the data from \code{EEG.edf}
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec.
 #'        \item channel names: Fp2_F4, F4_C4, C4_P4, P4_O2, Fp1_F3, F3_C3, C3_P3, P3_O1, Fp2_F8, F8_T4,
 #'                             T4_T6, T6_O2, Fp1_F7, F7_T3, T3_T5, T5_O1, Fz_Cz, Cz_Pz
@@ -41,30 +43,31 @@
 #'    \item \code{sample2.csv}, \code{sample2.db}
 #'      \itemize{
 #'        \item 1 channel
-#'        \item sampling frequency: 128 Hz Hz, signal length: 10 sec.
+#'        \item sampling frequency: 128 Hz, signal length: 10 sec.
 #'      }
 #'    \item \code{sample3.csv}, \code{sample3.db}
 #'      \itemize{
-#'        \item 3 channels (random numbers from 0 to 1 in each channel)
-#'        \item sampling frequency: 128 Hz Hz, signal length: 2 sec.
+#'        \item 3 channels (sum of four sinusoids, burst signal, sum of three Gabor atoms)
+#'        \item sampling frequency: 128 Hz, signal length: 2 sec.
 #'      }
 #'    \item \code{00001_lr.dat}, \code{00001_lr.hea}
 #'      \itemize{
-#'        \item Example ECG recording from \url{https://physionet.org/content/ptb-xl/1.0.3/}
+#'        \item Example ECG recording from \url{https://physionet.org/content/ptb_xl/1.0.3/}
 #'        \item 12 ECG leads, 10 sec, 16-bit integer format
 #'        \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
 #'      }
 #' }
+#'
 #' The first line of a \code{.csv} file contains two numbers: sampling rate in Hz (\code{freq})
-#' and signal length in seconds (\code{sec}). The \code{read.csv.signals()} function verifies
+#' and signal length in seconds (\code{sec}). The \code{read_csv_signals()} function verifies
 #' whether the file contains exactly \code{round(freq * sec)} samples. The two numbers
 #' must be separated by one or more whitespace characters.
 #'
 #' Optionally, channel names may be specified in the second line of the \code{.csv} file.
-#' In such cases, use \code{col.names.in.csv = TRUE} when calling \code{read.csv.signals()}.
+#' In such cases, use \code{col_names_in_csv = TRUE} when calling \code{read_csv_signals()}.
 #'
 #' Files with the \code{.db} extension are in \code{SQLite} format and are produced by
-#' the \code{empi.execute()} function.
+#' the \code{empi_execute()} function.
 #'
 #' @example inst/examples/examples.R
 #'

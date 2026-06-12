@@ -3,7 +3,7 @@
 #' @description
 #' Saves the given data (signals) in binary form. The input signal(s) must be a data frame:
 #' rows correspond to samples for all channels, and columns correspond to channels.
-#' The function is used internally by \code{empi.execute()}. The binary data consist of
+#' The function is used internally by \code{empi_execute()}. The binary data consist of
 #' floating-point values in the byte order of the current machine (no byte-order conversion
 #' is performed).
 #'
@@ -13,13 +13,19 @@
 #'
 #' @param data Data frame containing the input signal(s).
 #'
-#' @param write.to.file If \code{TRUE}, a \code{.bin} file is created and saved in the cache directory.
+#' @param write_to_file If \code{TRUE}, a \code{.bin} file is created and saved in the
+#' \code{path} directory or, if \code{path = NULL}, in the cache directory.
 #'
-#' @return Input signal returned as \code{raw}. If \code{write.to.file = TRUE}, a \code{.bin} file
+#' @param path Directory in which the SQLite database file will be saved.
+#' If \code{NULL}, the file will be saved in the cache directory.
+#'
+#' @param file_name Name of the file to create if \code{write_to_file = TRUE}.
+#'
+#' @return Input signal returned as \code{raw}. If \code{write_to_file = TRUE}, a \code{.bin} file
 #' is additionally created and saved in the current directory.
 #'
 #' @note Users do not work directly with \code{.bin} files. Binary files are used only in
-#' \code{empi.execute()}. The external program \emph{Enhanced Matching Pursuit Implementation}
+#' \code{empi_execute()}. The external program \emph{Enhanced Matching Pursuit Implementation}
 #' (EMPI), executed inside this function, requires binary input data. This conversion utility
 #' may also be useful for users who wish to run EMPI outside of the R environment.
 #'
@@ -27,42 +33,62 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
-#' out <- read.csv.signals(file)
+#' out <- read_csv_signals(file, col_names_in_csv = TRUE)
 #'
-#' signal.bin <- sig2bin(data = out$signal, write.to.file = FALSE)
+#' signal_bin <- sig2bin(data = out$signal, write_to_file = FALSE)
 #'
 #' # We have 3 channels. The first 4 time points.
 #' head(out$signal, 4)
 #'
 #' # The same elements of the signal in binary (floats are stored in 4 bytes).
-#' head(signal.bin, 48)
+#' head(signal_bin, 48)
 #'
 #' # After decoding to numeric.
 #' # Of course we get the same values as in out$signal.
-#' readBin(signal.bin[1:4], what = "numeric", size = 4, endian = "little")
-#' readBin(signal.bin[5:8], what = "numeric", size = 4, endian = "little")
-#' readBin(signal.bin[41:44], what = "numeric", size = 4, endian = "little")
-#' readBin(signal.bin[45:48], what = "numeric", size = 4, endian = "little")
+#' readBin(signal_bin[1:4], what = "numeric", size = 4, endian = "little")
+#' readBin(signal_bin[5:8], what = "numeric", size = 4, endian = "little")
+#' readBin(signal_bin[41:44], what = "numeric", size = 4, endian = "little")
+#' readBin(signal_bin[45:48], what = "numeric", size = 4, endian = "little")
 #'
-sig2bin <- function(data, write.to.file = FALSE) {
+sig2bin <- function(data, write_to_file = FALSE, path = NULL, file_name = NULL) {
 
-  if (!is.data.frame(data)) {
-    stop("data must be a data.frame.")
+  if (!is.data.frame(data) && !is.matrix(data)) {
+    stop("`data` must be data frame or matrix.")
   }
 
-  signal.raw = raw()
+  signal_raw <- raw()
   for (m in 1:nrow(data)) {
-    data.row <- as.numeric(data[m, ])
-    signal.raw <- c(signal.raw, writeBin(data.row, raw(), size = 4, endian = "little"))
+    data_row <- as.numeric(data[m, ])
+    signal_raw <- c(signal_raw, writeBin(data_row, raw(), size = 4, endian = "little"))
   }
 
-  if (write.to.file) {
-    dest.dir <- tools::R_user_dir("MatchingPursuit", "cache")
-    temp <- file.path(dest.dir, "signal.bin")
-    writeBin(signal.raw, temp)
-    message("Binary file saved to '", temp, "'.")
+  if (write_to_file) {
+
+    if (is.null(path)) {
+      dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
+      dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
+    } else {
+      dest_dir <- path
+      if (!dir.exists(dest_dir)) {
+        ok <- dir.create(dest_dir, recursive = TRUE, showWarnings = FALSE)
+        if (!ok && !dir.exists(path)) {
+          stop("Cannot create directory '", dest_dir, "'.")
+        }
+      }
+    }
+
+    if (is.null(file_name)) {
+      temp <- file.path(dest_dir, "signal.bin")
+      writeBin(signal_raw, temp)
+      message("Binary file saved to '", temp, "'.")
+    } else {
+      temp <- file.path(dest_dir, file_name)
+      writeBin(signal_raw, temp)
+      message("Binary file saved to '", temp, "'.")
+    }
   }
 
-  return(signal.raw)
+
+  return(signal_raw)
 }
 

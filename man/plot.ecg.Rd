@@ -8,28 +8,28 @@
   x,
   begin,
   end,
-  panel.height = 3,
-  small.squares = TRUE,
-  zero.line = FALSE,
+  panel_height = 3,
+  small_squares = TRUE,
+  zero_line = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{Object of class \code{ecg} (from \code{read.ecg.signals()}).}
+\item{x}{Object of class \code{ecg} (from \code{read_ecg_signals()}).}
 
 \item{begin}{Time point (in seconds) at which to start plotting.}
 
 \item{end}{Time point (in seconds) at which to stop plotting.}
 
-\item{panel.height}{Number of large squares to display (according to standard ECG paper):
+\item{panel_height}{Number of large squares to display (according to standard ECG paper):
 \itemize{
     \item small grid: 0.04 sec. x 0.1 mV
     \item large grid: 0.20 sec. x 0.5 mV
 }}
 
-\item{small.squares}{If \code{TRUE}, the small grid is also displayed.}
+\item{small_squares}{If \code{TRUE}, the small grid is also displayed.}
 
-\item{zero.line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
+\item{zero_line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
 
 \item{...}{Currently ignored. Required for compatibility with the generic \code{plot()}.}
 }
@@ -46,15 +46,15 @@ file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
 dir <- dirname(file)
 name <- tools::file_path_sans_ext(basename(file))
 
-out <- read.ecg.signals(file)
+out <- read_ecg_signals(file)
 
 plot(
   x = out,
   begin = 0,
   end = 10,
-  panel.height = 1,
-  zero.line = FALSE,
-  small.squares = TRUE
+  panel_height = 1,
+  zero_line = FALSE,
+  small_squares = TRUE
 )
 
 }

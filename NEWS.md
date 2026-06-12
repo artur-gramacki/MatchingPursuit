@@ -1,18 +1,24 @@
 # MatchingPursuit 1.1.0
 
-* Added the ability to load data in WFDB (WaveForm DataBase) format
-
-* `plot.empi()` function was added.
-
-* `plot.ecg()` function was added.
-
-* `read.ecg.signals()` function was added.
+* The project adopted a new naming convention for variables and functions, replacing dot-separated names (“name.of.some.variable”) with snake_case (“name_of_some_variable”).
 
 * Extended examples added to the package-level documentation.
 
-* The `read.csv.files()` function also supports files where the channel names are given in the second line.
+* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()` and `omp_execute()`). 
 
-* The `read.empi.db.file()` and `empi.execute()` functions now return object of class `empi`.
+* Added the ability to load data in WFDB (WaveForm DataBase) format.
+
+* `plot_mp()` function was added.
+
+* `plot_ecg()` function was added.
+
+* `read_ecg_signals()` function was added.
+
+* The `read_csv_files()` function also supports files where the channel names are given in the second line.
+
+* The `read_empi_db_file()` and `empi_execute()` functions now return object of class `mp`.
+
+* `empi2tf()` has been renamed to `tf_map()`, which provides support for both the EMPI and OMP algorithms.
 
 # MatchingPursuit 1.0.1
 

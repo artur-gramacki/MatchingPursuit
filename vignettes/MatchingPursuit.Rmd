@@ -39,7 +39,7 @@ knitr::opts_chunk$set(
   collapse = TRUE
 )
 
-old.par <- par("mfrow", "mai", "pty")
+old_par <- par("mfrow", "mai", "pty")
 options(width = 999)
 ```
 
@@ -66,7 +66,7 @@ library(MatchingPursuit)
 
 ## Installing the required external software
 
-The below `empi.install()` function downloads **Enhanced Matching
+The below `empi_install()` function downloads **Enhanced Matching
 Pursuit Implementation** external program (or **EMPI** for short), see
 @Rozanski-2024, and stores it in the cache directory. The function
 downloads the EMPI program in a version compatible with the operating
@@ -74,23 +74,23 @@ system used (Windows, Linux, MacOS-x64, MacOS-arm64).
 
 First, the user can see where EMPI can be downloaded from.
 
-```{r empi.locate, include = TRUE, echo = TRUE}
-empi.locate()
+```{r empi_locate, include = TRUE, echo = TRUE}
+empi_locate()
 ```
 
 The code in the below chunk has been commented out because CRAN's
 verification rules prohibit automatic binary downloads. Therefore, this
 function cannot be executed while generating this vignette.
 
-```{r empi.install, include = TRUE, echo = TRUE}
-# empi.install()
+```{r empi_install, include = TRUE, echo = TRUE}
+# empi_install()
 ```
 
 User can check whether the EMPI program is installed; if not, an error
 message is displayed indicating that installation is required.
 
-```{r empi.check, include = TRUE, echo = TRUE}
-empi.check()
+```{r empi_check, include = TRUE, echo = TRUE}
+empi_check()
 ```
 
 ## The purpose and functionality of the package
@@ -109,7 +109,8 @@ functionality of the package includes:
     and band-stop filters
 5.  Plotting the signals
 6.  Executing the Matching Pursuit (MP) algorithm
-7.  Plotting time–frequency maps based on the MP results
+7.  Executing the Orthogonal Matching Pursuit (OMP) algorithm
+8.  Plotting time–frequency maps based on the MP ond OMP results
 
 [Back to menu](#top)
 
@@ -121,7 +122,7 @@ Let us construct an example signal by combining seven non-stationary
 components. The resulting signal (highlighted in blue below) will be
 used to demonstrate the basic functionality of the package.
 
-```{r 7.non.stationary, include = TRUE, echo = TRUE, warning = FALSE}
+```{r 7_non_stationary, include = TRUE, echo = TRUE, warning = FALSE}
 fs <- 1024
 T <- 1
 t <- seq(0, T - 1 / fs, 1 / fs)
@@ -139,7 +140,7 @@ x7 <- t * sin(2 * pi * 40 * t)                                   # increasing am
 signal <- data.frame(x = x1 + x2 + x3 + x4 + x5 + x6 + x7)
 ```
 
-```{r 7.non.stationary.plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
+```{r 7_non_stationary_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 range <- range(signal)
 par(mfrow = c(8, 1), pty = "m", mai = c(0.2, 0.4, 0.2, 0.1))
 
@@ -152,18 +153,18 @@ plot(t, x5, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "De
 plot(t, x6, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Frequency modulated sine wave")
 plot(t, x7, type = "l", ylab = "", xlab = "", xaxt = "n", yaxt = "s", main = "Increasing amplitude")
 
-par(old.par)
+par(old_par)
 ```
 
 Data must be stored in a data frame: rows represent samples for all
 channels, and columns represent channels. Our first demo dataset
-consists of only one channel (one column). The `read.csv.signals()`
+consists of only one channel (one column). The `read_csv_signals()`
 function checks whether the data has the correct structure. The first
 line of the file must contain two numbers: the sampling rate in Hz
 (`freq`) and the signal length in seconds (`sec`). This allows
 verification that the file actually contains `freq*sec` samples.
 
-```{r sample1.csv, include = TRUE, echo = TRUE, warning = FALSE}
+```{r sample1_csv, include = TRUE, echo = TRUE, warning = FALSE}
 # The sample1.csv file contains exactly the same data as shown in Step 1.
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 
@@ -173,7 +174,7 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 out <- read.csv(file, header = FALSE)
 head(out)
 
-signal <- read.csv.signals(file)
+signal <- read_csv_signals(file)
 str(signal)
 ```
 
@@ -182,7 +183,7 @@ str(signal)
 ### Step 2 {.unnumbered}
 
 The input data (`signal`) is passed as an argument to the
-`empi.execute()` function, which generates the final output file in
+`empi_execute()` function, which generates the final output file in
 `SQLite` format (`sample1.db`) containing all atom parameters.
 
 ::: {#important_note}
@@ -190,13 +191,13 @@ The input data (`signal`) is passed as an argument to the
 
 **Important note:** The code in the chunk below has been commented out
 because CRAN's verification rules prohibit automatic binary downloads.
-`empi.execute()` function requires that EMPI is installed, otherwise it
+`empi_execute()` function requires that EMPI is installed, otherwise it
 terminates with an error message. Therefore, this function can not be
 executed here. That is why the `sample1.db` file has been generated in
 advance and included in the package. In the next chunk, the `empi2ft()`
 function uses this file as input (the `x` parameter).
 
-Notice the `empi.options` parameter in the `empi.execute()` function.
+Notice the `empi_options` parameter in the `empi_execute()` function.
 You can specify `NULL` for this parameter, and the EMPI program will run
 with the default values set in the function
 (`"-o local --gabor -i 50"`). It is also worth noting that the program
@@ -205,16 +206,16 @@ the `README.md` file located in the directory where the EMPI program was
 installed. In our example, parameters were set to instruct the program
 to find 25 atoms.
 
-```{r empi.execute, include = TRUE, echo = TRUE, warning = FALSE}
+```{r empi_execute, include = TRUE, echo = TRUE, warning = FALSE}
 # file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-# signal <- read.csv.signals(file)
+# signal <- read_csv_signals(file)
 
-# empi.class <- empi.execute (
+# empi_class <- empi_execute (
 #   signal = signal,
-#   empi.options = "-o local --gabor -i 25",
-#   write.to.file = TRUE,
+#   empi_options = "-o local --gabor -i 25",
+#   write_to_file = TRUE,
 #   path = NULL,
-#   file.name = "sample1.db"
+#   file_name = "sample1.db"
 # )
 ```
 
@@ -241,38 +242,38 @@ the original signal's energy is "explained" by the generated atoms.
 Naturally, increasing the number of generated atoms will likely bring
 the energy of the reconstructed signal closer to 100%.
 
-```{r sample1.db, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+```{r sample1_db, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file in which all generated atom parameters are stored.
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
 
 # Create time-frequency map based on MP atoms.
-out <- empi2tf(
+out <- tf_map(
   x = file,
   channel = 1,
   mode = "sqrt",
-  freq.divide = 4,
-  increase.factor = 4,
-  display.crosses = FALSE,
-  display.atom.numbers = TRUE,
-  out.mode = "plot"
+  freq_divide = 4,
+  increase_factor = 4,
+  display_crosses = FALSE,
+  display_atom_numbers = TRUE,
+  out_mode = "plot"
 )
 ```
 
 ### Step 3.bis {.unnumbered}
 
-To display the T–F map, you can also use `plot.empi()`, the `S3` method
+To display the T–F map, you can also use `plot_empi()`, the `S3` method
 for the generic `plot()` function. This function requires an object of
-class `empi`, created with `empi.execute()`. Due to CRAN regulations,
+class `empi`, created with `empi_execute()`. Due to CRAN regulations,
 the code below has been commented out. See the explanation
 [here](#important_note). Uncomment it to view the result.
 
-```{r plot.empi, include = TRUE, echo = TRUE, warning = FALSE}
+```{r plot_empi, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read.csv.signals(file, col.names = "ch1")
+signal <- read_csv_signals(file, col_names = "ch1")
 
-# empi.class <- empi.execute(signal = signal)
+# empi_class <- empi_execute(signal = signal)
 
-# plot(empi.class)
+# plot(empi_class)
 ```
 
 [Back to menu](#top)
@@ -293,11 +294,11 @@ annotation channel that does not contain EEG signal data). The sampling
 rate is 256 Hz for each channel with EEG data. The channels have
 standard names.
 
-```{r read.edf.params, include = TRUE, echo = TRUE, warning = FALSE}
+```{r read_edf_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 
 # Read signal parameters and display them in a tabular form.
-read.edf.params(file)
+read_edf_params(file)
 ```
 
 [Back to menu](#top)
@@ -305,22 +306,22 @@ read.edf.params(file)
 ### Step 2 (sometimes required) {.unnumbered}
 
 Sometimes it is necessary to change the sampling frequency (increase —
-*upsampling* or decrease — *downsampling*). The `read.edf.signals()`
+*upsampling* or decrease — *downsampling*). The `read_edf_signals()`
 function provides this functionality. In the example below, the original
 sampling frequency is reduced from 256 Hz to 64 Hz.
 
-```{r read.edf.signal.resampling, include = TRUE, echo = TRUE, warning = FALSE}
+```{r read_edf_signal_resampling, include = TRUE, echo = TRUE, warning = FALSE}
 # Original signal
-eeg <- read.edf.signals(file, resampling = FALSE, from = 0, to = 10)
-signal.eeg <- eeg$signal
-sampling.rate <- eeg$sampling.rate
-sampling.rate
+eeg <- read_edf_signals(file, resampling = FALSE, from = 0, to = 10)
+signal_eeg <- eeg$signal
+sampling_frequency <- eeg$sampling_frequency
+sampling_frequency
 
 # Resampled signal
-eeg.resampled <- read.edf.signals(file, resampling = TRUE, f.new = 64, from = 0, to = 10)
-signal.eeg.r <- eeg.resampled$signal
-sampling.rate.r <- eeg.resampled$sampling.rate
-sampling.rate.r
+eeg_resampled <- read_edf_signals(file, resampling = TRUE, sf_new = 64, from = 0, to = 10)
+signal_eeg_r <- eeg_resampled$signal
+sampling_frequency_r <- eeg_resampled$sampling_frequency
+sampling_frequency_r
 ```
 
 ```{r sampling.results, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
@@ -328,9 +329,9 @@ par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
-  signal.eeg[, 1],
+  signal_eeg[, 1],
   type = "l",
-  panel.first = grid(),
+  panel_first = grid(),
   main = "Original signal (256 Hz), channel #1",
   xlab = "sample points",
   ylab = "",
@@ -339,16 +340,16 @@ plot(
 
 # Signal after filtering.
 plot(
-  signal.eeg.r[, 1],
+  signal_eeg_r[, 1],
   type = "l",
-  panel.first = grid(),
+  panel_first = grid(),
   main = "Signal after downsampling (64 Hz), channel #1",
   xlab = "sample points",
   ylab = "",
   col = "blue"
 )
 
-par(old.par)
+par(old_par)
 ```
 
 [Back to menu](#top)
@@ -358,10 +359,10 @@ par(old.par)
 A bipolar montage is created (the classical *double banana* montage),
 where each channel compares two adjacent electrodes. In the first step,
 you define the pairs of electrodes to be connected using the `pairs`
-list. In the second step, the `eeg.montage()` function generates the
+list. In the second step, the `eeg_montage()` function generates the
 required montage.
 
-```{r eeg.montage, include = TRUE, echo = TRUE, warning = FALSE}
+```{r eeg_montage, include = TRUE, echo = TRUE, warning = FALSE}
 # Pairs of signals for bipolar montage (so called "double banana").
 pairs <- list(
   c("Fp2", "F4"), c("F4", "C4"), c("C4", "P4"), c("P4", "O2"), c("Fp1", "F3"), c("F3", "C3"),  
@@ -370,14 +371,14 @@ pairs <- list(
 )
 
 # Make the bipolar montage.
-eeg.m <- eeg.montage(eeg, montage.type = c("bipolar"), bipolar.pairs = pairs)
-signal.eeg.m <- eeg.m$signal
+eeg_m <- eeg_montage(eeg, montage_type = c("bipolar"), bipolar_pairs = pairs)
+signal_eeg_m <- eeg_m$signal
 
 # Original signal (first 6 rows, first 6 channels).
-signal.eeg[1:6, 1:6]
+signal_eeg[1:6, 1:6]
 
 # Signal after banana montage (first 6 rows, first 6 channels).
-signal.eeg.m[1:6, 1:6]
+signal_eeg_m[1:6, 1:6]
 
 ```
 
@@ -386,46 +387,46 @@ signal.eeg.m[1:6, 1:6]
 ### Step 4 (usually required) {.unnumbered}
 
 EEG signals are rarely analyzed without prior filtering. Using the
-`filters.coeff()` function, you can define the filter parameters and
+`filters_coeff()` function, you can define the filter parameters and
 then apply the filter to the signal. The filter parameters listed below
 use typical values recommended in the literature for EEG signal
 analysis.
 
-```{r eeg.filtering, include = TRUE, echo = TRUE, warning = FALSE}
+```{r eeg_filtering, include = TRUE, echo = TRUE, warning = FALSE}
 # Filter parameters that will be used (quite typical in filtering EEG signals).
-fc <- filters.coeff(
-   fs = sampling.rate,
+fc <- filters_coeff(
+   sf = sampling_frequency,
    notch = c(49, 51),
    lowpass = 40,
    highpass = 1,
 )
 
 # Filtering input signals.
-signal.eeg.m.f <- signal.eeg.m
+signal_eeg_m_f <- signal_eeg_m
 
-for (m in 1:ncol(signal.eeg.m)) {
-  signal.eeg.m.f[, m] = signal::filtfilt(fc$notch, signal.eeg.m[, m])      # 50Hz notch filter
-  signal.eeg.m.f[, m] = signal::filtfilt(fc$lowpass, signal.eeg.m.f[, m])  # Low pass IIR Butterworth
-  signal.eeg.m.f[, m] = signal::filtfilt(fc$highpass, signal.eeg.m.f[, m]) # High pass IIR Butterwoth
+for (m in 1:ncol(signal_eeg_m)) {
+  signal_eeg_m_f[, m] = signal::filtfilt(fc$notch, signal_eeg_m[, m])      # 50Hz notch filter
+  signal_eeg_m_f[, m] = signal::filtfilt(fc$lowpass, signal_eeg_m_f[, m])  # Low pass IIR Butterworth
+  signal_eeg_m_f[, m] = signal::filtfilt(fc$highpass, signal_eeg_m_f[, m]) # High pass IIR Butterwoth
 }
 ```
 
 For the selected channel (after the bipolar montage, it is named
-`r ch <- 1; colnames(signal.eeg.m.f)[ch]`), both the original and
+`r ch <- 1; colnames(signal_eeg_m_f)[ch]`), both the original and
 filtered signals are displayed. The effect of filtering is clearly
 beneficial, as noise—typically without diagnostic significance—has been
 removed from the signal.
 
-```{r no.filtering.and.filtering.plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
+```{r no_filtering_and_filtering_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
 ch <- 1
 par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 # Not-filtered signal (raw signal).
 plot(
-  signal.eeg.m[, ch],
+  signal_eeg_m[, ch],
   type = "l",
-  panel.first = grid(),
-  main = paste(colnames(signal.eeg.m)[ch], " (raw signal, channel #1)", sep = ""),
+  panel_first = grid(),
+  main = paste(colnames(signal_eeg_m)[ch], " (raw signal, channel #1)", sep = ""),
   xlab = "sample points",
   ylab = "",
   col = "blue"
@@ -433,16 +434,16 @@ plot(
 
 # Signal after filtering.
 plot(
-  signal.eeg.m.f[, ch],
+  signal_eeg_m_f[, ch],
   type = "l",
   panel.first = grid(),
-  main = paste(colnames(signal.eeg.m)[ch], " (filtered signal, channel #1)", sep = ""),
+  main = paste(colnames(signal_eeg_m)[ch], " (filtered signal, channel #1)", sep = ""),
   xlab = "sample points",
   ylab = "",
   col = "blue"
 )
 
-par(old.par)
+par(old_par)
 ```
 
 [Back to menu](#top)
@@ -452,26 +453,26 @@ par(old.par)
 **Important note:** The code below has been commented out. See the
 explanation given [here](#important_note).
 
-```{r eeg.empi.execute, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-# The empi.options parameter is NULL, so the EMPI program is 
+```{r eeg_empi_execute, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+# The empi_options parameter is NULL, so the EMPI program is 
 # run with the parameters "-o local --gabor -i 50"
 
-# sig <- list(signal.eeg.m.f, sampling.rate)
-# names(sig) <- c("signal", "sampling.rate")
+# sig <- list(signal_eeg_m_f, sampling_frequency)
+# names(sig) <- c("signal", "sampling_frequency")
 
-# empi.class <- empi.execute (
+# empi_class <- empi_execute (
 #   signal = sig,
-#   empi.options = NULL,
-#   write.to.file = TRUE,
+#   empi_options = NULL,
+#   write_to_file = TRUE,
 #   path = NULL,
-#   file.name = "EEG_bipolar_filtered.db"
+#   file_name = "EEG_bipolar_filtered.db"
 # )
 ```
 
 ### Step 6 {.unnumbered}
 
 Generating the final time-frequency map for the selected channel
-(`r ch <- 1; colnames(signal.eeg.m.f)[ch]`). The centers of atoms (in
+(`r ch <- 1; colnames(signal_eeg_m_f)[ch]`). The centers of atoms (in
 the sense of time and frequency coordinates) are now marked with white
 crosses.
 
@@ -487,47 +488,47 @@ signal (from the generated atoms) is calculated. The results show that
 nearly all of the energy of the original signal (97.75%) is “explained”
 by the generated atoms.
 
-```{r eeg.empi2tf, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+```{r eeg_tf_map, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
 file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 
 # Generate time-frequency map based on MP atoms.
-out <- empi2tf(
+out <- tf_map(
   x = file,
   channel = 2,
   mode = "sqrt",
-  increase.factor= 8,
-  display.crosses = TRUE,
-  display.atom.numbers = FALSE,
-  out.mode = "plot"
+  increase_factor= 8,
+  display_crosses = TRUE,
+  display_atom_numbers = FALSE,
+  out_mode = "plot"
 )
 ```
 
 ### Step 7 (optional) {.unnumbered}
 
 The package also includes a function for displaying EEG signals. To do
-this, you can use `plot.eeg()`, the `S3` method for the generic `plot()`
+this, you can use `plot_eeg()`, the `S3` method for the generic `plot()`
 function. This function requires an object of class `edf`, created with
-`read.edf.signals()`.
+`read_edf_signals()`.
 
-`panel.height` parameter controls the vertical distance between
+`panel_height` parameter controls the vertical distance between
 individual signals. If `NULL`, its value is set automatically so that
 all signals are clearly visible and do not overlap. The calculated value
-of parameter `panel.height` is displayed below the figure.
+of parameter `panel_height` is displayed below the figure.
 
-```{r plot.eeg.filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-temp <- eeg.m
-temp$signal <- signal.eeg.m.f
+```{r plot_eeg_filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+temp <- eeg_m
+temp$signal <- signal_eeg_m_f
 
 plot(
   x = temp,
   begin = 0,
   end = 10,
-  panel.height = NULL,
+  panel_height = NULL,
   rainbow = FALSE,
-  bg.colour = "white",
-  txt.col = "blue",
-  zero.line = TRUE,
+  bg_colour = "white",
+  txt_col = "blue",
+  zero_line = TRUE,
   main = "EEG.edf file after banana montage and after filtering"
 )
 ```
@@ -536,19 +537,19 @@ In the next example, we show a plot of the same EEG signal as above.
 However, this time, we display the unfiltered version. Undesirable
 artifacts (noise and drift) are clearly visible.
 
-```{r plot.eeg.no.filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-temp <- eeg.m
-temp$signal <- signal.eeg.m
+```{r plot_eeg_no_filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+temp <- eeg_m
+temp$signal <- signal_eeg_m
 
 plot(
   x = temp,
   begin = 0,
   end = 10,
-  panel.height = NULL,
+  panel_height = NULL,
   rainbow = FALSE,
-  bg.colour = "white",
-  txt.col = "blue",
-  zero.line = TRUE,
+  bg_colour = "white",
+  txt_col = "blue",
+  zero_line = TRUE,
   main = "EEG.edf file after banana montage and after filtering"
 )
 ```
@@ -570,22 +571,22 @@ Reading an example ECG signal (`.dat` and `.hea` files). The signal is
 Hz. The channels have standard names. The data comes from the repository
 available at [PhysioNet](https://physionet.org/content/ptb-xl/1.0.3/).
 
-```{r read.ecg.signals, include = TRUE, echo = TRUE, warning = FALSE}
+```{r read_ecg_signals, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
 
-out.ecg <- read.ecg.signals(file)
+out_ecg <- read_ecg_signals(file)
 
-head(out.ecg$signals)
-out.ecg$sampling.rate
-out.ecg$lead.names
-out.ecg$record.name
+head(out_ecg$signals)
+out_ecg$sampling_frequency
+out_ecg$lead_names
+out_ecg$record_name
 ```
 
-```{r ecg.signal, include = TRUE, echo = TRUE, warning = FALSE}
-# Create a list compatible with the empi.execute() function.
+```{r ecg_signal, include = TRUE, echo = TRUE, warning = FALSE}
+# Create a list compatible with the empi_execute() function.
 signal <- list(
-  signal = data.frame(out.ecg$signal),
-  sampling.rate = out.ecg$sampling.rate
+  signal = data.frame(out_ecg$signal),
+  sampling_frequency = out_ecg$sampling_frequency
 )
 
 str(signal)
@@ -594,18 +595,18 @@ str(signal)
 ### Step 2 {.unnumbered}
 
 The input data (`signal`) is passed as an argument to the
-`empi.execute()` function, which generates the final output file in
+`empi_execute()` function, which generates the final output file in
 `SQLite` format (`00001_lr.db`) containing all atom parameters.
 
 **Important note:** The code below has been commented out. See the
 explanation given [here](#important_note).
 
-```{r ecg.empi.execute, include = TRUE, echo = TRUE, warning = FALSE}
-# empi.class <- empi.execute (
+```{r ecg_empi_execute, include = TRUE, echo = TRUE, warning = FALSE}
+# empi_class <- empi_execute (
 #   signal = signal,
-#   write.to.file = TRUE,
+#   write_to_file = TRUE,
 #   path = NULL,
-#   file.name = "00001_lr.db"
+#   file_name = "00001_lr.db"
 # )
 ```
 
@@ -619,10 +620,10 @@ selected channel.
 file <- system.file("extdata", "00001_lr.db", package = "MatchingPursuit")
 
 # Create time-frequency map based on MP atoms.
-out <- empi2tf(
+out <- tf_map(
   x = file,
   channel = 2,
-  increase.factor = 8
+  increase_factor = 8
 )
 ```
 
@@ -631,35 +632,35 @@ out <- empi2tf(
 The package also includes a function for displaying ECG signals in a
 layout corresponding to standard paper ECG printouts. A typical ECG
 paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a
-large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.ecg()`,
+large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot_ecg()`,
 the `S3` method for the generic `plot()` function. This function
-requires an object of class `ecg`, created with `read.ecg.signals()`.
+requires an object of class `ecg`, created with `read_ecg_signals()`.
 
-```{r plot.ecg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+```{r plot_ecg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 plot(
-  x = out.ecg,
+  x = out_ecg,
   begin = 0,
   end = 10,
-  panel.height = 1,
-  zero.line = FALSE,
-  small.squares = TRUE
+  panel_height = 1,
+  zero_line = FALSE,
+  small_squares = TRUE
 )
 
 ```
 
 ## Selected auxilary functions
 
-### `atom.params()` {.unnumbered}
+### `atom_params()` {.unnumbered}
 
-Using the `atom.params()` function, all atom parameters can be displayed
+Using the `atom_params()` function, all atom parameters can be displayed
 in a tabular form. Note that the `sample1.db` file contains only one
 channel. The signal was decomposed into 25 atoms. By analyzing the
 `position` and `frequency` parameters, you can easily identify the
 so-called blobs corresponding to these atoms in the T-F maps.
 
-```{r atom.params, include = TRUE, echo = TRUE, warning = FALSE}
+```{r atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-atom.params(file)
+atom_params(file)
 ```
 
 In the following example, note that the `EEG_bipolar_filtered.db` file
@@ -672,9 +673,9 @@ generated is 900 (number of atoms per channel = 50, number of channels =
 atoms generated for each channel does not need to be the same. However,
 in our example, the number of atoms in each channel is exactly the same.
 
-```{r eeg.atom.params, include = TRUE, echo = TRUE, warning = FALSE}
+```{r eeg_atom_params, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
-ap <- atom.params(file)
+ap <- atom_params(file)
 head(ap, 5)
 tail(ap, 5)
 ```
@@ -689,62 +690,62 @@ samples are arranged such that first come all channels at `t = 0`, then
 all channels at `t = Δt`, and so on.
 
 **Note:** Users do not work directly with `.bin` files. Binary files are
-used only internally by the `empi.execute()` function. The external EMPI
+used only internally by the `empi_execute()` function. The external EMPI
 program executed within this function requires binary data as input.
 Additionally, the ability to convert text files to binary form can be
 useful for those who wish to use EMPI independently of the R
 environment.
 
-```{r sig.2.bin, include = TRUE, echo = TRUE, warning = FALSE}
+```{r sig_2_bin, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
-out <- read.csv.signals(file)
+out <- read_csv_signals(file, col_names_in_csv = TRUE)
 
-signal.bin <- sig2bin(data = out$signal, write.to.file = FALSE)
+signal_bin <- sig2bin(data = out$signal, write_to_file = FALSE)
 
 # We have 3 channels. The first 4 time points.
 head(out$signal, 4)
 
 # The first four elements of the signal in binary.
 # Floats are stored in 4 bytes, so this corresponds to 16 hexadecimal values.
-head(signal.bin, 16)
+head(signal_bin, 16)
 
 # After decoding four sample numbers into numeric values.
-# Of course we get the same values ​​as in out$signal.
-readBin(signal.bin[1:4], what = "numeric", size = 4, endian = "little")
-readBin(signal.bin[5:8], what = "numeric", size = 4, endian = "little")
-readBin(signal.bin[41:44], what = "numeric", size = 4, endian = "little")
-readBin(signal.bin[45:48], what = "numeric", size = 4, endian = "little")
+# Of course we get the same values as in out$signal.
+readBin(signal_bin[1:4], what = "numeric", size = 4, endian = "little")
+readBin(signal_bin[5:8], what = "numeric", size = 4, endian = "little")
+readBin(signal_bin[41:44], what = "numeric", size = 4, endian = "little")
+readBin(signal_bin[45:48], what = "numeric", size = 4, endian = "little")
 ```
 
-### `read.empi.db.file()` {.unnumbered}
+### `read_empi_db_file()` {.unnumbered}
 
 Data from the generated `SQLite` file can be easily read using the
-`read.empi.db.file()` function. Below, data from a sample `sample1.db`
+`read_empi_db_file()` function. Below, data from a sample `sample1.db`
 file is read. The original and reconstructed signals are then extracted
 and displayed. The two signals are virtually indistinguishable,
 indicating that the atoms are highly effective at reconstructing the
 analyzed signal.
 
-```{r read.empi.db.file, include = TRUE, echo = TRUE, warning = FALSE}
+```{r read_empi_db_file, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-out <- read.empi.db.file(file)
+out <- read_empi_db_file(file)
 
 str(out)
 ```
 
-```{r display.original.and.reconstrction, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-n.channnels <- ncol(out$original.signal)
-original.signal <- out$original.signal
+```{r display_original_and_reconstrction, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
+n_channnels <- ncol(out$original_signal)
+original_signal <- out$original_signal
 reconstruction <- out$reconstruction
 t <- out$t
-f <- out$f
-len <- length(original.signal[, 1])
-lab <- seq(t[1], t[len] + 1 / f, length.out = 11)
+sf <- out$sf
+len <- length(original_signal[, 1])
+lab <- seq(t[1], t[len] + 1 / sf, length.out = 11)
 
 par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
 
 plot(
-  original.signal[,1], type = "l", col = "blue",
+  original_signal[,1], type = "l", col = "blue",
   main = "Original signal",
   xaxt = "n", ylab = "", xlab = "time [sec]"
 )
@@ -757,7 +758,7 @@ plot(
 )
 axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 
-par(old.par)
+par(old_par)
 ```
 
 [Back to menu](#top)
@@ -769,16 +770,16 @@ work of @Durka-2007. The signal consists of a mixture of seven
 components: (a) four Gabor functions with different parameters, (b) a
 unit impulse, (c) a sinusoidal waveform, and (d) a chirp signal.
 
-```{r chirp.def, include = TRUE, echo = FALSE, warning = FALSE}
+```{r chirp_def, include = TRUE, echo = FALSE, warning = FALSE}
 n <- 1280
 f <- 128
 t1 = n / f
 t <- seq(from = 0, to = n - 1, by = 1) / f
 
-g1 <- gabor.fun(n, f, mean = 2, phase = 0, sigma = 1, frequency = 50, normalization = F)
-g2 <- gabor.fun(n, f, mean = 8, phase = 0, sigma = 1.5, frequency = 25, normalization = F)
-g3 <- gabor.fun(n, f, mean = 2, phase = 0, sigma = 2, frequency = 30, normalization = F)
-g4 <- gabor.fun(n, f, mean = 7, phase = 0, sigma = 0.5, frequency = 15, normalization = F)
+g1 <- gabor_fun(n, f, mean = 2, phase = 0, sigma = 1, frequency = 50, normalization = F)
+g2 <- gabor_fun(n, f, mean = 8, phase = 0, sigma = 1.5, frequency = 25, normalization = F)
+g3 <- gabor_fun(n, f, mean = 2, phase = 0, sigma = 2, frequency = 30, normalization = F)
+g4 <- gabor_fun(n, f, mean = 7, phase = 0, sigma = 0.5, frequency = 15, normalization = F)
 imp <- rep(0, n)
 imp[n / 2] <- 4
 sine <- 0.2 * sin(2 * pi * 3 * t)
@@ -786,7 +787,7 @@ chirp <- signal::chirp(t = t, f0 = 0, t1 = t1, f1 = 50, form = c("linear"), phas
 signal <- g1$gabor + g2$gabor + g3$gabor + g4$gabor + imp  + chirp + sine
 ```
 
-```{r chirp.plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
+```{r chirp_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 7}
 par(mfcol = c(8, 1), pty = "m", mai = c(0.2, 0.1, 0.2, 0.1)) 
 
 ylim <- c(-2, 2)
@@ -799,7 +800,7 @@ plot(t, imp,      ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown",
 plot(t, sine,     ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Sine wave: 3 Hz")
 plot(t, chirp,    ylim = ylim, xaxt = "n", yaxt = "n", bty = "o", col = "brown", type = "l", xlab = "", ylab = "",   main = "Linear-frequency chirp (0Hz - 50Hz)")
 
-par(old.par)
+par(old_par)
 ```
 
 In the T–F map, all signal components—except for the chirp—are
@@ -812,19 +813,19 @@ representation of a signal with smoothly varying frequency. This
 limitation (and, in some respects, a drawback) of the MP algorithm
 should be taken into account.
 
-```{r chirp.plot.tf, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 6}
+```{r chirp_plot_tf, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 6}
 file <- system.file("extdata", "sample2.db", package = "MatchingPursuit")
 
-out <- empi2tf(
+out <- tf_map(
   x = file,
   channel = 1,
   mode = "sqrt",
-  freq.divide = 1,
-  increase.factor= 4,
-  display.crosses = TRUE,
-  display.atom.numbers = FALSE,
-  out.mode = "plot",
-  plot.signals = FALSE
+  freq_divide = 1,
+  increase_factor= 4,
+  display_crosses = TRUE,
+  display_atom_numbers = FALSE,
+  out_mode = "plot",
+  plot_signals = FALSE
 )
 
 ```
@@ -867,7 +868,7 @@ real-valued Gabor function has the following form:
 $$
 g_{\gamma}(t) = 
 K(\gamma) e^{- \pi \left( \frac{t-\mu}{\sigma} \right) ^2}
-\cos(\omega (t - \mu) + \phi)
+\cos(\omega (t - \mu) + \phi) \tag{2}
 $$
 
 where $\gamma = (\mu, \omega, \sigma, \phi)$ constitute a
@@ -910,7 +911,7 @@ for (i in c(1:n)) {
     )
   )
   
-  gb <- gabor.fun(N, fs, mean, phase, sigma, frequency, normalization = F)
+  gb <- gabor_fun(N, fs, mean, phase, sigma, frequency, normalization = F)
 
   plot(
     gb$t, 
@@ -925,7 +926,7 @@ for (i in c(1:n)) {
   s <- s + gb$gabor
 }
 
-par(old.par)
+par(old_par)
 ```
 
 In the MP algorithm, the decomposition process is iterative. At each
@@ -935,35 +936,52 @@ starting with the signal $f$ at iteration $n=0$ the initial residual and
 initial function approximation are
 
 $$
-R^0 = f \\
-f^0 = 0
-$$ For each iteration $n = \{0,1,\ldots, N\}$ we find
+R^0 = f \tag{3}
+$$ 
+and 
+
+$$
+f^0 = 0 \tag{4}
+$$ 
+
+For each iteration $n = \{0,1,\ldots, N\}$ we find
 $g_{\gamma_n} \in D$ such that the following inner product
 $\langle \cdot, \cdot \rangle$ is maximized
 
 $$
-g_{\gamma_n} = \arg \max_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle |
-$$ The coefficients $a_n$ in (1) are
+g_{\gamma_n} = \operatorname*{arg\,min}_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle | \tag{5}
+$$ 
+The coefficients $a_n$ in (1) are
 
 $$
-a_n = \langle R^{n}, g_{\gamma_n} \rangle 
-$$ and updated function approximation is defined as
+a_n = \langle R^{n}, g_{\gamma_n} \rangle \tag{6} 
+$$ 
+
+and updated function approximation is defined as
 
 $$
-f^{n+1} = f^{n} + a_n g_{\gamma_n}
-$$ Similarly, updated residual is defined as
+f^{n+1} = f^{n} + a_n g_{\gamma_n} \tag{7}
+$$ 
+
+Similarly, updated residual is defined as
 
 $$
-R^{n+1} = R^{n} - a_n g_{\gamma_n}
-$$ After $N$ iterations, the signal $f$ is approximated as
+R^{n+1} = R^{n} - a_n g_{\gamma_n} \tag{8}
+$$ 
+
+After $N$ iterations, the signal $f$ is approximated as
 
 $$
-f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N} a_n g_{\gamma_n}
-$$ or equivalently
+f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N} a_n g_{\gamma_n} \tag{9}
+$$ 
+
+or equivalently
 
 $$
-f = \sum_{n = 0}^{N} \langle R^n   g_{\gamma_n} \rangle g_{\gamma_n} + R^{N+1}
-$$ The procedure stops when $\|R^{n+1}\|$ is below a threshold or after
+f = \sum_{n = 0}^{N} \langle R^n   g_{\gamma_n} \rangle g_{\gamma_n} + R^{N+1} \tag{10}
+$$ 
+
+The procedure stops when $\|R^{n+1}\|$ is below a threshold or after
 a fixed number of iterations.
 
 It should be noted that finding an optimal approximation (1) is an
@@ -973,11 +991,169 @@ MP is energy conservation: the total energy of the signal is preserved
 in the MP decomposition.
 
 $$
-||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2
-$$ [Back to menu](#top)
+||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2 \tag{11}
+$$ 
+
+[Back to menu](#top)
 
 ```{r restore_par, include = FALSE}
-par(old.par)
+par(old_par)
 ```
+
+## The Orthogonal Matching Pursuit (OMP) in a nutshell
+
+The package also provides an implementation of the Orthogonal Matching
+Pursuit (OMP) algorithm. OMP is closely related to Matching Pursuit
+(MP), but differs in the way the approximation coefficients are
+estimated.
+
+In the classical MP algorithm, after selecting an atom, only the
+residual signal is updated (8). Previously selected atoms and their coefficients 
+$a_n$ remain unchanged. and are not recalculated in the next steps.v
+
+OMP addresses this limitation by recomputing the coefficients $a_n$ of all
+selected atoms after each iteration. This makes the residue orthogonal to all 
+selected atoms.
+
+At each iteration, the next atom $g_{\gamma_n}$ is selected according to (5). 
+At this point, a fundamental difference with the MP algorithm appears. 
+The coefficients are obtained from a **least-squares problem**:
+
+$$
+a_n = 
+\operatorname*{arg\,min}_{\mathbf{c}}
+\left\|
+f - D_n \mathbf{c}
+\right\|_2^2
+$$
+
+and, assuming $D_n$ has full column rank
+$$
+a_n = (D_n^T D_n)^{-1}D_n^Tf
+$$
+
+where $D_k$ is the matrix containing the selected atoms. This is the core of OMP.
+Instead of just adding the contribution of the new atom (see (7)), OMP projects the 
+original signal $f$ orthogonally onto the space spanned by all currently selected atoms in $D_n$.
+Because the residual is orthogonal to the span of the selected atoms, a previously selected 
+atom has zero correlation with the residual and therefore cannot be selected again.
+
+Now, the new residual is calculated by subtracting the new approximation from the original signal. 
+The new residual is now completely orthogonal to all columns that have been selected so far
+
+$$
+R^{n+1} = f - D_n a_n
+$$
+
+Compared with MP, OMP usually provides:
+
+1. more accurate signal reconstruction,
+2. sparser representations,
+3. fewer selected atoms for a comparable approximation quality.
+
+The increased accuracy comes at the cost of higher computational complexity because 
+a least-squares problem must be solved after each iteration. 
+In practical OMP implementations (including ours), the least-squares problem is not 
+solved from scratch at each iteration. Instead, an incremental Cholesky factorization 
+is used to update the solution efficiently.
+
+[Back to menu](#top)
+
+## OMP workflow in the package 
+
+The OMP implementation uses a three-stage procedure.
+
+### Step 1 {.unnumbered}
+
+Dictionary generation. A dictionary of candidate Gabor atoms is generated with
+`read_dict()`. The dictionary may contain tens or hundreds of thousands
+of atoms.
+
+**Note:** The `read_dict()` function does not, strictly speaking, generate a dictionary 
+of atoms. Instead, it reads an XML file that provides a "recipe" for constructing the 
+dictionary. The format is compatible with the[MPTK program](https://mptk.irisa.fr/) 
+and can also be generated by the EMPI program; see Section 13 for details.
+
+```{r read_dict, include = TRUE, echo = TRUE, warning = FALSE}
+sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
+sample3 <- read_csv_signals(sig_file, col_names_in_csv = TRUE)
+
+signal <- sample3$signal
+sf <- sample3$sampling_frequency
+duration <- nrow(sample3$signal) / sf
+
+xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
+
+atoms_dict <- read_dict(
+  xml_file, 
+  sf, 
+  duration, 
+  verbose = TRUE)
+```
+
+### Step 2 {.unnumbered}
+
+Preselection of candidate atoms. The `topk_atoms()` function evaluates all 
+dictionary atoms using phase-invariant complex projections and selects the atoms 
+with the highest similarities to the analyzed signal.
+
+```{r topk_atoms, include = TRUE, echo = TRUE, warning = FALSE}
+dict_topk <- topk_atoms(
+  atoms_dict = atoms_dict,
+  sig = signal,
+  sf = sf,
+  topk = 5000,
+  verbose = FALSE
+)
+```
+
+This step substantially reduces the size of the optimization problem.
+Only the selected atoms are retained and converted into real-valued
+Gabor atoms with optimal phase estimates.
+
+### Step 3 {.unnumbered}
+
+OMP decomposition. The reduced dictionary is passed to `omp_execute()` function.
+
+```{r omp_execution, include = TRUE, echo = TRUE, warning = FALSE}
+fit <- omp_execute(
+  dictionary = dict_topk,
+  signal = signal,
+  sf = sf,
+  n_nonzero_coefs = 50,
+  verbose = TRUE
+)
+```
+
+The result is an object of class `mp`, making it fully compatible with
+the same visualization functions used for MP decompositions:
+
+```{r omp_plot, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+plot(fit, channel = 3)
+```
+
+## Relationship between OMP and EMPI
+
+The `topk_atoms()` function was designed to work with dictionaries exported from 
+the EMPI program. Dictionaries generated by EMPI can be read using `read_dict()` 
+and subsequently used as input for `topk_atoms()` and `omp_execute()`.
+
+For meaningful comparisons between MP results generated by EMPI and OMP
+results generated in R, it is recommended to run EMPI with the options
+
+`-o none --full-atoms-in-signal`
+
+which disable additional EMPI-specific optimization procedures and force
+generation of complete atoms within the analyzed signal. Details of
+these options can be found in the EMPI documentation (`README.md` file).
+
+Summarising, the typical workflow is as follows:
+
+`read_dict()` $\rightarrow$ 
+`topk_atoms()` $\rightarrow$
+`omp_execute()` $\rightarrow$
+`plot()`/`tf_map()`
+
+[Back to menu](#top)
 
 ## Bibliogaphy

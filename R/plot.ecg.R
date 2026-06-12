@@ -7,21 +7,21 @@
 #' @importFrom graphics lines segments
 #' @importFrom stats median
 #'
-#' @param x Object of class \code{ecg} (from \code{read.ecg.signals()}).
+#' @param x Object of class \code{ecg} (from \code{read_ecg_signals()}).
 #'
 #' @param begin Time point (in seconds) at which to start plotting.
 #'
 #' @param end Time point (in seconds) at which to stop plotting.
 #'
-#' @param panel.height Number of large squares to display (according to standard ECG paper):
+#' @param panel_height Number of large squares to display (according to standard ECG paper):
 #' \itemize{
 #'     \item small grid: 0.04 sec. x 0.1 mV
 #'     \item large grid: 0.20 sec. x 0.5 mV
 #' }
 #'
-#' @param small.squares If \code{TRUE}, the small grid is also displayed.
+#' @param small_squares If \code{TRUE}, the small grid is also displayed.
 #'
-#' @param zero.line If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.
+#' @param zero_line If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.
 #'
 #' @param ... Currently ignored. Required for compatibility with the generic \code{plot()}.
 #'
@@ -35,24 +35,24 @@
 #' dir <- dirname(file)
 #' name <- tools::file_path_sans_ext(basename(file))
 #'
-#' out <- read.ecg.signals(file)
+#' out <- read_ecg_signals(file)
 #'
 #' plot(
 #'   x = out,
 #'   begin = 0,
 #'   end = 10,
-#'   panel.height = 1,
-#'   zero.line = FALSE,
-#'   small.squares = TRUE
+#'   panel_height = 1,
+#'   zero_line = FALSE,
+#'   small_squares = TRUE
 #' )
 #'
 plot.ecg <- function(
     x,
     begin,
     end,
-    panel.height = 3,
-    small.squares = TRUE,
-    zero.line = FALSE,
+    panel_height = 3,
+    small_squares = TRUE,
+    zero_line = FALSE,
     ...
 ) {
 
@@ -68,10 +68,10 @@ plot.ecg <- function(
   }
 
   ecg <- as.matrix(x$signal)
-  fs <- x$sampling.rate
+  sf <- x$ sampling_frequency
   channels <- ncol(ecg)
 
-  main <- paste("record name: ", x$record.name, sep = "")
+  main <- paste("record name: ", x$record_name, sep = "")
 
   # Each column is centered around its median. In signals like ECG/EGM, this
   # helps remove the base-level offset (DC offset), making channels more comparable.
@@ -79,8 +79,8 @@ plot.ecg <- function(
   md <- apply(ecg, 2, median)
   ecg <- sweep(ecg, 2, md, "-")
 
-  from <- begin * fs
-  to <- end * fs
+  from <- begin * sf
+  to <- end * sf
 
   ecg <- ecg[from:to, ]
 
@@ -88,15 +88,15 @@ plot.ecg <- function(
   n <- nrow(ecg)
 
   # time points
-  t <- seq(begin, by = 1 / fs, length.out = n)
+  t <- seq(begin, by = 1 / sf, length.out = n)
 
   # duration of ECG signal (in sec.)
-  duration <- n / fs
+  duration <- n / sf
 
-  # panel.height - single strip height (mV)
-  ph2 <- panel.height / 2
+  # panel_height - single strip height (mV)
+  ph2 <- panel_height / 2
 
-  baseline <- rev(seq(0, by = panel.height, length.out = channels))
+  baseline <- rev(seq(0, by = panel_height, length.out = channels))
 
   ylim <- c(-ph2, max(baseline) + ph2)
 
@@ -118,7 +118,7 @@ plot.ecg <- function(
 
     y0 <- baseline[i]
 
-    if (small.squares) {
+    if (small_squares) {
       ## small vertical grids: 0.04 s
       for (x in seq(begin, end, by = 0.04)) {
         segments(x, y0 - ph2, x, y0 + ph2, col = "#f7d7d7", lwd = 0.5)
@@ -141,11 +141,9 @@ plot.ecg <- function(
     }
 
     ## baseline
-    if (zero.line)  segments(begin, y0, end, y0, col = "blue", lwd = 0.5)
+    if (zero_line) segments(begin, y0, end, y0, col = "blue", lwd = 0.5)
 
     ## signal
-    # range(ecg[, i])
-    # head(t); tail(t)
     lines(t, ecg[, i] + y0, lwd = 1)
 
     ## lead names
@@ -161,4 +159,3 @@ plot.ecg <- function(
 
   on.exit(par(old.par))
 }
-

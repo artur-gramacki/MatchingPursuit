@@ -8,33 +8,33 @@
   x,
   begin,
   end,
-  panel.height = NULL,
+  panel_height = NULL,
   rainbow = TRUE,
-  bg.colour = "black",
-  txt.col = "white",
-  zero.line = TRUE,
+  bg_colour = "black",
+  txt_col = "white",
+  zero_line = TRUE,
   main = NULL,
   ...
 )
 }
 \arguments{
-\item{x}{Object of class \code{edf} (from \code{read.edf.signals()}).}
+\item{x}{Object of class \code{edf} (from \code{read_edf_ signals()}).}
 
 \item{begin}{Time point (in seconds) at which to start plotting.}
 
 \item{end}{Time point (in seconds) at which to stop plotting.}
 
-\item{panel.height}{Controls the vertical spacing between individual signals.
+\item{panel_height}{Controls the vertical spacing between individual signals.
 If \code{NULL}, the value is chosen automatically so that all signals are clearly
 visible and do not overlap.}
 
 \item{rainbow}{If \code{TRUE}, individual channels are drawn in different colours.}
 
-\item{bg.colour}{Background colour.}
+\item{bg_colour}{Background colour.}
 
-\item{txt.col}{Colour of text elements (axis labels and title).}
+\item{txt_col}{Colour of text elements (axis labels and title).}
 
-\item{zero.line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
+\item{zero_line}{If \code{TRUE}, a horizontal line representing \code{0 mV} is displayed.}
 
 \item{main}{The text shown as the plot title.}
 
@@ -49,17 +49,17 @@ colours for improved readability.
 }
 \examples{
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
-out  <- read.edf.signals(file, resampling = FALSE)
+out  <- read_edf_signals(file, resampling = FALSE)
 
 plot(
   x = out,
   begin = 0,
   end = 10,
-  panel.height = NULL,
+  panel_height = NULL,
   rainbow = TRUE,
-  bg.colour = "black",
-  txt.col = "white",
-  zero.line = TRUE,
+  bg_colour = "black",
+  txt_col = "white",
+  zero_line = TRUE,
   main = "EEG signals stored in the EEG.edf file"
 )
 
@@ -67,11 +67,11 @@ plot(
   x = out,
   begin = 0,
   end = 10,
-  panel.height = NULL,
+  panel_height = NULL,
   rainbow = FALSE,
-  bg.colour = "white",
-  txt.col = "black",
-  zero.line = TRUE,
+  bg_colour = "white",
+  txt_col = "black",
+  zero_line = TRUE,
   main = "EEG signals stored in the EEG.edf file"
 )
 }
