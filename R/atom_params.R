@@ -4,7 +4,15 @@
 #'
 #' @param db_file A character string giving the path to a SQLite database file.
 #'
-#' @return A data frame containing the atom parameters stored in the database.
+#' @return A data frame containing the atom parameters stored in the database:
+#'
+#' \item{channel_id}{Channel identifier.}
+#' \item{atom_number}{Atom number.}
+#' \item{energy}{Energy of the atom.}
+#' \item{frequency}{Frequency of the atom.}
+#' \item{phase}{Phase of the atom.}
+#' \item{scale}{Scaling factor.}
+#' \item{position}{Position of the atom in time.}
 #'
 #' @export
 #'

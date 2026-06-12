@@ -32,6 +32,13 @@
 #' \code{mp} is returned. If \code{write_to_file = TRUE}, the results are also written
 #' to a SQLite file in the \code{path} directory.
 #'
+#' \item{atoms}{A data frame describing the selected atoms.}
+#' \item{original_signal}{Matrix containing the original signal(s).}
+#' \item{reconstruction}{Matrix containing the reconstructed signal(s).}
+#' \item{gabors}{List of matrices containing selected atoms for each channel.}
+#' \item{t}{Time vector corresponding to signal samples.}
+#' \item{sf}{Sampling frequency.}
+#'
 #' @export
 #'
 #' @examples

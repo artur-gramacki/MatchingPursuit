@@ -43,6 +43,12 @@ filters_coeff(
 }
 \value{
 List with parameters of individual filters.
+
+  \item{notch}{Notch filter used to remove a specific narrow frequency band.}
+  \item{lowpass}{Low-pass filter that attenuates high-frequency components.}
+  \item{highpass}{High-pass filter that attenuates low-frequency components.}
+  \item{bandpass}{Band-pass filter that retains frequencies within a selected range.}
+  \item{bandstop}{Band-stop filter that removes frequencies within a selected range.}
 }
 \description{
 Implements notch, low-pass, high-pass, band-pass, and band-stop filters

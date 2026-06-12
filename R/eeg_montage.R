@@ -19,7 +19,13 @@
 #'
 #' @param bipolar_pairs List of electrodes pairs for \code{"bipolar"} montage. See example below.
 #'
-#' @return An object of class \code{edf}.
+#' @return An object of class \code{edf}, which is a list with fields:
+#'
+#' \item{signal}{Data frame with all signal channels.}
+#' \item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
+#' \item{time_stamps}{Sampling rate after optional resampling.}
+#' \item{signal_names}{Time stamps after optional resampling.}
+#' \item{record_name}{Signal names.}
 #'
 #' @details To check the channel names in the analysed EEG recording,
 #' use the \code{read_edf_params()} function.
@@ -130,7 +136,7 @@ eeg_montage <- function(
 
     my_list <- list(
       signal = as.data.frame(result),
-       sampling_frequency = x$ sampling_frequency,
+      sampling_frequency = x$ sampling_frequency,
       time_stamps = x$time_stamps,
       signal_names = new_names,
       record_name = x$record_name

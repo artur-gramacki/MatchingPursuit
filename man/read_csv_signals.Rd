@@ -19,10 +19,9 @@ to contain column names.}
 }
 \value{
 A list containing:
-\itemize{
-  \item a data frame (rows = samples, columns = channels),
-  \item sampling frequency.
-}
+
+  \item{signal}{Data frame containing all signals (rows = samples, columns = channels).}
+  \item{sampling_frequency}{Sampling frequency.}
 }
 \description{
 Reads and validates a CSV file structure

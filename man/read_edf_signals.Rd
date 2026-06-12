@@ -28,11 +28,13 @@ read_edf_signals(
 \item{verbose}{Logical flag indicating whether progress information should be printed.}
 }
 \value{
-An object of class \code{edf}, a list containing:
-1) a data frame with all signals stored in the EDF file,
-2) sampling rate after optional resampling,
-3) time stamps after optional resampling,
-4) signal names.
+An object of class \code{edf}, which is a list with fields:
+
+\item{signal}{Data frame with all signal channels.}
+\item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
+\item{time_stamps}{Sampling rate after optional resampling.}
+\item{signal_names}{Time stamps after optional resampling.}
+\item{record_name}{Signal names.}
 }
 \description{
 The function reads a selected EDF or EDF+ file. Optionally, resampling can be performed

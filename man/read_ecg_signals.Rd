@@ -11,11 +11,12 @@ read_ecg_signals(file)
 }
 \value{
 An object of class \code{ecg}. The returned value is a list containing:
-  1) a matrix of signals stored in the ECG file,
-  2) the sampling frequency,
-  3) time stamps,
-  4) lead names,
-  5) record name.
+
+\item{signal}{Matrix of signals stored in the ECG file.}
+\item{sampling_frequency}{Sampling frequency.}
+\item{time_stamps}{Time vector corresponding to signal samples.}
+\item{lead_names}{Names of the ECG leads (channels).}
+\item{record_name}{Name of the file.}
 }
 \description{
 WFDB (WaveForm DataBase) is a standard file format for storing, reading,

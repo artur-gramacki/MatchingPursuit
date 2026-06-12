@@ -14,10 +14,9 @@
 #' @importFrom utils read.table
 #'
 #' @return A list containing:
-#' \itemize{
-#'   \item a data frame (rows = samples, columns = channels),
-#'   \item sampling frequency.
-#' }
+#'
+#'   \item{signal}{Data frame containing all signals (rows = samples, columns = channels).}
+#'   \item{sampling_frequency}{Sampling frequency.}
 #'
 #' @export
 #'
@@ -92,5 +91,7 @@ read_csv_signals <- function(file, col_names = NULL, col_names_in_csv = FALSE) {
     colnames(signal) <- cols
   }
 
-  return(list(signal = signal,  sampling_frequency = sf))
+  return(list(
+    signal = signal,
+    sampling_frequency = sf))
 }

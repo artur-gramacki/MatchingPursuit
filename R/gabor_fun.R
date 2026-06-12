@@ -16,7 +16,11 @@
 #' @param normalization If \code{TRUE}, the resulting atom is normalized to have unit norm.
 #'
 #' @return A list containing four numeric vectors of length \code{number_of_samples}:
-#' cosine, Gaussian envelope, Gabor function, and time axis.
+#'
+#'   \item{cosine}{Cosine wave.}
+#'   \item{gauss}{Gaussian envelope.}
+#'   \item{gabor}{Gabor function.}
+#'   \item{t}{Time vector corresponding to signal samples.}
 #'
 #' @examples
 #' number_of_samples <- 512

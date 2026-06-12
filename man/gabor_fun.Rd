@@ -31,7 +31,11 @@ gabor_fun(
 }
 \value{
 A list containing four numeric vectors of length \code{number_of_samples}:
-cosine, Gaussian envelope, Gabor function, and time axis.
+
+  \item{cosine}{Cosine wave.}
+  \item{gauss}{Gaussian envelope.}
+  \item{gabor}{Gabor function.}
+  \item{t}{Time vector corresponding to signal samples.}
 }
 \description{
 A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing, it is

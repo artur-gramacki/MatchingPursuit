@@ -26,7 +26,13 @@ eeg_montage(
 \item{bipolar_pairs}{List of electrodes pairs for \code{"bipolar"} montage. See example below.}
 }
 \value{
-An object of class \code{edf}.
+An object of class \code{edf}, which is a list with fields:
+
+\item{signal}{Data frame with all signal channels.}
+\item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
+\item{time_stamps}{Sampling rate after optional resampling.}
+\item{signal_names}{Time stamps after optional resampling.}
+\item{record_name}{Signal names.}
 }
 \description{
 An EEG montage refers to the arrangement of EEG electrodes and the way their signals

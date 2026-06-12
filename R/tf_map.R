@@ -82,21 +82,20 @@
 #'      \item saves the time-frequency map as a \code{.RData} file
 #'   }
 #' Regardless of the output mode, the function also returns:
-#'   \itemize{
-#'     \item all Gabor functions
-#'     \item reconstructed signal
-#'     \item original signal
-#'     \item sampling frequency
-#'     \item grid size along the time axis
-#'     \item grid size along the frequency axis
-#'     \item epoch size in samples
-#'     \item signal length in seconds
-#'     \item time-frequency map
-#'     \item resampled time-frequency map
-#'     (if \code{out_mode = "RData"} or \code{out_mode = "RData2"}; otherwise \code{NULL})
-#'     \item processed channel number
-#'     \item frequency division factor
-#'   }
+#'
+#'     \item{gabor_functions}{All Gabor functions.}
+#'     \item{reconstruction}{Reconstructed signal.}
+#'     \item{original_signal}{ original signal.}
+#'     \item{sf}{ sampling frequency.}
+#'     \item{grid_size_t}{Grid size along the time axis.}
+#'     \item{grid_size_f}{Grid size along the frequency axis.}
+#'     \item{epochSize}{Epoch size in samples.}
+#'     \item{number_of_secs}{Signal length in seconds.}
+#'     \item{tf_map}{Time-frequency map.}
+#'     \item{tf_map_resampled}{Resampled time-frequency map
+#'     (if \code{out_mode = "RData"} or \code{out_mode = "RData2"}; otherwise \code{NULL}).}
+#'     \item{channel}{Processed channel number.}
+#'     \item{freq_divide}{Frequency division factor.}
 #'
 #' @export
 #'

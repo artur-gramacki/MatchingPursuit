@@ -10,7 +10,15 @@ atom_params(db_file)
 \item{db_file}{A character string giving the path to a SQLite database file.}
 }
 \value{
-A data frame containing the atom parameters stored in the database.
+A data frame containing the atom parameters stored in the database:
+
+\item{channel_id}{Channel identifier.}
+\item{atom_number}{Atom number.}
+\item{energy}{Energy of the atom.}
+\item{frequency}{Frequency of the atom.}
+\item{phase}{Phase of the atom.}
+\item{scale}{Scaling factor.}
+\item{position}{Position of the atom in time.}
 }
 \description{
 Reads atom parameters stored in a SQLite database created by \code{empi_execute()} function.

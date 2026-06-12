@@ -24,11 +24,13 @@
 #' @importFrom edf read.edf
 #' @importFrom utils flush.console
 #'
-#' @return An object of class \code{edf}, a list containing:
-#' 1) a data frame with all signals stored in the EDF file,
-#' 2) sampling rate after optional resampling,
-#' 3) time stamps after optional resampling,
-#' 4) signal names.
+#' @return An object of class \code{edf}, which is a list with fields:
+#'
+#' \item{signal}{Data frame with all signal channels.}
+#' \item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
+#' \item{time_stamps}{Sampling rate after optional resampling.}
+#' \item{signal_names}{Time stamps after optional resampling.}
+#' \item{record_name}{Signal names.}
 #'
 #' @export
 #'
@@ -128,7 +130,7 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
 
   my_list <- list(
     signal = as.data.frame(edf_mtx),
-     sampling_frequency = sf_new,
+    sampling_frequency = sf_new,
     time_stamps = t_new,
     signal_names = signal_names,
     record_name = basename(file)

@@ -9,7 +9,12 @@
 #'
 #' @param file Path to the EDF / EDF+ file to be read.
 #'
-#' @return A data frame containing the basic parameters of the EDF / EDF+ file.
+#' @return A data frame containing the basic parameters of the EDF / EDF+ file:
+#'
+#'  \item{channel_name}{Name of the given channel.}
+#'  \item{frequency}{Sampling frequency of the given channel.}
+#'  \item{no_of_samples}{Number of samples in the given channel.}
+#'  \item{length_sec}{Length in seconds of the given channel.}
 #'
 #' @importFrom edf read.edf
 #'
