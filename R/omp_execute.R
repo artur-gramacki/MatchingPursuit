@@ -170,7 +170,7 @@ omp_execute <- function (
         normalize = normalize,
         fit_intercept = fit_intercept
       )
-      if (verbose) cat("Channel ", ch, " processed.", "\n", sep = "")
+      if (verbose) cat("omp_execute: channel ", ch, " processed.", "\n", sep = "")
       res
     }
   )

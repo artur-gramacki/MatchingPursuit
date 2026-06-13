@@ -1125,11 +1125,30 @@ fit <- omp_execute(
 )
 ```
 
+### Step 4 {.unnumbered}
+
 The result is an object of class `mp`, making it fully compatible with
 the same visualization functions used for MP decompositions:
 
 ```{r omp_plot, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 plot(fit, channel = 3)
+```
+
+### Combine steps 1–4 into a single pipeline {.unnumbered}
+
+For simplicity, all four steps described above have been encapsulated in a single function, `run_omp_pipeline()`, which returns an object of class `mp`.
+
+```{r run_omp_pipline, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+out <- run_omp_pipeline(
+   sig_file = sig_file,
+   col_names_in_csv = TRUE,
+   xml_file = xml_file,
+   topk = 5000,
+   n_nonzero_coefs = 50,
+   verbose = FALSE
+ )
+
+ class(out)
 ```
 
 ## Relationship between OMP and EMPI

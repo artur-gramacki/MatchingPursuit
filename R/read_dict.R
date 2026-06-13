@@ -161,7 +161,7 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
   doc <- read_xml(xml_file)
   blocks <- xml_find_all(doc, ".//block")
 
-  if (verbose) message("Number of blocks: ", length(blocks))
+  if (verbose) cat("Number of blocks: ", length(blocks))
 
   # Decode atoms
   all_atoms <- list()
@@ -198,14 +198,14 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
     freq_bins <- 0:(floor(fft_size / 2) - 1)
 
     if (verbose) {
-      message(
+      cat(
         "\n===================================\n",
         "Block: ", block_id, "\n",
         "windowLen = ", window_len, "\n",
         "windowShift = ", window_shift, "\n",
         # "windowopt = ", window_opt, "\n",
         "fftSize = ", fft_size, "\n",
-        "==================================="
+        sep = ""
       )
     }
 
@@ -230,10 +230,10 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
       }
     }
 
-    if (verbose) message("Atoms in block: ", count)
+    if (verbose) cat("Atoms in block: ", count, sep = "")
   }
 
-  if (verbose) message("\nTotal atoms: ", length(all_atoms))
+  if (verbose) cat("\nTotal atoms: ", length(all_atoms), "\n", sep = "")
 
   # convert to matrix
   mat <- matrix(

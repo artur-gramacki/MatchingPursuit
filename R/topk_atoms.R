@@ -180,7 +180,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
 
     if (verbose) {
       if (i %% 1000 == 0) {
-        cat("Step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep  = "")
+        cat("topk_atoms: step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep  = "")
         flush.console()
       }
     }
@@ -243,7 +243,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
   } ### for (i in 1:nrow(atoms_dict))
 
   if (verbose) {
-    cat("Step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep = "")
+    cat("topk_atoms: step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep = "")
     flush.console()
   }
 
@@ -279,7 +279,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
     phase_vec <- numeric(topk)
 
     m <- 1
-    cat("\n")
+    if (verbose) cat("\n")
 
     for (k in topk_idx) {
       time <- atoms_dict[k, "time_sec"]
@@ -289,7 +289,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
 
       if (verbose) {
         if (m %% 100 == 0) {
-          cat("Step 2, signal: ", j, ", generating atoms: ", m, "/", topk, "\r", sep = "")
+          cat("topk_atoms: step 2, signal: ", j, ", generating atoms: ", m, "/", topk, "\r", sep = "")
           flush.console()
         }
       }
@@ -371,7 +371,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
     phase_mtx[, j] <- phase_vec
 
     if (verbose) {
-      cat("Step 2, signal: ", j, ", generating atoms: ", m - 1, "/", topk, "\r", sep = "")
+      cat("topk_atoms: step 2, signal: ", j, ", generating atoms: ", m - 1, "/", topk, "\r", sep = "")
       flush.console()
     }
   } ###  for (j in 1:ncol(sig))
