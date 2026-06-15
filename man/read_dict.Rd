@@ -121,7 +121,7 @@ atoms_dict <- read_dict(
 # +-------------------------------------------------------------+
 # | Step 3: Running the EMPI program with the                   |
 # | --dictionary-output option, which allows you to save        |
-# | (in an XML file) data about the dictionary used             |
+# | (in XML format) data about the dictionary used              |
 # +-------------------------------------------------------------+
 dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
 

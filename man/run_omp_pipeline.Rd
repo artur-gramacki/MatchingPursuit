@@ -67,7 +67,7 @@ out <- run_omp_pipeline(
   xml_file = xml_file,
   topk = 5000,
   n_nonzero_coefs = 50,
-  verbose = FALSE
+  verbose = TRUE
 )
 
 plot(out, channel = 3)

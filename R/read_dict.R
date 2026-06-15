@@ -120,7 +120,7 @@
 #' # +-------------------------------------------------------------+
 #' # | Step 3: Running the EMPI program with the                   |
 #' # | --dictionary-output option, which allows you to save        |
-#' # | (in an XML file) data about the dictionary used             |
+#' # | (in XML format) data about the dictionary used              |
 #' # +-------------------------------------------------------------+
 #' dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
 #'
@@ -233,7 +233,10 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
     if (verbose) cat("Atoms in block: ", count, sep = "")
   }
 
-  if (verbose) cat("\nTotal atoms: ", length(all_atoms), "\n", sep = "")
+  if (verbose) {
+    cat("\n===================================\n", sep = "")
+    cat("Total atoms: ", length(all_atoms), "\n\n", sep = "")
+  }
 
   # convert to matrix
   mat <- matrix(

@@ -9,9 +9,9 @@
 #'
 #' @details
 #' In addition to generic time_series data, the package supports direct loading of
-#' data stored in EDF/EDF(+) and WFDB (WaveForm DataBase) formats. These formats are
-#' widely used for physiological signals such as EEG and ECG recordings. Support
-#' for EDF/EDF(+) and WFDB import facilitates the analysis of biomedical signals.
+#' data stored in \strong{EDF/EDF(+)} and \strong{WFDB} (WaveForm DataBase) formats.
+#' These formats are widely used for physiological signals such as EEG and ECG recordings.
+#' Support for EDF/EDF(+) and WFDB import facilitates the analysis of biomedical signals.
 #'
 #' The package requires installation of an external program,
 #' \strong{Enhanced Matching Pursuit Implementation (EMPI)}.
@@ -22,7 +22,7 @@
 #' Example datasets available via the \code{system_file()} function:
 #'
 #'  \itemize{
-#'    \item \code{EEG.edf}, \code{EEG.db}
+#'    \item \code{EEG.edf}, \code{EEG.db}, \code{EEG.csv}
 #'      \itemize{
 #'        \item 19 EEG channels + 1 EDF_Annotations channel
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec.
@@ -56,7 +56,14 @@
 #'        \item 12 ECG leads, 10 sec, 16-bit integer format
 #'        \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
 #'      }
-#' }
+#'    \item \code{sample1_dict.xml}, \code{sample2_dict.xml}, \code{sample3_dict.xml}, \code{EEG_dict.xml}
+#'      \itemize{
+#'        \item XML files describing a multiscale Gabor dictionary.
+#'        \item such files can be generated from the EMPI program executed with the \code{--dictionary-output}
+#'        option, which allows you to save (in XML format) data about the dictionary used.
+#'        See the \code{read_dict()} function help page for examples and further details.
+#'      }
+#'  }
 #'
 #' The first line of a \code{.csv} file contains two numbers: sampling rate in Hz (\code{freq})
 #' and signal length in seconds (\code{sec}). The \code{read_csv_signals()} function verifies

@@ -4,7 +4,7 @@
 
 * Extended examples added to the package-level documentation.
 
-* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()` and `omp_execute()`). 
+* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()` and `omp_execute()`). 
 
 * Added the ability to load data in WFDB (WaveForm DataBase) format.
 

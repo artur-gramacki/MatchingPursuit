@@ -149,7 +149,6 @@ fit_2 <- omp_core(
 # +-------------------------------------------------------------+
 # | Step 5: Plot time-frequency representation                  |
 # +-------------------------------------------------------------+
-# Step 5: Plot time-frequency representation
 plot(fit_1, channel = 3)
 
 }
