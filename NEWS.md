@@ -1,8 +1,8 @@
 # MatchingPursuit 1.1.0
 
-* The project adopted a new naming convention for variables and functions, replacing dot-separated names (“name.of.some.variable”) with snake_case (“name_of_some_variable”).
+* The project adopted a new naming convention for variables and functions, replacing dot-separated names (`name.of.some.variable`) with snake_case (`name_of_some_variable`).
 
-* Extended examples added to the package-level documentation.
+* Extended examples added to the package-level documentation and to the vignette.
 
 * Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()` and `omp_execute()`). 
 
