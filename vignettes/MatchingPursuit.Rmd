@@ -1,6 +1,6 @@
 ---
 title: "Introduction to `MatchingPursuit` package"
-author: "authors: Artur Gramacki & Jarosław Gramacki"
+author: "authors: Artur Gramacki and Jarosław Gramacki"
 bibliography: bibliography.bib
 output: 
   rmarkdown::html_vignette:
@@ -8,7 +8,7 @@ output:
     number_sections: true  
     fig_caption: true
 vignette: >
-  %\VignetteIndexEntry{Introduction to `sifter` package}
+  %\VignetteIndexEntry{Introduction to `MatchingPursuit` package}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -30,7 +30,6 @@ pre {
   border: 1px solid #3b82f6;
   border-radius: 6px;  
 }
-
 
 </style>
 
@@ -70,7 +69,7 @@ The below `empi_install()` function downloads **Enhanced Matching
 Pursuit Implementation** external program (or **EMPI** for short), see
 @Rozanski-2024, and stores it in the cache directory. The function
 downloads the EMPI program in a version compatible with the operating
-system used (Windows, Linux, MacOS-x64, MacOS-arm64).
+system used (Windows, Linux, MacOS-arm64).
 
 First, the user can see where EMPI can be downloaded from.
 

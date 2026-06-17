@@ -17,8 +17,8 @@ external program compatible with the current operating system and stores it
 in the package cache directory.
 }
 \details{
-The function detects the operating system (Windows, Linux, macOS x64,
-macOS arm64), downloads the appropriate archive from the official
+The function detects the operating system (Windows, Linux, macOS arm64),
+downloads the appropriate archive from the official
 repository, verifies its integrity using a checksum, and extracts it.
 }
 \examples{

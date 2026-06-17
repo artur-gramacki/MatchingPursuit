@@ -315,7 +315,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
   freq_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
   sigma_mtx <- matrix(NA,  nrow = topk, ncol = ncol(sig))
   window_len_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  #topk_idx_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
+  topk_idx_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
   phase_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
 
   # "j" -  channel
@@ -421,7 +421,7 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
     phase_mtx[, j] <- phase_vec
     sigma_mtx[, j] <- sigma_vec
     window_len_mtx[, j] <- window_len_vec
-    #topk_idx_mtx[, j] <- topk_idx
+    topk_idx_mtx[, j] <- topk_idx
 
 
     if (verbose) {
@@ -434,8 +434,8 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
   # OUTPUT
   # ------------------------------------------------------------------+
   output <- list(
-    #cross_products = cp_mtx,
-    #topk_indices = topk_idx_mtx,
+    cross_products = cp_mtx,
+    topk_indices = topk_idx_mtx,
     atoms = atoms_list,
     frequency = freq_mtx,
     phase = phase_mtx,
