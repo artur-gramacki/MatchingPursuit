@@ -1101,7 +1101,7 @@ $$
 Only positive frequencies are considered, excluding the Nyquist component. $512$ is omitted, so we have $16$ different frequencies. Therefore, the frequencies are:
 
 $$
-0, 32, 64, \ldots, 480\ \text{Hz}
+0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448, 480\ \text{Hz}
 $$
 
 ### The total number of atoms {.unnumbered}
@@ -1218,6 +1218,13 @@ $$
 40\;704 + 81\;088 + \cdots + 4\;096 =564\;416
 $$
 
+A regular pattern can be observed in the dictionary construction: the ratio of `windowShift` to `windowLen` is nearly constant across all blocks (approximately 0.06). This means that consecutive windows overlap by about 94%.
+
+Furthermore, as the window length increases, the frequency resolution also increases. This is a direct consequence of the time–frequency uncertainty principle - the longer the window, the better the ability to distinguish closely spaced frequencies, but at the expense of time localization.
+
+Therefore, it is beneficial to analyze a larger number of frequency components for long windows, as they provide meaningful frequency information. In contrast, for short windows, a very dense frequency grid would not contribute much additional information because the frequency resolution is fundamentally limited by the window length itself.
+
+In summary, the dictionary provides an approximately uniform coverage of the time–frequency plane - short windows are associated with many temporal positions and relatively few frequency bins, whereas long windows have fewer time positions but a much denser frequency sampling.
 
 [Back to menu](#top)
 
