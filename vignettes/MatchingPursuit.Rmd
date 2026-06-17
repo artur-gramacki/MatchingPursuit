@@ -1082,7 +1082,7 @@ Assume that the analyzed signal is sampled at $1\;024$ Hz and has a duration of 
  - Window shift: ($S = 1$)
  - FFT size: $32$
 
-### Number of window positions
+### Number of window positions {.unnumbered}
 
 With a shift of one sample ($S = 1$), the number of possible window positions is
 
@@ -1090,7 +1090,7 @@ $$
 N_{\text{windows}} = N - L + 1 = 1\;024 - 17 + 1 = 1\;008.
 $$
 
-### Number of frequency bins
+### Number of frequency bins {.unnumbered}
 
 
 For an FFT size of $32$, the number of positive frequency bins is
@@ -1104,7 +1104,7 @@ $$
 0, 32, 64, \ldots, 480\ \text{Hz}
 $$
 
-### The total number of atoms 
+### The total number of atoms {.unnumbered}
 
 
 $$
@@ -1115,7 +1115,7 @@ $$
 In other words, for each of the $1\;008$ possible positions of the $17$-sample window, $16$ atoms corresponding to different FFT frequencies are generated.
 
 
-### Multiple-block dictionaries
+### Multiple-block dictionaries {.unnumbered}
 
 
 A practical dictionary usually consists of multiple blocks with different window lengths, shifts, and FFT sizes. The calculations for each block are analogous to those shown above. The results for the example dictionary are summarized in table below. In total, the XML file defines parameters for $564\;416$ atoms.
