@@ -32,7 +32,7 @@ See \code{topk_atoms()} function.}
 
 \item{n_nonzero_coefs}{Integer. Maximum number of non-zero coefficients  to include in the sparse decomposition.}
 
-\item{tol}{Optional numeric tolerance for the stopping criterion. If code{NULL}, the
+\item{tol}{Optional numeric tolerance for the stopping criterion. If \code{NULL}, the
 algorithm stops after selecting \code{n_nonzero_coefs} atoms.}
 
 \item{normalize}{Logical. If \code{TRUE}, dictionary atoms are normalized  before fitting.}
@@ -61,6 +61,8 @@ decomposition using OMP.
 sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
 
+# set 'verbose = TRUE' to see the progress
+
 out <- run_omp_pipeline(
   sig_file = sig_file,
   col_names_in_csv = TRUE,
@@ -72,4 +74,10 @@ out <- run_omp_pipeline(
 
 plot(out, channel = 3)
 
+}
+\seealso{
+\code{\link{omp_core}},
+\code{\link{read_dict}},
+\code{\link{omp_execute}}
+\code{\link{topk_atoms}}
 }

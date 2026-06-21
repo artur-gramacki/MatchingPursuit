@@ -4,7 +4,7 @@
 \alias{read_dict}
 \title{Read dictionary of Gabor atoms from XML file}
 \usage{
-read_dict(xml_file, sf, duration, verbose = TRUE)
+read_dict(xml_file, sf, duration, verbose = FALSE)
 }
 \arguments{
 \item{xml_file}{Path to the XML file containing the dictionary definition.}
@@ -18,7 +18,7 @@ of valid time positions.}
 and generated atoms.}
 }
 \value{
-A character matrix where each row describes a Gabor atom with the following columns:
+A matrix where each row describes a Gabor atom with the following columns:
 
 \item{block}{Block identifier from the XML file.}
 \item{time_sample}{Time position of the atom (in samples).}
@@ -115,7 +115,7 @@ atoms_dict <- read_dict(
   xml_file,
   sf,
   duration,
-  verbose = FALSE
+  verbose = TRUE
 )
 
 # +-------------------------------------------------------------+
@@ -142,14 +142,14 @@ out_sample3 <- empi_execute(
 # | used in the read_dict() function.                             |
 # +---------------------------------------------------------------+
 con <- file(xml_file, open = "r")
-for (i in 1:20) {
+for (i in 1:22) {
   print(readLines(con, n = 1))
 }
 close(con)
 
 f <- paste0(dest_dir, "/sample3_dict_EMPI.xml")
 con <- file(f, open = "r")
-for (i in 1:20) {
+for (i in 1:35) {
   print(readLines(con, n = 1))
 }
 close(con)
@@ -158,5 +158,6 @@ close(con)
 \seealso{
 \code{\link{topk_atoms}},
 \code{\link{omp_execute}}
-\code{\link{omp_core}}
+\code{\link{omp_core}},
+\code{\link{run_omp_pipeline}}
 }

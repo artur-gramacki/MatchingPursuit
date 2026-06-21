@@ -16,7 +16,7 @@
 #' Logical; if \code{TRUE}, prints progress information about  parsed blocks
 #' and generated atoms.
 #'
-#' @return A character matrix where each row describes a Gabor atom with the following columns:
+#' @return A matrix where each row describes a Gabor atom with the following columns:
 #'
 #' \item{block}{Block identifier from the XML file.}
 #' \item{time_sample}{Time position of the atom (in samples).}
@@ -81,7 +81,8 @@
 #' @seealso
 #' \code{\link{topk_atoms}},
 #' \code{\link{omp_execute}}
-#' \code{\link{omp_core}}
+#' \code{\link{omp_core}},
+#' \code{\link{run_omp_pipeline}}
 #'
 #' @examples
 #' # +-------------------------------------------------------------+
@@ -114,7 +115,7 @@
 #'   xml_file,
 #'   sf,
 #'   duration,
-#'   verbose = FALSE
+#'   verbose = TRUE
 #' )
 #'
 #' # +-------------------------------------------------------------+
@@ -141,19 +142,19 @@
 #' # | used in the read_dict() function.                             |
 #' # +---------------------------------------------------------------+
 #' con <- file(xml_file, open = "r")
-#' for (i in 1:20) {
+#' for (i in 1:22) {
 #'   print(readLines(con, n = 1))
 #' }
 #' close(con)
 #'
 #' f <- paste0(dest_dir, "/sample3_dict_EMPI.xml")
 #' con <- file(f, open = "r")
-#' for (i in 1:20) {
+#' for (i in 1:35) {
 #'   print(readLines(con, n = 1))
 #' }
 #' close(con)
 #'
-read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
+read_dict <- function (xml_file, sf, duration, verbose = FALSE) {
 
   signal_length <- sf * duration
 
@@ -161,7 +162,7 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
   doc <- read_xml(xml_file)
   blocks <- xml_find_all(doc, ".//block")
 
-  if (verbose) cat("Number of blocks: ", length(blocks))
+  if (verbose) message("Number of blocks: ", length(blocks))
 
   # Decode atoms
   all_atoms <- list()
@@ -181,7 +182,6 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
     window_len <- as.integer(params[["windowLen"]])
     window_shift <- as.integer(params[["windowShift"]])
     fft_size <- as.integer(params[["fftSize"]])
-    # window_opt <- as.numeric(params[["windowopt"]])
 
     end_time <- signal_length - window_len
 
@@ -198,13 +198,13 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
     freq_bins <- 0:(floor(fft_size / 2) - 1)
 
     if (verbose) {
-      cat(
-        "\n===================================\n",
+      message(
+        "===================================\n",
         "Block: ", block_id, "\n",
         "windowLen = ", window_len, "\n",
         "windowShift = ", window_shift, "\n",
         # "windowopt = ", window_opt, "\n",
-        "fftSize = ", fft_size, "\n",
+        "fftSize = ", fft_size,
         sep = ""
       )
     }
@@ -221,7 +221,6 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
           freq_bin = k,
           freq_hz = freq_hz,
           window_len = window_len,
-          # window_opt = window_opt,
           fft_size = fft_size
         )
         all_atoms[[atom_index]] <- atom
@@ -230,12 +229,12 @@ read_dict <- function (xml_file, sf, duration, verbose = TRUE) {
       }
     }
 
-    if (verbose) cat("Atoms in block: ", count, sep = "")
+    if (verbose) message("Atoms in block: ", count, sep = "")
   }
 
   if (verbose) {
-    cat("\n===================================\n", sep = "")
-    cat("Total atoms: ", length(all_atoms), "\n\n", sep = "")
+    message("===================================", sep = "")
+    message("Total atoms: ", length(all_atoms), sep = "")
   }
 
   # convert to matrix

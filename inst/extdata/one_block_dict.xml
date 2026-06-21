@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+<block>
+<param name="windowLen" value="30"/>
+<param name="windowShift" value="72"/>
+<param name="fftSize" value="32"/>
+</block>
+</dict>

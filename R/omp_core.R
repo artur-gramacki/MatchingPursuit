@@ -78,7 +78,8 @@
 #' @seealso
 #' \code{\link{read_dict}},
 #' \code{\link{topk_atoms}},
-#' \code{\link{omp_execute}}
+#' \code{\link{omp_execute}},
+#' \code{\link{run_omp_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(
@@ -101,11 +102,14 @@
 #' nrow = 5, byrow = TRUE
 #' )
 #'
+#' # set 'verbose = TRUE' to see the progress
+#'
 #' fit <- omp_core(
 #'   dictionary = dictionary,
 #'   signal = signal,
 #'   channel = 3,
-#'   n_nonzero_coefs = 3
+#'   n_nonzero_coefs = 3,
+#'   verbose = FALSE
 #' )
 #'
 #' fit$coef
@@ -188,8 +192,6 @@ omp_core <- function(
 
   if (normalize) {
     norms <- sqrt(colSums(D^2))
-    #nz <- norms > 0
-    #D[, nz] <- sweep(D[, nz, drop = FALSE], 2, norms[nz], "/")
     for (j in 1:p) {
       if (norms[j] > 0) {
         D[, j] <- D[, j] / norms[j]
@@ -219,9 +221,7 @@ omp_core <- function(
     j <- which.max(abs(corr))
     support <- c(support, j)
 
-    if (verbose) {
-      message("iteration: ", k, ", selected atom: ", j)
-    }
+    if (verbose) message("iteration: ", k, ", selected atom: ", j)
 
     # 2. Update Cholesky factor
     if (k == 1) {
@@ -264,9 +264,7 @@ omp_core <- function(
     if (!is.null(tol)) {
       residual_sq_norm <- sum(residual^2)
 
-      if (verbose) {
-        message("residual norm: ", signif(residual_sq_norm, 6))
-      }
+      if (verbose) message("residual norm: ", signif(residual_sq_norm, 6))
 
       if (residual_sq_norm <= tol) {
         break

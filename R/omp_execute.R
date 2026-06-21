@@ -63,7 +63,8 @@
 #' \code{"topk"} dictionary and computes a sparse approximation of the signal.
 #'
 #' The resulting object follows the same structure as Matching Pursuit outputs,
-#' enabling direct generation of time-frequency maps and visualizations.
+#' enabling direct generation of time-frequency maps and visualizations
+#' using `tf_map()` or `plot()` functions.
 #'
 #' Typical workflow:
 #'
@@ -77,7 +78,8 @@
 #' @seealso
 #' \code{\link{read_dict}},
 #' \code{\link{topk_atoms}},
-#' \code{\link{omp_core}}
+#' \code{\link{omp_core}},
+#' \code{\link{run_omp_pipeline}}
 #'
 #' @export
 #'
@@ -113,7 +115,8 @@
 #' atoms_dict <- read_dict(
 #'   xml_file = xml_file,
 #'   sf = sf,
-#'   duration = duration
+#'   duration = duration,
+#'   verbose = TRUE
 #' )
 #'
 #' # +-------------------------------------------------------------+
@@ -121,9 +124,10 @@
 #' # +-------------------------------------------------------------+
 #' topk_dict <- topk_atoms(
 #'   atoms_dict = atoms_dict,
-#'   sig = signal,
+#'   signal = signal,
 #'   sf = sf,
-#'   topk = 5000
+#'   topk = 5000,
+#'   verbose = TRUE
 #' )
 #'
 #' # +-------------------------------------------------------------+
@@ -157,6 +161,14 @@ omp_execute <- function (
     verbose = FALSE
 ) {
 
+  if (!is.matrix(signal)) {
+    if (is.vector(signal) || is.data.frame(signal)) {
+      signal <- as.matrix(signal)
+    } else {
+      stop("Parameter 'signal' must be a matrix or convertible to a matrix.")
+    }
+  }
+
   # run omp_core() for all channels
   results <- lapply(
     seq(1, ncol(signal)),
@@ -165,12 +177,13 @@ omp_execute <- function (
         dictionary = dictionary,
         signal = signal,
         channel = ch,
-        n_nonzero_coefs = n_nonzero_coefs,
         tol = tol,
+        n_nonzero_coefs = n_nonzero_coefs,
         normalize = normalize,
-        fit_intercept = fit_intercept
+        fit_intercept = fit_intercept,
+        verbose = FALSE
       )
-      if (verbose) cat("omp_execute: channel ", ch, " processed.", "\n", sep = "")
+      if (verbose) message("omp_execute(): channel ", ch, " processed.")
       res
     }
   )

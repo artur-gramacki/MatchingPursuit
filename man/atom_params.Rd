@@ -25,7 +25,7 @@ Reads atom parameters stored in a SQLite database created by \code{empi_execute(
 }
 \examples{
 # Example database containing data from 18 channels
-file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 out <- atom_params(file)
 out[which(out$channel_id == 1), ]
 out[which(out$channel_id == 18), ]

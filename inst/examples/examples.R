@@ -1,15 +1,15 @@
 if (interactive()) {
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Clear the cache directory, install the 'empi' program,
   # and verify that the installation completed successfully.
-  ###############################################################################
+  # +-------------------------------------------------------------+
   clear_cache()
   empi_install()
   empi_check()
 
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Workflow 1. Data stored in a CSV file.
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # STEP 1 - Read sample data.
   file_sample1_csv <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
   signal_sample1_csv <- read_csv_signals(file_sample1_csv, col_names = "ch1")
@@ -31,9 +31,9 @@ if (interactive()) {
   #  out_mode = "plot"
   #)
 
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Workflow 2. Data stored in an EDF file (EEG data).
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # STEP 1 - Read a sample EEG file.
   file_EEG_edf <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
   out_EEG <- read_edf_signals(file_EEG_edf)
@@ -99,9 +99,9 @@ if (interactive()) {
     main = "EEG.edf file after banana montage and after filtering"
   )
 
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Workflow 3. Data stored in WFDB (WaveForm DataBase) format.
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # STEP 1 - Read sample data.
   file_00001_lr_hea <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
   out_ecg <- read_ecg_signals(file_00001_lr_hea)
@@ -131,9 +131,9 @@ if (interactive()) {
     small_squares = TRUE
   )
 
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Save empi_execute() results to a SQLite file.
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Run the MP algorithm and save the results to a SQLite file.
   empi_class <- empi_execute(
     signal = signal_sample1_csv,
@@ -145,9 +145,9 @@ if (interactive()) {
   atoms <- atom_params(db_file = "sample1.db")
   print(atoms)
 
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Some useful options in tf_map() function.
-  ###############################################################################
+  # +-------------------------------------------------------------+
   # Save the time-frequency map as a PNG file
   # with the specified dimensions (in pixels).
   out <- tf_map(

@@ -14,9 +14,14 @@
 #'
 #' @param atoms_dict A matrix describing Gabor atoms (e.g. output of
 #'   \code{read_dict()}). Each row represents a candidate atom with fields:
-#'   \code{time_sec}, \code{freq_hz}, \code{window_len}, etc.
+#'   \code{block}, \code{time_sec}, \code{freq_hz}, \code{window_len}, etc.
 #'
-#' @param sig A numeric vector, matrix, or data frame representing the signal(s)
+#' @param atoms_dict A matrix describing Gabor atoms (e.g. output of
+#'   \code{read_dict()}). Each row represents a candidate atom and must
+#'   contain the following columns: \code{block}, \code{time_sec}, \code{freq_hz},
+#'   and \code{window_len}. Other columns are ignored.
+#'
+#' @param signal A numeric vector, matrix, or data frame representing the signal(s)
 #'   to be analyzed. Each column is treated as a separate channel.
 #'
 #' @param sf Sampling frequency (Hz) of the signal.
@@ -32,18 +37,17 @@
 #'   both similarity computation and atom generation.
 #'
 #' @return An object of class \code{"topk"}, a list containing:
-#'
-#' \item{cross_products}{Matrix of phase-invariant similarities between atoms
-#'   and signal(s).}
-#' \item{topk_indices}{Indices of selected atoms for each signal channel.}
+#' \item{inner_products}{Matrix of phase-invariant similarities between all atoms
+#'   in the dictionary and signal channels.}
+#' \item{topk_indices}{Matrix of indices of the selected top-k atoms for each channel.}
 #' \item{atoms}{List of matrices containing reconstructed real-valued atoms
-#'   (one matrix per signal).}
-#' \item{frequency}{Frequency (Hz) of selected atoms.}
-#' \item{phase}{Optimal phase values used for atom reconstruction.}
-#' \item{scale}{Gaussian window scale (normalized sigma).}
-#' \item{position}{Time position (center of atom in seconds).}
-#' \item{atom_begin}{Start time of each atom (in seconds).}
-#' \item{window_len}{Window length (in seconds).}
+#'   (one matrix per signal channel, where columns represent individual atoms).}
+#' \item{frequency}{Matrix of frequencies (Hz) of the selected atoms for each channel.}
+#' \item{phase}{Matrix of optimal phase values used for atom reconstruction.}
+#' \item{scale}{Matrix of Gaussian window scales (normalized sigma in seconds) for each atom.}
+#' \item{position}{Matrix of time positions (centers of atoms in seconds) for each atom.}
+#' \item{atom_begin}{Matrix of start times of each atom (in seconds).}
+#' \item{window_len}{Matrix of window lengths (in seconds).}
 #'
 #' @export
 #'
@@ -92,16 +96,16 @@
 #' tail(atoms_dict)
 #' nrow(atoms_dict)
 #'
-#'
 #' # +-------------------------------------------------------------+
 #' # | Step 3: Select top-k atoms most similar to the signal       |
 #' # +-------------------------------------------------------------+
 #' out_topk_atoms <- topk_atoms(
 #'   atoms_dict = atoms_dict,
-#'   sig = signal,
+#'   signal = signal,
 #'   sigma_divisor = NULL,
 #'   sf = sf,
-#'   topk = 5000
+#'   topk = 5000,
+#'   verbose = TRUE
 #' )
 #'
 #' class(out_topk_atoms)
@@ -141,89 +145,26 @@
 #' # +-------------------------------------------------------------+
 #' plot(fit_1, channel = 3)
 #'
-topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, verbose = TRUE) {
+topk_atoms <- function(atoms_dict, signal, sf, topk = NULL, sigma_divisor = NULL, verbose = FALSE) {
 
-  if (!is.matrix(sig)) {
-    if (is.vector(sig) || is.data.frame(sig)) {
-      sig <- as.matrix(sig)
+  if (!is.matrix(signal)) {
+    if (is.vector(signal) || is.data.frame(signal)) {
+      signal <- as.matrix(signal)
     } else {
       stop("Parameter must be a matrix or convertible to a matrix")
     }
   }
 
-  cp_mtx <- matrix(0, nrow = nrow(atoms_dict), ncol = ncol(sig))
-  N <- nrow(sig)
+  proj_mod_mtx <- matrix(0, nrow = nrow(atoms_dict), ncol = ncol(signal))
+  N <- nrow(signal)
 
   # By default select 5% best atoms
   if (is.null(topk)) {
     topk <- ceiling(0.05 * nrow(atoms_dict))
   }
 
-  if (topk > nrow(cp_mtx)) {
+  if (topk > nrow(proj_mod_mtx)) {
     stop("'topk' cannot be greater than ", nrow(atoms_dict), ".")
-  }
-
-  if (verbose) cat("Precomputing objects, please wait a few seconds..." , "\n")
-
-  # Calculates atoms for all possible combinations of "freq_hz", "window_len"
-  # (so you don't have to calculate the same things multiple times later)
-  unique_atoms <- unique(atoms_dict[, c("freq_hz", "window_len")])
-  atoms_list <- list()
-
-  for (i in 1:nrow(unique_atoms)) {
-    ua2 <- unique_atoms[i, 2]
-    ua1 <- unique_atoms[i, 1]
-    # Local atom samples
-    n <- 0:(ua2 - 1)
-    # Gaussian window
-    c <- (ua2 - 1) / 2
-    if (is.null(sigma_divisor)) {
-      sigma <- (ua2 + 1) / 3
-    } else {
-      sigma <- (ua2 + 1) / sigma_divisor
-    }
-    w <- exp(-pi * ((n - c) / sigma)^2)
-    carrier_cplx <- exp(1i * 2 * pi * ua1 * n / sf)
-    atom_cplx <- w * carrier_cplx
-    atoms_list[[i]] <- atom_cplx
-  }
-
-  # Create a composite key from the first two columns of unique_atoms
-  # and build a lookup table mapping each key to its index in atoms_list
-  key <- paste(unique_atoms[,1], unique_atoms[,2], sep=":")
-  lookup <- setNames(seq_along(atoms_list), key)
-
-  #plot(w, type = "l")
-  #plot(Re(atom_cplx), type = "l")
-  #plot(Im(atom_cplx), type = "l")
-
-  # Similar to above for all unique "window_len"
-  wl <- unique(atoms_dict[, "window_len"])
-  w_list <- list()
-
-  for (i in 1:length(wl)) {
-    n <- 0:(wl[i] - 1)
-    c <- (wl[i] - 1) / 2
-    # "(wl[i] + 1) / 3": heuristic default
-    # We want the Gauss to be reasonably concentrated in the window
-    # and not extend beyond its edges.
-    #
-    # sigma_divisor: divisor used to compute Gaussian width.
-    # Larger values create narrower windows.
-    if (is.null(sigma_divisor)) {
-      sigma <- (wl[i] + 1) / 3
-    } else {
-      sigma <- (wl[i] + 1) / sigma_divisor
-    }
-    w_list[[i]] <- exp(-pi * ((n - c) / sigma)^2)
-  }
-
-  # Similar to above for all unique "freq_hz"
-  fhz <- unique(atoms_dict[, "freq_hz"])
-  fhz_vec <- c()
-
-  for (j in 1:length(fhz)) {
-    fhz_vec[j] <- exp(1i * 2 * pi * fhz[j] / sf)
   }
 
   # ------------------------------------------------------------------+
@@ -234,69 +175,22 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
   #
   # In this step, we don't save all the generated atoms. With hundreds of
   # thousands of potential atoms, this would be very inefficient, especially
-  # since the vast majority of these atoms won't be selected (crossprod
-  # too small). We only create the cp_mtx matrix with the saved crossprod
-  # values. In step 2, a matrix with the 'topk' atoms will be created.
+  # since the vast majority of these atoms won't be selected (inner product
+  # too small). We only create the proj_mod_mtx matrix with the saved inner
+  # product values. In step 2, a matrix with the 'topk' atoms will be created.
 
-  for (i in 1:nrow(atoms_dict)) {
+  if (verbose) message("topk_atoms(), step 1, calculating ", nrow(atoms_dict), " inner products...")
 
-    if (verbose) {
-      if (i %% 1000 == 0) {
-        cat("topk_atoms: step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep  = "")
-        flush.console()
-      }
-    }
+  blocks_id <- unique(atoms_dict[,"block"])
 
-    time <- atoms_dict[i, "time_sec"]
-    freq <- atoms_dict[i, "freq_hz"]
-    window_len <- atoms_dict[i, "window_len"]
-
-    # Convert time to sample index
-    n0 <- as.integer(time * sf) + 1
-
-    # Local atom samples
-    n <- 0:(window_len - 1)
-
-    # Gaussian window
-    c <- (window_len - 1) / 2
-
-    #idx <- match(window_len, wl)
-    #w <- w_list[[idx]]
-
-    # ------------------------------------------------------------------+
-    # Complex Gabor atom ----
-    # ------------------------------------------------------------------+
-    # use the precomputed values
-    atom_cplx <- atoms_list[[ lookup[[paste(freq, window_len, sep= ":")]] ]]
-
-    # Full-length complex signal
-    end_idx <- min(n0 + window_len - 1, N)
-    valid_len <- end_idx - n0 + 1
-
-    # Normalize
-    atom_seg <- atom_cplx[1:valid_len]
-    norm <- sqrt(sum(Mod(atom_seg)^2))
-    if (norm > 0) {
-       atom_seg <- atom_seg / norm
-    }
-
-    # ------------------------------------------------------------------+
-    # Complex projection ----
-    # ------------------------------------------------------------------+
-    cp <- crossprod(atom_seg, sig[n0:end_idx, , drop = FALSE])
-
-    # Phase-invariant similarity
-    cp_mtx[i, ] <- Mod(cp)
-
-
-  } ### for (i in 1:nrow(atoms_dict))
-
-  if (verbose) {
-    cat("topk_atoms: step 1, calculating cross products: ", i, "/", nrow(atoms_dict), "\r", sep = "")
-    flush.console()
+  for (i in blocks_id) {
+    ids <- which(atoms_dict[, "block"] == i)
+    block <- atoms_dict[ids,]
+    my_list <- gabor_proj_fft(block, signal)
+    proj_mod_mtx[ids,] <- my_list$proj_mod_mtx
   }
 
-  gc()
+  if (verbose) message("topk_atoms(), step 1 finished.")
 
   # ------------------------------------------------------------------+
   # STEP 2 ----
@@ -305,22 +199,21 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
   # ------------------------------------------------------------------+
   atoms_list <- list()
 
-  for (m in 1:ncol(sig)) {
-    atoms_list[[m]] <- matrix(NA, nrow = N, ncol = topk)
+  for (s in 1:ncol(signal)) {
+    atoms_list[[s]] <- matrix(NA, nrow = N, ncol = topk)
   }
-  names(atoms_list) <- paste0("signal_", 1:ncol(sig))
+  names(atoms_list) <- paste0("signal_", 1:ncol(signal))
 
-  times_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  times_center_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  freq_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  sigma_mtx <- matrix(NA,  nrow = topk, ncol = ncol(sig))
-  window_len_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  topk_idx_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  phase_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
+  times_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
+  times_center_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
+  freq_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
+  sigma_mtx <- matrix(NA,  nrow = topk, ncol = ncol(signal))
+  window_len_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
+  topk_idx_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
+  phase_mtx <- matrix(NA, nrow = topk, ncol = ncol(signal))
 
-  # "j" -  channel
-  for (j in 1:ncol(sig)) {
-    topk_idx <- order(cp_mtx[, j], decreasing = TRUE)[1:topk]
+  for (i in 1:ncol(signal)) {
+    topk_idx <- order(proj_mod_mtx[, i], decreasing = TRUE)[1:topk]
     topk_atoms_dict <- atoms_dict[topk_idx,]
 
     atoms_mtx <- matrix(NA, nrow = N, ncol = topk)
@@ -331,58 +224,41 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
     window_len_vec <- numeric(topk)
     phase_vec <- numeric(topk)
 
-    m <- 1
-    if (verbose) cat("\n")
+    blocks_id <- unique(topk_atoms_dict[,"block"])
+    topk_proj_mod_mtx <- matrix(0, nrow = nrow(topk_atoms_dict), ncol = ncol(signal))
+    topk_fft_bin_mtx <- matrix(0, nrow = nrow(topk_atoms_dict), ncol = ncol(signal))
 
-    for (k in 1:nrow(topk_atoms_dict)) {
-      time <- topk_atoms_dict[k, "time_sec"]
-      freq <- topk_atoms_dict[k, "freq_hz"]
-      window_len <- topk_atoms_dict[k, "window_len"]
+    for (k in blocks_id) {
+      ids <- which(topk_atoms_dict[, "block"] == k)
+      block <- topk_atoms_dict[ids, , drop = FALSE]
+      my_list <- gabor_proj_fft(block, signal)
+      topk_proj_mod_mtx[ids,] <- my_list$proj_mod_mtx
+      topk_fft_bin_mtx[ids,] <- my_list$fft_bin_mtx
+    }
 
-      if (verbose) {
-        if (m %% 100 == 0) {
-          cat("topk_atoms: step 2, signal: ", j, ", generating atoms: ", m, "/", topk, "\r", sep = "")
-          flush.console()
-        }
-      }
+    # optimal phis
+    phi_vec <- Arg(as.vector(topk_fft_bin_mtx[, i]))
+
+    for (j in 1:nrow(topk_atoms_dict)) {
+
+      time <- topk_atoms_dict[j, "time_sec"]
+      freq <- topk_atoms_dict[j, "freq_hz"]
+      window_len <- topk_atoms_dict[j, "window_len"]
 
       n0 <- as.integer(time * sf) + 1
       n <- 0:(window_len - 1)
       c <- (window_len - 1) / 2
 
-       if (is.null(sigma_divisor)) {
-         sigma <- (window_len + 1) / 3
-       } else {
-         sigma <- (window_len + 1) / sigma_divisor
-       }
-
-      idx <- match(window_len, wl)
-      w <- w_list[[idx]]
-
-      # ------------------------------------------------------------------+
-      # Complex atom for phase estimation ----
-      #                 ^^^^^^^^^^^^^^^^^
-      # ------------------------------------------------------------------+
-      idx <- match(freq, fhz)
-      carrier_cplx <- fhz_vec[idx]^n
-      atom_cplx <- w * carrier_cplx
-
-      end_idx <- min(n0 + window_len - 1, N)
-      valid_len <- end_idx - n0 + 1
-
-      # Normalize
-      atom_seg <- atom_cplx[1:valid_len]
-      norm <- sqrt(sum(Mod(atom_seg)^2))
-      if (norm > 0) {
-        atom_seg <- atom_seg / norm
+      if (is.null(sigma_divisor)) {
+        sigma <- (window_len + 1) / 3
+      } else {
+        sigma <- (window_len + 1) / sigma_divisor
       }
 
-      # ------------------------------------------------------------------+
-      # Optimal phase ----
-      # ------------------------------------------------------------------+
-      cp <- crossprod(atom_seg, sig[n0:end_idx, j, drop = FALSE])
-
-      phi <- Arg(as.vector(cp))
+      w <- exp(-pi * ((n - c) / sigma)^2)
+      end_idx <- min(n0 + window_len - 1, N)
+      valid_len <- end_idx - n0 + 1
+      phi <- phi_vec[j]
 
       # ------------------------------------------------------------------+
       # Final real-valued atom with optimal phi ----
@@ -400,41 +276,31 @@ topk_atoms <- function(atoms_dict, sig, sf, topk = NULL, sigma_divisor = NULL, v
         x <- x / norm
       }
 
-      # ------------------------------------------------------------------+
-      # Save ----
-      # ------------------------------------------------------------------+
-      atoms_mtx[, m] <- x
-      times_vec[m] <- time
-      times_center_vec[m] <- (time + (window_len / (2 * sf)))
-      freq_vec[m] <- freq
-      sigma_vec[m] <- sigma / sf
-      window_len_vec[m] <- window_len / sf
-      phase_vec[m] <- phi
+      atoms_mtx[, j] <- x
+      times_vec[j] <- time
+      times_center_vec[j] <- (time + (window_len / (2 * sf)))
+      freq_vec[j] <- freq
+      sigma_vec[j] <- sigma / sf
+      window_len_vec[j] <- window_len / sf
+      phase_vec[j] <- phi
 
-      m <- m + 1
-    } ### for (k in topk_idx)
+    } ### for (j in topk_idx)
 
-    atoms_list[[j]] <- atoms_mtx
-    times_mtx[, j] <- times_vec
-    times_center_mtx[, j] <- times_center_vec
-    freq_mtx[, j] <- freq_vec
-    phase_mtx[, j] <- phase_vec
-    sigma_mtx[, j] <- sigma_vec
-    window_len_mtx[, j] <- window_len_vec
-    topk_idx_mtx[, j] <- topk_idx
+    if (verbose) message("topk_atoms(), step 2, signal ", i, " finished.")
 
+    atoms_list[[i]] <- atoms_mtx
+    times_mtx[, i] <- times_vec
+    times_center_mtx[, i] <- times_center_vec
+    freq_mtx[, i] <- freq_vec
+    phase_mtx[, i] <- phase_vec
+    sigma_mtx[, i] <- sigma_vec
+    window_len_mtx[, i] <- window_len_vec
+    topk_idx_mtx[, i] <- topk_idx
 
-    if (verbose) {
-      cat("topk_atoms: step 2, signal: ", j, ", generating atoms: ", m - 1, "/", topk, "\r", sep = "")
-      flush.console()
-    }
-  } ###  for (j in 1:ncol(sig))
+  } ###  for (i in 1:ncol(sig))
 
-  # ------------------------------------------------------------------+
-  # OUTPUT
-  # ------------------------------------------------------------------+
   output <- list(
-    cross_products = cp_mtx,
+    inner_products = proj_mod_mtx,
     topk_indices = topk_idx_mtx,
     atoms = atoms_list,
     frequency = freq_mtx,

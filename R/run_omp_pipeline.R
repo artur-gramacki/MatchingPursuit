@@ -26,7 +26,7 @@
 #' Integer. Maximum number of non-zero coefficients  to include in the sparse decomposition.
 #'
 #' @param tol
-#' Optional numeric tolerance for the stopping criterion. If code{NULL}, the
+#' Optional numeric tolerance for the stopping criterion. If \code{NULL}, the
 #' algorithm stops after selecting \code{n_nonzero_coefs} atoms.
 #'
 #' @param normalize
@@ -49,9 +49,17 @@
 #'
 #' @export
 #'
+#' @seealso
+#' \code{\link{omp_core}},
+#' \code{\link{read_dict}},
+#' \code{\link{omp_execute}}
+#' \code{\link{topk_atoms}}
+#'
 #' @examples
 #' sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 #' xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
+#'
+#' # set 'verbose = TRUE' to see the progress
 #'
 #' out <- run_omp_pipeline(
 #'   sig_file = sig_file,
@@ -93,13 +101,11 @@ run_omp_pipeline <- function(
 
   topk_dict <- topk_atoms(
     atoms_dict = atoms_dict,
-    sig = signal,
+    signal = signal,
     sf = sf,
     topk = topk,
     verbose = verbose
   )
-
-  if (verbose) cat("\n")
 
   fit <- omp_execute(
     dictionary = topk_dict,
@@ -111,4 +117,7 @@ run_omp_pipeline <- function(
     fit_intercept = fit_intercept,
     verbose = verbose
   )
+
+  return(fit)
+
 }

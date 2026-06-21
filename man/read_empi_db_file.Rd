@@ -25,7 +25,7 @@ The reconstructed signal(s) and Gabor function(s) are also returned.
 }
 \examples{
 ## Not run:
-file <- system.file("extdata", "EEG.db", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 out <- read_empi_db_file(file)
 
 n_channels <- ncol(out$original_signal)

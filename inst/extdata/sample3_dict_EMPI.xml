@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+<libVersion>0.2</libVersion>
+<blockproperties name="GAUSS-WINDOW">
+<param name="windowtype" value="gauss"/>
+</blockproperties>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="17"/>
+<param name="windowShift" value="1"/>
+<param name="windowopt" value="0.015043"/>
+<param name="fftSize" value="32"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="27"/>
+<param name="windowShift" value="1"/>
+<param name="windowopt" value="0.015453"/>
+<param name="fftSize" value="64"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="41"/>
+<param name="windowShift" value="2"/>
+<param name="windowopt" value="0.017073"/>
+<param name="fftSize" value="128"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="65"/>
+<param name="windowShift" value="3"/>
+<param name="windowopt" value="0.017186"/>
+<param name="fftSize" value="128"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="103"/>
+<param name="windowShift" value="6"/>
+<param name="windowopt" value="0.017205"/>
+<param name="fftSize" value="256"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="161"/>
+<param name="windowShift" value="9"/>
+<param name="windowopt" value="0.017626"/>
+<param name="fftSize" value="512"/>
+</block>
+<block uses="GAUSS-WINDOW">
+<param name="type" value="gabor"/>
+<param name="windowLen" value="255"/>
+<param name="windowShift" value="15"/>
+<param name="windowopt" value="0.017546"/>
+<param name="fftSize" value="512"/>
+</block>
+</dict>

@@ -82,7 +82,8 @@ For every channel, OMP greedily selects atoms from the supplied
 \code{"topk"} dictionary and computes a sparse approximation of the signal.
 
 The resulting object follows the same structure as Matching Pursuit outputs,
-enabling direct generation of time-frequency maps and visualizations.
+enabling direct generation of time-frequency maps and visualizations
+using `tf_map()` or `plot()` functions.
 
 Typical workflow:
 
@@ -125,7 +126,8 @@ xml_file <- system.file(
 atoms_dict <- read_dict(
   xml_file = xml_file,
   sf = sf,
-  duration = duration
+  duration = duration,
+  verbose = TRUE
 )
 
 # +-------------------------------------------------------------+
@@ -133,9 +135,10 @@ atoms_dict <- read_dict(
 # +-------------------------------------------------------------+
 topk_dict <- topk_atoms(
   atoms_dict = atoms_dict,
-  sig = signal,
+  signal = signal,
   sf = sf,
-  topk = 5000
+  topk = 5000,
+  verbose = TRUE
 )
 
 # +-------------------------------------------------------------+
@@ -162,5 +165,6 @@ plot(fit, channel = 3)
 \seealso{
 \code{\link{read_dict}},
 \code{\link{topk_atoms}},
-\code{\link{omp_core}}
+\code{\link{omp_core}},
+\code{\link{run_omp_pipeline}}
 }

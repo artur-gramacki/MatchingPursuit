@@ -6,19 +6,20 @@
 \usage{
 topk_atoms(
   atoms_dict,
-  sig,
+  signal,
   sf,
   topk = NULL,
   sigma_divisor = NULL,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
 \item{atoms_dict}{A matrix describing Gabor atoms (e.g. output of
-\code{read_dict()}). Each row represents a candidate atom with fields:
-\code{time_sec}, \code{freq_hz}, \code{window_len}, etc.}
+\code{read_dict()}). Each row represents a candidate atom and must
+contain the following columns: \code{block}, \code{time_sec}, \code{freq_hz},
+and \code{window_len}. Other columns are ignored.}
 
-\item{sig}{A numeric vector, matrix, or data frame representing the signal(s)
+\item{signal}{A numeric vector, matrix, or data frame representing the signal(s)
 to be analyzed. Each column is treated as a separate channel.}
 
 \item{sf}{Sampling frequency (Hz) of the signal.}
@@ -35,18 +36,17 @@ both similarity computation and atom generation.}
 }
 \value{
 An object of class \code{"topk"}, a list containing:
-
-\item{cross_products}{Matrix of phase-invariant similarities between atoms
-  and signal(s).}
-\item{topk_indices}{Indices of selected atoms for each signal channel.}
+\item{inner_products}{Matrix of phase-invariant similarities between all atoms
+  in the dictionary and signal channels.}
+\item{topk_indices}{Matrix of indices of the selected top-k atoms for each channel.}
 \item{atoms}{List of matrices containing reconstructed real-valued atoms
-  (one matrix per signal).}
-\item{frequency}{Frequency (Hz) of selected atoms.}
-\item{phase}{Optimal phase values used for atom reconstruction.}
-\item{scale}{Gaussian window scale (normalized sigma).}
-\item{position}{Time position (center of atom in seconds).}
-\item{atom_begin}{Start time of each atom (in seconds).}
-\item{window_len}{Window length (in seconds).}
+  (one matrix per signal channel, where columns represent individual atoms).}
+\item{frequency}{Matrix of frequencies (Hz) of the selected atoms for each channel.}
+\item{phase}{Matrix of optimal phase values used for atom reconstruction.}
+\item{scale}{Matrix of Gaussian window scales (normalized sigma in seconds) for each atom.}
+\item{position}{Matrix of time positions (centers of atoms in seconds) for each atom.}
+\item{atom_begin}{Matrix of start times of each atom (in seconds).}
+\item{window_len}{Matrix of window lengths (in seconds).}
 }
 \description{
 This function constructs a sparse, signal-dependent Gabor dictionary by
@@ -102,16 +102,16 @@ head(atoms_dict)
 tail(atoms_dict)
 nrow(atoms_dict)
 
-
 # +-------------------------------------------------------------+
 # | Step 3: Select top-k atoms most similar to the signal       |
 # +-------------------------------------------------------------+
 out_topk_atoms <- topk_atoms(
   atoms_dict = atoms_dict,
-  sig = signal,
+  signal = signal,
   sigma_divisor = NULL,
   sf = sf,
-  topk = 5000
+  topk = 5000,
+  verbose = TRUE
 )
 
 class(out_topk_atoms)

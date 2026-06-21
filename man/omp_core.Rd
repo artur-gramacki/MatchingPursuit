@@ -104,11 +104,14 @@ c(
 nrow = 5, byrow = TRUE
 )
 
+# set 'verbose = TRUE' to see the progress
+
 fit <- omp_core(
   dictionary = dictionary,
   signal = signal,
   channel = 3,
-  n_nonzero_coefs = 3
+  n_nonzero_coefs = 3,
+  verbose = FALSE
 )
 
 fit$coef
@@ -121,5 +124,6 @@ fit$support
 \seealso{
 \code{\link{read_dict}},
 \code{\link{topk_atoms}},
-\code{\link{omp_execute}}
+\code{\link{omp_execute}},
+\code{\link{run_omp_pipeline}}
 }
