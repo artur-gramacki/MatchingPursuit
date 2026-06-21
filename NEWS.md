@@ -2,7 +2,7 @@
 
 * The project adopted a new naming convention for variables and functions, replacing dot-separated names (`name.of.some.variable`) with snake_case (`name_of_some_variable`).
 
-* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()` and `omp_execute()`). 
+* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()`, `omp_execute()` and `gabor_proj_fft()`). 
 
 * Extended examples added to the package-level documentation and to the vignette.
 
