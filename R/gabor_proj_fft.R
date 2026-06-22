@@ -13,8 +13,8 @@
 #'
 #' @seealso
 #' \itemize{
-#'   \item \emph{Introduction to the 'MatchingPursuit' package}
-#'     (\url{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html})
+#'   \item \href{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html}{Introduction to the 'MatchingPursuit' package}
+#'   where the structure of blocks is explained.
 #' }
 #'
 #' @note Users do not work directly with this function. It is used internally in the
@@ -52,6 +52,7 @@ gabor_proj_fft <- function(block, signal) {
 
   N <- nrow(signal)
   K <- ncol(signal)
+
   proj_mod_mtx <- matrix(0, nrow = nrow(block), ncol = K)
   fft_bin_mtx <- matrix(0, nrow = nrow(block), ncol = K)
 

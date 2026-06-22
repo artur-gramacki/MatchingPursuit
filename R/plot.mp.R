@@ -42,6 +42,7 @@
 #' @return No return value, called to visualize the empi decomposition.
 #'
 #' @examples
+#' #' ## Not run:
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file, col_names = "ch1")
 #'
@@ -50,6 +51,7 @@
 #'
 #' # Plot a time-frequency map based on MP atoms.
 #' plot(mp_class)
+#' ## End(Not run)
 #'
 #' @export
 plot.mp <- function(

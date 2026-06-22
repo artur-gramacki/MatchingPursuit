@@ -1005,7 +1005,7 @@ fit <- omp_execute(
   signal = signal,
   sf = sf,
   n_nonzero_coefs = 50,
-  verbose = FALSE
+  verbose = TRUE
 )
 ```
 

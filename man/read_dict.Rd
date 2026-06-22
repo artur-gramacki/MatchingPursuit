@@ -39,16 +39,34 @@ using three parameters:
   \item \code{windowShift} — step size between consecutive windows,
   \item \code{fftSize} — FFT size defining frequency resolution.
 }
+The function assumes an XML structure containing \code{param} nodes with
+\code{name} and \code{value} attributes. An example XML file is shown below.
+For simplicity, the example contains only one block; in practice, dictionary
+files usually contain multiple blocks.
+
+\preformatted{
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+ <block>
+   <param name="windowLen" value="30"/>
+   <param name="windowShift" value="72"/>
+   <param name="fftSize" value="32"/>
+ </block>
+</dict>
+}
 
 Each block generates a grid of atoms over time and frequency bins, forming
 a multiresolution Gabor dictionary. Smaller windows provide better time
-resolution, while larger windows improve frequency resolution.  If the signal
-duration is shorter than the window length, no time positions are generated
-for that block.
-}
-\note{
-The function assumes a specific XML structure containing \code{block}
-and nested \code{param} nodes with attributes \code{name} and \code{value}.
+resolution, while larger windows improve frequency resolution.
+
+This implementation assumes a \emph{finite signal support model}
+and restricts dictionary generation to atoms fully contained within
+the signal support. In particular, only atoms satisfying:
+\deqn{0 \leq t \leq N - L} are generated, where \eqn{t} is the atom start
+position, \eqn{N} is the signal length, and \eqn{L} is the window length.
+Atoms that would extend beyond the left or right boundary of the signal
+are \strong{not included in the dictionary}. If the signal duration is
+shorter than the window length, no time positions are generated for that block.
 }
 \section{Usage in sparse decomposition pipeline}{
 
@@ -86,7 +104,7 @@ described in the EMPI documentation (see \code{README.md}).
 
 \examples{
 # +-------------------------------------------------------------+
-# | Step 1: Read signal                                         |
+# | Read signal                                                 |
 # +-------------------------------------------------------------+
 sig_file <- system.file(
   "extdata",
@@ -102,9 +120,9 @@ sample3 <- read_csv_signals(
 sf <- sample3$sampling_frequency
 duration <- nrow(sample3$signal) / sf
 
-# +-------------------------------------------------------------+
-# | Step 2: Read dictionary definition                          |
-# +-------------------------------------------------------------+
+# +---------------------------------------------------------------+
+# | Read dictionary definition                                    |
+# +---------------------------------------------------------------+
 xml_file <- system.file(
   "extdata",
   "sample3_dict.xml",
@@ -118,23 +136,27 @@ atoms_dict <- read_dict(
   verbose = TRUE
 )
 
-# +-------------------------------------------------------------+
-# | Step 3: Running the EMPI program with the                   |
-# | --dictionary-output option, which allows you to save        |
-# | (in XML format) data about the dictionary used              |
-# +-------------------------------------------------------------+
-dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
+# +---------------------------------------------------------------+
+# | Running the EMPI program with the                             |
+# | --dictionary-output option allows you to save                 |
+# | (in XML format) data about the dictionary used.               |
+# +---------------------------------------------------------------+
 
-opts <- paste0(
-  "-o none --gabor -i 50 --full-atoms-in-signal --dictionary-output ",
-  dest_dir,
-  "/sample3_dict_EMPI.xml"
-)
+#
+# Uncomment to run empi_execute() function
+#
+# dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
 
-out_sample3 <- empi_execute(
-  signal = sample3,
-  empi_options = opts
-)
+# opts <- paste0(
+#  "-o none --gabor -i 50 --full-atoms-in-signal --dictionary-output ",
+#  dest_dir,
+#   "/sample3_dict_EMPI.xml"
+# )
+
+# out_sample3 <- empi_execute(
+#   signal = sample3,
+#   empi_options = opts
+# )
 
 # +---------------------------------------------------------------+
 # | Please compare the sample3_dict.xml and sample3_dict_EMPI.xml |
@@ -142,15 +164,18 @@ out_sample3 <- empi_execute(
 # | used in the read_dict() function.                             |
 # +---------------------------------------------------------------+
 con <- file(xml_file, open = "r")
-for (i in 1:22) {
-  print(readLines(con, n = 1))
-}
+cat(readLines(con, n = 22), sep = "\n")
 close(con)
 
-f <- paste0(dest_dir, "/sample3_dict_EMPI.xml")
-con <- file(f, open = "r")
+xml_file_2 <- system.file(
+  "extdata",
+  "sample3_dict_EMPI.xml",
+  package = "MatchingPursuit"
+)
+
+con <- file(xml_file_2, open = "r")
 for (i in 1:35) {
-  print(readLines(con, n = 1))
+  cat(readLines(con, n = 1), sep = "\n")
 }
 close(con)
 

@@ -63,7 +63,6 @@ object of class \code{mp} is created as output. This allows it to be passed
 to the \code{tf_map()} function, which creates a time-frequency map.
 }
 \examples{
-
 # +-------------------------------------------------------------+
 # | Step 1: Read signal                                         |
 # +-------------------------------------------------------------+

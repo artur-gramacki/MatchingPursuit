@@ -51,7 +51,7 @@ head(Mod(scm))
 }
 \seealso{
 \itemize{
-  \item \emph{Introduction to the 'MatchingPursuit' package}
-    (\url{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html})
+  \item \href{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html}{Introduction to the 'MatchingPursuit' package}
+  where the structure of blocks is explained.
 }
 }
