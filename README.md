@@ -11,7 +11,7 @@ a greedy signal decomposition technique that represents complex signals as a lin
 of simpler functions (called atoms) selected from a redundant dictionary. Support for the 
 **Orthogonal Matching Pursuit** (**OMP**) variant of the classical MP algorithm is also provided.
 
-In addition to generic time_series data, the package supports direct loading of
+In addition to generic time-series data, the package supports direct loading of
 data stored in **EDF/EDF(+)** and **WFDB** (WaveForm DataBase) formats.
 These formats are widely used for physiological signals such as EEG and ECG recordings.
 Support for EDF/EDF(+) and WFDB import facilitates the analysis of biomedical signals.
@@ -29,5 +29,5 @@ install.packages("MatchingPursuit")
 
 See the package’s vignette:
 
-[Introduction to 'MatchingPursuit' package](https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html)
+[Introduction to MatchingPursuit package](https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html)
 

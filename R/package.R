@@ -14,7 +14,7 @@
 #' popular because they well implement the time-frequency tradeoff implied by the
 #' Heisenberg Uncertainty Principle and describe many natural signals.
 #'
-#' In addition to generic time_series data, the package supports direct loading of
+#' In addition to generic time-series data, the package supports direct loading of
 #' data stored in \strong{EDF/EDF(+)} and \strong{WFDB} (WaveForm DataBase) formats.
 #' These formats are widely used for physiological signals such as EEG and ECG recordings.
 #' Support for EDF/EDF(+) and WFDB import facilitates the analysis of biomedical signals.
