@@ -25,9 +25,9 @@ You can install the released version of motif from
 install.packages("MatchingPursuit")
 ```
 
-## Documentation
+## Learning more
 
-See the package’s vignette:
+To get started, first read 
 
 [Introduction to MatchingPursuit package](https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html)
 
