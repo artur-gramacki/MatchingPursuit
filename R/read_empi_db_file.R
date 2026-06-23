@@ -19,7 +19,6 @@
 #' @export
 #'
 #' @examples
-#' ## Not run:
 #' file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 #' out <- read_empi_db_file(file)
 #'
@@ -54,8 +53,6 @@
 #' axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 #'
 #' par(old.par)
-#'
-#' ## End(Not run)
 #'
 read_empi_db_file <- function(db_file) {
 

@@ -6,16 +6,10 @@
 #' corresponding to Gabor frequencies. The resulting values provide both complex
 #' projection coefficients and their magnitudes.
 #'
-#' @param block See the vignette (link below) for a description of the structure of blocks.
+#' @param block See the vignette for a description of the structure of blocks.
 #'
 #' @param signal A numeric vector, matrix, or data frame representing the signal(s)
 #'   to be analyzed. Each column is treated as a separate channel.
-#'
-#' @seealso
-#' \itemize{
-#'   \item \href{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html}{Introduction to the 'MatchingPursuit' package}
-#'   where the structure of blocks is explained.
-#' }
 #'
 #' @note Users do not work directly with this function. It is used internally in the
 #' \code{topk_atoms()} function. However, it can be used by users for their own experiments

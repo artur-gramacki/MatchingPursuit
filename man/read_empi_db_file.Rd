@@ -24,7 +24,6 @@ Reads data from a SQLite file (\code{.db}) created by the Matching Pursuit algor
 The reconstructed signal(s) and Gabor function(s) are also returned.
 }
 \examples{
-## Not run:
 file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 out <- read_empi_db_file(file)
 
@@ -59,7 +58,5 @@ plot(
 axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 
 par(old.par)
-
-## End(Not run)
 
 }

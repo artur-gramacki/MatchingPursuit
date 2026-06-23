@@ -42,7 +42,7 @@
 #' @export
 #'
 #' @examples
-#' ## Not run:
+#' \dontrun{
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' out <- read_csv_signals(file)
 #'
@@ -55,7 +55,7 @@
 #' )
 #'
 #' plot(out_empi)
-#' ## End(Not run)
+#' }
 #'
 empi_execute <- function(
     signal,

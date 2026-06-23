@@ -7,7 +7,7 @@
 gabor_proj_fft(block, signal)
 }
 \arguments{
-\item{block}{See the vignette (link below) for a description of the structure of blocks.}
+\item{block}{See the vignette for a description of the structure of blocks.}
 
 \item{signal}{A numeric vector, matrix, or data frame representing the signal(s)
 to be analyzed. Each column is treated as a separate channel.}
@@ -48,10 +48,4 @@ head(pmm)
 # Of course it gives 'pmm'
 head(Mod(scm))
 
-}
-\seealso{
-\itemize{
-  \item \href{https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html}{Introduction to the 'MatchingPursuit' package}
-  where the structure of blocks is explained.
-}
 }

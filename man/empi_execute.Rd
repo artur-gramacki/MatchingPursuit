@@ -54,7 +54,7 @@ Continuous Dictionaries}. ACM Transactions on Mathematical Software, Volume 50, 
 Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 }
 \examples{
-## Not run:
+\dontrun{
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 out <- read_csv_signals(file)
 
@@ -67,6 +67,6 @@ out_empi <- empi_execute(
 )
 
 plot(out_empi)
-## End(Not run)
+}
 
 }

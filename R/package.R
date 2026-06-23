@@ -58,7 +58,7 @@
 #'      }
 #'    \item \code{00001_lr.dat}, \code{00001_lr.hea}
 #'      \itemize{
-#'        \item Example ECG recording from \url{https://physionet.org/content/ptb_xl/1.0.3/}
+#'        \item Example ECG recording from \url{https://physionet.org/content/ptb-xl/1.0.3/}
 #'        \item 12 ECG leads, 10 sec, 16-bit integer format
 #'        \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
 #'      }
@@ -83,7 +83,9 @@
 #' Files with the \code{.db} extension are in \code{SQLite} format and are produced by
 #' the \code{empi_execute()} function.
 #'
-#' @example inst/examples/examples.R
+#' @section Examples:
+#' A slightly longer demo script showing the most important functionality of the package:
+#' \code{system.file("examples", "quickstart.R", package = "MatchingPursuit")}
 #'
 #' @docType package
 #'
