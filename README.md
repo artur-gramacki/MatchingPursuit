@@ -27,5 +27,5 @@ install.packages("MatchingPursuit")
 
 ## Learning more
 
-To get started, first read [Introduction to MatchingPursuit package](https://cran.r-project.org/web/packages/MatchingPursuit/vignettes/MatchingPursuit.html)
+To get started, first read the vignette [Introduction to MatchingPursuit package]( https://CRAN.R-project.org/package=MatchingPursuit)
 
