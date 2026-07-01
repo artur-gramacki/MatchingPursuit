@@ -136,7 +136,7 @@ run_mp_omp_pipeline <- function(
     verbose = verbose
   )
   } else if (mode == "mp") {
-    fit <- mp_execute(
+    fit <- mp_omp_execute(
       mode = "mp",
       dictionary = topk_dict,
       signal = signal,

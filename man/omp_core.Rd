@@ -122,6 +122,6 @@ fit$support
 \seealso{
 \code{\link{read_dict}},
 \code{\link{topk_atoms}},
-\code{\link{omp_execute}},
+\code{\link{mp_omp_execute}},
 \code{\link{run_omp_pipeline}}
 }

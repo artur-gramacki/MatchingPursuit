@@ -211,7 +211,7 @@ mp_omp_execute <- function (
           fit_intercept = fit_intercept,
           verbose = FALSE
         )
-        if (verbose) message("omp_execute(): channel ", ch, " processed.")
+        if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
         res
       }
     ) }
@@ -230,7 +230,7 @@ mp_omp_execute <- function (
           normalize = normalize,
           verbose = FALSE
         )
-        if (verbose) message("mp_execute(): channel ", ch, " processed.")
+        if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
         res
       }
     ) }
