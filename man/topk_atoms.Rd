@@ -57,10 +57,11 @@ In the first step, phase-invariant similarities between complex Gabor atoms
 and the input signal are computed using cross-products. In the second step,
 the top-ranked atoms are reconstructed with optimal phase alignment and
 converted into real-valued time-domain signals. The resulting object is used
-as input to \code{omp_core()} or to \code{omp_execute()}. This second function
-is a wrapper around the first function. It is prepared in such a way that an
-object of class \code{mp} is created as output. This allows it to be passed
-to the \code{tf_map()} function, which creates a time-frequency map.
+as input to \code{omp_core()}, \code{mp_core()} or to \code{mp_omp_execute()}.
+This second function is a wrapper around the first function. It is prepared
+in such a way that an object of class \code{mp} is created as output.
+This allows it to be passed to the \code{tf_map()} function, which creates
+a time-frequency map.
 }
 \examples{
 # +-------------------------------------------------------------+
@@ -122,7 +123,8 @@ class(out_topk_atoms)
 # | Output: object of class 'mp'                                |
 # | Processes: all signal channels (3 in this example)          |
 # +-------------------------------------------------------------+
-fit_1 <- omp_execute(
+fit_1 <- mp_omp_execute(
+  mode = "omp",
   dictionary = out_topk_atoms,
   signal = signal,
   sf = sf,
@@ -153,6 +155,7 @@ plot(fit_1, channel = 3)
 }
 \seealso{
 \code{\link{read_dict}},
-\code{\link{omp_execute}}
+\code{\link{mp_omp_execute}}
 \code{\link{omp_core}}
+\code{\link{mp_core}}
 }

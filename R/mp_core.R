@@ -1,14 +1,13 @@
-#' Implements Orthogonal Matching Pursuit (OMP) algorithm
+#' Implements the Classic Matching Pursuit (MP) Algorithm
 #'
-#' This function implements the Orthogonal Matching Pursuit (OMP) algorithm to
-#' compute a sparse representation of a signal using a dictionary of atoms.
-#' This is an efficient implementation with incremental Cholesky factorization for
-#' efficient least-squares solving. The function works very similarly to the
-#' Python implementation of OMP available in the scikit-learn library.
+#' Computes a sparse representation of a signal using the classic Matching
+#' Pursuit (MP) algorithm and a dictionary of atoms.
 #'
-#' Unlike classical Matching Pursuit, OMP recomputes all selected coefficients
-#' at each iteration by solving a least-squares problem, which generally
-#' yields more accurate sparse approximations for a given number of atoms.
+#' This is a pure R implementation of the MP algorithm. It is primarily
+#' intended for reference and educational purposes and is slower and less
+#' numerically precise than the C++ implementation provided with this package.
+#' See \code{empi_locate()}, \code{empi_install()}, \code{empi_check()}, and
+#' \code{empi_execute()} for information about the C++ implementation.
 #'
 #' @param dictionary
 #' A dictionary of atoms. Can be a matrix, data frame, or any
@@ -40,10 +39,6 @@
 #' Logical; if \code{TRUE}, dictionary atoms are normalized to
 #' unit \eqn{\ell_2} norm before decomposition.
 #'
-#' @param fit_intercept
-#' Logical; if \code{TRUE}, the signal and dictionary atoms
-#' are centered before decomposition and an intercept term is estimated.
-#'
 #' @param verbose
 #' Logical; flag indicating whether progress information should be printed.
 #'
@@ -53,17 +48,15 @@
 #'
 #' \item{gabors}{Matrix of selected atoms (dictionary columns) used in the
 #'   reconstruction.}
-#' \item{original_signal}{The original signal reconstructed as a vector
-#'   (including intercept if \code{fit_intercept = TRUE}).}
-#' \item{reconstruction}{The OMP approximation of the signal including intercept
-#'   (if applicable).}
+#' \item{original_signal}{The original signal reconstructed as a vector.}
+#' \item{reconstruction}{The MP approximation of the signal.}
 #' \item{coef}{Numeric vector of estimated coefficients for selected atoms.}
 #' \item{energy}{Energy contribution of selected atoms, computed as
 #'   \code{coef^2 * colSums(selected_atoms^2)}.}
-#' \item{intercept}{Estimated intercept term (0 if \code{fit_intercept = FALSE}).}
 #' \item{support}{Integer vector of selected atom indices.}
 #' \item{residual}{Final residual vector.}
 #' \item{n_iters}{Number of iterations performed by the algorithm.}
+#' \item{error_history}{Current L2 error.}
 #'
 #' If \code{dictionary} is a \code{"topk"} object, the result additionally
 #' contains:
@@ -78,8 +71,8 @@
 #' @seealso
 #' \code{\link{read_dict}},
 #' \code{\link{topk_atoms}},
-#' \code{\link{omp_execute}},
-#' \code{\link{run_omp_pipeline}}
+#' \code{\link{mp_execute}},
+#' \code{\link{run_mp_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(
@@ -102,32 +95,33 @@
 #' nrow = 5, byrow = TRUE
 #' )
 #'
-#' fit <- omp_core(
+#' # set 'verbose = TRUE' to see the progress
+#'
+#' fit <- mp_core(
 #'   dictionary = dictionary,
 #'   signal = signal,
 #'   channel = 3,
 #'   n_nonzero_coefs = 3,
+#'   normalize = TRUE,
 #'   verbose = TRUE
 #' )
 #'
 #' fit$coef
 #' fit$support
 #'
-#' # More realistic example, see omp_execute() examples.
+#' # More realistic example, see mp_execute() examples.
 #'
 #'
-omp_core <- function(
+mp_core <- function(
     dictionary,
     signal,
     channel = NULL,
     n_nonzero_coefs = NULL,
     tol = NULL,
     normalize = TRUE,
-    fit_intercept = TRUE,
     verbose = FALSE
 ) {
 
-  # Preprocessing
   if (inherits(dictionary, "topk")) {
     D <- dictionary$atoms[[channel]]
     D <- as.matrix(D)
@@ -141,14 +135,14 @@ omp_core <- function(
     }
   }
 
-  n <- nrow(D)
-  p <- ncol(D)
-
   if (is.vector(signal) || is.data.frame(signal) || is.matrix(signal)) {
     signal <- as.matrix(signal)
   } else {
     stop("'signal' must be a matrix or convertible to a matrix.")
   }
+
+  n <- nrow(D)
+  p <- ncol(D)
 
   sig <- signal[, channel]
   sig <- as.numeric(sig)
@@ -174,110 +168,62 @@ omp_core <- function(
     max_iter <- p
   }
 
-  # Intercept handling
-  sig_mean <- rep(0)
-  D_mean <- rep(0, p)
-
-  if (fit_intercept) {
-    sig_mean <- mean(sig)
-    sig <- sig - sig_mean
-    D_mean <- colMeans(D)
-    D <- sweep(D, 2, D_mean)
-  }
-
-  # Normalization
-  norms <- rep(1, p)
-
+  # 1. Normalize the dictionary columns (atoms must have an L2 norm of 1)
+  # Often, the dictionary is already normalized, but this makes the calculations safer
   if (normalize) {
-    norms <- sqrt(colSums(D^2))
-    for (j in 1:p) {
-      if (norms[j] > 0) {
-        D[, j] <- D[, j] / norms[j]
-      }
-    }
+    D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
+  } else {
+    D_norm = D
   }
 
-  # Pre-compute Dtsig only
-  Dtsig <- crossprod(D, sig)
-
-  # Outputs
-  support <- integer(0)
-  coef <- rep(0, p)
   residual <- sig
-  L <- NULL
+  n_atoms <- ncol(D)
 
-  # Main OMP loop
+  # Integer vector of selected atom indices.
+  support <- integer(0)
+
+  # Initialize the coefficient vector (sparse vector representation)
+  coef <- rep(0, n_atoms)
+
+  # History of reconstruction error
+  error_history <- c(sum(residual^2))
+
   for (k in 1:max_iter) {
+    # 2. Calculating the scalar products of the remainder with all atoms
+    projections <- t(D_norm) %*% residual
 
-    # 1. Select atom
-    corr <- as.vector(crossprod(D, residual))
+    #3. Selecting the atom with the best fit (largest absolute value)
+    best_atom_idx <- which.max(abs(projections))
+    best_projection <- projections[best_atom_idx]
 
-    if (length(support) > 0) {
-      corr[support] <- 0
-    }
+    if (verbose) message("iteration: ", k, ", selected atom: ", best_atom_idx)
 
-    j <- which.max(abs(corr))
-    support <- c(support, j)
+    # 4. Update the coefficient for the selected atom
+    # (in classic MP, coefficients stack if the same atom is selected again)
+    coef[best_atom_idx] <- coef[best_atom_idx] + best_projection
 
-    if (verbose) message("iteration: ", k, ", selected atom: ", j)
+    # 5. Calculating the new remainder
+    residual <- residual - best_projection * D_norm[, best_atom_idx]
 
-    # 2. Update Cholesky factor
-    if (k == 1) {
-      # atom norm
-      dj_norm_sq <- sum(D[, j]^2)
-      L <- matrix(sqrt(dj_norm_sq), nrow = 1)
-    } else {
-      prev_support <- support[-length(support)]
-      # lazy Gram computation
-      w <- crossprod(D[, prev_support, drop = FALSE], D[, j])
-      # Solve L v = w
-      v <- forwardsolve(L, w)
-      dj_norm_sq <- sum(D[, j]^2)
-      alpha <- dj_norm_sq - sum(v^2)
+    # Save current L2 error
+    current_error <- sum(residual^2)
+    error_history <- c(error_history, current_error)
 
-      if (alpha <= 1e-12) {
-        warning(paste("Near linear dependence detected at iteration", k))
-        break
-      }
+    support <- c(support, best_atom_idx)
 
-      diag_val <- sqrt(alpha)
-      L <- rbind(cbind(L, rep(0, nrow(L))), c(v, diag_val))
-    }
-
-    # 3. Solve least square
-    b <- Dtsig[support]
-    z <- forwardsolve(L, b)
-    x_active <- backsolve(t(L), z)
-    x_active <- as.numeric(x_active)
-
-    # 4. Build full coefficient vector
-    coef <- rep(0, p)
-    coef[support] <- x_active
-
-    # 5. Update residual
-    residual <- sig - D[, support, drop = FALSE] %*% x_active
-
-    # 6. Stopping criterion
-    # tol = maximum squared residual norm ||r||^2
+    # Stop criterion: if error is less than tol
     if (!is.null(tol)) {
-      residual_sq_norm <- sum(residual^2)
-
-      if (verbose) message("residual norm: ", signif(residual_sq_norm, 6))
-
-      if (residual_sq_norm <= tol) {
+      if (current_error < tol) {
+        message("Convergence achieved in iteration:", k, "\n")
         break
       }
     }
   }
 
-  # intercept recovery
-  intercept <- 0
+  selected_atoms <- D_norm[, support]
+  coefs_selected  <- coef[support]
+  energy <- coefs_selected^2 * colSums(selected_atoms^2)
 
-  if (fit_intercept) {
-    intercept <- sig_mean - sum(D_mean * coef)
-  }
-
-  # Selected topk atoms
   if (inherits(dictionary, "topk")) {
     frequency <- dictionary$frequency[support, channel]
     phase <- dictionary$phase[support, channel]
@@ -285,21 +231,16 @@ omp_core <- function(
     position <- dictionary$position[support, channel]
   }
 
-  selected_atoms <- D[, support]
-  coef_selected  <- coef[support]
-  energy <- coef_selected^2 * colSums(selected_atoms^2)
-
-  # Output
   if (inherits(dictionary, "topk")) {
     list(
       gabors = selected_atoms,
-      original_signal = sig + intercept,
-      reconstruction = as.vector(selected_atoms %*% coef_selected + intercept),
-      coef = coef_selected,
+      original_signal = sig,
+      reconstruction = as.vector(sig - residual),
+      coefs = coefs_selected,
       energy = energy,
-      intercept = intercept,
       support = support,
       residual = as.vector(residual),
+      error_history = error_history,
       n_iters = k,
       frequency = frequency,
       phase = phase,
@@ -309,19 +250,14 @@ omp_core <- function(
   } else {
     list(
       gabors = selected_atoms,
-      original_signal = sig + intercept,
-      reconstruction = as.vector(selected_atoms %*% coef_selected + intercept),
-      coef = coef_selected,
+      original_signal = sig,
+      reconstruction = as.vector(sig - residual),
+      coefs = coefs_selected,
       energy = energy,
-      intercept = intercept,
       support = support,
       residual = as.vector(residual),
+      error_history = error_history,
       n_iters = k
     )
   }
 }
-
-
-
-
-

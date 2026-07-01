@@ -31,6 +31,10 @@ This tool implements the Matching Pursuit algorithm developed by
 \strong{Piotr T. Różański} and is available at
 \url{https://github.com/develancer/empi}
 
+The package also provides a pure R implementation of the \strong{MP} algorithm.
+It is primarily intended for reference and educational purposes and is
+slower and less numerically precise than the \strong{EMPI} implementation.
+
 Example datasets available via the \code{system.file()} function:
 
  \itemize{

@@ -1,9 +1,12 @@
-#' Run the complete OMP decomposition pipeline
+#' Run the complete MP or OMP decomposition pipeline
 #'
-#' Executes the full Orthogonal Matching Pursuit (OMP) workflow:
-#' reads a signal from a CSV file, loads a dictionary definition from an
-#' XML file, selects the most relevant atoms, and performs sparse signal
+#' Executes the full Orthogonal Matching Pursuit (OMP) or Matching Pursuit
+#' (MP) workflow: reads a signal from a CSV file, loads a dictionary definition
+#' from an XML file, selects the most relevant atoms, and performs sparse signal
 #' decomposition using OMP.
+#'
+#' @param mode
+#' \code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.
 #'
 #' @param sig_file
 #' Path to a CSV file containing the signal data.
@@ -19,7 +22,7 @@
 #'
 #' @param topk
 #' Integer. Number of atoms with the highest correlation to the
-#' signal retained for OMP fitting.
+#' signal retained for MP/OMP fitting.
 #' See \code{topk_atoms()} function.
 #'
 #' @param n_nonzero_coefs
@@ -34,6 +37,7 @@
 #'
 #' @param fit_intercept
 #' Logical. If  \code{TRUE}, an intercept term is included in the model.
+#' Only used when \code{mode == "omp"}.
 #'
 #' @param verbose
 #' Logical. If  \code{TRUE}, progress information is printed to  the console.
@@ -51,17 +55,17 @@
 #'
 #' @seealso
 #' \code{\link{omp_core}},
-#' \code{\link{read_dict}},
-#' \code{\link{omp_execute}}
+#' \code{\link{mp_core}},
+#' \code{\link{mp_omp_execute}}
 #' \code{\link{topk_atoms}}
+#' \code{\link{read_dict}},
 #'
 #' @examples
 #' sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 #' xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
 #'
-#' # set 'verbose = TRUE' to see the progress
-#'
-#' out <- run_omp_pipeline(
+#' out_mp <- run_mp_omp_pipeline(
+#'   mode = "mp",
 #'   sig_file = sig_file,
 #'   col_names_in_csv = TRUE,
 #'   xml_file = xml_file,
@@ -70,9 +74,21 @@
 #'   verbose = TRUE
 #' )
 #'
-#' plot(out, channel = 3)
+#' out_omp <- run_mp_omp_pipeline(
+#'   mode = "omp",
+#'   sig_file = sig_file,
+#'   col_names_in_csv = TRUE,
+#'   xml_file = xml_file,
+#'   topk = 5000,
+#'   n_nonzero_coefs = 50,
+#'   verbose = TRUE
+#' )
 #'
-run_omp_pipeline <- function(
+#' plot(out_mp, channel = 3)
+#' plot(out_omp, channel = 3)
+#'
+run_mp_omp_pipeline <- function(
+    mode = NULL,
     sig_file,
     col_names_in_csv,
     xml_file,
@@ -107,6 +123,7 @@ run_omp_pipeline <- function(
     verbose = verbose
   )
 
+  if (mode == "omp") {
   fit <- omp_execute(
     dictionary = topk_dict,
     signal = signal,
@@ -117,6 +134,19 @@ run_omp_pipeline <- function(
     fit_intercept = fit_intercept,
     verbose = verbose
   )
+  } else if (mode == "mp") {
+    fit <- mp_execute(
+      dictionary = topk_dict,
+      signal = signal,
+      sf = sf,
+      n_nonzero_coefs = n_nonzero_coefs,
+      tol = tol,
+      normalize = normalize,
+      verbose = verbose
+    )
+  } else {
+    stop("Unknown mode. Must be 'mp' or 'omp'.")
+  }
 
   return(fit)
 

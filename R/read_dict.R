@@ -99,8 +99,9 @@
 #'
 #' @seealso
 #' \code{\link{topk_atoms}},
-#' \code{\link{omp_execute}}
+#' \code{\link{mp_omp_execute}}
 #' \code{\link{omp_core}},
+#' \code{\link{mp_core}},
 #' \code{\link{run_omp_pipeline}}
 #'
 #' @examples

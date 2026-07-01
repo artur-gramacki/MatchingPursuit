@@ -22,7 +22,8 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{mp} created by \code{empi_execute()}.}
+\item{x}{An object of class \code{mp} created by \code{empi_execute()} or \code{mp_omp_execute()}
+functions.}
 
 \item{channel}{Channel from the SQLite file to process.}
 

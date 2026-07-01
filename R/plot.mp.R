@@ -2,7 +2,8 @@
 #'
 #' This function is a wrapper around \code{tf_map()} with \code{out_mode = "plot"}.
 #'
-#' @param x An object of class \code{mp} created by \code{empi_execute()}.
+#' @param x An object of class \code{mp} created by \code{empi_execute()} or \code{mp_omp_execute()}
+#' functions.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
