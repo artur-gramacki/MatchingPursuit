@@ -124,7 +124,8 @@ run_mp_omp_pipeline <- function(
   )
 
   if (mode == "omp") {
-  fit <- omp_execute(
+  fit <- mp_omp_execute(
+    mode = "omp",
     dictionary = topk_dict,
     signal = signal,
     sf = sf,
@@ -136,6 +137,7 @@ run_mp_omp_pipeline <- function(
   )
   } else if (mode == "mp") {
     fit <- mp_execute(
+      mode = "mp",
       dictionary = topk_dict,
       signal = signal,
       sf = sf,
