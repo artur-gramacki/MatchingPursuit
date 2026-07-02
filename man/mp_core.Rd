@@ -2,7 +2,7 @@
 % Please edit documentation in R/mp_core.R
 \name{mp_core}
 \alias{mp_core}
-\title{Implements the Classic Matching Pursuit (MP) Algorithm}
+\title{Implements the Classical Matching Pursuit (MP) Algorithm}
 \usage{
 mp_core(
   dictionary,
@@ -66,7 +66,7 @@ contains:
 \item{position}{Positions of selected atoms.}
 }
 \description{
-Computes a sparse representation of a signal using the classic Matching
+Computes a sparse representation of a signal using the classical Matching
 Pursuit (MP) algorithm and a dictionary of atoms.
 }
 \details{
@@ -111,7 +111,7 @@ fit <- mp_core(
 fit$coef
 fit$support
 
-# More realistic example, see mp_execute() examples.
+# More realistic example, see mp_omp_execute() examples.
 
 
 }
@@ -119,5 +119,5 @@ fit$support
 \code{\link{read_dict}},
 \code{\link{topk_atoms}},
 \code{\link{mp_omp_execute}},
-\code{\link{run_mp_omp_pipeline}}
+\code{\link{mp_omp_run_pipeline}}
 }

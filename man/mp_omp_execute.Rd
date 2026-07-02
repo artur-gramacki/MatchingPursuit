@@ -190,5 +190,5 @@ plot(fit_mp, channel = 1)
 \code{\link{topk_atoms}},
 \code{\link{omp_core}},
 \code{\link{mp_core}},
-\code{\link{run_mp_omp_pipeline}}
+\code{\link{mp_omp_run_pipeline}}
 }

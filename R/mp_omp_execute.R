@@ -85,7 +85,7 @@
 #' \code{\link{topk_atoms}},
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}},
-#' \code{\link{run_mp_omp_pipeline}}
+#' \code{\link{mp_omp_run_pipeline}}
 #'
 #' @export
 #'
@@ -209,7 +209,7 @@ mp_omp_execute <- function (
           n_nonzero_coefs = n_nonzero_coefs,
           normalize = normalize,
           fit_intercept = fit_intercept,
-          verbose = FALSE
+          verbose = verbose
         )
         if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
         res
@@ -228,7 +228,7 @@ mp_omp_execute <- function (
           tol = tol,
           n_nonzero_coefs = n_nonzero_coefs,
           normalize = normalize,
-          verbose = FALSE
+          verbose = verbose
         )
         if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
         res

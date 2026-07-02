@@ -1,6 +1,6 @@
-#' Implements the Classic Matching Pursuit (MP) Algorithm
+#' Implements the Classical Matching Pursuit (MP) Algorithm
 #'
-#' Computes a sparse representation of a signal using the classic Matching
+#' Computes a sparse representation of a signal using the classical Matching
 #' Pursuit (MP) algorithm and a dictionary of atoms.
 #'
 #' This is a pure R implementation of the MP algorithm. It is primarily
@@ -72,7 +72,7 @@
 #' \code{\link{read_dict}},
 #' \code{\link{topk_atoms}},
 #' \code{\link{mp_omp_execute}},
-#' \code{\link{run_mp_omp_pipeline}}
+#' \code{\link{mp_omp_run_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(
@@ -109,7 +109,7 @@
 #' fit$coef
 #' fit$support
 #'
-#' # More realistic example, see mp_execute() examples.
+#' # More realistic example, see mp_omp_execute() examples.
 #'
 #'
 mp_core <- function(
@@ -199,7 +199,7 @@ mp_core <- function(
     if (verbose) message("iteration: ", k, ", selected atom: ", best_atom_idx)
 
     # 4. Update the coefficient for the selected atom
-    # (in classic MP, coefficients stack if the same atom is selected again)
+    # (in classical MP, coefficients stack if the same atom is selected again)
     coef[best_atom_idx] <- coef[best_atom_idx] + best_projection
 
     # 5. Calculating the new remainder

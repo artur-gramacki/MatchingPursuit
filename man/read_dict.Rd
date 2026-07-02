@@ -185,5 +185,5 @@ close(con)
 \code{\link{mp_omp_execute}}
 \code{\link{omp_core}},
 \code{\link{mp_core}},
-\code{\link{run_mp_omp_pipeline}}
+\code{\link{mp_omp_run_pipeline}}
 }

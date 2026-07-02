@@ -64,7 +64,7 @@
 #' sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 #' xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
 #'
-#' out_mp <- run_mp_omp_pipeline(
+#' out_mp <- mp_omp_run_pipeline(
 #'   mode = "mp",
 #'   sig_file = sig_file,
 #'   col_names_in_csv = TRUE,
@@ -74,7 +74,7 @@
 #'   verbose = TRUE
 #' )
 #'
-#' out_omp <- run_mp_omp_pipeline(
+#' out_omp <- mp_omp_run_pipeline(
 #'   mode = "omp",
 #'   sig_file = sig_file,
 #'   col_names_in_csv = TRUE,
@@ -87,7 +87,7 @@
 #' plot(out_mp, channel = 3)
 #' plot(out_omp, channel = 3)
 #'
-run_mp_omp_pipeline <- function(
+mp_omp_run_pipeline <- function(
     mode = NULL,
     sig_file,
     col_names_in_csv,

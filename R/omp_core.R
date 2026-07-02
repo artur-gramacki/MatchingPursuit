@@ -79,7 +79,7 @@
 #' \code{\link{read_dict}},
 #' \code{\link{topk_atoms}},
 #' \code{\link{mp_omp_execute}},
-#' \code{\link{run_mp_omp_pipeline}}
+#' \code{\link{mp_omp_run_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(
