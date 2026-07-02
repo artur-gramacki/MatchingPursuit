@@ -1044,7 +1044,7 @@ For educational and experimental purposes, the package also includes a pure R im
 
 ```{r mp_pure_R_impl, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 out_mp <- mp_omp_run_pipeline(
-   mode = 'mp',             # swith to MP algo
+   mode = 'mp',             # switch to MP algo
    sig_file = sig_file,
    col_names_in_csv = TRUE,
    xml_file = xml_file,
@@ -1054,7 +1054,7 @@ out_mp <- mp_omp_run_pipeline(
  )
 
  fit_mp <- mp_omp_execute(
-  mode = 'mp',             # swith to MP algo
+  mode = 'mp',             # switch to MP algo
   dictionary = dict_topk,
   signal = signal,
   sf = sf,

@@ -122,12 +122,20 @@ mp_core <- function(
     verbose = FALSE
 ) {
 
-  if (inherits(dictionary, "topk")) {
+  is_topk <- inherits(dictionary, "topk")
+
+  if (is.null(channel))  stop("'channel' must be specified.")
+
+  if (is_topk) {
     D <- dictionary$atoms[[channel]]
     D <- as.matrix(D)
   }
 
-  if (!inherits(dictionary, "topk")) {
+  norms <- sqrt(colSums(D^2))
+
+  if (any(norms < 1e-12)) stop("Dictionary contains zero or near-zero norm atoms.")
+
+  if (!is_topk) {
     if (is.vector(dictionary) || is.data.frame(dictionary) || is.matrix(dictionary)) {
       D <- as.matrix(dictionary)
     } else {
@@ -180,13 +188,17 @@ mp_core <- function(
   n_atoms <- ncol(D)
 
   # Integer vector of selected atom indices.
-  support <- integer(0)
+  support <- integer(max_iter)
 
   # Initialize the coefficient vector (sparse vector representation)
   coef <- rep(0, n_atoms)
 
+
+  total_energy <- sum(sig^2)
+
   # History of reconstruction error
-  error_history <- c(sum(residual^2))
+  relative_residual_energy <- numeric(max_iter + 1)
+  relative_residual_energy[1] <- sum(residual^2) / total_energy
 
   for (k in 1:max_iter) {
     # 2. Calculating the scalar products of the remainder with all atoms
@@ -206,41 +218,50 @@ mp_core <- function(
     residual <- residual - best_projection * D_norm[, best_atom_idx]
 
     # Save current L2 error
-    current_error <- sum(residual^2)
-    error_history <- c(error_history, current_error)
+    residual_sq_norm <- sum(residual^2)
+    relative_error <- residual_sq_norm / total_energy
+    relative_residual_energy[k + 1] <- relative_error
 
-    support <- c(support, best_atom_idx)
+    support[k] <- best_atom_idx
 
-    # Stop criterion: if error is less than tol
+    # Stop criterion: squared L2 norm of residual < tol
     if (!is.null(tol)) {
-      if (current_error < tol) {
-        message("Convergence achieved in iteration:", k, "\n")
+      if (verbose) message("relative residual energy: ", signif(relative_residual_energy[k + 1], 6))
+      if (relative_error < tol) {
+        message("Convergence achieved in iteration: ", k, "\n")
         break
       }
     }
   }
 
+  # If terminate the loop early with 'tol', then 'support' has length max_iter,
+  # but only the first k elements are filled (are != zero)
+  support <- support[1:k]
+
   selected_atoms <- D_norm[, support]
   coefs_selected  <- coef[support]
-  energy <- coefs_selected^2 * colSums(selected_atoms^2)
 
-  if (inherits(dictionary, "topk")) {
+  # as atoms are normalized ||g||= 1, colSums(selected_atoms^2) is always 1
+  # energy <- coefs_selected^2 * colSums(selected_atoms^2)
+  energy <- coefs_selected^2
+
+  if (is_topk) {
     frequency <- dictionary$frequency[support, channel]
     phase <- dictionary$phase[support, channel]
     scale <- dictionary$scale[support, channel]
     position <- dictionary$position[support, channel]
   }
 
-  if (inherits(dictionary, "topk")) {
+  if (is_topk) {
     list(
       gabors = selected_atoms,
       original_signal = sig,
       reconstruction = as.vector(sig - residual),
       coefs = coefs_selected,
       energy = energy,
-      support = support,
+      support = support[1:k],
       residual = as.vector(residual),
-      error_history = error_history,
+      relative_residual_energy = relative_residual_energy[1:(k+1)],
       n_iters = k,
       frequency = frequency,
       phase = phase,
@@ -254,9 +275,9 @@ mp_core <- function(
       reconstruction = as.vector(sig - residual),
       coefs = coefs_selected,
       energy = energy,
-      support = support,
+      support = support[1:k],
       residual = as.vector(residual),
-      error_history = error_history,
+      relative_residual_energy = relative_residual_energy[1:(k+1)],
       n_iters = k
     )
   }

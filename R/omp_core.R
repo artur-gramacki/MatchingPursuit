@@ -127,13 +127,16 @@ omp_core <- function(
     verbose = FALSE
 ) {
 
+  if (is.null(channel))  stop("'channel' must be specified.")
+  is_topk <- inherits(dictionary, "topk")
+
   # Preprocessing
-  if (inherits(dictionary, "topk")) {
+  if (is_topk) {
     D <- dictionary$atoms[[channel]]
     D <- as.matrix(D)
   }
 
-  if (!inherits(dictionary, "topk")) {
+  if (!is_topk) {
     if (is.vector(dictionary) || is.data.frame(dictionary) || is.matrix(dictionary)) {
       D <- as.matrix(dictionary)
     } else {
@@ -152,6 +155,7 @@ omp_core <- function(
 
   sig <- signal[, channel]
   sig <- as.numeric(sig)
+  total_energy <- sum(sig^2)
 
   if (length(sig) != n) {
     stop("Dimension mismatch between dictionary and signal.")
@@ -206,6 +210,9 @@ omp_core <- function(
   residual <- sig
   L <- NULL
 
+  relative_residual_energy <- numeric(max_iter + 1)
+  relative_residual_energy[1] <- sum(residual^2) / total_energy
+
   # Main OMP loop
   for (k in 1:max_iter) {
 
@@ -259,12 +266,14 @@ omp_core <- function(
 
     # 6. Stopping criterion
     # tol = maximum squared residual norm ||r||^2
+    residual_sq_norm <- sum(residual^2)
+    relative_error <- residual_sq_norm / total_energy
+    relative_residual_energy[k + 1] <- relative_error
+
     if (!is.null(tol)) {
-      residual_sq_norm <- sum(residual^2)
-
-      if (verbose) message("residual norm: ", signif(residual_sq_norm, 6))
-
-      if (residual_sq_norm <= tol) {
+      if (verbose) message("relative residual energy: ", signif(relative_residual_energy[k + 1], 6))
+      if (relative_error <= tol) {
+        message("Convergence achieved in iteration: ", k, "\n")
         break
       }
     }
@@ -300,6 +309,7 @@ omp_core <- function(
       intercept = intercept,
       support = support,
       residual = as.vector(residual),
+      relative_residual_energy = relative_residual_energy[1:(k+1)],
       n_iters = k,
       frequency = frequency,
       phase = phase,
@@ -316,6 +326,7 @@ omp_core <- function(
       intercept = intercept,
       support = support,
       residual = as.vector(residual),
+      relative_residual_energy = relative_residual_energy[1:(k+1)],
       n_iters = k
     )
   }

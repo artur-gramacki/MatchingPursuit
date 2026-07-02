@@ -26,8 +26,7 @@
 #' for each signal channel.
 #'
 #' @param tol Optional stopping tolerance defined as the maximum allowed
-#' squared residual norm. If specified, it overrides
-#' \code{n_nonzero_coefs}.
+#' relative residual energy. If specified, it overrides \code{n_nonzero_coefs}.
 #'
 #' @param normalize Logical; if \code{TRUE}, atoms are normalized to unit
 #' \eqn{\ell_2} norm before decomposition.
@@ -186,7 +185,13 @@ mp_omp_execute <- function (
     verbose = FALSE
 ) {
 
-  if (is.null(mode)) stop("Please specify an execution mode: 'mp' or 'omp'.")
+  if (is.null(mode)) {
+    stop("'mode' must be specified.")
+  }
+
+  if (!mode %in% c("mp", "omp")) {
+    stop("'mode' must be either 'mp' or 'omp'.")
+  }
 
   if (!is.matrix(signal)) {
     if (is.vector(signal) || is.data.frame(signal)) {
@@ -235,8 +240,6 @@ mp_omp_execute <- function (
       }
     ) }
 
-  if  (mode != "mp" && mode != "omp") stop("Unknown mode. Must be 'mp' or 'omp'.")
-
   # Create 'mp' class object, compatible with tf_map() and plot.mp()
   channel_id <- c()
   atom_number <- c()
@@ -259,7 +262,7 @@ mp_omp_execute <- function (
 
     num_atoms <- ncol(results[[r]]$gabors)
     gabors[[r]] <- results[[r]]$gabors
-    reconstruction[, r] <- results[[r]]$gabors %*% results[[r]]$coef
+    reconstruction[, r] <- results[[r]]$gabors %*% results[[r]]$coefs
     original_signal[, r] <- results[[r]]$original_signal
 
     i1 <- rep(r, num_atoms)
@@ -287,8 +290,8 @@ mp_omp_execute <- function (
     position <-c(position, i8)
   }
 
-  my_list <- list()
-  my_list$atoms <- data.frame(
+  result <- list()
+  result$atoms <- data.frame(
     channel_id,
     atom_number,
     energy,
@@ -298,12 +301,12 @@ mp_omp_execute <- function (
     scale,
     position
   )
-  my_list$original_signal <- original_signal
-  my_list$reconstruction <- reconstruction
-  my_list$gabors <- gabors
-  my_list$t <- t
-  my_list$sf <- sf
-  class(my_list) <- 'mp'
+  result$original_signal <- original_signal
+  result$reconstruction <- reconstruction
+  result$gabors <- gabors
+  result$t <- t
+  result$sf <- sf
+  class(result) <- 'mp'
 
 
   return(my_list)

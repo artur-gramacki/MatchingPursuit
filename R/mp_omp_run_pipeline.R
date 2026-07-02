@@ -1,9 +1,9 @@
 #' Run the complete MP or OMP decomposition pipeline
 #'
-#' Executes the full Orthogonal Matching Pursuit (OMP) or Matching Pursuit
-#' (MP) workflow: reads a signal from a CSV file, loads a dictionary definition
-#' from an XML file, selects the most relevant atoms, and performs sparse signal
-#' decomposition using OMP.
+#' Executes the complete Orthogonal Matching Pursuit (OMP) or Matching Pursuit
+#' (MP) workflow: (1) reads a signal from a CSV file, (2) loads a dictionary
+#' definition from an XML file, (3) selects the most relevant atoms, and
+#' (4) performs sparse signal decomposition using the selected algorithm.
 #'
 #' @param mode
 #' \code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.
@@ -99,6 +99,14 @@ mp_omp_run_pipeline <- function(
     fit_intercept = TRUE,
     verbose = FALSE) {
 
+  if (is.null(mode)) {
+    stop("'mode' must be specified.")
+  }
+
+  if (!mode %in% c("mp", "omp")) {
+    stop("'mode' must be either 'mp' or 'omp'.")
+  }
+
   sig <- read_csv_signals(
     file = sig_file,
     col_names_in_csv = col_names_in_csv
@@ -133,9 +141,10 @@ mp_omp_run_pipeline <- function(
     tol = tol,
     normalize = normalize,
     fit_intercept = fit_intercept,
-    verbose = verbose
-  )
-  } else if (mode == "mp") {
+    verbose = verbose)
+  }
+
+  if (mode == "mp") {
     fit <- mp_omp_execute(
       mode = "mp",
       dictionary = topk_dict,
@@ -144,10 +153,7 @@ mp_omp_run_pipeline <- function(
       n_nonzero_coefs = n_nonzero_coefs,
       tol = tol,
       normalize = normalize,
-      verbose = verbose
-    )
-  } else {
-    stop("Unknown mode. Must be 'mp' or 'omp'.")
+      verbose = verbose)
   }
 
   return(fit)

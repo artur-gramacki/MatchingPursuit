@@ -34,8 +34,7 @@ columns.}
 for each signal channel.}
 
 \item{tol}{Optional stopping tolerance defined as the maximum allowed
-squared residual norm. If specified, it overrides
-\code{n_nonzero_coefs}.}
+relative residual energy. If specified, it overrides \code{n_nonzero_coefs}.}
 
 \item{normalize}{Logical; if \code{TRUE}, atoms are normalized to unit
 \eqn{\ell_2} norm before decomposition.}

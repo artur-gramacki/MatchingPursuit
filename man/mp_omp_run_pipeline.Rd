@@ -56,10 +56,10 @@ An object of class \code{"mp"} containing:
 \item{sf}{Sampling frequency.}
 }
 \description{
-Executes the full Orthogonal Matching Pursuit (OMP) or Matching Pursuit
-(MP) workflow: reads a signal from a CSV file, loads a dictionary definition
-from an XML file, selects the most relevant atoms, and performs sparse signal
-decomposition using OMP.
+Executes the complete Orthogonal Matching Pursuit (OMP) or Matching Pursuit
+(MP) workflow: (1) reads a signal from a CSV file, (2) loads a dictionary
+definition from an XML file, (3) selects the most relevant atoms, and
+(4) performs sparse signal decomposition using the selected algorithm.
 }
 \examples{
 sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
