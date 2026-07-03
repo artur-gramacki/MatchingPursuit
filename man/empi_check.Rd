@@ -19,3 +19,9 @@ cache directory. This function checks whether the EMPI program is still availabl
 empi_check()
 
 }
+\seealso{
+\code{\link{empi_install}},
+\code{\link{empi_locate}},
+\code{\link{empi_execute}},
+\code{\link{plot.mp}}
+}

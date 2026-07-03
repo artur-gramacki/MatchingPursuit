@@ -74,6 +74,5 @@ plot(out_empi)
 \code{\link{empi_check}},
 \code{\link{empi_install}},
 \code{\link{empi_locate}},
-\code{\link{empi_execute}},
 \code{\link{plot.mp}}
 }

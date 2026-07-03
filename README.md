@@ -114,7 +114,7 @@ these steps internally as part of a single optimized C++ pipeline.
                     |
         ------------|------------
         |                       |
- MP / OMP workflow         EMPI workflow
+  MP / OMP workflow       EMPI workflow
         |                       | 
  read_csv_signals()      read_csv_signals()
         │                       │

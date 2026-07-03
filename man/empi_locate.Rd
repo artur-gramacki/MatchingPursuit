@@ -8,6 +8,11 @@ empi_locate()
 }
 \value{
 List with URL of the EMPI binaries and zip file name.
+
+\code{\link{empi_check}},
+\code{\link{empi_install}},
+\code{\link{empi_execute}},
+\code{\link{plot.mp}}
 }
 \description{
 Returns \strong{Enhanced Matching Pursuit Implementation} binary locations for
