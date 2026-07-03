@@ -131,10 +131,6 @@ mp_core <- function(
     D <- as.matrix(D)
   }
 
-  norms <- sqrt(colSums(D^2))
-
-  if (any(norms < 1e-12)) stop("Dictionary contains zero or near-zero norm atoms.")
-
   if (!is_topk) {
     if (is.vector(dictionary) || is.data.frame(dictionary) || is.matrix(dictionary)) {
       D <- as.matrix(dictionary)
@@ -142,6 +138,10 @@ mp_core <- function(
       stop("'dictionary' must be a matrix or convertible to a matrix.")
     }
   }
+
+  norms <- sqrt(colSums(D^2))
+
+  if (any(norms < 1e-12)) stop("Dictionary contains zero or near-zero norm atoms.")
 
   if (is.vector(signal) || is.data.frame(signal) || is.matrix(signal)) {
     signal <- as.matrix(signal)
