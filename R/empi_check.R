@@ -8,6 +8,12 @@
 #' If the EMPI program is found, its full path is returned. Otherwise, a message is displayed,
 #' prompting the user to install it using the \code{empi_install()} function.
 #'
+#'
+#' \code{\link{empi_install}},
+#' \code{\link{empi_locate}},
+#' \code{\link{empi_execute}},
+#' \code{\link{plot.mp}}
+#'
 #' @export
 #'
 #' @examples

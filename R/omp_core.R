@@ -127,16 +127,13 @@ omp_core <- function(
     verbose = FALSE
 ) {
 
-  if (is.null(channel))  stop("'channel' must be specified.")
-  is_topk <- inherits(dictionary, "topk")
-
   # Preprocessing
-  if (is_topk) {
+  if (inherits(dictionary, "topk")) {
     D <- dictionary$atoms[[channel]]
     D <- as.matrix(D)
   }
 
-  if (!is_topk) {
+  if (!inherits(dictionary, "topk")) {
     if (is.vector(dictionary) || is.data.frame(dictionary) || is.matrix(dictionary)) {
       D <- as.matrix(dictionary)
     } else {
@@ -206,7 +203,7 @@ omp_core <- function(
 
   # Outputs
   support <- integer(0)
-  coef <- rep(0, p)
+  coefs <- rep(0, p)
   residual <- sig
   L <- NULL
 
@@ -258,8 +255,8 @@ omp_core <- function(
     x_active <- as.numeric(x_active)
 
     # 4. Build full coefficient vector
-    coef <- rep(0, p)
-    coef[support] <- x_active
+    coefs <- rep(0, p)
+    coefs[support] <- x_active
 
     # 5. Update residual
     residual <- sig - D[, support, drop = FALSE] %*% x_active
@@ -283,7 +280,7 @@ omp_core <- function(
   intercept <- 0
 
   if (fit_intercept) {
-    intercept <- sig_mean - sum(D_mean * coef)
+    intercept <- sig_mean - sum(D_mean * coefs)
   }
 
   # Selected topk atoms
@@ -295,16 +292,16 @@ omp_core <- function(
   }
 
   selected_atoms <- D[, support]
-  coef_selected  <- coef[support]
-  energy <- coef_selected^2 * colSums(selected_atoms^2)
+  coefs_selected  <- coefs[support]
+  energy <- coefs_selected^2 * colSums(selected_atoms^2)
 
   # Output
   if (inherits(dictionary, "topk")) {
     list(
       gabors = selected_atoms,
       original_signal = sig + intercept,
-      reconstruction = as.vector(selected_atoms %*% coef_selected + intercept),
-      coef = coef_selected,
+      reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
+      coefs = coefs_selected,
       energy = energy,
       intercept = intercept,
       support = support,
@@ -320,8 +317,8 @@ omp_core <- function(
     list(
       gabors = selected_atoms,
       original_signal = sig + intercept,
-      reconstruction = as.vector(selected_atoms %*% coef_selected + intercept),
-      coef = coef_selected,
+      reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
+      coefs = coefs_selected,
       energy = energy,
       intercept = intercept,
       support = support,

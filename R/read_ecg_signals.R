@@ -60,7 +60,7 @@ read_ecg_signals <- function(file) {
 
   time_stamps <- seq(0, by = 1 / sampling_frequency, length.out = nrow(signal))
 
-  my_list <- list(
+  result <- list(
     signal = signal,
     time_stamps = time_stamps,
     sampling_frequency = sampling_frequency,
@@ -68,6 +68,6 @@ read_ecg_signals <- function(file) {
     record_name = record_name
   )
 
-  class(my_list) <- "ecg"
-  return(my_list)
+  class(result) <- "ecg"
+  return(result)
 }

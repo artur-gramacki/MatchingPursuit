@@ -70,3 +70,10 @@ plot(out_empi)
 }
 
 }
+\seealso{
+\code{\link{empi_check}},
+\code{\link{empi_install}},
+\code{\link{empi_locate}},
+\code{\link{empi_execute}},
+\code{\link{plot.mp}}
+}

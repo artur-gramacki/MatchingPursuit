@@ -1,8 +1,14 @@
+# MatchingPursuit 1.2.0
+
+* Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`). This implementation is intended for educational and experimental purposes. The R implementation does not replace the existing optimized C++ version. It is significantly slower and should not be used for large-scale computations.
+
+* A significantly expanded README.md file providing a much more detailed overview of the package.
+
 # MatchingPursuit 1.1.0
 
 * The project adopted a new naming convention for variables and functions, replacing dot-separated names (`name.of.some.variable`) with snake_case (`name_of_some_variable`).
 
-* Implemented Orthogonal Matching Pursuit (OMP) and support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()`, `omp_execute()` and `gabor_proj_fft()`). 
+* Implemented Orthogonal Matching Pursuit (OMP) and added support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()`, `omp_execute()` and `gabor_proj_fft()`). 
 
 * Extended examples added to the package-level documentation and to the vignette.
 

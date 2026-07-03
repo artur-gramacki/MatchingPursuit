@@ -134,7 +134,7 @@ eeg_montage <- function(
 
     #return(as.data.frame(result))
 
-    my_list <- list(
+    result <- list(
       signal = as.data.frame(result),
       sampling_frequency = x$ sampling_frequency,
       time_stamps = x$time_stamps,
@@ -142,8 +142,8 @@ eeg_montage <- function(
       record_name = x$record_name
     )
 
-    class(my_list) <- "edf"
-    return(my_list)
+    class(result) <- "edf"
+    return(result)
 
   }
 }

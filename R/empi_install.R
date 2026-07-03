@@ -14,6 +14,11 @@
 #'
 #' @importFrom utils download.file unzip
 #'
+#' \code{\link{empi_check}},
+#' \code{\link{empi_locate}},
+#' \code{\link{empi_execute}},
+#' \code{\link{plot.mp}}
+#'
 #' @export
 #'
 #' @examples

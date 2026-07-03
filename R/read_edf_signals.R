@@ -128,7 +128,7 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
     edf_mtx <- edf_mtx[seq(from * sf + 1, to * sf / (sf / sf_new)), ]
   }
 
-  my_list <- list(
+  result <- list(
     signal = as.data.frame(edf_mtx),
     sampling_frequency = sf_new,
     time_stamps = t_new,
@@ -136,6 +136,6 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
     record_name = basename(file)
   )
 
-  class(my_list) <- "edf"
-  return(my_list)
+  class(result) <- "edf"
+  return(result)
 }

@@ -309,5 +309,5 @@ mp_omp_execute <- function (
   class(result) <- 'mp'
 
 
-  return(my_list)
+  return(result)
 }

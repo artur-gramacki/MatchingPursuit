@@ -39,6 +39,13 @@
 #' \item{t}{Time vector corresponding to signal samples.}
 #' \item{sf}{Sampling frequency.}
 #'
+#'
+#' @seealso
+#' \code{\link{empi_check}},
+#' \code{\link{empi_install}},
+#' \code{\link{empi_locate}},
+#' \code{\link{plot.mp}}
+#'
 #' @export
 #'
 #' @examples
