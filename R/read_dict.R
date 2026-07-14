@@ -99,10 +99,12 @@
 #'
 #' @seealso
 #' \code{\link{topk_atoms}},
-#' \code{\link{mp_omp_execute}}
+#' \code{\link{mp_omp_execute}},
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}},
-#' \code{\link{mp_omp_run_pipeline}}
+#' \code{\link{mp_omp_run_pipeline}},
+#' \code{\link{generate_xml_dict}},
+#'
 #'
 #' @examples
 #' # +-------------------------------------------------------------+

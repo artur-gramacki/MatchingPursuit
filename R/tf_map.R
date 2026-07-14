@@ -442,7 +442,7 @@ tf_map <- function(
     # At the centres of the atoms, the atom numbers
     if (display_atom_numbers) {
       for (n in 1:num_atoms) {
-        text(position[n], frequency[n], n, col = "white", cex = 1)
+        text(position[n], frequency[n], n, col = color, cex = 1)
       }
     }
 
@@ -457,11 +457,14 @@ tf_map <- function(
       grid(col = "grey")
 
     if (plot_signals) {
+      sig_range <- range(original_signal)
       xx <- seq(from = 0, to = epochSize / sf, length.out =  epochSize)
-      plot(x = xx, original_signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, main = "Original signal", panel.first = grid())
+      plot(x = xx, original_signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
+           main = "Original signal", panel.first = grid())
       abline(h = 0, col = "blue")
 
-      plot(x = xx, reconstruction, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, main = "Reconstructed signal", panel.first = grid())
+      plot(x = xx, reconstruction, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
+           main = "Reconstructed signal", panel.first = grid())
       abline(h = 0, col = "blue")
     }
 

@@ -10,7 +10,7 @@ mp_omp_run_pipeline(
   col_names_in_csv,
   xml_file,
   topk,
-  n_nonzero_coefs,
+  n_nonzero_coefs = NULL,
   tol = NULL,
   normalize = TRUE,
   fit_intercept = TRUE,
@@ -85,8 +85,8 @@ out_omp <- mp_omp_run_pipeline(
   verbose = TRUE
 )
 
-plot(out_mp, channel = 3)
-plot(out_omp, channel = 3)
+plot(out_mp, channel = 2)
+plot(out_omp, channel = 2)
 
 }
 \seealso{

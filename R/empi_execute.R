@@ -15,7 +15,7 @@
 #'
 #'
 #' @param empi_options If \code{NULL}, the EMPI program is run with
-#' \code{"-o local --gabor -i 50 --cpu-workers 8"} parameters. Otherwise, the user may specify any command-line
+#' \code{"-o local --gabor -i 50"} parameters. Otherwise, the user may specify any command-line
 #' options. See the \code{README.md} file after downloading the EMPI program using the
 #' \code{empi_install()} function.
 #'
@@ -61,7 +61,16 @@
 #'   file_name = NULL
 #' )
 #'
-#' plot(out_empi)
+#' # Default EMPI options have been changed. For details, see the EMPI README.md file.
+#' out_empi <- empi_execute(
+#'   signal = out,
+#'   empi_options = "-o none --full-atoms-in-signal -i 50 --gabor",
+#'   write_to_file = FALSE,
+#'   path = NULL,
+#'   file_name = NULL
+#' )
+#'
+#' plot(out_empi, freq_divide = 4)
 #' }
 #'
 empi_execute <- function(
@@ -98,7 +107,7 @@ empi_execute <- function(
   writeBin(signal_raw, file_bin)
 
   if (is.null(empi_options)) {
-    options <-  "-o local --gabor -i 50 --cpu-workers 8"
+    options <-  "-o local --gabor -i 50"
   } else {
     options <- empi_options
   }

@@ -105,16 +105,58 @@
 #' fit <- omp_core(
 #'   dictionary = dictionary,
 #'   signal = signal,
-#'   channel = 3,
+#'   channel = 1,
 #'   n_nonzero_coefs = 3,
+#'   fit_intercept = FALSE,
 #'   verbose = TRUE
 #' )
 #'
 #' fit$coef
+#' # [1] 5.282278 2.637693 2.195920
+#'
 #' fit$support
+#' # [1] 9 5 7
 #'
 #' # More realistic example, see omp_execute() examples.
 #'
+#' #--------------------------------------------------------
+#' # Comparison with the Python implementation.
+#' # The results are identical.
+#' #--------------------------------------------------------
+#' # import numpy as np
+#' # from sklearn.linear_model import OrthogonalMatchingPursuit
+#' # from sklearn.preprocessing import normalize
+#'
+#' # import sklearn
+#' # print(sklearn.__version__)
+#' # 1.8.0
+#'
+#' # A = np.array([
+#' #   [ 1.0,  0.9,  0.1,  1.0, -0.2,  0.3,  0.7, -0.5,  1.2,  0.4],
+#' #   [ 0.2,  1.0,  0.8, -0.3,  1.0, -0.6,  0.5,  0.9, -0.1,  0.8],
+#' #   [ 0.0,  0.1,  1.0,  0.5,  0.7,  1.1, -0.4,  0.2,  0.6, -0.7],
+#' #   [ 0.9, -0.2,  0.4,  1.3,  0.1,  0.0,  0.8, -0.9,  0.5,  1.0],
+#' #   [-0.3,  0.6,  1.1, -0.4,  0.2,  0.7, -0.8,  1.0,  0.3,  0.9]
+#' # ])
+#' # A = normalize(A, axis = 0)
+#'
+#' # y = np.array([
+#' #   [4, 3, 5, 2],
+#' #   [2, 1, 2, 3],
+#' #   [3, 2, 4, 1],
+#' #   [5, 4, 3, 2],
+#' #   [1, 3, 2, 4]
+#' # ])
+#'
+#' # omp = OrthogonalMatchingPursuit(n_nonzero_coefs = 3, fit_intercept = False)
+#' # omp.fit(A, y)
+#'
+#' # print(omp.coef_)
+#'
+#' # [[0.   0.   0.         0.   2.63769257 0.    2.19591982 0.  5.28227763 0.        ]
+#' #  [0.   0.   1.93331753 0.   0.         0.    0.         0.  3.65053608 2.21995968]
+#' #  [0.   0.   0.         0.   2.75657594 0.    0.         0.  6.55405854 0.64133666]
+#' #  [0.   0.   3.3515668  0.   0.         0.    0.         0.  0.98551322 2.81352305]]
 #'
 omp_core <- function(
     dictionary,

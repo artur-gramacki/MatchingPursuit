@@ -7,19 +7,21 @@
 
 ## Purpose
 
-Sparse signal decomposition framework for one- and multi-channel biomedical and general time series data using the **Matching Pursuit (MP)** and **Orthogonal Matching Pursuit (OMP)** algorithms.
+Sparse signal decomposition framework for one- and multi-channel biomedical and general time series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit ** algorithms.
 
 Supported features:
 
-- Matching Pursuit 
-  - optimized C++ backend (**EMPI**)
-  - reference R implementation (**MP**)
-- Orthogonal Matching Pursuit (**OMP**) for improved sparse reconstruction accuracy
+- Executing the Matching Pursuit algorithm
+    - optimized C++ backend, Enhanced Matching Pursuit Implementation (**EMPI**)  
+    - reference R implementation (**MP**)
+- Executing the Orthogonal Matching Pursuit (**OMP**) algorithm
 - Gabor dictionary support via XML-based atom definitions
-- Support for biomedical signal formats:
-  - EDF / EDF+ file support
-  - WFDB records support
-- Time-frequency analysis and visualization tools
+- Support for biomedical signal formats
+    - EDF / EDF+ file support
+    - WFDB records support
+    - Performing three standard EEG montages (bipolar, referential, and average)
+- Plotting time–frequency maps based on MP, OMP and EMPI results
+- Pre-filtering signals using notch, low-pass, high-pass, band-pass, and band-stop filters 
 
 ## Installation
 
@@ -33,7 +35,7 @@ install.packages("MatchingPursuit")
 ## Quick start
 
 ### MP and OMP
-The simplest workflow consists of four steps:
+The typical workflow consists of four steps:
 
 1. Read a signal.
 2. Read a dictionary definition.
@@ -57,7 +59,7 @@ out <- mp_omp_run_pipeline(
   verbose = TRUE
 )
 
-plot(out, channel = 1)
+plot(out, channel = 1, freq_divide = 4)
 ```
 ### EMPI
 The EMPI tool must be first installed via `empi_install()` function. Then, 
@@ -72,7 +74,7 @@ out <- empi_execute(
   signal = sig
 )
 
-plot(out, channel = 1)
+plot(out, channel = 1, freq_divide = 4)
 ```
 
 ## Package architecture
@@ -110,25 +112,29 @@ these steps internally as part of a single optimized C++ pipeline.
 ## Typical workflow
  
 ``` 
-                  START
-                    |
-        ------------|------------
-        |                       |
-  MP / OMP workflow       EMPI workflow
-        |                       | 
- read_csv_signals()      read_csv_signals()
-        │                       │
-  read_dict()                   |             
-        │                       │
-  topk_atoms()                  │
-        │                       │
- mp_omp_execute()         empi_execute()
-        |                       |
-        ------------------------
-                    |
-            plot() / tf_map()
-``` 
+                                       START
+                                         |
+                      -----------------------------------------
+                      |                                       |
+              MP / OMP workflow                         EMPI workflow
+                      |                                       | 
+         ---------------------------                          |            
+         |                         |                          | 
+ mp_omp_run_pipline()     read_csv_signals()          read_csv_signals()
+         |                         │                          │
+         |                   read_dict()                      |             
+         |                         │                          │
+         |                   topk_atoms()                     │
+         |                        │                           │
+         |                 mp_omp_execute()             empi_execute()
+         |                        |                           |
+         --------------------------                           |
+                     |                                        |
+                     ------------------------------------------
+                                          |
+                                   plot() / tf_map()
 
+```                   
 ## Documentation
 
 The package documentation includes:
@@ -136,7 +142,6 @@ The package documentation includes:
  - Introduction vignette
  - Reference manual
  - Examples
- - Time-frequency visualization
 
 ## Supported input formats
 

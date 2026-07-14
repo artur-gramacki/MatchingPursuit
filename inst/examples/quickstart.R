@@ -1,3 +1,5 @@
+library(MatchingPursuit)
+
 # +-------------------------------------------------------------+
 # Clear the cache directory, install the 'empi' program,
 # and verify that the installation completed successfully.
@@ -7,19 +9,28 @@ empi_install()
 empi_check()
 
 # +-------------------------------------------------------------+
-# Workflow 1. Data stored in a CSV file.
+# EMPI workflow
 # +-------------------------------------------------------------+
 # STEP 1 - Read sample data.
 file_sample1_csv <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal_sample1_csv <- read_csv_signals(file_sample1_csv, col_names = "ch1")
 
 # STEP 2 - Run the MP algorithm.
-empi_class <- empi_execute(signal = signal_sample1_csv)
+empi_class <- empi_execute(
+  signal = signal_sample1_csv
+)
+
+# STEP 2.bis - Run the MP algorithm.
+# Default EMPI options have been changed. For details, see the EMPI README.md file.
+empi_class <- empi_execute(
+  signal = signal_sample1_csv,
+  empi_options = "-o none --full-atoms-in-signal -i 50 --gabor"
+)
 
 # STEP 3 - Plot the time-frequency map based on MP atoms.
 # plot_empi() is the S3 method for the generic plot() function.
 # It requires an object of class empi, created with empi_execute().
-plot(empi_class)
+plot(empi_class, freq_divide = 4)
 
 # STEP 3.bis — This call gives the same result as plot(empi_class).
 out <- tf_map(
@@ -30,7 +41,83 @@ out <- tf_map(
 )
 
 # +-------------------------------------------------------------+
-# Workflow 2. Data stored in an EDF file (EEG data).
+# Orthogonal Matching Pursuit (OMP) workflow
+# +-------------------------------------------------------------+
+# STEP 1 - Read sample data.
+sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+sample1 <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
+
+signal <- sample1$signal
+sf <- sample1$sampling_frequency
+duration <- nrow(sample1$signal) / sf
+
+# STEP 2 - Read dictionary.
+xml_file <- system.file("extdata", "sample1_dict.xml", package = "MatchingPursuit")
+
+atoms_dict <- read_dict(
+  xml_file,
+  sf,
+  duration,
+  verbose = TRUE)
+
+# STEP 3 - Preselection of candidate atoms.
+dict_topk <- topk_atoms(
+  atoms_dict = atoms_dict,
+  signal = signal,
+  sf = sf,
+  topk = 5000,
+  verbose = TRUE
+)
+
+# STEP 4 - OMP decomposition.
+fit <- mp_omp_execute(
+  mode = "omp",
+  dictionary = dict_topk,
+  signal = signal,
+  sf = sf,
+  n_nonzero_coefs = 50,
+  verbose = TRUE
+)
+
+# STEP 4 - Plot the time-frequency map based on PMP atoms.
+plot(fit, channel = 1, freq_divide = 4)
+
+# Combine steps 1–4 into a single pipeline.
+# The final result is identical as in step 4.
+out <- mp_omp_run_pipeline(
+  mode = "omp",
+  sig_file = sig_file,
+  col_names_in_csv = FALSE,
+  xml_file = xml_file,
+  topk = 5000,
+  n_nonzero_coefs = 50,
+  verbose = TRUE
+)
+
+class(out)
+plot(out, channel = 1, freq_divide = 4)
+
+# +-------------------------------------------------------------+
+# Matching Pursuit (MP) workflow
+# +-------------------------------------------------------------+
+# We're using the same functions here as in the above workflow.
+# The "mode" parameter is now set to "mp." Technically, this calls
+# the "mp_core()" function instead of "opm_core()".
+out <- mp_omp_run_pipeline(
+  mode = "mp",
+  sig_file = sig_file,
+  col_names_in_csv = FALSE,
+  xml_file = xml_file,
+  topk = 5000,
+  n_nonzero_coefs = 50,
+  verbose = TRUE
+)
+
+plot(out, channel = 1, freq_divide = 4)
+
+# +-------------------------------------------------------------+
+# Data stored in an EDF file (EEG data).
+# EMPI is used.
 # +-------------------------------------------------------------+
 # STEP 1 - Read a sample EEG file.
 file_EEG_edf <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
@@ -98,7 +185,8 @@ plot(
 )
 
 # +-------------------------------------------------------------+
-# Workflow 3. Data stored in WFDB (WaveForm DataBase) format.
+# Data stored in WFDB (WaveForm DataBase) format.
+# EMPI is used.
 # +-------------------------------------------------------------+
 # STEP 1 - Read sample data.
 file_00001_lr_hea <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
@@ -179,57 +267,3 @@ out <- tf_map(
   increase_factor = 8,
   out_mode = "plot"
 )
-
-# +-------------------------------------------------------------+
-# Workflow 4. Orthogonal Matching Pursuit (OMP)
-# +-------------------------------------------------------------+
-
-# STEP 1 - Dictionary generation.
-sig_file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
-sample3 <- read_csv_signals(sig_file, col_names_in_csv = TRUE)
-
-signal <- sample3$signal
-sf <- sample3$sampling_frequency
-duration <- nrow(sample3$signal) / sf
-
-xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursuit")
-
-atoms_dict <- read_dict(
-  xml_file,
-  sf,
-  duration,
-  verbose = TRUE)
-
-# STEP 2 - Preselection of candidate atoms.
-dict_topk <- topk_atoms(
-  atoms_dict = atoms_dict,
-  signal = signal,
-  sf = sf,
-  topk = 5000,
-  verbose = TRUE
-)
-
-# STEP 3 - OMP decomposition.
-fit <- omp_execute(
-  dictionary = dict_topk,
-  signal = signal,
-  sf = sf,
-  n_nonzero_coefs = 50,
-  verbose = TRUE
-)
-
-# STEP 4 - Plot the time-frequency map based on PMP atoms.
-plot(fit, channel = 3)
-
-# Combine steps 1–4 into a single pipeline
-out <- run_omp_pipeline(
-  sig_file = sig_file,
-  col_names_in_csv = TRUE,
-  xml_file = xml_file,
-  topk = 5000,
-  n_nonzero_coefs = 50,
-  verbose = TRUE
-)
-
-class(out)
-plot(out, channel = 3)

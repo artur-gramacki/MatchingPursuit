@@ -84,8 +84,8 @@
 #'   verbose = TRUE
 #' )
 #'
-#' plot(out_mp, channel = 3)
-#' plot(out_omp, channel = 3)
+#' plot(out_mp, channel = 2)
+#' plot(out_omp, channel = 2)
 #'
 mp_omp_run_pipeline <- function(
     mode = NULL,
@@ -93,7 +93,7 @@ mp_omp_run_pipeline <- function(
     col_names_in_csv,
     xml_file,
     topk,
-    n_nonzero_coefs,
+    n_nonzero_coefs = NULL,
     tol = NULL,
     normalize = TRUE,
     fit_intercept = TRUE,

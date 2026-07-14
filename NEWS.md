@@ -2,6 +2,8 @@
 
 * Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`). This implementation is intended for educational and experimental purposes. The R implementation does not replace the existing optimized C++ version. It is significantly slower and should not be used for large-scale computations.
 
+* The vignette was supplemented with examples of the Pure R implementation of the Matching Pursuit algorithm. Additionally, the three implementations of the Matching Pursuit algorithm are now more clearly distinguished, with the abbreviations MP, OMP, and EMPI used consistently throughout.
+
 * A significantly expanded README.md file providing a much more detailed overview of the package.
 
 # MatchingPursuit 1.1.0

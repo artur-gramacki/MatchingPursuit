@@ -49,13 +49,14 @@ decomposition with the following elements:
   reconstruction.}
 \item{original_signal}{The original signal reconstructed as a vector.}
 \item{reconstruction}{The MP approximation of the signal.}
-\item{coef}{Numeric vector of estimated coefficients for selected atoms.}
-\item{energy}{Energy contribution of selected atoms, computed as
-  \code{coef^2 * colSums(selected_atoms^2)}.}
-\item{support}{Integer vector of selected atom indices.}
+\item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
+\item{energy}{Energy contribution of selected atoms, computed as \code{coefs^2}.}
+\item{support}{Integer vector of selected atom indices at every iteration.}
 \item{residual}{Final residual vector.}
 \item{n_iters}{Number of iterations performed by the algorithm.}
-\item{error_history}{Current L2 error.}
+\item{relative_residual_energy}{Fraction of the original signal energy that
+remains unexplained after each Matching Pursuit iteration. Values close to zero
+indicate a better reconstruction.}
 
 If \code{dictionary} is a \code{"topk"} object, the result additionally
 contains:
@@ -102,17 +103,13 @@ nrow = 5, byrow = TRUE
 fit <- mp_core(
   dictionary = dictionary,
   signal = signal,
-  channel = 3,
+  channel = 1,
   n_nonzero_coefs = 3,
   normalize = TRUE,
   verbose = TRUE
 )
 
-fit$coef
-fit$support
-
 # More realistic example, see mp_omp_execute() examples.
-
 
 }
 \seealso{

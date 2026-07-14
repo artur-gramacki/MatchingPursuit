@@ -99,13 +99,13 @@
 #'   package = "MatchingPursuit"
 #' )
 #'
-#' sample3 <- read_csv_signals(
+#' sample <- read_csv_signals(
 #'   sig_file,
 #'   col_names_in_csv = TRUE
 #' )
 #'
-#' sf <- sample3$sampling_frequency
-#' signal <- sample3$signal
+#' sf <- sample$sampling_frequency
+#' signal <- sample$signal
 #' duration <- nrow(signal) / sf
 #'
 #' # +-------------------------------------------------------------+
@@ -136,15 +136,16 @@
 #' )
 #'
 #' # +-------------------------------------------------------------+
-#' # | Step 4.1: Run Orthogonal Matching Pursuit                     |
+#' # | Step 4.1: Run Orthogonal Matching Pursuit                   |
 #' # +-------------------------------------------------------------+
 #' fit_omp <- mp_omp_execute(
 #'   mode = "omp",
 #'   dictionary = topk_dict,
 #'   signal = signal,
 #'   sf = sf,
-#'   n_nonzero_coefs = 50,
-#'   verbose = TRUE
+#'   n_nonzero_coefs = 20,
+#'   verbose = TRUE,
+#'   fit_intercept = FALSE,
 #' )
 #'
 #' # Inspect results
@@ -159,7 +160,7 @@
 #'   dictionary = topk_dict,
 #'   signal = signal,
 #'   sf = sf,
-#'   n_nonzero_coefs = 50,
+#'   n_nonzero_coefs = 20,
 #'   verbose = TRUE
 #' )
 #'
@@ -170,15 +171,31 @@
 #' # +-------------------------------------------------------------+
 #' # | Step 5: Time-frequency map                                  |
 #' # +-------------------------------------------------------------+
-#' plot(fit_omp, channel = 1)
-#' plot(fit_mp, channel = 1)
+#' plot(fit_omp, channel = 3)
+#' plot(fit_mp, channel = 3)
+#'
+#' # +-------------------------------------------------------------+
+#' # | Execute the complete pipeline (steps 1-4)                   |
+#' # | using a single function                                     |
+#' # +-------------------------------------------------------------+
+#' fit <- mp_omp_run_pipeline(
+#'   mode = "mp",         # or "omp" for Orthogonal Matching Pursuit
+#'   sig_file = sig_file,
+#'   col_names_in_csv = TRUE,
+#'   xml_file = xml_file,
+#'   topk = 5000,
+#'   n_nonzero_coefs = 20,
+#'   verbose = FALSE
+#' )
+#'
+#' plot(fit, channel = 3)
 #'
 mp_omp_execute <- function (
     mode = NULL,
     dictionary,
     signal,
     sf,
-    n_nonzero_coefs,
+    n_nonzero_coefs = NULL,
     tol = NULL,
     normalize = TRUE,
     fit_intercept = TRUE,

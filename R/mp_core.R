@@ -50,13 +50,14 @@
 #'   reconstruction.}
 #' \item{original_signal}{The original signal reconstructed as a vector.}
 #' \item{reconstruction}{The MP approximation of the signal.}
-#' \item{coef}{Numeric vector of estimated coefficients for selected atoms.}
-#' \item{energy}{Energy contribution of selected atoms, computed as
-#'   \code{coef^2 * colSums(selected_atoms^2)}.}
-#' \item{support}{Integer vector of selected atom indices.}
+#' \item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
+#' \item{energy}{Energy contribution of selected atoms, computed as \code{coefs^2}.}
+#' \item{support}{Integer vector of selected atom indices at every iteration.}
 #' \item{residual}{Final residual vector.}
 #' \item{n_iters}{Number of iterations performed by the algorithm.}
-#' \item{error_history}{Current L2 error.}
+#' \item{relative_residual_energy}{Fraction of the original signal energy that
+#' remains unexplained after each Matching Pursuit iteration. Values close to zero
+#' indicate a better reconstruction.}
 #'
 #' If \code{dictionary} is a \code{"topk"} object, the result additionally
 #' contains:
@@ -100,17 +101,13 @@
 #' fit <- mp_core(
 #'   dictionary = dictionary,
 #'   signal = signal,
-#'   channel = 3,
+#'   channel = 1,
 #'   n_nonzero_coefs = 3,
 #'   normalize = TRUE,
 #'   verbose = TRUE
 #' )
 #'
-#' fit$coef
-#' fit$support
-#'
 #' # More realistic example, see mp_omp_execute() examples.
-#'
 #'
 mp_core <- function(
     dictionary,
@@ -170,7 +167,7 @@ mp_core <- function(
       # Example: For a small dictionary, e.g. ncol(D) = 8, 0.1 × 8 = 0.8.
       n_nonzero_coefs <- max(1, floor(0.1 * p))
     }
-    max_iter <- min(n_nonzero_coefs, p)
+    max_iter <- n_nonzero_coefs
   } else {
     # tol overrides n_nonzero_coefs
     max_iter <- p
@@ -185,16 +182,15 @@ mp_core <- function(
   }
 
   residual <- sig
-  n_atoms <- ncol(D)
 
   # Integer vector of selected atom indices.
   support <- integer(max_iter)
 
-  # Initialize the coefficient vector (sparse vector representation)
-  coef <- rep(0, n_atoms)
-
+  # MP coefficient history
+  coefs <- numeric(max_iter)
 
   total_energy <- sum(sig^2)
+  if (total_energy < 1e-12) stop("Signal has zero energy.")
 
   # History of reconstruction error
   relative_residual_energy <- numeric(max_iter + 1)
@@ -212,22 +208,21 @@ mp_core <- function(
 
     # 4. Update the coefficient for the selected atom
     # (in classical MP, coefficients stack if the same atom is selected again)
-    coef[best_atom_idx] <- coef[best_atom_idx] + best_projection
+    ###coefs[best_atom_idx] <- coefs[best_atom_idx] + best_projection
+    coefs[k] <- best_projection
+    support[k] <- best_atom_idx
 
     # 5. Calculating the new remainder
     residual <- residual - best_projection * D_norm[, best_atom_idx]
 
     # Save current L2 error
     residual_sq_norm <- sum(residual^2)
-    relative_error <- residual_sq_norm / total_energy
-    relative_residual_energy[k + 1] <- relative_error
-
-    support[k] <- best_atom_idx
+    relative_residual_energy[k + 1] <- residual_sq_norm / total_energy
 
     # Stop criterion: squared L2 norm of residual < tol
     if (!is.null(tol)) {
       if (verbose) message("relative residual energy: ", signif(relative_residual_energy[k + 1], 6))
-      if (relative_error < tol) {
+      if (relative_residual_energy[k + 1] < tol) {
         message("Convergence achieved in iteration: ", k, "\n")
         break
       }
@@ -237,13 +232,14 @@ mp_core <- function(
   # If terminate the loop early with 'tol', then 'support' has length max_iter,
   # but only the first k elements are filled (are != zero)
   support <- support[1:k]
+  coefs <- coefs[1:k]
+  relative_residual_energy <- relative_residual_energy[1:(k + 1)]
+  # for k = 1 it can return a vector, not a matrix. Then 'drop = FALSE' prevents this
+  gabors = D_norm[, support, drop = FALSE]
 
-  selected_atoms <- D_norm[, support]
-  coefs_selected  <- coef[support]
-
-  # as atoms are normalized ||g||= 1, colSums(selected_atoms^2) is always 1
-  # energy <- coefs_selected^2 * colSums(selected_atoms^2)
-  energy <- coefs_selected^2
+  # as atoms are normalized ||g||= 1, colSums(gabors^2) is always 1
+  # energy <- coefs^2 * colSums(gabors^2)
+  energy <- coefs^2
 
   if (is_topk) {
     frequency <- dictionary$frequency[support, channel]
@@ -254,14 +250,15 @@ mp_core <- function(
 
   if (is_topk) {
     list(
-      gabors = selected_atoms,
+      gabors = gabors,
       original_signal = sig,
       reconstruction = as.vector(sig - residual),
-      coefs = coefs_selected,
+      #reconstruction2 = gabors %*% coefs,
+      coefs = coefs,
       energy = energy,
-      support = support[1:k],
+      support = support,
       residual = as.vector(residual),
-      relative_residual_energy = relative_residual_energy[1:(k+1)],
+      relative_residual_energy = relative_residual_energy,
       n_iters = k,
       frequency = frequency,
       phase = phase,
@@ -270,14 +267,15 @@ mp_core <- function(
     )
   } else {
     list(
-      gabors = selected_atoms,
+      gabors = gabors,
       original_signal = sig,
       reconstruction = as.vector(sig - residual),
-      coefs = coefs_selected,
+      #reconstruction2 = gabors %*% coefs,
+      coefs = coefs,
       energy = energy,
-      support = support[1:k],
+      support = support,
       residual = as.vector(residual),
-      relative_residual_energy = relative_residual_energy[1:(k+1)],
+      relative_residual_energy = relative_residual_energy,
       n_iters = k
     )
   }
