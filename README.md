@@ -1,8 +1,11 @@
-# MatchingPursuit
+# MatchingPursuit: An R Package Package for Sparse Time-Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit 
 
 <!-- badges: start -->
 [![CRAN status](http://www.r-pkg.org/badges/version/MatchingPursuit)](https://CRAN.R-project.org/package=MatchingPursuit)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/MatchingPursuit)](https://CRAN.R-project.org/package=MatchingPursuit)
+[![CRAN total
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchingPursuit)](https://cran.r-project.org/package=MatchingPursuit)
+
 <!-- badges: end -->
 
 ## Purpose

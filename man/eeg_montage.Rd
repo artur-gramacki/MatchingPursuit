@@ -28,11 +28,11 @@ eeg_montage(
 \value{
 An object of class \code{edf}, which is a list with fields:
 
-\item{signal}{Data frame with all signal channels.}
-\item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
-\item{time_stamps}{Sampling rate after optional resampling.}
-\item{signal_names}{Time stamps after optional resampling.}
-\item{record_name}{Signal names.}
+\item{signal}{Data frame containing all signal channels.}
+\item{sampling_frequency}{Sampling frequency.}
+\item{time_stamps}{Time stamps.}
+\item{signal_names}{Names of the signal channels.}
+\item{record_name}{Name of the EDF file.}
 }
 \description{
 An EEG montage refers to the arrangement of EEG electrodes and the way their signals
@@ -74,9 +74,9 @@ pairs <- list(
   c("Cz",  "Pz")
 )
 
-signal_bip_mont <- eeg_montage(out, montage_type = c("bipolar"), bipolar_pairs = pairs)
-signal_ref_mont <- eeg_montage(out, montage_type = c("reference"), ref_channel = "O1")
-signal_avg_mont <- eeg_montage(out, montage_type = c("average"))
+signal_bip_mont <- eeg_montage(out, montage_type = "bipolar", bipolar_pairs = pairs)
+signal_ref_mont <- eeg_montage(out, montage_type = "reference", ref_channel = "O1")
+signal_avg_mont <- eeg_montage(out, montage_type = "average")
 
 head(signal_bip_mont$signal)
 head(signal_ref_mont$signal)

@@ -3,8 +3,9 @@
 #' This function implements the Orthogonal Matching Pursuit (OMP) algorithm to
 #' compute a sparse representation of a signal using a dictionary of atoms.
 #' This is an efficient implementation with incremental Cholesky factorization for
-#' efficient least-squares solving. The function works very similarly to the
-#' Python implementation of OMP available in the scikit-learn library.
+#' efficient least-squares solving. The implementation follows the algorithm used
+#' by sklearn.linear_model.OrthogonalMatchingPursuit, including incremental Cholesky
+#' updates for solving the least-squares problem.
 #'
 #' Unlike classical Matching Pursuit, OMP recomputes all selected coefficients
 #' at each iteration by solving a least-squares problem, which generally
@@ -57,9 +58,9 @@
 #'   (including intercept if \code{fit_intercept = TRUE}).}
 #' \item{reconstruction}{The OMP approximation of the signal including intercept
 #'   (if applicable).}
-#' \item{coef}{Numeric vector of estimated coefficients for selected atoms.}
+#' \item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
 #' \item{energy}{Energy contribution of selected atoms, computed as
-#'   \code{coef^2 * colSums(selected_atoms^2)}.}
+#'   \code{coefs^2 * colSums(selected_atoms^2)}.}
 #' \item{intercept}{Estimated intercept term (0 if \code{fit_intercept = FALSE}).}
 #' \item{support}{Integer vector of selected atom indices.}
 #' \item{residual}{Final residual vector.}
@@ -169,6 +170,14 @@ omp_core <- function(
     verbose = FALSE
 ) {
 
+  if (is.null(channel)) {
+    if (ncol(signal) == 1) {
+      channel <- 1L
+    } else {
+      stop("'channel' must be specified when 'signal' has more than one column.")
+    }
+  }
+
   # Preprocessing
   if (inherits(dictionary, "topk")) {
     D <- dictionary$atoms[[channel]]
@@ -195,6 +204,7 @@ omp_core <- function(
   sig <- signal[, channel]
   sig <- as.numeric(sig)
   total_energy <- sum(sig^2)
+  sig_original <- sig
 
   if (length(sig) != n) {
     stop("Dimension mismatch between dictionary and signal.")
@@ -333,7 +343,7 @@ omp_core <- function(
     position <- dictionary$position[support, channel]
   }
 
-  selected_atoms <- D[, support]
+  selected_atoms <- D[, support, drop = FALSE]
   coefs_selected  <- coefs[support]
   energy <- coefs_selected^2 * colSums(selected_atoms^2)
 
@@ -341,7 +351,7 @@ omp_core <- function(
   if (inherits(dictionary, "topk")) {
     list(
       gabors = selected_atoms,
-      original_signal = sig + intercept,
+      original_signal = sig_original,
       reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
       coefs = coefs_selected,
       energy = energy,
@@ -358,7 +368,7 @@ omp_core <- function(
   } else {
     list(
       gabors = selected_atoms,
-      original_signal = sig + intercept,
+      original_signal = sig_original,
       reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
       coefs = coefs_selected,
       energy = energy,

@@ -2,10 +2,16 @@
 #'
 #' @description
 #' Returns \strong{Enhanced Matching Pursuit Implementation} binary locations for
-#' the following operating systems: Windows, Linux, macOS-x64, macOS-arm64.
+#' the following operating systems: Windows, Linux, macOS-arm64.
 #'
-#' @return List with URL of the EMPI binaries and zip file name.
+#' @return
+#' A list containing:
+#' \itemize{
+#'   \item \code{url}: URL of the EMPI binary archive,
+#'   \item \code{fname}: archive file name.
+#' }
 #'
+#' @seealso
 #' \code{\link{empi_check}},
 #' \code{\link{empi_install}},
 #' \code{\link{empi_execute}},
@@ -33,11 +39,15 @@ empi_locate <- function() {
 
   } else if (sys == "Darwin") {
 
+    if (mach != "arm64") {
+      stop("Only Apple Silicon Macs (arm64) are supported. ", "Detected architecture: ", mach)
+    }
+
     url <- "https://github.com/develancer/empi/releases/download/1.0.4/empi-1.0.4-macos-arm64.zip"
     fname <- "empi-1.0.4-macos-arm64.zip"
 
   } else {
-    stop("Sorry. Unsupported OS.")
+    stop("Unsupported operating system: ", sys)
   }
 
   list(

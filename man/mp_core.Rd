@@ -42,7 +42,7 @@ unit \eqn{\ell_2} norm before decomposition.}
 \item{verbose}{Logical; flag indicating whether progress information should be printed.}
 }
 \value{
-A list containing the result of the Orthogonal Matching Pursuit
+A list containing the result of the Matching Pursuit
 decomposition with the following elements:
 
 \item{gabors}{Matrix of selected atoms (dictionary columns) used in the

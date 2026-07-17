@@ -12,10 +12,10 @@ read_edf_params(file)
 \value{
 A data frame containing the basic parameters of the EDF / EDF+ file:
 
- \item{channel_name}{Name of the given channel.}
- \item{frequency}{Sampling frequency of the given channel.}
- \item{no_of_samples}{Number of samples in the given channel.}
- \item{length_sec}{Length in seconds of the given channel.}
+ \item{channel_name}{Channel name.}
+ \item{frequency}{Channel sampling frequency.}
+ \item{no_of_samples}{Number of samples in the channel.}
+ \item{length_sec}{Channel duration, in seconds.}
 }
 \description{
 Reads a selected EDF or EDF+ file and returns basic signal parameters

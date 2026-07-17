@@ -26,13 +26,16 @@
 #'
 #' @param bandstop_order Band-stop filter order.
 #'
-#' @return List with parameters of individual filters.
+#' @return
+#' List containing coefficients of individual Butterworth filters.
 #'
+#' \describe{
 #'   \item{notch}{Notch filter used to remove a specific narrow frequency band.}
 #'   \item{lowpass}{Low-pass filter that attenuates high-frequency components.}
 #'   \item{highpass}{High-pass filter that attenuates low-frequency components.}
 #'   \item{bandpass}{Band-pass filter that retains frequencies within a selected range.}
 #'   \item{bandstop}{Band-stop filter that removes frequencies within a selected range.}
+#' }
 #'
 #' @importFrom signal butter freqz
 #'
@@ -66,9 +69,9 @@
 #' signal_filt <- signal
 #'
 #' for (m in 1:ncol(signal)) {
-#'   signal_filt[, m] = signal::filtfilt(fc$notch, signal_filt[, m]); # 50Hz notch filter
-#'   signal_filt[, m] = signal::filtfilt(fc$lowpass, signal_filt[, m]); # Low pass IIR Butterworth
-#'   signal_filt[, m] = signal::filtfilt(fc$highpass, signal_filt[, m]); # High pass IIR Butterwoth
+#'   signal_filt[, m] <- signal::filtfilt(fc$notch, signal_filt[, m]); # 50Hz notch filter
+#'   signal_filt[, m] <- signal::filtfilt(fc$lowpass, signal_filt[, m]); # Low pass IIR Butterworth
+#'   signal_filt[, m] <- signal::filtfilt(fc$highpass, signal_filt[, m]); # High pass IIR Butterwoth
 #' }
 #'
 #' plot(signal_filt[, 1], type = "l", panel.first = grid())
@@ -82,7 +85,11 @@ filters_coeff <- function (
     bandstop = c(0.5, 40), bandstop_order = 4)
 {
 
+  if (sf <= 0) stop("Sampling frequency must be positive.")
+
   nyq <- sf / 2
+
+  if (any(notch <= 0 | notch >= nyq)) stop("Notch frequencies must be between 0 and Nyquist frequency.")
 
   ## Notch filter
   notch <- butter(notch_order, notch / nyq, "stop")
@@ -90,7 +97,7 @@ filters_coeff <- function (
   # Low pass IIR Butterworth, cutoff at 'lowpass' Hz
   lowpass <- butter(lowpass_order, lowpass / nyq, "low")
 
-  # High pass IIR Butterwoth, cutoff at 'highpass' Hz
+  # High pass IIR Butterworth, cutoff at 'highpass' Hz
   highpass <- butter(highpass_order, highpass / nyq, "high")
 
   # Bandpass filter IIR Butterworth

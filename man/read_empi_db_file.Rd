@@ -7,17 +7,18 @@
 read_empi_db_file(db_file)
 }
 \arguments{
-\item{db_file}{SQLite file.}
+\item{db_file}{A character string giving the path to a SQLite database file.}
 }
 \value{
 An object of class \code{"mp"} containing:
-
-\item{atoms}{A data frame describing the selected atoms.}
-\item{original_signal}{Matrix containing the original signal(s).}
-\item{reconstruction}{Matrix containing the reconstructed signal(s).}
-\item{gabors}{List of matrices containing selected atoms for each channel.}
-\item{t}{Time vector corresponding to signal samples.}
-\item{sf}{Sampling frequency.}
+\describe{
+  \item{atoms}{A data frame describing the selected atoms.}
+  \item{original_signal}{Matrix containing the original signal(s).}
+  \item{reconstruction}{Matrix containing the reconstructed signal(s).}
+  \item{gabors}{List of matrices containing selected atoms for each channel.}
+  \item{t}{Time vector corresponding to signal samples.}
+  \item{sf}{Sampling frequency.}
+}
 }
 \description{
 Reads data from a SQLite file (\code{.db}) created by the Matching Pursuit algorithm.

@@ -21,11 +21,11 @@
 #'
 #' @return An object of class \code{edf}, which is a list with fields:
 #'
-#' \item{signal}{Data frame with all signal channels.}
-#' \item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
-#' \item{time_stamps}{Sampling rate after optional resampling.}
-#' \item{signal_names}{Time stamps after optional resampling.}
-#' \item{record_name}{Signal names.}
+#' \item{signal}{Data frame containing all signal channels.}
+#' \item{sampling_frequency}{Sampling frequency.}
+#' \item{time_stamps}{Time stamps.}
+#' \item{signal_names}{Names of the signal channels.}
+#' \item{record_name}{Name of the EDF file.}
 #'
 #' @details To check the channel names in the analysed EEG recording,
 #' use the \code{read_edf_params()} function.
@@ -60,9 +60,9 @@
 #'   c("Cz",  "Pz")
 #' )
 #'
-#' signal_bip_mont <- eeg_montage(out, montage_type = c("bipolar"), bipolar_pairs = pairs)
-#' signal_ref_mont <- eeg_montage(out, montage_type = c("reference"), ref_channel = "O1")
-#' signal_avg_mont <- eeg_montage(out, montage_type = c("average"))
+#' signal_bip_mont <- eeg_montage(out, montage_type = "bipolar", bipolar_pairs = pairs)
+#' signal_ref_mont <- eeg_montage(out, montage_type = "reference", ref_channel = "O1")
+#' signal_avg_mont <- eeg_montage(out, montage_type = "average")
 #'
 #' head(signal_bip_mont$signal)
 #' head(signal_ref_mont$signal)
@@ -83,17 +83,18 @@ eeg_montage <- function(
   eeg_data <- x$signal
 
   if (!is.data.frame(eeg_data)) {
-    stop("eeg.data must be a dataframe: rows = samples, columns = channels.")
+    stop("'signal' must be a data frame with samples in rows and channels in columns.")
   }
 
   if (is.null(colnames(eeg_data))) {
-    stop("The matrix must have column names (channel names).")
+    stop("Signal data must have column names corresponding to channel names.")
   }
 
   if (montage_type == "average") {
     avg_signal <- rowMeans(eeg_data)
     reref_data <- sweep(eeg_data, 1, avg_signal, "-")
-    return(reref_data)
+    result <- reref_data
+    new_names <- x$signal_names
   }
 
   if (montage_type == "reference") {
@@ -106,7 +107,8 @@ eeg_montage <- function(
 
     ref_signal <- eeg_data[, ref_channel]
     reref_data <- sweep(eeg_data, 1, ref_signal, "-")
-    return(reref_data)
+    result <- reref_data
+    new_names <- x$signal_names
   }
 
   if (montage_type == "bipolar") {
@@ -115,12 +117,14 @@ eeg_montage <- function(
     }
 
     result <- matrix(nrow = nrow(eeg_data), ncol = length(bipolar_pairs))
-
     new_names <- c()
 
     for (i in seq_along(bipolar_pairs)) {
       ch1 <- bipolar_pairs[[i]][1]
       ch2 <- bipolar_pairs[[i]][2]
+
+      if (length(bipolar_pairs[[i]]) != 2)
+        stop("Each bipolar pair must contain exactly two channel names.")
 
       if (!(ch1 %in% colnames(eeg_data)) || !(ch2 %in% colnames(eeg_data))) {
         stop(paste("Incorrect pair: ", ch1, " ", ch2, sep = ""))
@@ -131,12 +135,11 @@ eeg_montage <- function(
     }
 
     colnames(result) <- new_names
-
-    #return(as.data.frame(result))
+  }
 
     result <- list(
       signal = as.data.frame(result),
-      sampling_frequency = x$ sampling_frequency,
+      sampling_frequency = x$sampling_frequency,
       time_stamps = x$time_stamps,
       signal_names = new_names,
       record_name = x$record_name
@@ -144,6 +147,4 @@ eeg_montage <- function(
 
     class(result) <- "edf"
     return(result)
-
-  }
 }

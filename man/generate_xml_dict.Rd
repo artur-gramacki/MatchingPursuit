@@ -83,21 +83,22 @@ generate_xml_dict(
 xml_file <- tempfile(fileext = ".xml")
 
 dict <- generate_xml_dict(
-  N = 128,
+  N = 256,
   file = xml_file
 )
 
 dict
-}
 
 atoms_dict <- read_dict(
   xml_file,
-  sf = 64,
+  sf = 128,
   duration = 2,
   verbose = TRUE
 )
 
-atoms_dict
+head(atoms_dict)
+tail(atoms_dict)
+}
 
 }
 \seealso{

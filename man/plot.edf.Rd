@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.edf.R
 \name{plot.edf}
 \alias{plot.edf}
-\title{The function displays EEG signals}
+\title{Plots EEG signals stored in an object of class \code{edf}}
 \usage{
 \method{plot}{edf}(
   x,

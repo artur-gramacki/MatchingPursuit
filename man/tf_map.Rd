@@ -17,7 +17,7 @@ tf_map(
   display_grid = FALSE,
   color = "white",
   palette = "my custom palette",
-  rev = TRUE,
+  reverse_palette = TRUE,
   out_mode = "plot",
   path = NULL,
   file_name = NULL,
@@ -53,7 +53,7 @@ frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropri
 
 \item{display_crosses}{Whether small crosses should be displayed at the centres of atoms.}
 
-\item{display_atom_numbers}{Whether atom numbers should be displayed in the canters of atoms.}
+\item{display_atom_numbers}{Whether atom numbers should be displayed in the cantres of atoms.}
 
 \item{display_grid}{Whether grid lines should be drawn.}
 
@@ -62,7 +62,7 @@ frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropri
 \item{palette}{Palette from the list returned by the \code{hcl.pals()} function or the string
 \code{"my custom palette"}.}
 
-\item{rev}{Value of the \code{rev} argument passed to the \code{hcl.colors()} function.}
+\item{reverse_palette}{Value of the \code{rev} argument passed to the \code{hcl.colors()} function.}
 
 \item{out_mode}{One of the following:
 \itemize{
@@ -104,8 +104,8 @@ Regardless of the output mode, the function also returns:
 
     \item{gabor_functions}{All Gabor functions.}
     \item{reconstruction}{Reconstructed signal.}
-    \item{original_signal}{ original signal.}
-    \item{sf}{ sampling frequency.}
+    \item{original_signal}{ Original signal.}
+    \item{sf}{Sampling frequency.}
     \item{grid_size_t}{Grid size along the time axis.}
     \item{grid_size_f}{Grid size along the frequency axis.}
     \item{epochSize}{Epoch size in samples.}

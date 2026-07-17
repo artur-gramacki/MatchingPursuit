@@ -35,7 +35,7 @@ A list containing four numeric vectors of length \code{number_of_samples}:
   \item{cosine}{Cosine wave.}
   \item{gauss}{Gaussian envelope.}
   \item{gabor}{Gabor function.}
-  \item{t}{Time vector corresponding to signal samples.}
+  \item{t}{Time vector corresponding to the signal samples.}
 }
 \description{
 A Gabor function is a sinusoidal wave localized by a Gaussian envelope. In signal processing, it is

@@ -20,8 +20,10 @@ to contain column names.}
 \value{
 A list containing:
 
+\describe{
   \item{signal}{Data frame containing all signals (rows = samples, columns = channels).}
   \item{sampling_frequency}{Sampling frequency.}
+}
 }
 \description{
 Reads and validates a CSV file structure
@@ -48,6 +50,6 @@ signal$sampling_frequency
 file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 signal <- read_csv_signals(file, col_names_in_csv = TRUE)
 head(signal$signal)
-signal$ sampling_frequency
+signal$sampling_frequency
 
 }

@@ -5,8 +5,8 @@
 #' (users have full access to the cache directory and may remove its contents at any time).
 #'
 #' @return
-#' If the EMPI program is found, its full path is returned. Otherwise, a message is displayed,
-#' prompting the user to install it using the \code{empi_install()} function.
+#' The full path to the EMPI executable if it is found. Otherwise, returns \code{NULL}
+#' and displays a message suggesting installation using \code{empi_install()}.
 #'
 #' @seealso
 #' \code{\link{empi_install}},
@@ -17,7 +17,9 @@
 #' @export
 #'
 #' @examples
-#' empi_check()
+#' if (interactive()) {
+#'   empi_check()
+#' }
 #'
 empi_check <- function() {
 
@@ -35,5 +37,10 @@ empi_check <- function() {
     return(exec_path)
   }
 
-  message("The EMPI tool is not available. Run empi_install() to install it.")
+  message(
+    "The EMPI tool is not installed. ",
+    "Run empi_install() if you want to install it."
+  )
+
+  return(invisible(NULL))
 }

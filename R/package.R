@@ -1,4 +1,4 @@
-#' Processing Time Series Data Using the Matching Pursuit Algorithm
+#' Sparse Time-Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit
 #'
 #' Tools for analyzing and decomposing time_series data using the
 #' \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition

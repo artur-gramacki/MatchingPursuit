@@ -26,25 +26,27 @@
 #'
 #' @return An object of class \code{edf}, which is a list with fields:
 #'
-#' \item{signal}{Data frame with all signal channels.}
-#' \item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
-#' \item{time_stamps}{Sampling rate after optional resampling.}
-#' \item{signal_names}{Time stamps after optional resampling.}
-#' \item{record_name}{Signal names.}
+#' \item{signal}{Data frame containing all signal channels.}
+#' \item{sampling_frequency}{Sampling frequency after optional resampling.}
+#' \item{time_stamps}{Time stamps after optional resampling.}
+#' \item{signal_names}{Names of the signal channels.}
+#' \item{record_name}{Name of the EDF file.}
 #'
 #' @export
 #'
 #' @examples
+#' # Read EDF signals without resampling
 #' file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 #' out1  <- read_edf_signals(file, resampling = FALSE)
 #'
 #' lapply(out1, class)
-#' out1$ sampling_frequency
+#' out1$sampling_frequency
 #'
+#' # Read EDF signals and resample them to 128 Hz
 #' out2 <- read_edf_signals(file, resampling = TRUE, sf_new = 128, verbose = TRUE)
 #'
 #' lapply(out2, class)
-#' out2$ sampling_frequency
+#' out2$sampling_frequency
 #'
 
 read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NULL, to = NULL, verbose = FALSE) {
@@ -54,36 +56,36 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
   }
 
   if (!is.null(from) && !is.null(to)) {
-    if (from >= to) stop("`from` varaible must by smaller than `to`")
+    if (from >= to) stop("`from` variable must by smaller than `to`")
   }
 
-  edf <- edf::read.edf(filename = file, read.annotations = FALSE, header.only = FALSE)
+  edf_obj <- edf::read.edf(filename = file, read.annotations = FALSE, header.only = FALSE)
 
-  if (nchar(edf[["header.global"]][["reserved"]]) > 0) {
-    n_sigs <- edf[["header.global"]][["n.signals"]] - 1 # EDF +
+  if (nchar(edf_obj[["header.global"]][["reserved"]]) > 0) {
+    n_sigs <- edf_obj[["header.global"]][["n.signals"]] - 1 # EDF +
   } else {
-    n_sigs <- edf[["header.global"]][["n.signals"]]     # EDF
+    n_sigs <- edf_obj[["header.global"]][["n.signals"]]     # EDF
   }
 
   ff <- NA
   for (i in 1:n_sigs) {
-    ff[i] <- edf[["header.signal"]][[i]][["samplingrate"]]
+    ff[i] <- edf_obj[["header.signal"]][[i]][["samplingrate"]]
   }
   eq <- length(unique(ff)) == 1
 
   if (!eq && !resampling) {
     warning(
       "It has been detected that individual channels do not have the same sampling rate. Therefore, it is not possible to save all channels' data in a single data frame. Run the function again by setting 'resampling = TRUE' and specifying a new frequency value 'sf_new'.")
-    return(edf)
+    return(edf_obj)
   }
 
   signal_names <- NA
   for (i in 1:n_sigs) {
-    lab <- edf[["header.signal"]][[i]]$label
-    freq <- edf[["header.signal"]][[i]]$samplingrate
-    sig <- edf[["signal"]][[i]][["data"]]
-    t <- edf[["signal"]][[i]][["t"]]
-    sf <- edf[["header.signal"]][[i]][["samplingrate"]]
+    lab <- edf_obj[["header.signal"]][[i]]$label
+    freq <- edf_obj[["header.signal"]][[i]]$samplingrate
+    sig <- edf_obj[["signal"]][[i]][["data"]]
+    t <- edf_obj[["signal"]][[i]][["t"]]
+    sf <- edf_obj[["header.signal"]][[i]][["samplingrate"]]
 
     signal_names[i] <- lab
 
@@ -122,7 +124,7 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
     # }
   } # for (i in 1:n_sigs)
 
-  if (is.null(sf_new)) sf_new <- sf
+  if (!resampling) sf_new <- sf
 
   if (!is.null(from) && !is.null(to)) {
     edf_mtx <- edf_mtx[seq(from * sf + 1, to * sf / (sf / sf_new)), ]

@@ -28,7 +28,9 @@ clear_cache <- function() {
     return(invisible(TRUE))
   }
 
-  print(files2)
+  cat("Files found in cache:\n")
+  cat(paste0(" - ", files2), sep = "\n")
+
   answer <- readline(prompt = paste0("Found ", length(files), " file(s) in cache. Delete them? [y/N]: "))
 
 

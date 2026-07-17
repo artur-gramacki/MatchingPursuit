@@ -55,9 +55,9 @@ decomposition with the following elements:
   (including intercept if \code{fit_intercept = TRUE}).}
 \item{reconstruction}{The OMP approximation of the signal including intercept
   (if applicable).}
-\item{coef}{Numeric vector of estimated coefficients for selected atoms.}
+\item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
 \item{energy}{Energy contribution of selected atoms, computed as
-  \code{coef^2 * colSums(selected_atoms^2)}.}
+  \code{coefs^2 * colSums(selected_atoms^2)}.}
 \item{intercept}{Estimated intercept term (0 if \code{fit_intercept = FALSE}).}
 \item{support}{Integer vector of selected atom indices.}
 \item{residual}{Final residual vector.}
@@ -75,8 +75,9 @@ contains:
 This function implements the Orthogonal Matching Pursuit (OMP) algorithm to
 compute a sparse representation of a signal using a dictionary of atoms.
 This is an efficient implementation with incremental Cholesky factorization for
-efficient least-squares solving. The function works very similarly to the
-Python implementation of OMP available in the scikit-learn library.
+efficient least-squares solving. The implementation follows the algorithm used
+by sklearn.linear_model.OrthogonalMatchingPursuit, including incremental Cholesky
+updates for solving the least-squares problem.
 }
 \details{
 Unlike classical Matching Pursuit, OMP recomputes all selected coefficients

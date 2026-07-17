@@ -1,6 +1,6 @@
 #' Read atom parameters from a SQLite database
 #'
-#' Reads atom parameters stored in a SQLite database created by \code{empi_execute()} function.
+#' Reads the atom parameters from a SQLite database produced by \code{empi_execute()}.
 #'
 #' @param db_file A character string giving the path to a SQLite database file.
 #'
@@ -29,6 +29,10 @@
 #' out
 #'
 atom_params <- function(db_file) {
+
+  if (!file.exists(db_file)) {
+    stop("Database file does not exist: ", db_file)
+  }
 
   out <- read_empi_db_file(db_file)
 

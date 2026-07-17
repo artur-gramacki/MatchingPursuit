@@ -1,4 +1,4 @@
-#' The function displays EEG signals
+#' Plots EEG signals stored in an object of class \code{edf}
 #'
 #' Signals are displayed one below another and may be shown in different
 #' colours for improved readability.
@@ -74,6 +74,7 @@ plot.edf <- function(
 
   # Save current graphical parameters to reset
   old.par <- par(no.readonly = TRUE)
+  on.exit(par(old.par), add = FALSE)
 
   if (!inherits(x, "edf")) {
     stop("'x' must be an object of class 'edf'.")
@@ -82,7 +83,7 @@ plot.edf <- function(
   par(bg = bg_colour)
 
   eeg <- as.matrix(x$signal)
-  sf <- x$ sampling_frequency
+  sf <- x$sampling_frequency
   channels <- ncol(eeg)
 
   if (rainbow) {
@@ -127,7 +128,6 @@ plot.edf <- function(
   ylim <- c(-ph2 - b, max(baseline) + ph2 + b)
 
   op <- par(mar = c(2, 4, 1, 1), xaxs = "i", yaxs = "i")
-  on.exit(par(op))
 
   plot(
     NA,
@@ -172,8 +172,6 @@ plot.edf <- function(
     padj = -1.5,
     tcl = 0.6
   )
-
-  on.exit(par(old.par))
 
   message("Actual value of 'panel_height' parameter is: ", panel_height)
 }

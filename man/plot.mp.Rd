@@ -22,8 +22,7 @@
 )
 }
 \arguments{
-\item{x}{An object of class \code{mp} created by \code{empi_execute()} or \code{mp_omp_execute()}
-functions.}
+\item{x}{An object of class \code{mp} returned by \code{empi_execute()} or \code{mp_omp_execute()}.}
 
 \item{channel}{Channel from the SQLite file to process.}
 
@@ -61,7 +60,7 @@ frequency axis. Non-negative integers such as 2, 4, 5, or 8 are typically approp
 \item{...}{Currently ignored. Required for compatibility with the generic \code{plot()}.}
 }
 \value{
-No return value, called to visualize the empi decomposition.
+No return value, called to visualize the EMPI decomposition.
 }
 \description{
 This function is a wrapper around \code{tf_map()} with \code{out_mode = "plot"}.

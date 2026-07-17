@@ -42,13 +42,15 @@ filters_coeff(
 \item{bandstop_order}{Band-stop filter order.}
 }
 \value{
-List with parameters of individual filters.
+List containing coefficients of individual Butterworth filters.
 
+\describe{
   \item{notch}{Notch filter used to remove a specific narrow frequency band.}
   \item{lowpass}{Low-pass filter that attenuates high-frequency components.}
   \item{highpass}{High-pass filter that attenuates low-frequency components.}
   \item{bandpass}{Band-pass filter that retains frequencies within a selected range.}
   \item{bandstop}{Band-stop filter that removes frequencies within a selected range.}
+}
 }
 \description{
 Implements notch, low-pass, high-pass, band-pass, and band-stop filters
@@ -82,9 +84,9 @@ plot(signal[, 1], type = "l", panel.first = grid())
 signal_filt <- signal
 
 for (m in 1:ncol(signal)) {
-  signal_filt[, m] = signal::filtfilt(fc$notch, signal_filt[, m]); # 50Hz notch filter
-  signal_filt[, m] = signal::filtfilt(fc$lowpass, signal_filt[, m]); # Low pass IIR Butterworth
-  signal_filt[, m] = signal::filtfilt(fc$highpass, signal_filt[, m]); # High pass IIR Butterwoth
+  signal_filt[, m] <- signal::filtfilt(fc$notch, signal_filt[, m]); # 50Hz notch filter
+  signal_filt[, m] <- signal::filtfilt(fc$lowpass, signal_filt[, m]); # Low pass IIR Butterworth
+  signal_filt[, m] <- signal::filtfilt(fc$highpass, signal_filt[, m]); # High pass IIR Butterwoth
 }
 
 plot(signal_filt[, 1], type = "l", panel.first = grid())

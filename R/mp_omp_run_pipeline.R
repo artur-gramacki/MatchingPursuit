@@ -31,9 +31,11 @@
 #' @param tol
 #' Optional numeric tolerance for the stopping criterion. If \code{NULL}, the
 #' algorithm stops after selecting \code{n_nonzero_coefs} atoms.
+#' If specified, the algorithm stops when the residual energy falls below
+#' this value and overrides n_nonzero_coefs.
 #'
 #' @param normalize
-#' Logical. If \code{TRUE}, dictionary atoms are normalized  before fitting.
+#' Logical. If \code{TRUE}, dictionary atoms are normalized to unit L2 norm before fitting.
 #'
 #' @param fit_intercept
 #' Logical. If  \code{TRUE}, an intercept term is included in the model.
@@ -56,8 +58,8 @@
 #' @seealso
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}},
-#' \code{\link{mp_omp_execute}}
-#' \code{\link{topk_atoms}}
+#' \code{\link{mp_omp_execute}},
+#' \code{\link{topk_atoms}},
 #' \code{\link{read_dict}},
 #'
 #' @examples
@@ -105,6 +107,22 @@ mp_omp_run_pipeline <- function(
 
   if (!mode %in% c("mp", "omp")) {
     stop("'mode' must be either 'mp' or 'omp'.")
+  }
+
+  if (mode == "mp" && fit_intercept) {
+    warning("'fit_intercept' is ignored when mode = 'mp'.")
+  }
+
+  if (!file.exists(sig_file)) {
+    stop("Signal file does not exist: ", sig_file)
+  }
+
+  if (!file.exists(xml_file)) {
+    stop("Dictionary XML file does not exist: ", xml_file)
+  }
+
+  if (length(topk) != 1 || topk <= 0) {
+    stop("'topk' must be a positive integer.")
   }
 
   sig <- read_csv_signals(

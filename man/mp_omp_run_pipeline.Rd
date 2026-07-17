@@ -36,9 +36,11 @@ See \code{topk_atoms()} function.}
 \item{n_nonzero_coefs}{Integer. Maximum number of non-zero coefficients  to include in the sparse decomposition.}
 
 \item{tol}{Optional numeric tolerance for the stopping criterion. If \code{NULL}, the
-algorithm stops after selecting \code{n_nonzero_coefs} atoms.}
+algorithm stops after selecting \code{n_nonzero_coefs} atoms.
+If specified, the algorithm stops when the residual energy falls below
+this value and overrides n_nonzero_coefs.}
 
-\item{normalize}{Logical. If \code{TRUE}, dictionary atoms are normalized  before fitting.}
+\item{normalize}{Logical. If \code{TRUE}, dictionary atoms are normalized to unit L2 norm before fitting.}
 
 \item{fit_intercept}{Logical. If  \code{TRUE}, an intercept term is included in the model.
 Only used when \code{mode == "omp"}.}
@@ -92,7 +94,7 @@ plot(out_omp, channel = 2)
 \seealso{
 \code{\link{omp_core}},
 \code{\link{mp_core}},
-\code{\link{mp_omp_execute}}
-\code{\link{topk_atoms}}
+\code{\link{mp_omp_execute}},
+\code{\link{topk_atoms}},
 \code{\link{read_dict}},
 }

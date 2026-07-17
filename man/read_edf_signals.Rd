@@ -30,11 +30,11 @@ read_edf_signals(
 \value{
 An object of class \code{edf}, which is a list with fields:
 
-\item{signal}{Data frame with all signal channels.}
-\item{sampling_frequency}{Data frame with all signals stored in the EDF file.}
-\item{time_stamps}{Sampling rate after optional resampling.}
-\item{signal_names}{Time stamps after optional resampling.}
-\item{record_name}{Signal names.}
+\item{signal}{Data frame containing all signal channels.}
+\item{sampling_frequency}{Sampling frequency after optional resampling.}
+\item{time_stamps}{Time stamps after optional resampling.}
+\item{signal_names}{Names of the signal channels.}
+\item{record_name}{Name of the EDF file.}
 }
 \description{
 The function reads a selected EDF or EDF+ file. Optionally, resampling can be performed
@@ -47,15 +47,17 @@ some channels may be upsampled while others are downsampled. The function does n
 independent resampling of individual channels.
 }
 \examples{
+# Read EDF signals without resampling
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 out1  <- read_edf_signals(file, resampling = FALSE)
 
 lapply(out1, class)
-out1$ sampling_frequency
+out1$sampling_frequency
 
+# Read EDF signals and resample them to 128 Hz
 out2 <- read_edf_signals(file, resampling = TRUE, sf_new = 128, verbose = TRUE)
 
 lapply(out2, class)
-out2$ sampling_frequency
+out2$sampling_frequency
 
 }

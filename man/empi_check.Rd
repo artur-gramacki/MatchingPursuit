@@ -7,8 +7,8 @@
 empi_check()
 }
 \value{
-If the EMPI program is found, its full path is returned. Otherwise, a message is displayed,
-prompting the user to install it using the \code{empi_install()} function.
+The full path to the EMPI executable if it is found. Otherwise, returns \code{NULL}
+and displays a message suggesting installation using \code{empi_install()}.
 }
 \description{
 The EMPI program is installed using the \code{empi_install()} function and stored in the
@@ -16,7 +16,9 @@ cache directory. This function checks whether the EMPI program is still availabl
 (users have full access to the cache directory and may remove its contents at any time).
 }
 \examples{
-empi_check()
+if (interactive()) {
+  empi_check()
+}
 
 }
 \seealso{

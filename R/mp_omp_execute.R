@@ -22,7 +22,7 @@
 #'
 #' @param sf Sampling frequency of the signal in Hertz.
 #'
-#' @param n_nonzero_coefs Maximum number of atoms selected by the OMP algorithm
+#' @param n_nonzero_coefs Maximum number of atoms selected during the decomposition
 #' for each signal channel.
 #'
 #' @param tol Optional stopping tolerance defined as the maximum allowed
@@ -63,8 +63,9 @@
 #'
 #' @details
 #' The function applies \code{omp_core()} or \code{mp_core()} independently
-#' to each signal channel. For every channel, OMP greedily selects atoms from the supplied
-#' \code{"topk"} dictionary and computes a sparse approximation of the signal.
+#' to each signal channel. For every channel, the selected algorithm (MP or OMP)
+#' greedily builds a sparse approximation of the signal using atoms from the
+#' supplied "topk" dictionary.
 #'
 #' The resulting object follows the same structure as Matching Pursuit outputs,
 #' enabling direct generation of time-frequency maps and visualizations
@@ -210,6 +211,10 @@ mp_omp_execute <- function (
     stop("'mode' must be either 'mp' or 'omp'.")
   }
 
+  if (mode == "mp" && fit_intercept) {
+    warning("'fit_intercept' is ignored when mode = 'mp'.")
+  }
+sss
   if (!is.matrix(signal)) {
     if (is.vector(signal) || is.data.frame(signal)) {
       signal <- as.matrix(signal)
@@ -323,7 +328,7 @@ mp_omp_execute <- function (
   result$gabors <- gabors
   result$t <- t
   result$sf <- sf
-  class(result) <- 'mp'
+  class(result) <- "mp"
 
 
   return(result)

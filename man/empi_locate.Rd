@@ -7,18 +7,23 @@
 empi_locate()
 }
 \value{
-List with URL of the EMPI binaries and zip file name.
-
-\code{\link{empi_check}},
-\code{\link{empi_install}},
-\code{\link{empi_execute}},
-\code{\link{plot.mp}}
+A list containing:
+\itemize{
+  \item \code{url}: URL of the EMPI binary archive,
+  \item \code{fname}: archive file name.
+}
 }
 \description{
 Returns \strong{Enhanced Matching Pursuit Implementation} binary locations for
-the following operating systems: Windows, Linux, macOS-x64, macOS-arm64.
+the following operating systems: Windows, Linux, macOS-arm64.
 }
 \examples{
 empi_locate()
 
+}
+\seealso{
+\code{\link{empi_check}},
+\code{\link{empi_install}},
+\code{\link{empi_execute}},
+\code{\link{plot.mp}}
 }

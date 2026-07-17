@@ -2,8 +2,7 @@
 #'
 #' This function is a wrapper around \code{tf_map()} with \code{out_mode = "plot"}.
 #'
-#' @param x An object of class \code{mp} created by \code{empi_execute()} or \code{mp_omp_execute()}
-#' functions.
+#' @param x An object of class \code{mp} returned by \code{empi_execute()} or \code{mp_omp_execute()}.
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
@@ -40,7 +39,7 @@
 #'
 #' @param ... Currently ignored. Required for compatibility with the generic \code{plot()}.
 #'
-#' @return No return value, called to visualize the empi decomposition.
+#' @return No return value, called to visualize the EMPI decomposition.
 #'
 #' @examples
 #' \dontrun{
@@ -74,6 +73,7 @@ plot.mp <- function(
 
   # Save current graphical parameters to reset
   old.par <- par(no.readonly = TRUE)
+  on.exit(par(old.par), add = FALSE)
 
   object <- x
 

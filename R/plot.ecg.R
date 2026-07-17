@@ -13,7 +13,8 @@
 #'
 #' @param end Time point (in seconds) at which to stop plotting.
 #'
-#' @param panel_height Number of large squares to display (according to standard ECG paper):
+#' @param panel_height Height of each ECG channel panel (in mV).
+#' One large ECG-paper square corresponds to 0.5 mV. According to standard ECG paper:
 #' \itemize{
 #'     \item small grid: 0.04 sec. x 0.1 mV
 #'     \item large grid: 0.20 sec. x 0.5 mV
@@ -32,9 +33,6 @@
 #' @examples
 #' # ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
 #' file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
-#' dir <- dirname(file)
-#' name <- tools::file_path_sans_ext(basename(file))
-#'
 #' out <- read_ecg_signals(file)
 #'
 #' plot(
@@ -62,13 +60,14 @@ plot.ecg <- function(
 
   # Save current graphical parameters to reset
   old.par <- par(no.readonly = TRUE)
+  on.exit(par(old.par), add = FALSE)
 
   if (!inherits(x, "ecg")) {
     stop("'x' must be an object of class 'ecg'.")
   }
 
   ecg <- as.matrix(x$signal)
-  sf <- x$ sampling_frequency
+  sf <- x$sampling_frequency
   channels <- ncol(ecg)
 
   main <- paste("record name: ", x$record_name, sep = "")
@@ -101,7 +100,6 @@ plot.ecg <- function(
   ylim <- c(-ph2, max(baseline) + ph2)
 
   op <- par(mar = c(2, 4, 1, 1), xaxs = "i", yaxs = "i")
-  on.exit(par(op))
 
   plot(
     NA,
@@ -156,6 +154,4 @@ plot.ecg <- function(
        labels = seq(begin, end, by = 1),
        lwd = 0,
        lwd.ticks = 1)
-
-  on.exit(par(old.par))
 }

@@ -21,7 +21,8 @@
 
 \item{end}{Time point (in seconds) at which to stop plotting.}
 
-\item{panel_height}{Number of large squares to display (according to standard ECG paper):
+\item{panel_height}{Height of each ECG channel panel (in mV).
+One large ECG-paper square corresponds to 0.5 mV. According to standard ECG paper:
 \itemize{
     \item small grid: 0.04 sec. x 0.1 mV
     \item large grid: 0.20 sec. x 0.5 mV
@@ -43,9 +44,6 @@ large grid of 0.20 s × 0.5 mV.
 \examples{
 # ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
 file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
-dir <- dirname(file)
-name <- tools::file_path_sans_ext(basename(file))
-
 out <- read_ecg_signals(file)
 
 plot(

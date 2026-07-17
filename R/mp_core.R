@@ -43,7 +43,7 @@
 #' Logical; flag indicating whether progress information should be printed.
 #'
 #' @return
-#' A list containing the result of the Orthogonal Matching Pursuit
+#' A list containing the result of the Matching Pursuit
 #' decomposition with the following elements:
 #'
 #' \item{gabors}{Matrix of selected atoms (dictionary columns) used in the
@@ -146,6 +146,10 @@ mp_core <- function(
     stop("'signal' must be a matrix or convertible to a matrix.")
   }
 
+  if (channel < 1 || channel > ncol(signal)) {
+    stop("'channel' is out of range.")
+  }
+
   n <- nrow(D)
   p <- ncol(D)
 
@@ -178,7 +182,7 @@ mp_core <- function(
   if (normalize) {
     D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
   } else {
-    D_norm = D
+    D_norm <- D
   }
 
   residual <- sig
@@ -215,7 +219,7 @@ mp_core <- function(
     # 5. Calculating the new remainder
     residual <- residual - best_projection * D_norm[, best_atom_idx]
 
-    # Save current L2 error
+    # Save current squared L2 error
     residual_sq_norm <- sum(residual^2)
     relative_residual_energy[k + 1] <- residual_sq_norm / total_energy
 
@@ -223,7 +227,7 @@ mp_core <- function(
     if (!is.null(tol)) {
       if (verbose) message("relative residual energy: ", signif(relative_residual_energy[k + 1], 6))
       if (relative_residual_energy[k + 1] < tol) {
-        message("Convergence achieved in iteration: ", k, "\n")
+        message("Convergence achieved in iteration: ", k)
         break
       }
     }
@@ -235,7 +239,7 @@ mp_core <- function(
   coefs <- coefs[1:k]
   relative_residual_energy <- relative_residual_energy[1:(k + 1)]
   # for k = 1 it can return a vector, not a matrix. Then 'drop = FALSE' prevents this
-  gabors = D_norm[, support, drop = FALSE]
+  gabors <- D_norm[, support, drop = FALSE]
 
   # as atoms are normalized ||g||= 1, colSums(gabors^2) is always 1
   # energy <- coefs^2 * colSums(gabors^2)

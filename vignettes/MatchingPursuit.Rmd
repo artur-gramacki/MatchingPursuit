@@ -112,7 +112,7 @@ signals. The functionality of the package includes:
 5. Visualization of time–frequency maps based on MP, OMP, and EMPI results  
 6. Signal pre-processing using notch, low-pass, high-pass, band-pass and band-stop filters  
 
-## Naminig convention
+## Naming convention
 In this vignette, we use the following naming convention:
 
 -  **MP** denotes a pure R implementation of the Matching Pursuit algorithm.
@@ -832,7 +832,7 @@ $g_{\gamma_n} \in D$ such that the following inner product
 $\langle \cdot, \cdot \rangle$ is maximized
 
 $$
-g_{\gamma_n} = \operatorname*{arg\,min}_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle | \tag{5}
+g_{\gamma_n} = \operatorname*{arg\,max}_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle | \tag{5}
 $$ 
 The coefficients $a_n$ in (1) are
 
@@ -913,7 +913,7 @@ $$
 
 and, assuming $D_n$ has full column rank
 $$
-a_n = (D_n^T D_n)^{-1}D_n^Tf
+a = (D_n^T D_n)^{-1}D_n^Tf
 $$
 
 where $D_k$ is the matrix containing the selected atoms. This is the core of OMP.
@@ -933,7 +933,7 @@ Compared with Matching Pursuit, OMP usually provides:
 
 1. more accurate signal reconstruction,
 2. sparser representations,
-3. fewer selected atoms for a comparable approximation quality.
+3. can provide more compact representations in many practical cases.
 
 The increased accuracy comes at the cost of higher computational complexity because 
 a least-squares problem must be solved after each iteration. 
@@ -1085,7 +1085,7 @@ The diagram below illustrates the three main workflows for running the MP, OMP, 
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 
- mp_omp_run_pipline()     read_csv_signals()          read_csv_signals()
+ mp_omp_run_pipeline()   read_csv_signals()          read_csv_signals()
          |                         │                          │
          |                   read_dict()                      |             
          |                         │                          │
@@ -1103,7 +1103,7 @@ The diagram below illustrates the three main workflows for running the MP, OMP, 
 
 [Back to menu](#top)
 
-## XML-base atom dictionary specification
+## XML-based atom dictionary specification
 
 The XML file encodes the structure of a dictionary of basis functions (Gabor atoms), including window lengths, window shifts, and frequency grids used during signal analysis.
 A simple example illustrates how atom parameters are encoded in the XML file. Consider the following **block**:
@@ -1271,7 +1271,7 @@ In summary, the dictionary provides an approximately uniform coverage of the tim
 
 [Back to menu](#top)
 
-## XML-base atom dictionary generator
+## XML-based atom dictionary generator
 
 The package includes a utility for generating XML-based atom dictionaries
 for MPTK-like sparse decomposition algorithms. The generator creates
@@ -1296,4 +1296,4 @@ dict
 
 [Back to menu](#top)
 
-## Bibliogaphy
+## Bibliography

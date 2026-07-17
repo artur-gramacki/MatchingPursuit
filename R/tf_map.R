@@ -35,7 +35,7 @@
 #'
 #' @param display_crosses Whether small crosses should be displayed at the centres of atoms.
 #'
-#' @param display_atom_numbers Whether atom numbers should be displayed in the canters of atoms.
+#' @param display_atom_numbers Whether atom numbers should be displayed in the cantres of atoms.
 #'
 #' @param display_grid Whether grid lines should be drawn.
 #'
@@ -44,7 +44,7 @@
 #' @param palette Palette from the list returned by the \code{hcl.pals()} function or the string
 #' \code{"my custom palette"}.
 #'
-#' @param rev Value of the \code{rev} argument passed to the \code{hcl.colors()} function.
+#' @param reverse_palette Value of the \code{rev} argument passed to the \code{hcl.colors()} function.
 #'
 #' @param out_mode One of the following:
 #'   \itemize{
@@ -85,8 +85,8 @@
 #'
 #'     \item{gabor_functions}{All Gabor functions.}
 #'     \item{reconstruction}{Reconstructed signal.}
-#'     \item{original_signal}{ original signal.}
-#'     \item{sf}{ sampling frequency.}
+#'     \item{original_signal}{ Original signal.}
+#'     \item{sf}{Sampling frequency.}
 #'     \item{grid_size_t}{Grid size along the time axis.}
 #'     \item{grid_size_f}{Grid size along the frequency axis.}
 #'     \item{epochSize}{Epoch size in samples.}
@@ -139,7 +139,7 @@ tf_map <- function(
     display_grid = FALSE,
     color = "white",
     palette = 'my custom palette',
-    rev = TRUE,
+    reverse_palette = TRUE,
     out_mode = "plot",
     path = NULL,
     file_name = NULL,
@@ -211,7 +211,7 @@ tf_map <- function(
     }
   }
 
-  if (out_mode != "RData" & out_mode != "RData2")
+  if (out_mode != "RData" && out_mode != "RData2")
     tf_map_resampled <- NULL
 
   if (palette == 'my custom palette') {
@@ -234,7 +234,7 @@ tf_map <- function(
       "#b22e03", "#af2a02", "#ac2702", "#a82402", "#a52101", "#a21e01", "#9f1b00", "#9c1800",
       "#991500")
   } else {
-    col <- hcl.colors(128, palette, rev = rev)
+    col <- hcl.colors(128, palette, rev = reverse_palette)
   }
 
   total_channels <- length(unique(out$atoms$channel_id))

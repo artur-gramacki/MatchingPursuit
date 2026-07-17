@@ -15,8 +15,10 @@
 #'
 #' @return A list containing:
 #'
+#' \describe{
 #'   \item{signal}{Data frame containing all signals (rows = samples, columns = channels).}
 #'   \item{sampling_frequency}{Sampling frequency.}
+#' }
 #'
 #' @export
 #'
@@ -31,7 +33,7 @@
 #'
 #' signal <- read_csv_signals(file, col_names = "signal_1")
 #' head(signal$signal)
-#' signal$ sampling_frequency
+#' signal$sampling_frequency
 #'
 #' file <- system.file("extdata", "sample2.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file, col_names = c("signal_1"))
@@ -42,9 +44,11 @@
 #' file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file, col_names_in_csv = TRUE)
 #' head(signal$signal)
-#' signal$ sampling_frequency
+#' signal$sampling_frequency
 #'
 read_csv_signals <- function(file, col_names = NULL, col_names_in_csv = FALSE) {
+
+  if (!file.exists(file)) stop("File does not exist: ", file)
 
   line <- readLines(file, n = 1)
   items <- strsplit(line, "\\s+")[[1]]
@@ -56,16 +60,16 @@ read_csv_signals <- function(file, col_names = NULL, col_names_in_csv = FALSE) {
   sf <- suppressWarnings(as.numeric(items[1]))
   sl <- suppressWarnings(as.numeric(items[2]))
 
-  if (sf <= 0 || sl <= 0) stop("Numbers in the first line must be positive.")
-
   if (is.na(sf) || is.na(sl)) {
     stop("The first line in the file must contain 2 numbers, the first is the sampling rate, the second is the signal length in seconds.")
   }
 
+  if (sf <= 0 || sl <= 0) stop("Numbers in the first line must be positive.")
+
   if (col_names_in_csv) {
-    signal <- read.table(file, skip = 2, header = FALSE)
+    signal <- read.table(file, skip = 2, header = FALSE, sep = "")
   } else {
-    signal <- read.table(file, skip = 1, header = FALSE)
+    signal <- read.table(file, skip = 1, header = FALSE, sep = "")
   }
 
   if (nrow(signal) != round(sf * sl)) {

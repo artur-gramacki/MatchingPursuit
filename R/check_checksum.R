@@ -21,7 +21,7 @@ check_checksum <- function (dest) {
   hash <- digest::digest(file = dest, algo = "md5")
 
   if (hash != checksums[[fname]]) {
-    stop("Checksum does not match! The program file could not be downloaded.")
+    stop("Checksum verification failed. The downloaded file may be corrupted or incomplete.")
   }
 
   message("Checksum is correct.")

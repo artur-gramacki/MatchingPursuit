@@ -20,7 +20,7 @@
 #'   \item{cosine}{Cosine wave.}
 #'   \item{gauss}{Gaussian envelope.}
 #'   \item{gabor}{Gabor function.}
-#'   \item{t}{Time vector corresponding to signal samples.}
+#'   \item{t}{Time vector corresponding to the signal samples.}
 #'
 #' @examples
 #' number_of_samples <- 512
@@ -57,20 +57,24 @@ gabor_fun <- function(
     frequency,
     normalization = TRUE) {
 
+  if (sigma <= 0) stop("'sigma' must be positive.")
+  if (number_of_samples <= 0)  stop("'number_of_samples' must be positive.")
+  if (sampling_frequency <= 0) stop("'sampling_frequency' must be positive.")
+
   vec_norm <- function(x) { x / sqrt(sum(x^2)) }
 
   omega <- 2 * pi * frequency
   t <- seq(from = 0, to = number_of_samples - 1, by = 1) / sampling_frequency
   gauss <- exp(-pi * ((t - mean) / sigma)^2)
-  cosinus <- cos(omega * (t - mean) + phase)
-  gabor <- cosinus * gauss
+  cosine <- cos(omega * (t - mean) + phase)
+  gabor <- cosine * gauss
 
   if (normalization) {
     gabor <- vec_norm(gabor)
   }
 
   list(
-    cosinus = cosinus,
+    cosine = cosine,
     gauss = gauss,
     gabor = gabor,
     t = t
