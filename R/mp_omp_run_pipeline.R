@@ -9,8 +9,11 @@
 #' \code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.
 #'
 #' @param sig_file
-#' Path to a CSV file containing the signal data.
-#' See \code{read_csv_signals()} function.
+#' Path to a CSV, EDF/EDF(+) or WFDB file containing the signal data.
+#'
+#' @param sig_file_type
+#' \code{"csv"} or \code{"wfdb"} or \code{"edf"}. Specifies the input file type.
+#' See \code{read_csv_signals()}, \code{read_wfdb_signals()}, \code{read_edf_signals()} functions.
 #'
 #' @param col_names_in_csv
 #' Logical. Indicates whether the CSV file contains column names in the first row.
@@ -69,6 +72,7 @@
 #' out_mp <- mp_omp_run_pipeline(
 #'   mode = "mp",
 #'   sig_file = sig_file,
+#'   sig_file_type = "csv",
 #'   col_names_in_csv = TRUE,
 #'   xml_file = xml_file,
 #'   topk = 5000,
@@ -79,6 +83,7 @@
 #' out_omp <- mp_omp_run_pipeline(
 #'   mode = "omp",
 #'   sig_file = sig_file,
+#'   sig_file_type = "csv",
 #'   col_names_in_csv = TRUE,
 #'   xml_file = xml_file,
 #'   topk = 5000,
@@ -92,6 +97,7 @@
 mp_omp_run_pipeline <- function(
     mode = NULL,
     sig_file,
+    sig_file_type = "csv",
     col_names_in_csv,
     xml_file,
     topk,
@@ -109,6 +115,15 @@ mp_omp_run_pipeline <- function(
     stop("'mode' must be either 'mp' or 'omp'.")
   }
 
+  if (!sig_file_type %in% c("csv", "wfdb", "edf")) {
+    stop("'sig_file_type' must be either 'csv' or 'wfdb' or 'edf'.")
+  }
+
+  if (sig_file_type != "csv" && col_names_in_csv) {
+    warning("'col_names_in_csv' is ignored when sig_file_type != 'csv'.")
+  }
+
+
   if (mode == "mp" && fit_intercept) {
     warning("'fit_intercept' is ignored when mode = 'mp'.")
   }
@@ -125,10 +140,24 @@ mp_omp_run_pipeline <- function(
     stop("'topk' must be a positive integer.")
   }
 
-  sig <- read_csv_signals(
-    file = sig_file,
-    col_names_in_csv = col_names_in_csv
-  )
+  if (sig_file_type == "csv") {
+    sig <- read_csv_signals(
+      file = sig_file,
+      col_names_in_csv = col_names_in_csv
+    )
+  }
+
+  if (sig_file_type == "wfdb") {
+    sig <- read_wfdb_signals(
+      file = sig_file
+    )
+  }
+
+  if (sig_file_type == "edf") {
+    sig <- read_edf_signals(
+      file = sig_file
+    )
+  }
 
   sf <- sig$sampling_frequency
   signal <- sig$signal

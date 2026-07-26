@@ -7,6 +7,7 @@
 mp_omp_run_pipeline(
   mode = NULL,
   sig_file,
+  sig_file_type = "csv",
   col_names_in_csv,
   xml_file,
   topk,
@@ -20,8 +21,10 @@ mp_omp_run_pipeline(
 \arguments{
 \item{mode}{\code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.}
 
-\item{sig_file}{Path to a CSV file containing the signal data.
-See \code{read_csv_signals()} function.}
+\item{sig_file}{Path to a CSV, EDF/EDF(+) or WFDB file containing the signal data.}
+
+\item{sig_file_type}{\code{"csv"} or \code{"wfdb"} or \code{"edf"}. Specifies the input file type.
+See \code{read_csv_signals()}, \code{read_wfdb_signals()}, \code{read_edf_signals()} functions.}
 
 \item{col_names_in_csv}{Logical. Indicates whether the CSV file contains column names in the first row.
 See \code{read_csv_signals()} function.}
@@ -70,6 +73,7 @@ xml_file <- system.file("extdata", "sample3_dict.xml", package = "MatchingPursui
 out_mp <- mp_omp_run_pipeline(
   mode = "mp",
   sig_file = sig_file,
+  sig_file_type = "csv",
   col_names_in_csv = TRUE,
   xml_file = xml_file,
   topk = 5000,
@@ -80,6 +84,7 @@ out_mp <- mp_omp_run_pipeline(
 out_omp <- mp_omp_run_pipeline(
   mode = "omp",
   sig_file = sig_file,
+  sig_file_type = "csv",
   col_names_in_csv = TRUE,
   xml_file = xml_file,
   topk = 5000,

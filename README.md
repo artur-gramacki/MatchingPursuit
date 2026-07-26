@@ -114,7 +114,7 @@ these steps internally as part of a single optimized C++ pipeline.
 
 ## Typical workflow
  
-``` 
+```
                                        START
                                          |
                       -----------------------------------------
@@ -123,7 +123,7 @@ these steps internally as part of a single optimized C++ pipeline.
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 
- mp_omp_run_pipline()     read_csv_signals()          read_csv_signals()
+ mp_omp_run_pipeline()     read_*_signals()            read_*_signals()
          |                         │                          │
          |                   read_dict()                      |             
          |                         │                          │
@@ -136,6 +136,9 @@ these steps internally as part of a single optimized C++ pipeline.
                      ------------------------------------------
                                           |
                                    plot() / tf_map()
+                                   
+read_*_signals() - select the appropriate function depending on the file format:
+read_csv_signals(), read_edf_signals(), read_wfdb_signals()
 
 ```                   
 ## Documentation

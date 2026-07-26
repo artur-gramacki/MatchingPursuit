@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="17"/>
+<param name="windowShift" value="1"/>
+<param name="fftSize" value="64"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="25"/>
+<param name="windowShift" value="2"/>
+<param name="fftSize" value="64"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="35"/>
+<param name="windowShift" value="2"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="47"/>
+<param name="windowShift" value="3"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="67"/>
+<param name="windowShift" value="4"/>
+<param name="fftSize" value="256"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="93"/>
+<param name="windowShift" value="6"/>
+<param name="fftSize" value="256"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="131"/>
+<param name="windowShift" value="8"/>
+<param name="fftSize" value="512"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="183"/>
+<param name="windowShift" value="11"/>
+<param name="fftSize" value="512"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="257"/>
+<param name="windowShift" value="15"/>
+<param name="fftSize" value="1024"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="361"/>
+<param name="windowShift" value="22"/>
+<param name="fftSize" value="1024"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="509"/>
+<param name="windowShift" value="31"/>
+<param name="fftSize" value="1024"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="713"/>
+<param name="windowShift" value="43"/>
+<param name="fftSize" value="2048"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="999"/>
+<param name="windowShift" value="60"/>
+<param name="fftSize" value="2048"/>
+</block>
+</dict>

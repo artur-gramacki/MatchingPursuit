@@ -4,7 +4,7 @@
 \name{MatchingPursuit}
 \alias{MatchingPursuit-package}
 \alias{MatchingPursuit}
-\title{Processing Time Series Data Using the Matching Pursuit Algorithm}
+\title{Sparse Time-Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit}
 \description{
 Tools for analyzing and decomposing time_series data using the
 \strong{Matching Pursuit (MP)} algorithm, a greedy signal decomposition

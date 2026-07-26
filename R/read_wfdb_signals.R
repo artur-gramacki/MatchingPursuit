@@ -11,18 +11,18 @@
 #' file describing how to interpret the data. In some cases, additional annotation
 #' files such as \code{.atr} may be present, containing beat labels or rhythm annotations.
 #'
-#' @param file Path to the ECG record to be read.
+#' @param file Path to the WFDB record to be read.
 #'
 #' @importFrom EGM read_wfdb
 #' @importFrom tools file_path_sans_ext
 #'
-#' @return An object of class \code{ecg}. The returned value is a list containing:
+#' @return An object of class \code{wfdb}. The returned value is a list containing:
 #'
 #' \describe{
-#'   \item{signal}{Matrix of signals stored in the ECG file.}
+#'   \item{signal}{Matrix of signals stored in the WFDB file.}
 #'   \item{sampling_frequency}{Sampling frequency.}
 #'   \item{time_stamps}{Time vector corresponding to signal samples.}
-#'   \item{lead_names}{Names of the ECG leads (channels).}
+#'   \item{lead_names}{Names of the WFDB leads (channels).}
 #'   \item{record_name}{Name of the file.}
 #' }
 #'
@@ -32,14 +32,14 @@
 #' # ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
 #' file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
 #'
-#' out <- read_ecg_signals(file)
+#' out <- read_wfdb_signals(file)
 #' head(out$signal)
 #' out$sampling_frequency
 #' out$lead_names
 #'
 #' plot(out, begin = 0, end = 10, panel_height = 1.5)
 #'
-read_ecg_signals <- function(file) {
+read_wfdb_signals <- function(file) {
 
   if (!file.exists(file)) stop("File does not exist: ", file)
 
@@ -54,7 +54,7 @@ read_ecg_signals <- function(file) {
 
   channels <- length(out$header$number)
 
-  # First column contains time, remaining columns are ECG channels.
+  # First column contains time, remaining columns are WFDB channels.
   signal <- as.matrix(out$signal[, 2:(channels + 1)])
 
   lead_names <- colnames(signal)
@@ -66,12 +66,12 @@ read_ecg_signals <- function(file) {
 
   result <- list(
     signal = signal,
-    time_stamps = time_stamps,
     sampling_frequency = sampling_frequency,
+    time_stamps = time_stamps,
     lead_names = lead_names,
     record_name = record_name
   )
 
-  class(result) <- "ecg"
+  class(result) <- "wfdb"
   return(result)
 }

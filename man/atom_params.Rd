@@ -21,7 +21,7 @@ A data frame containing the atom parameters stored in the database:
 \item{position}{Position of the atom in time.}
 }
 \description{
-Reads atom parameters stored in a SQLite database created by \code{empi_execute()} function.
+Reads the atom parameters from a SQLite database produced by \code{empi_execute()}.
 }
 \examples{
 # Example database containing data from 18 channels

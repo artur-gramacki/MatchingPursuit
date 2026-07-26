@@ -18,6 +18,7 @@
 #' \describe{
 #'   \item{signal}{Data frame containing all signals (rows = samples, columns = channels).}
 #'   \item{sampling_frequency}{Sampling frequency.}
+#'   \item{time_stamps}{Time vector corresponding to signal samples.}
 #' }
 #'
 #' @export
@@ -34,6 +35,8 @@
 #' signal <- read_csv_signals(file, col_names = "signal_1")
 #' head(signal$signal)
 #' signal$sampling_frequency
+#' head(signal$time_stamps)
+#' tail(signal$time_stamps)
 #'
 #' file <- system.file("extdata", "sample2.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file, col_names = c("signal_1"))
@@ -95,7 +98,14 @@ read_csv_signals <- function(file, col_names = NULL, col_names_in_csv = FALSE) {
     colnames(signal) <- cols
   }
 
-  return(list(
+  time_stamps <- seq(0, by = 1 / sf, length.out = nrow(signal))
+
+  result <- list(
     signal = signal,
-    sampling_frequency = sf))
+    sampling_frequency = sf,
+    time_stamps = time_stamps
+  )
+
+  class(result) <- "sig"
+  return(result)
 }

@@ -214,7 +214,7 @@ mp_omp_execute <- function (
   if (mode == "mp" && fit_intercept) {
     warning("'fit_intercept' is ignored when mode = 'mp'.")
   }
-sss
+
   if (!is.matrix(signal)) {
     if (is.vector(signal) || is.data.frame(signal)) {
       signal <- as.matrix(signal)

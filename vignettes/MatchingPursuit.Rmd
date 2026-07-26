@@ -567,10 +567,10 @@ Reading an example ECG signal (`.dat` and `.hea` files). The signal is
 Hz. The channels have standard names. The data comes from the repository
 available at [PhysioNet](https://physionet.org/content/ptb-xl/1.0.3/).
 
-```{r read_ecg_signals, include = TRUE, echo = TRUE, warning = FALSE}
+```{r read_wfdb_signals, include = TRUE, echo = TRUE, warning = FALSE}
 file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
 
-out_ecg <- read_ecg_signals(file)
+out_ecg <- read_wfdb_signals(file)
 
 head(out_ecg$signals)
 out_ecg$sampling_frequency
@@ -628,9 +628,9 @@ out <- tf_map(
 The package also includes a function for displaying ECG signals in a
 layout corresponding to standard paper ECG printouts. A typical ECG
 paper layout was used, with a small grid of `0.04 s × 0.1 mV` and a
-large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot_ecg()`,
+large grid of `0.20 s × 0.5 mV`. To do this, you can use `plot.wfdb()`,
 the `S3` method for the generic `plot()` function. This function
-requires an object of class `ecg`, created with `read_ecg_signals()`.
+requires an object of class `ecg`, created with `read_wfdb_signals()`.
 
 ```{r plot_ecg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 plot(
@@ -727,13 +727,14 @@ normalized atoms $\|g_{\gamma}\|=1$ Matching Pursuit finds a sparse signal
 representation
 
 $$
-f \approx \sum_{n = 0}^{N} a_n g_{\gamma_n}
+f \approx \sum_{n = 0}^{N-1} a_n g_{\gamma_n}
 \tag{1}
-$$ where $a_n \in \mathbb{R}$ are coefficients, $g_{\gamma_n} \in D$ are
+$$ 
+where $a_n \in \mathbb{R}$ are coefficients, $g_{\gamma_n} \in D$ are
 atoms selected from the dictionary and $N$ is the desired number of
-iterations (or stopping threshold). In most practical cases \$ N
-\ll size(D)\$. Also, $g_{\gamma}$ is the dictionary atom indexed by
-$\gamma$ and $\Gamma$ is the set of all indices in the directory.
+iterations (or stopping threshold). In most practical cases $N
+\ll size(D)$. Also, $g_{\gamma}$ is the dictionary atom indexed by
+$\gamma$ and $\Gamma$ is the set of all indices in the dictionary.
 
 In the ideal case, the linear expansion (1) should include all atoms
 $g_{\gamma_n}$ that represent the relevant structures of the signal $f$.
@@ -803,7 +804,7 @@ for (i in c(1:n)) {
     xaxt = "t", yaxt = "t", bty = "or",
     cex.axis = 1, lwd = 2,
     main = main)
-  lines(gb$t, gb$cosinus, type = "l", col = "grey")
+  lines(gb$t, gb$cosine, type = "l", col = "grey")
   lines(gb$t, gb$gabor, col="blue", lwd = 2)
   
   s <- s + gb$gabor
@@ -827,7 +828,7 @@ $$
 f^0 = 0 \tag{4}
 $$ 
 
-For each iteration $n = \{0,1,\ldots, N\}$ we find
+For each iteration $n = \{0,1,\ldots, N-1\}$ we find
 $g_{\gamma_n} \in D$ such that the following inner product
 $\langle \cdot, \cdot \rangle$ is maximized
 
@@ -855,27 +856,36 @@ $$
 After $N$ iterations, the signal $f$ is approximated as
 
 $$
-f \approx \sum_{n = 0}^{N} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N} a_n g_{\gamma_n} \tag{9}
+f \approx \sum_{n = 0}^{N-1} \langle R^n,  g_{\gamma_n} \rangle g_{\gamma_n} = \sum_{n = 0}^{N-1} a_n g_{\gamma_n} \tag{9}
 $$ 
 
 or equivalently
 
 $$
-f = \sum_{n = 0}^{N} \langle R^n   g_{\gamma_n} \rangle g_{\gamma_n} + R^{N+1} \tag{10}
+f = \sum_{n = 0}^{N-1} \langle R^n, g_{\gamma_n} \rangle g_{\gamma_n} + R^{N} \tag{10}
 $$ 
 
-The procedure stops when $\|R^{n+1}\|$ is below a threshold or after
-a fixed number of iterations.
+The procedure stops when $\|R^{n+1}\|_2$ falls below a predefined
+threshold or when a fixed number of iterations has been reached
 
 It should be noted that finding an optimal approximation (1) is an
 NP-hard problem. A suboptimal solution can be obtained using an
-iterative procedure, such as the MP algorithm. Another key property of
-Matching Pursuit is energy conservation: the total energy of the signal is preserved
-in the Matching Pursuit decomposition.
+iterative procedure, such as the MP algorithm. 
+
+Another key property of
+MP is energy conservation: the total energy of the signal is preserved
+in the MP decomposition.
+
+Because the selected atoms are normalized, each MP iteration removes an amount of 
+squared $\ell_2$ energy equal to $|\langle R^n,g_{\gamma_n}\rangle|^2$ from the current 
+residual. Consequently, the signal energy can be decomposed as        
+
 
 $$
-||f||^2 = \sum_{n = 0}^{N} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N+1}||^2 \tag{11}
-$$ 
+||f||^2_2 = \sum_{n = 0}^{N-1} |\langle R^n,  g_{\gamma_n} \rangle |^2 + ||R^{N}||^2_2. \tag{11}
+$$
+
+This identity is sometimes referred to as the energy conservation property of Matching Pursuit.
 
 
 ```{r restore_par, include = FALSE}
@@ -887,59 +897,79 @@ par(old_par)
 ## The Orthogonal Matching Pursuit in a nutshell
 
 The package also provides an implementation of the Orthogonal Matching
-Pursuit (OMP) algorithm. OMP is closely related to Matching Pursuit
-but differs in the way the approximation coefficients are
-estimated.
+Pursuit (OMP) algorithm. OMP algorithm is closely related to
+MP, but differs in how approximation coefficients are estimated.
 
-In the classical Matching Pursuit algorithm, after selecting an atom, only the
-residual signal is updated (8). Previously selected atoms and their coefficients 
-$a_n$ remain unchanged. and are not recalculated in the next steps.v
+In the classical MP algorithm, after an atom has been selected, only
+the residual signal is updated (8). The previously selected
+atoms and their coefficients remain unchanged and are not re-estimated
+in subsequent iterations.
 
-OMP addresses this limitation by recomputing the coefficients $a_n$ of all
-selected atoms after each iteration. This makes the residue orthogonal to all 
-selected atoms.
+OMP addresses this limitation by recomputing the coefficients of all
+selected atoms after each atom selection. As a result, the new residual is
+orthogonal to the subspace spanned by all selected atoms.
 
-At each iteration, the next atom $g_{\gamma_n}$ is selected according to (5). 
-At this point, a fundamental difference with the Matching Pursuit algorithm appears. 
-The coefficients are obtained from a **least-squares problem**:
+At each iteration, OMP selects the next atom $g_{\gamma_n}$ by
+maximizing its correlation with the current residual, as in
+(7). The crucial difference from MP lies in the
+subsequent estimation of the coefficients. After the new atom has been
+added to the selected set, the coefficients are obtained by solving a
+least-squares problem
+
 
 $$
-a_n = 
+\mathbf{a}^{(n)}
+=
 \operatorname*{arg\,min}_{\mathbf{c}}
 \left\|
 f - D_n \mathbf{c}
-\right\|_2^2
+\right\|_2^2, \tag{12}
 $$
 
-and, assuming $D_n$ has full column rank
-$$
-a = (D_n^T D_n)^{-1}D_n^Tf
-$$
+where $D_n$ denotes the matrix whose columns are the atoms selected up to
+and including iteration $n$:
 
-where $D_k$ is the matrix containing the selected atoms. This is the core of OMP.
-Instead of just adding the contribution of the new atom (see (7)), OMP projects the 
-original signal $f$ orthogonally onto the space spanned by all currently selected atoms in $D_n$.
-Because the residual is orthogonal to the span of the selected atoms, a previously selected 
-atom has zero correlation with the residual and therefore cannot be selected again.
-
-Now, the new residual is calculated by subtracting the new approximation from the original signal. 
-The new residual is now completely orthogonal to all columns that have been selected so far
 
 $$
-R^{n+1} = f - D_n a_n
+D_n =
+[g_{\gamma_0},g_{\gamma_1},\ldots,g_{\gamma_n}]. \tag{13}
 $$
 
-Compared with Matching Pursuit, OMP usually provides:
+Assuming that $D_n$ has full column rank, the least-squares solution is
 
-1. more accurate signal reconstruction,
-2. sparser representations,
-3. can provide more compact representations in many practical cases.
+$$
+\mathbf{a}^{(n)}
+=
+(D_n^T D_n)^{-1}D_n^T f. \tag{14}
+$$
 
-The increased accuracy comes at the cost of higher computational complexity because 
-a least-squares problem must be solved after each iteration. 
-In practical OMP implementations (including ours), the least-squares problem is not 
-solved from scratch at each iteration. Instead, an incremental Cholesky factorization 
-is used to update the solution efficiently.
+This coefficient re-estimation is the core difference between OMP and
+MP. Instead of simply adding the contribution of the newly selected
+atom, as in (7), OMP projects the original signal $f$
+orthogonally onto the subspace spanned by all currently selected atoms.
+
+The new residual is then calculated as
+
+$$
+R^{n+1} = f - D_n \mathbf{a}^{(n)}. \tag{15}
+$$
+
+Because the residual is orthogonal to the span of the selected atoms,
+its correlation with every selected atom is zero. Consequently, a
+previously selected atom cannot be selected again.
+
+Compared with MP, OMP generally provides:
+1. More accurate signal reconstruction for a given number of selected atoms than MP,
+2. Potentially fewer selected atoms for a prescribed reconstruction accuracy,
+3. More stable coefficient estimates in the presence of correlated atoms.
+
+The increased accuracy comes at the cost of higher computational
+complexity because a least-squares problem must be solved after each
+iteration. In practical OMP implementations, including the
+implementation provided by our package, the least-squares problem need
+not be solved from scratch at each iteration. Instead, an incremental
+Cholesky factorization can be used to update the solution efficiently
+as new atoms are added to the selected set.
 
 [Back to menu](#top)
 
@@ -1039,6 +1069,7 @@ For simplicity, all four steps described above have been encapsulated in a singl
 out <- mp_omp_run_pipeline(
    mode = 'omp',          # or "mp" for classical Matching Pursuit
    sig_file = sig_file,
+   sig_file_type = "csv",
    col_names_in_csv = FALSE,
    xml_file = xml_file,
    topk = 5000,
@@ -1085,7 +1116,7 @@ The diagram below illustrates the three main workflows for running the MP, OMP, 
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 
- mp_omp_run_pipeline()   read_csv_signals()          read_csv_signals()
+ mp_omp_run_pipeline()     read_*_signals()            read_*_signals()
          |                         │                          │
          |                   read_dict()                      |             
          |                         │                          │
@@ -1098,6 +1129,9 @@ The diagram below illustrates the three main workflows for running the MP, OMP, 
                      ------------------------------------------
                                           |
                                    plot() / tf_map()
+                                   
+read_*_signals() - select the appropriate function depending on the file format:
+read_csv_signals(), read_edf_signals(), read_wfdb_signals()
 
 ```                
 

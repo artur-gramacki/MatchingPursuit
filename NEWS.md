@@ -6,6 +6,10 @@
 
 * A significantly expanded README.md file providing a much more detailed overview of the package.
 
+* `plot.ecg()` and `read_ecg_signals()` functions were renamed to `plot.wfdb()` and `read_wfdb_signals()`
+
+* Now functions `read_csv_signals()`, `read_edf_signals()` and `read_wfdb_signals()` return objects of class `sig`, `edf` and `wfdb` respectively.
+
 # MatchingPursuit 1.1.0
 
 * The project adopted a new naming convention for variables and functions, replacing dot-separated names (`name.of.some.variable`) with snake_case (`name_of_some_variable`).
