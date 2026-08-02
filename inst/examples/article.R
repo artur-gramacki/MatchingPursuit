@@ -346,6 +346,7 @@ for (m in 1:ncol(signal_eeg_f)) {
 # 256 Hz --> 64 Hz
 signal_eeg_f_r <- resample_signal(signal = signal_eeg_f, p = 1, q = 4)
 time_64 <- seq(0, nrow(signal_eeg_f_r) - 1) / (sampling_frequency / 4)
+sampling_frequency_r <- 64
 
 
 # EEG double banana ----
@@ -447,4 +448,12 @@ plot(
   txt_col = "blue",
   zero_line = TRUE,
   main = "EEG.edf file after filtering, resampling and banana montage"
+)
+
+
+plot(
+  x = eeg,
+  begin = 0,
+  end = 10
+  #main = "EEG.edf file before preprocessing"
 )

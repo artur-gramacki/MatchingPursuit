@@ -92,7 +92,7 @@ plot.edf <- function(
     line.cols <- rep("black", length.out = channels)
   }
 
-  if (is.null(main)) main <- paste("file name: ", x$record.name, sep = "")
+  if (is.null(main)) main <- paste("file name: ", x$record_name, sep = "")
 
   # Each column is centered around its median. In signals like EEG/EGM, this
   # helps remove the base-level offset (DC offset), making channels more comparable.

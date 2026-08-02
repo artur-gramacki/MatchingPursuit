@@ -1,6 +1,6 @@
-#' Resample a signal
+#' Resample a signal (upsampling or downsampling)
 #'
-#' Resamples one or more numeric signals using
+#' Resamples one or more dimensional numeric signals using
 #' \code{signal::resample()}.
 #'
 #' The new sampling frequency is determined by the ratio \code{p/q}:
