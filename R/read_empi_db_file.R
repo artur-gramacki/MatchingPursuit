@@ -8,11 +8,11 @@
 #' @return  An object of class \code{"mp"} containing:
 #' \describe{
 #'   \item{atoms}{A data frame describing the selected atoms.}
-#'   \item{original_signal}{Matrix containing the original signal(s).}
+#'   \item{signal}{Matrix containing the original signal(s).}
 #'   \item{reconstruction}{Matrix containing the reconstructed signal(s).}
-#'   \item{gabors}{List of matrices containing selected atoms for each channel.}
-#'   \item{t}{Time vector corresponding to signal samples.}
-#'   \item{sf}{Sampling frequency.}
+#'   \item{selected_atoms}{List of matrices containing selected atoms for each channel.}
+#'   \item{time}{Time vector corresponding to signal samples.}
+#'   \item{sampling_frequency}{Sampling frequency.}
 #' }
 #'
 #' @importFrom RSQLite dbConnect dbDisconnect dbListTables dbGetQuery
@@ -23,11 +23,11 @@
 #' file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
 #' out <- read_empi_db_file(file)
 #'
-#' n_channels <- ncol(out$original_signal)
-#' original_signal <- out$original_signal
+#' n_channels <- ncol(out$signal)
+#' signal <- out$signal
 #' reconstruction <- out$reconstruction
 #' t <- out$t
-#' sf <- out$sf
+#' sampling_frequency <- out$sampling_frequency
 #'
 #' old.par <- par("mfrow", "pty", "mai")
 #'
@@ -36,13 +36,13 @@
 #' par(mai = c(0.9, 0.5, 0.3, 0.4))
 #'
 #' plot(
-#'   original_signal[,1], type = "l", col = "blue",
+#'   signal[,1], type = "l", col = "blue",
 #'   main = paste("channel: ", 1, " / " , n_channels, " (original signal)",  sep = ""),
 #'   xaxt = "n", ylab = "", xlab = "time [sec]"
 #' )
 #'
-#' len <- length(original_signal[, 1])
-#' lab <- seq(t[1], t[len] + 1 / sf, length.out = 11)
+#' len <- length(signal[, 1])
+#' lab <- seq(t[1], t[len] + 1 / sampling_frequency, length.out = 11)
 #' axis(side = 1, las = 1, cex.axis = 0.9, at = seq(0, len, length.out = 11), labels = lab)
 #'
 #' plot(
@@ -90,13 +90,13 @@ read_empi_db_file <- function(db_file) {
   dbDisconnect(con)
 
   # sampling rate in Hz
-  sf <- as.numeric(data_frames[["metadata"]]$value[3])
+  sampling_frequency <- as.numeric(data_frames[["metadata"]]$value[3])
 
   # number of samples
   epoch_size <- data_frames[["segments"]]$sample_count
 
   # number of seconds
-  s <- epoch_size / sf
+  s <- epoch_size / sampling_frequency
 
   # number of channels
   n_channels <- length(data_frames[["samples"]]$channel_id)
@@ -126,7 +126,7 @@ read_empi_db_file <- function(db_file) {
   # We read the input data from the .db file (they are stored there as float32 numbers)
   # For example: c0 74 23 f3  =  -3.81469
 
-  original_signal <- matrix(nrow = epoch_size, ncol = n_channels)
+  signal <- matrix(nrow = epoch_size, ncol = n_channels)
 
   for (k in 1:n_channels) {
     temp <- data_frames[["samples"]][["samples_float32"]][k]
@@ -137,7 +137,7 @@ read_empi_db_file <- function(db_file) {
       # to the order expected by readBin().
       b2 <- paste(b[4], b[3], b[2], b[1], sep = "")
       # https://stackoverflow.com/questions/39461349/converting-hex-format-to-float-numbers-in-r
-      original_signal[i, k] <-
+      signal[i, k] <-
         readBin(as.raw(strtoi(substring(b2, (step <- seq(1, nchar(b2), by = 2)), step + 1), 16)), "double", n = 1, size = 4)
     }
 
@@ -146,7 +146,7 @@ read_empi_db_file <- function(db_file) {
   # tail(atoms)
 
   reconstruction <- matrix(0, nrow = epoch_size, ncol = n_channels)
-  gabors <- list()
+  selected_atoms <- list()
 
   for (k in 1:n_channels) {
     rows <- which(atoms$channel_id == k)
@@ -157,26 +157,26 @@ read_empi_db_file <- function(db_file) {
     for (i in 1:n_atoms) {
       gab <- gabor_fun(
         number_of_samples = epoch_size,
-        sampling_frequency = sf,
+        sampling_frequency = sampling_frequency,
         mean = atoms_channel$position[i],
         phase = atoms_channel$phase[i],
         sigma = atoms_channel$scale[i],
         frequency = atoms_channel$frequency[i],
         normalization = TRUE
       )
-      reconstruction[, k] <- reconstruction[, k] + gab$gabor * sqrt(atoms_channel$energy[i] * sf)
+      reconstruction[, k] <- reconstruction[, k] + gab$gabor * sqrt(atoms_channel$energy[i] * sampling_frequency)
 
       g[, i] <- gab$gabor
     }
-    gabors[[k]] <- g
+    selected_atoms[[k]] <- g
   }
   output <- list(
     atoms = atoms,
-    original_signal = original_signal,
+    signal = signal,
     reconstruction = reconstruction,
-    gabors = gabors,
-    t = gab$t,
-    sf = sf)
+    selected_atoms = selected_atoms,
+    time = gab$t,
+    sampling_frequency = sampling_frequency)
 
   class(output) <- "mp"
   return(output)

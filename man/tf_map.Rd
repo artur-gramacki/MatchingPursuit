@@ -104,8 +104,8 @@ Regardless of the output mode, the function also returns:
 
     \item{gabor_functions}{All Gabor functions.}
     \item{reconstruction}{Reconstructed signal.}
-    \item{original_signal}{ Original signal.}
-    \item{sf}{Sampling frequency.}
+    \item{signal}{ Original signal.}
+    \item{sampling_frequency}{Sampling frequency.}
     \item{grid_size_t}{Grid size along the time axis.}
     \item{grid_size_f}{Grid size along the frequency axis.}
     \item{epochSize}{Epoch size in samples.}

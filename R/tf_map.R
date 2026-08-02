@@ -85,8 +85,8 @@
 #'
 #'     \item{gabor_functions}{All Gabor functions.}
 #'     \item{reconstruction}{Reconstructed signal.}
-#'     \item{original_signal}{ Original signal.}
-#'     \item{sf}{Sampling frequency.}
+#'     \item{signal}{ Original signal.}
+#'     \item{sampling_frequency}{Sampling frequency.}
 #'     \item{grid_size_t}{Grid size along the time axis.}
 #'     \item{grid_size_f}{Grid size along the frequency axis.}
 #'     \item{epochSize}{Epoch size in samples.}
@@ -242,26 +242,26 @@ tf_map <- function(
   if (length(which(out$atoms$channel_id == channel)) == 0)
     stop("There is no channel number ", channel, ".")
 
-  sf <- out$sf
+  sampling_frequency <- out$sampling_frequency
 
   if (is.null(freq_divide)) {
     rows <- which(out$atoms$channel_id == channel)
     ff <- max(out$atoms$frequency[rows])
-    freq_divide <- (out$sf / 2) / ff
+    freq_divide <- (sampling_frequency / 2) / ff
     # cat("max atom frequency: ", ff, "\n", sep = "")
     # cat("freq_divide: ", freq_divide, "\n", sep = "")
   }
 
-  # sf / 2: according to the Nyquist criterion
-  maxf <- ceiling((sf / 2) / freq_divide)
+  # sampling_frequency / 2: according to the Nyquist criterion
+  maxf <- ceiling((sampling_frequency / 2) / freq_divide)
 
   epochSize <- length(out$t)
-  s <- epochSize / sf
+  s <- epochSize / sampling_frequency
 
   # grid size in t
   t <- seq(from = 0, to = s, length.out = epochSize)
 
-  # grid size in sf
+  # grid size in sampling_frequency
   y <- seq(from = 0, to = maxf, length.out = maxf * increase_factor)
 
   # t-f map
@@ -278,12 +278,12 @@ tf_map <- function(
   scale <- out$atoms$scale[rows]
   position <- out$atoms$position[rows]
   frequency <- out$atoms$frequency[rows]
-  original_signal <- out$original_signal[, channel]
+  signal <- out$signal[, channel]
   reconstruction <- out$reconstruction[, channel]
   gabors <- out$gabors[[channel]]
 
   # Signal energy
-  o <- round(sum(original_signal^2), 2)
+  o <- round(sum(signal^2), 2)
   r <- round(sum(reconstruction^2), 2)
 
   if (verbose) {
@@ -291,7 +291,7 @@ tf_map <- function(
       "Channel number: ", channel, "\n",
       "Total channels: ", total_channels, "\n",
       "Number of atoms: ", length(rows), "\n",
-      "Sampling frequency: ", sf, " Hz", "\n",
+      "Sampling frequency: ", sampling_frequency, " Hz", "\n",
       "Epoch size (in points): ", epochSize, "\n",
       "Signal length (in seconds): ", s, "\n",
       "\nEnergy of the original signal:      ",o, "\n",
@@ -315,7 +315,7 @@ tf_map <- function(
         lab <- seq(from = 0, to = ceiling(tail(t, 1)), length.out = 11)
         axis(
           side = 1, las = 1, cex.axis = 0.9,
-          at = seq(from = 0, to = ceiling(tail(t * sf, 1)), length.out = 11),
+          at = seq(from = 0, to = ceiling(tail(t * sampling_frequency, 1)), length.out = 11),
           labels = c(formatC(lab, format = "f", digits = 2))
         )
       } else {
@@ -369,13 +369,13 @@ tf_map <- function(
     }
 
     if (mode == "sqrt")
-      A  <- sqrt(energy[n] * sf)
+      A  <- sqrt(energy[n] * sampling_frequency)
 
     if (mode == "log")
-      A  <- log(energy[n] * sf)
+      A  <- log(energy[n] * sampling_frequency)
 
     if (mode == "linear")
-      A  <- energy[n] * sf
+      A  <- energy[n] * sampling_frequency
 
     # from Heisenberg rule: delta_t x delta_omega >= 1/2
     radius_x <- (scale[n] / 2) / shortening_factor_x
@@ -418,7 +418,7 @@ tf_map <- function(
     plot.new()
     plot.window(range(t), range(y))
     rasterImage(tf_map_rot90, 0, 0, tail(t, 1), tail(y, 1))
-    main_txt <- paste("channel: ", channel, "/", total_channels, ", sampling rate: ", sf, " Hz", sep = "")
+    main_txt <- paste("channel: ", channel, "/", total_channels, ", sampling rate: ", sampling_frequency, " Hz", sep = "")
     title(main_txt)
 
     lab <- seq(from = 0, to = ceiling(tail(t, 1)), length.out = 11)
@@ -457,9 +457,9 @@ tf_map <- function(
       grid(col = "grey")
 
     if (plot_signals) {
-      sig_range <- range(original_signal)
-      xx <- seq(from = 0, to = epochSize / sf, length.out =  epochSize)
-      plot(x = xx, original_signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
+      sig_range <- range(signal)
+      xx <- seq(from = 0, to = epochSize / sampling_frequency, length.out =  epochSize)
+      plot(x = xx, signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
            main = "Original signal", panel.first = grid())
       abline(h = 0, col = "blue")
 
@@ -529,8 +529,8 @@ tf_map <- function(
     atoms = out$atoms,
     gabor_functions = gabors,
     reconstruction = reconstruction,
-    original_signal = original_signal,
-    sf = sf,
+    signal = signal,
+    sampling_frequency = sampling_frequency,
     grid_size_t = t,
     grid_size_f = y,
     epochSize = epochSize,

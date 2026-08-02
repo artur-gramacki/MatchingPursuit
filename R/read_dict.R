@@ -5,7 +5,7 @@
 #' @param xml_file
 #' Path to the XML file containing the dictionary definition.
 #'
-#' @param sf
+#' @param sampling_frequency
 #' Sampling frequency (in Hz) of the signal associated with the  dictionary.
 #'
 #' @param duration
@@ -121,8 +121,8 @@
 #'   col_names_in_csv = TRUE
 #' )
 #'
-#' sf <- sample3$sampling_frequency
-#' duration <- nrow(sample3$signal) / sf
+#' sampling_frequency <- sample3$sampling_frequency
+#' duration <- nrow(sample3$signal) / sampling_frequency
 #'
 #' # +---------------------------------------------------------------+
 #' # | Read dictionary definition                                    |
@@ -135,7 +135,7 @@
 #'
 #' atoms_dict <- read_dict(
 #'   xml_file,
-#'   sf,
+#'   sampling_frequency,
 #'   duration,
 #'   verbose = TRUE
 #' )
@@ -183,9 +183,9 @@
 #' }
 #' close(con)
 #'
-read_dict <- function (xml_file, sf, duration, verbose = FALSE) {
+read_dict <- function (xml_file, sampling_frequency, duration, verbose = FALSE) {
 
-  signal_length <- sf * duration
+  signal_length <- sampling_frequency * duration
 
   # Parse XML
   doc <- read_xml(xml_file)
@@ -242,11 +242,11 @@ read_dict <- function (xml_file, sf, duration, verbose = FALSE) {
 
     for (t in time_positions) {
       for (k in freq_bins) {
-        freq_hz <- k * sf / fft_size
+        freq_hz <- k * sampling_frequency / fft_size
         atom <- list(
           block = block_id,
           time_sample = t,
-          time_sec = t / sf,
+          time_sec = t / sampling_frequency,
           freq_bin = k,
           freq_hz = freq_hz,
           window_len = window_len,

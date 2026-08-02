@@ -4,12 +4,12 @@
 \alias{read_dict}
 \title{Read dictionary of Gabor atoms from XML file}
 \usage{
-read_dict(xml_file, sf, duration, verbose = FALSE)
+read_dict(xml_file, sampling_frequency, duration, verbose = FALSE)
 }
 \arguments{
 \item{xml_file}{Path to the XML file containing the dictionary definition.}
 
-\item{sf}{Sampling frequency (in Hz) of the signal associated with the  dictionary.}
+\item{sampling_frequency}{Sampling frequency (in Hz) of the signal associated with the  dictionary.}
 
 \item{duration}{Duration of the signal (in seconds) used to determine the number
 of valid time positions.}
@@ -117,8 +117,8 @@ sample3 <- read_csv_signals(
   col_names_in_csv = TRUE
 )
 
-sf <- sample3$sampling_frequency
-duration <- nrow(sample3$signal) / sf
+sampling_frequency <- sample3$sampling_frequency
+duration <- nrow(sample3$signal) / sampling_frequency
 
 # +---------------------------------------------------------------+
 # | Read dictionary definition                                    |
@@ -131,7 +131,7 @@ xml_file <- system.file(
 
 atoms_dict <- read_dict(
   xml_file,
-  sf,
+  sampling_frequency,
   duration,
   verbose = TRUE
 )

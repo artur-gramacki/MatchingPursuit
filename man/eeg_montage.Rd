@@ -12,7 +12,9 @@ eeg_montage(
 )
 }
 \arguments{
-\item{x}{Object of class \code{edf} (from \code{read_edf_signals()}).}
+\item{x}{Object of class \code{edf} (from \code{read_edf_signals()}) or
+data frame with samples in rows and channels in columns.
+The data frame must have column names corresponding to channel names.}
 
 \item{montage_type}{A character string specifying the montage type.
 \itemize{
@@ -30,7 +32,7 @@ An object of class \code{edf}, which is a list with fields:
 
 \item{signal}{Data frame containing all signal channels.}
 \item{sampling_frequency}{Sampling frequency.}
-\item{time_stamps}{Time stamps.}
+\item{time}{Time stamps.}
 \item{signal_names}{Names of the signal channels.}
 \item{record_name}{Name of the EDF file.}
 }

@@ -190,7 +190,7 @@ plot(
 # +-------------------------------------------------------------+
 # STEP 1 - Read sample data.
 file_00001_lr_hea <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
-out_ecg <- read_ecg_signals(file_00001_lr_hea)
+out_ecg <- read_wfdb_signals(file_00001_lr_hea)
 
 # Create a list compatible with the empi.execute() function.
 signal_ecg <- list(

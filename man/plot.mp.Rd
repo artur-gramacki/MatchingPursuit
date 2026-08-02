@@ -71,10 +71,10 @@ file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read_csv_signals(file, col_names = "ch1")
 
 # Execute the MP algorithm.
-mp_class <- empi_execute(signal = signal)
+out_empi <- empi_execute(signal = signal)
 
 # Plot a time-frequency map based on MP atoms.
-plot(mp_class)
+plot(out_empi)
 }
 
 }

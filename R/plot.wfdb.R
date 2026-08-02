@@ -80,7 +80,7 @@ plot.wfdb <- function(
   }
 
   wfdb <- as.matrix(x$signal)
-  sf <- x$sampling_frequency
+  sampling_frequency <- x$sampling_frequency
   channels <- ncol(wfdb)
 
   main <- paste("record name: ", x$record_name, sep = "")
@@ -91,8 +91,8 @@ plot.wfdb <- function(
   md <- apply(wfdb, 2, median)
   wfdb <- sweep(wfdb, 2, md, "-")
 
-  from <- begin * sf
-  to <- end * sf
+  from <- begin * sampling_frequency
+  to <- end * sampling_frequency
 
   wfdb <- wfdb[from:to, ]
 
@@ -100,10 +100,10 @@ plot.wfdb <- function(
   n <- nrow(wfdb)
 
   # time points
-  t <- seq(begin, by = 1 / sf, length.out = n)
+  t <- seq(begin, by = 1 / sampling_frequency, length.out = n)
 
   # duration of wfdb signal (in sec.)
-  duration <- n / sf
+  duration <- n / sampling_frequency
 
   # panel_height - single strip height (mV)
   ph2 <- panel_height / 2

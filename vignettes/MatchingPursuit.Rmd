@@ -327,16 +327,16 @@ sampling_frequency_r
 ```
 
 ```{r sampling.results, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
+par(mfrow = c(2, 1), pty = "m", mai = c(0.6, 0.5, 0.4, 0.5), par(mgp = c(1.5, 0.5, 0)))
 
 # Not-filtered signal (raw signal).
 plot(
   signal_eeg[, 1],
   type = "l",
-  panel_first = grid(),
+  panel.first = grid(),
   main = "Original signal (256 Hz), channel #1",
   xlab = "sample points",
-  ylab = "",
+  ylab = "Amplitude",
   col = "blue"
 )
 
@@ -344,10 +344,10 @@ plot(
 plot(
   signal_eeg_r[, 1],
   type = "l",
-  panel_first = grid(),
+  panel.first = grid(),
   main = "Signal after downsampling (64 Hz), channel #1",
   xlab = "sample points",
-  ylab = "",
+  ylab = "Amplitude",
   col = "blue"
 )
 
@@ -393,7 +393,7 @@ analysis.
 ```{r eeg_filtering, include = TRUE, echo = TRUE, warning = FALSE}
 # Filter parameters that will be used (quite typical in filtering EEG signals).
 fc <- filters_coeff(
-   sf = sampling_frequency,
+   sampling_frequency = sampling_frequency,
    notch = c(49, 51),
    lowpass = 40,
    highpass = 1,
@@ -417,28 +417,35 @@ removed from the signal.
 
 ```{r no_filtering_and_filtering_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
 ch <- 1
-par(mfrow = c(2, 1), pty = "m", mai = c(0.8, 0.5, 0.5, 0.5))
+par(mfrow = c(2, 1), pty = "m", mai = c(0.6, 0.5, 0.4, 0.5), par(mgp = c(1.5, 0.5, 0)))
+
+time <- seq(0, nrow(signal_eeg) - 1) / sampling_frequency
+sr <- range(signal_eeg_m[, ch])
 
 # Not-filtered signal (raw signal).
 plot(
+  time,
   signal_eeg_m[, ch],
   type = "l",
   panel_first = grid(),
-  main = paste(colnames(signal_eeg_m)[ch], " (raw signal, channel #1)", sep = ""),
-  xlab = "sample points",
-  ylab = "",
-  col = "blue"
+  main = paste("Original EEG signal, channel #1 (", colnames(signal_eeg_m)[ch], ")", sep = ""),
+  xlab = "Time (s)",
+  ylab = "Amplitude",
+  col = "blue",
+  ylim = sr
 )
 
 # Signal after filtering.
 plot(
+  time,
   signal_eeg_m_f[, ch],
   type = "l",
   panel.first = grid(),
-  main = paste(colnames(signal_eeg_m)[ch], " (filtered signal, channel #1)", sep = ""),
-  xlab = "sample points",
-  ylab = "",
-  col = "blue"
+  main = paste("EEG signal after preprocessing, channel #1 (", colnames(signal_eeg_m)[ch], ")", sep = ""),
+  xlab = "Time (s)",
+  ylab = "Amplitude",
+  col = "blue",
+  ylim = sr
 )
 
 par(old_par)
@@ -503,7 +510,7 @@ out <- tf_map(
 ### Step 7 (optional) {.unnumbered}
 
 The package also includes a function for displaying EEG signals. To do
-this, you can use `plot_eeg()`, the `S3` method for the generic `plot()`
+this, you can use `plot.edf()`, the `S3` method for the generic `plot()`
 function. This function requires an object of class `edf`, created with
 `read_edf_signals()`.
 
@@ -727,7 +734,7 @@ normalized atoms $\|g_{\gamma}\|=1$ Matching Pursuit finds a sparse signal
 representation
 
 $$
-f \approx \sum_{n = 0}^{N-1} a_n g_{\gamma_n}
+f \approx \sum_{n = 0}^{N-1} a_n g_{\gamma_n},
 \tag{1}
 $$ 
 where $a_n \in \mathbb{R}$ are coefficients, $g_{\gamma_n} \in D$ are
@@ -752,7 +759,7 @@ real-valued Gabor function has the following form:
 $$
 g_{\gamma}(t) = 
 K(\gamma) e^{- \pi \left( \frac{t-\mu}{\sigma} \right) ^2}
-\cos(\omega (t - \mu) + \phi) \tag{2}
+\cos(\omega (t - \mu) + \phi), \tag{2}
 $$
 
 where $\gamma = (\mu, \omega, \sigma, \phi)$ constitute a
@@ -825,7 +832,7 @@ $$
 and 
 
 $$
-f^0 = 0 \tag{4}
+f^0 = 0. \tag{4}
 $$ 
 
 For each iteration $n = \{0,1,\ldots, N-1\}$ we find
@@ -833,7 +840,7 @@ $g_{\gamma_n} \in D$ such that the following inner product
 $\langle \cdot, \cdot \rangle$ is maximized
 
 $$
-g_{\gamma_n} = \operatorname*{arg\,max}_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle | \tag{5}
+g_{\gamma_n} = \operatorname*{arg\,max}_{\gamma \in \Gamma} | \langle R^{n}, g_{\gamma} \rangle |. \tag{5}
 $$ 
 The coefficients $a_n$ in (1) are
 
@@ -844,13 +851,13 @@ $$
 and updated function approximation is defined as
 
 $$
-f^{n+1} = f^{n} + a_n g_{\gamma_n} \tag{7}
+f^{n+1} = f^{n} + a_n g_{\gamma_n}. \tag{7}
 $$ 
 
 Similarly, updated residual is defined as
 
 $$
-R^{n+1} = R^{n} - a_n g_{\gamma_n} \tag{8}
+R^{n+1} = R^{n} - a_n g_{\gamma_n}. \tag{8}
 $$ 
 
 After $N$ iterations, the signal $f$ is approximated as
@@ -862,7 +869,7 @@ $$
 or equivalently
 
 $$
-f = \sum_{n = 0}^{N-1} \langle R^n, g_{\gamma_n} \rangle g_{\gamma_n} + R^{N} \tag{10}
+f = \sum_{n = 0}^{N-1} \langle R^n, g_{\gamma_n} \rangle g_{\gamma_n} + R^{N}. \tag{10}
 $$ 
 
 The procedure stops when $\|R^{n+1}\|_2$ falls below a predefined
@@ -1000,14 +1007,14 @@ sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 sample1 <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
 
 signal <- sample1$signal
-sf <- sample1$sampling_frequency
-duration <- nrow(sample1$signal) / sf
+sampling_frequency <- sample1$sampling_frequency
+duration <- nrow(sample1$signal) / sampling_frequency
 
 xml_file <- system.file("extdata", "sample1_dict.xml", package = "MatchingPursuit")
 
 atoms_dict <- read_dict(
   xml_file, 
-  sf, 
+  sampling_frequency, 
   duration, 
   verbose = TRUE)
 ```
@@ -1022,7 +1029,7 @@ with the highest similarities to the analysed signal.
 dict_topk <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -1041,7 +1048,7 @@ fit <- mp_omp_execute(
   mode = 'omp',          # or "mp" for classical Matching Pursuit
   dictionary = dict_topk,
   signal = signal,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
@@ -1164,7 +1171,7 @@ Assume that the analyzed signal is sampled at $1\;024$ Hz and has a duration of 
 With a shift of one sample ($S = 1$), the number of possible window positions is
 
 $$
-N_{\text{windows}} = N - L + 1 = 1\;024 - 17 + 1 = 1\;008.
+N_{\text{windows}} = N - L + 1 = 1\;024 - 17 + 1 = 1\;008
 $$
 
 ### Number of frequency bins {.unnumbered}
@@ -1173,7 +1180,7 @@ $$
 For an FFT size of $32$, the number of positive frequency bins is
 
 $$
-N_{\text{freq}} = \frac{32}{2} = 16.
+N_{\text{freq}} = \frac{32}{2} = 16
 $$
 Only positive frequencies are considered, excluding the Nyquist component. $512$ is omitted, so we have $16$ different frequencies. Therefore, the frequencies are:
 
@@ -1186,7 +1193,7 @@ $$
 
 $$
 N_{\text{atoms}} = N_{\text{windows}} \times N_{\text{freq}}
-= 1\;008 \times 16 = 16\;128.
+= 1\;008 \times 16 = 16\;128
 $$
 
 In other words, for each of the $1\;008$ possible positions of the $17$-sample window, $16$ atoms corresponding to different FFT frequencies are generated.

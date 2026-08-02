@@ -25,7 +25,7 @@
 #' @param signal A numeric vector, matrix, or data frame representing the signal(s)
 #'   to be analyzed. Each column is treated as a separate channel.
 #'
-#' @param sf Sampling frequency (Hz) of the signal.
+#' @param sampling_frequency Sampling frequency (Hz) of the signal.
 #'
 #' @param topk Number of best atoms to select per signal.
 #'   If \code{NULL}, defaults to \code{ceiling(0.05 * nrow(atoms_dict))}.
@@ -73,9 +73,9 @@
 #'   col_names_in_csv = TRUE
 #' )
 #'
-#' sf <- sample3$sampling_frequency
+#' sampling_frequency <- sample3$sampling_frequency
 #' signal <- sample3$signal
-#' duration <- nrow(sample3$signal) / sf
+#' duration <- nrow(sample3$signal) / sampling_frequency
 #'
 #' # +-------------------------------------------------------------+
 #' # | Step 2: Read dictionary                                     |
@@ -88,7 +88,7 @@
 #'
 #' atoms_dict <- read_dict(
 #'   xml_file,
-#'   sf,
+#'   sampling_frequency,
 #'   duration,
 #'   verbose = TRUE
 #' )
@@ -104,7 +104,7 @@
 #'   atoms_dict = atoms_dict,
 #'   signal = signal,
 #'   sigma_divisor = NULL,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   topk = 5000,
 #'   verbose = TRUE
 #' )
@@ -122,7 +122,7 @@
 #'   mode = "omp",
 #'   dictionary = out_topk_atoms,
 #'   signal = signal,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   n_nonzero_coefs = 50
 #' )
 #'
@@ -147,7 +147,7 @@
 #' # +-------------------------------------------------------------+
 #' plot(fit_1, channel = 3)
 #'
-topk_atoms <- function(atoms_dict, signal, sf, topk = NULL, sigma_divisor = NULL, verbose = FALSE) {
+topk_atoms <- function(atoms_dict, signal, sampling_frequency, topk = NULL, sigma_divisor = NULL, verbose = FALSE) {
 
   if (!is.matrix(signal)) {
     if (is.vector(signal) || is.data.frame(signal)) {
@@ -247,7 +247,7 @@ topk_atoms <- function(atoms_dict, signal, sf, topk = NULL, sigma_divisor = NULL
       freq <- topk_atoms_dict[j, "freq_hz"]
       window_len <- topk_atoms_dict[j, "window_len"]
 
-      n0 <- as.integer(time * sf) + 1
+      n0 <- as.integer(time * sampling_frequency) + 1
       n <- 0:(window_len - 1)
       c <- (window_len - 1) / 2
 
@@ -266,7 +266,7 @@ topk_atoms <- function(atoms_dict, signal, sf, topk = NULL, sigma_divisor = NULL
       # Final real-valued atom with optimal phi ----
       #       ^^^^^^^^^^^^^^^^      ^^^^^^^^^^^
       # ------------------------------------------------------------------+
-      carrier <- cos(2 * pi * freq * n / sf + phi)
+      carrier <- cos(2 * pi * freq * n / sampling_frequency + phi)
       atom <- w * carrier
       x <- rep(0, N)
       x[n0:end_idx] <- atom[1:valid_len]
@@ -280,10 +280,10 @@ topk_atoms <- function(atoms_dict, signal, sf, topk = NULL, sigma_divisor = NULL
 
       atoms_mtx[, j] <- x
       times_vec[j] <- time
-      times_center_vec[j] <- (time + (window_len / (2 * sf)))
+      times_center_vec[j] <- (time + (window_len / (2 * sampling_frequency)))
       freq_vec[j] <- freq
-      sigma_vec[j] <- sigma / sf
-      window_len_vec[j] <- window_len / sf
+      sigma_vec[j] <- sigma / sampling_frequency
+      window_len_vec[j] <- window_len / sampling_frequency
       phase_vec[j] <- phi
 
     } ### for (j in topk_idx)

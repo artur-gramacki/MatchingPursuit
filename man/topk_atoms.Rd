@@ -7,7 +7,7 @@
 topk_atoms(
   atoms_dict,
   signal,
-  sf,
+  sampling_frequency,
   topk = NULL,
   sigma_divisor = NULL,
   verbose = FALSE
@@ -22,7 +22,7 @@ and \code{window_len}. Other columns are ignored.}
 \item{signal}{A numeric vector, matrix, or data frame representing the signal(s)
 to be analyzed. Each column is treated as a separate channel.}
 
-\item{sf}{Sampling frequency (Hz) of the signal.}
+\item{sampling_frequency}{Sampling frequency (Hz) of the signal.}
 
 \item{topk}{Number of best atoms to select per signal.
 If \code{NULL}, defaults to \code{ceiling(0.05 * nrow(atoms_dict))}.}
@@ -78,9 +78,9 @@ sample3 <- read_csv_signals(
   col_names_in_csv = TRUE
 )
 
-sf <- sample3$sampling_frequency
+sampling_frequency <- sample3$sampling_frequency
 signal <- sample3$signal
-duration <- nrow(sample3$signal) / sf
+duration <- nrow(sample3$signal) / sampling_frequency
 
 # +-------------------------------------------------------------+
 # | Step 2: Read dictionary                                     |
@@ -93,7 +93,7 @@ xml_file <- system.file(
 
 atoms_dict <- read_dict(
   xml_file,
-  sf,
+  sampling_frequency,
   duration,
   verbose = TRUE
 )
@@ -109,7 +109,7 @@ out_topk_atoms <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
   sigma_divisor = NULL,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -127,7 +127,7 @@ fit_1 <- mp_omp_execute(
   mode = "omp",
   dictionary = out_topk_atoms,
   signal = signal,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 50
 )
 

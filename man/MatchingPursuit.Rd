@@ -73,7 +73,7 @@ Example datasets available via the \code{system.file()} function:
        \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
      }
    \item \code{sample1_dict.xml}, \code{sample2_dict.xml}, \code{sample3_dict.xml}, \code{sample3_dict_EMPI.xml},
-   \code{EEG_bipolar_filtered.xml}, \code{sample1_dict_one_block.xml}
+   \code{EEG_bipolar_filtered_dict.xml}, \code{one_block_dict.xml}, \code{00001_lr_dict.xml}
      \itemize{
        \item XML files describing a multiscale Gabor dictionary.
        \item such files can be generated from the EMPI program executed with the \code{--dictionary-output}

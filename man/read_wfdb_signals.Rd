@@ -33,6 +33,20 @@ A WFDB record typically consists of two main files:
 file describing how to interpret the data. In some cases, additional annotation
 files such as \code{.atr} may be present, containing beat labels or rhythm annotations.
 }
+\note{
+The function \code{EGM::read_wfdb()} from version 0.2.0 of the
+\code{EGM} package does not support multi-frequency signals. Consequently,
+records containing different numbers of samples per frame, as indicated by
+the \code{16x2}, \code{16x4}, and \code{16x1} specifications below, cannot
+be read correctly.
+
+\verb{
+multi_freq_test 3 100 1000
+multi_freq_test.dat 16x2 200.0(0)/mV 16 0 0 258 0 ECG
+multi_freq_test.dat 16x4 400.0(0)/mmHg 16 0 400 57824 0 ABP
+multi_freq_test.dat 16x1 100.0(0)/pm 16 0 0 18204 0 RESP
+}
+}
 \examples{
 # ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
 file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")

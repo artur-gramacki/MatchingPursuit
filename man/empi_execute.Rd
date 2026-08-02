@@ -37,11 +37,11 @@ Results of signal decomposition using the MP algorithm. An object of class
 to a SQLite file in the \code{path} directory.
 
 \item{atoms}{A data frame describing the selected atoms.}
-\item{original_signal}{Matrix containing the original signal(s).}
+\item{signal}{Matrix containing the original signal(s).}
 \item{reconstruction}{Matrix containing the reconstructed signal(s).}
-\item{gabors}{List of matrices containing selected atoms for each channel.}
-\item{t}{Time vector corresponding to signal samples.}
-\item{sf}{Sampling frequency.}
+\item{selected_atoms}{List of matrices containing selected atoms for each channel.}
+\item{time}{Time vector corresponding to signal samples.}
+\item{sampling_frequency}{Sampling frequency.}
 }
 \description{
 Runs the EMPI program for the given data (signal).

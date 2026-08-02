@@ -87,7 +87,7 @@
 #'
 #' atoms_dict <- read_dict(
 #'   xml_file,
-#'   sf = 128,
+#'   sampling_frequency = 128,
 #'   duration = 2,
 #'   verbose = TRUE
 #' )

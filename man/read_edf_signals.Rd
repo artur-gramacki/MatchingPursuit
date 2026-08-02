@@ -19,20 +19,20 @@ read_edf_signals(
 \item{resampling}{If \code{TRUE}, all signals are resampled
 (either upsampled or downsampled), depending on the original sampling rates of the channels.}
 
-\item{sf_new}{Target sampling frequency used for upsampling or downsampling.}
-
 \item{from}{Starting time of the signal to be loaded (in seconds).}
 
 \item{to}{Ending time of the signal to be loaded (in seconds).}
 
 \item{verbose}{Logical flag indicating whether progress information should be printed.}
+
+\item{sampling_frequency_new}{Target sampling frequency used for upsampling or downsampling.}
 }
 \value{
 An object of class \code{edf}, which is a list with fields:
 
 \item{signal}{Data frame containing all signal channels.}
 \item{sampling_frequency}{Sampling frequency after optional resampling.}
-\item{time_stamps}{Time stamps after optional resampling.}
+\item{time}{Time stamps after optional resampling.}
 \item{signal_names}{Names of the signal channels.}
 \item{record_name}{Name of the EDF file.}
 }

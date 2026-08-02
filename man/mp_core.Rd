@@ -45,9 +45,9 @@ unit \eqn{\ell_2} norm before decomposition.}
 A list containing the result of the Matching Pursuit
 decomposition with the following elements:
 
-\item{gabors}{Matrix of selected atoms (dictionary columns) used in the
+\item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
   reconstruction.}
-\item{original_signal}{The original signal reconstructed as a vector.}
+\item{signal}{The original signal reconstructed as a vector.}
 \item{reconstruction}{The MP approximation of the signal.}
 \item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
 \item{energy}{Energy contribution of selected atoms, computed as \code{coefs^2}.}

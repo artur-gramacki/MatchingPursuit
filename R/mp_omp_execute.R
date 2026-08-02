@@ -20,7 +20,7 @@
 #' containing the signal(s) to decompose. Signals are assumed to be stored in
 #' columns.
 #'
-#' @param sf Sampling frequency of the signal in Hertz.
+#' @param sampling_frequency Sampling frequency of the signal in Hertz.
 #'
 #' @param n_nonzero_coefs Maximum number of atoms selected during the decomposition
 #' for each signal channel.
@@ -44,9 +44,9 @@
 #' \item{atoms}{A data frame describing the selected atoms.}
 #' \item{original_signal}{Matrix containing the original signal(s).}
 #' \item{reconstruction}{Matrix containing the reconstructed signal(s).}
-#' \item{gabors}{List of matrices containing selected atoms for each channel.}
+#' \item{selected_atoms}{List of matrices containing selected atoms for each channel.}
 #' \item{t}{Time vector corresponding to signal samples.}
-#' \item{sf}{Sampling frequency.}
+#' \item{sampling_frequency}{Sampling frequency.}
 #'
 #' The \code{atoms} data frame contains:
 #'
@@ -105,9 +105,9 @@
 #'   col_names_in_csv = TRUE
 #' )
 #'
-#' sf <- sample$sampling_frequency
+#' sampling_frequency <- sample$sampling_frequency
 #' signal <- sample$signal
-#' duration <- nrow(signal) / sf
+#' duration <- nrow(signal) / sampling_frequency
 #'
 #' # +-------------------------------------------------------------+
 #' # | Step 2: Read dictionary definition                          |
@@ -120,7 +120,7 @@
 #'
 #' atoms_dict <- read_dict(
 #'   xml_file = xml_file,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   duration = duration,
 #'   verbose = TRUE
 #' )
@@ -131,7 +131,7 @@
 #' topk_dict <- topk_atoms(
 #'   atoms_dict = atoms_dict,
 #'   signal = signal,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   topk = 5000,
 #'   verbose = TRUE
 #' )
@@ -143,7 +143,7 @@
 #'   mode = "omp",
 #'   dictionary = topk_dict,
 #'   signal = signal,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   n_nonzero_coefs = 20,
 #'   verbose = TRUE,
 #'   fit_intercept = FALSE,
@@ -160,7 +160,7 @@
 #'   mode = "mp",
 #'   dictionary = topk_dict,
 #'   signal = signal,
-#'   sf = sf,
+#'   sampling_frequency = sampling_frequency,
 #'   n_nonzero_coefs = 20,
 #'   verbose = TRUE
 #' )
@@ -195,7 +195,7 @@ mp_omp_execute <- function (
     mode = NULL,
     dictionary,
     signal,
-    sf,
+    sampling_frequency,
     n_nonzero_coefs = NULL,
     tol = NULL,
     normalize = TRUE,
@@ -209,10 +209,6 @@ mp_omp_execute <- function (
 
   if (!mode %in% c("mp", "omp")) {
     stop("'mode' must be either 'mp' or 'omp'.")
-  }
-
-  if (mode == "mp" && fit_intercept) {
-    warning("'fit_intercept' is ignored when mode = 'mp'.")
   }
 
   if (!is.matrix(signal)) {
@@ -271,21 +267,21 @@ mp_omp_execute <- function (
   phase <- c()
   scale <- c()
   position <- c()
-  gabors <-list()
+  selected_atoms <-list()
 
   n_channels <- length(results)
-  n_samples <- nrow(results[[1]]$gabors)
-  t <- seq(0, (n_samples - 1) / sf, by = 1 / sf)
+  n_samples <- nrow(results[[1]]$selected_atoms)
+  t <- seq(0, (n_samples - 1) / sampling_frequency, by = 1 / sampling_frequency)
 
   original_signal <- matrix(NA, nrow = n_samples, ncol = n_channels)
   reconstruction <- matrix(NA, nrow = n_samples, ncol = n_channels)
 
   for (r in 1:n_channels) {
 
-    num_atoms <- ncol(results[[r]]$gabors)
-    gabors[[r]] <- results[[r]]$gabors
-    reconstruction[, r] <- results[[r]]$gabors %*% results[[r]]$coefs
-    original_signal[, r] <- results[[r]]$original_signal
+    num_atoms <- ncol(results[[r]]$selected_atoms)
+    selected_atoms[[r]] <- results[[r]]$selected_atoms
+    reconstruction[, r] <- results[[r]]$selected_atoms %*% results[[r]]$coefs
+    original_signal[, r] <- results[[r]]$signal
 
     i1 <- rep(r, num_atoms)
     channel_id <- c(channel_id, i1)
@@ -323,11 +319,11 @@ mp_omp_execute <- function (
     scale,
     position
   )
-  result$original_signal <- original_signal
+  result$signal <- original_signal
   result$reconstruction <- reconstruction
-  result$gabors <- gabors
-  result$t <- t
-  result$sf <- sf
+  result$selected_atoms <- selected_atoms
+  result$time <- t
+  result$sampling_frequency <- sampling_frequency
   class(result) <- "mp"
 
 

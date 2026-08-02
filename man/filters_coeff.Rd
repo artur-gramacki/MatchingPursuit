@@ -5,7 +5,7 @@
 \title{A wrapper function for \code{signal::butter()} function}
 \usage{
 filters_coeff(
-  sf = 256,
+  sampling_frequency = 256,
   notch = c(49, 51),
   notch_order = 2,
   lowpass = 30,
@@ -19,7 +19,7 @@ filters_coeff(
 )
 }
 \arguments{
-\item{sf}{Sampling frequency.}
+\item{sampling_frequency}{Sampling frequency.}
 
 \item{notch}{Vector of two frequencies for notch filter.}
 
@@ -63,7 +63,7 @@ signal <- out$signal
 sampling_frequency <- out$sampling_frequency
 
 fc <- filters_coeff(
-  sf = sampling_frequency,
+  sampling_frequency = sampling_frequency,
   notch = c(49, 51),
   lowpass = 40,
   highpass = 1,

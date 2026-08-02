@@ -8,7 +8,7 @@
 #' @param resampling If \code{TRUE}, all signals are resampled
 #' (either upsampled or downsampled), depending on the original sampling rates of the channels.
 #'
-#' @param sf_new Target sampling frequency used for upsampling or downsampling.
+#' @param sampling_frequency_new Target sampling frequency used for upsampling or downsampling.
 #'
 #' @param from Starting time of the signal to be loaded (in seconds).
 #'
@@ -28,7 +28,7 @@
 #'
 #' \item{signal}{Data frame containing all signal channels.}
 #' \item{sampling_frequency}{Sampling frequency after optional resampling.}
-#' \item{time_stamps}{Time stamps after optional resampling.}
+#' \item{time}{Time stamps after optional resampling.}
 #' \item{signal_names}{Names of the signal channels.}
 #' \item{record_name}{Name of the EDF file.}
 #'
@@ -85,13 +85,13 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
     freq <- edf_obj[["header.signal"]][[i]]$samplingrate
     sig <- edf_obj[["signal"]][[i]][["data"]]
     t <- edf_obj[["signal"]][[i]][["t"]]
-    sf <- edf_obj[["header.signal"]][[i]][["samplingrate"]]
+    sampling_frequency <- edf_obj[["header.signal"]][[i]][["samplingrate"]]
 
     signal_names[i] <- lab
 
     if (resampling) {
-      sig_len <- length(sig) / sf
-      sig_new <- signal::resample(sig, p = sf_new, q = sf, d = 5)
+      sig_len <- length(sig) / sampling_frequency
+      sig_new <- signal::resample(sig, p = sf_new, q = sampling_frequency, d = 5)
       t_new <- seq(0, sig_len - (1 / sf_new), by = 1 / sf_new)
       if (verbose) {
         message(
@@ -99,7 +99,7 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
           "sf original: ", freq, " Hz, ",
           "sf new: ", sf_new, " Hz, ",
           "samples: ", length(sig_new), ", ",
-          "length: ", length(sig) / sf, " sec.")
+          "length: ", length(sig) / sampling_frequency, " sec.")
 
         flush.console()
       }
@@ -124,16 +124,16 @@ read_edf_signals <- function(file, resampling = FALSE, sf_new = NULL, from = NUL
     # }
   } # for (i in 1:n_sigs)
 
-  if (!resampling) sf_new <- sf
+  if (!resampling) sf_new <- sampling_frequency
 
   if (!is.null(from) && !is.null(to)) {
-    edf_mtx <- edf_mtx[seq(from * sf + 1, to * sf / (sf / sf_new)), ]
+    edf_mtx <- edf_mtx[seq(from * sampling_frequency + 1, to * sampling_frequency / (sampling_frequency / sf_new)), ]
   }
 
   result <- list(
     signal = as.data.frame(edf_mtx),
     sampling_frequency = sf_new,
-    time_stamps = t_new,
+    time = t_new,
     signal_names = signal_names,
     record_name = basename(file)
   )

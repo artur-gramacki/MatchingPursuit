@@ -46,9 +46,9 @@
 #' A list containing the result of the Matching Pursuit
 #' decomposition with the following elements:
 #'
-#' \item{gabors}{Matrix of selected atoms (dictionary columns) used in the
+#' \item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
 #'   reconstruction.}
-#' \item{original_signal}{The original signal reconstructed as a vector.}
+#' \item{signal}{The original signal reconstructed as a vector.}
 #' \item{reconstruction}{The MP approximation of the signal.}
 #' \item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
 #' \item{energy}{Energy contribution of selected atoms, computed as \code{coefs^2}.}
@@ -239,10 +239,10 @@ mp_core <- function(
   coefs <- coefs[1:k]
   relative_residual_energy <- relative_residual_energy[1:(k + 1)]
   # for k = 1 it can return a vector, not a matrix. Then 'drop = FALSE' prevents this
-  gabors <- D_norm[, support, drop = FALSE]
+  selected_atoms <- D_norm[, support, drop = FALSE]
 
-  # as atoms are normalized ||g||= 1, colSums(gabors^2) is always 1
-  # energy <- coefs^2 * colSums(gabors^2)
+  # as atoms are normalized ||g||= 1, colSums(selected_atoms^2) is always 1
+  # energy <- coefs^2 * colSums(selected_atoms^2)
   energy <- coefs^2
 
   if (is_topk) {
@@ -254,10 +254,10 @@ mp_core <- function(
 
   if (is_topk) {
     list(
-      gabors = gabors,
-      original_signal = sig,
+      selected_atoms = selected_atoms,
+      signal = sig,
       reconstruction = as.vector(sig - residual),
-      #reconstruction2 = gabors %*% coefs,
+      #reconstruction2 = selected_atoms %*% coefs,
       coefs = coefs,
       energy = energy,
       support = support,
@@ -271,10 +271,10 @@ mp_core <- function(
     )
   } else {
     list(
-      gabors = gabors,
-      original_signal = sig,
+      selected_atoms = selected_atoms,
+      signal = sig,
       reconstruction = as.vector(sig - residual),
-      #reconstruction2 = gabors %*% coefs,
+      #reconstruction2 = selected_atoms %*% coefs,
       coefs = coefs,
       energy = energy,
       support = support,

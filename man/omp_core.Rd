@@ -49,7 +49,7 @@ are centered before decomposition and an intercept term is estimated.}
 A list containing the result of the Orthogonal Matching Pursuit
 decomposition with the following elements:
 
-\item{gabors}{Matrix of selected atoms (dictionary columns) used in the
+\item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
   reconstruction.}
 \item{original_signal}{The original signal reconstructed as a vector
   (including intercept if \code{fit_intercept = TRUE}).}

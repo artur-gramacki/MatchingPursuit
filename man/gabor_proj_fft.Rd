@@ -32,11 +32,11 @@ and tests.
 }
 \examples{
 signal <- as.matrix(rnorm(256))
-sf <- 256
+sampling_frequency <- 256
 duration <- 1
 
 xml_file <- system.file("extdata", "one_block_dict.xml", package = "MatchingPursuit")
-block <- read_dict(xml_file, sf, duration, verbose = TRUE)
+block <- read_dict(xml_file, sampling_frequency, duration, verbose = TRUE)
 my_list <- gabor_proj_fft(block, signal)
 
 pmm <- my_list$proj_mod_mtx

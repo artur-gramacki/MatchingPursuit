@@ -7,7 +7,9 @@
 #' 1) Bipolar Montage, 2) Referential (Monopolar) Montage, and
 #' 3) Average Reference Montage.
 #'
-#' @param x Object of class \code{edf} (from \code{read_edf_signals()}).
+#' @param x Object of class \code{edf} (from \code{read_edf_signals()}) or
+#' data frame with samples in rows and channels in columns.
+#' The data frame must have column names corresponding to channel names.
 #'
 #' @param montage_type A character string specifying the montage type.
 #' \itemize{
@@ -23,7 +25,7 @@
 #'
 #' \item{signal}{Data frame containing all signal channels.}
 #' \item{sampling_frequency}{Sampling frequency.}
-#' \item{time_stamps}{Time stamps.}
+#' \item{time}{Time stamps.}
 #' \item{signal_names}{Names of the signal channels.}
 #' \item{record_name}{Name of the EDF file.}
 #'
@@ -74,13 +76,15 @@ eeg_montage <- function(
     ref_channel = NULL,
     bipolar_pairs = NULL) {
 
-  if (!inherits(x, "edf")) {
-    stop("'x' must be an object of class 'edf'.")
+  is_edf <- inherits(x, "edf")
+
+  if (is_edf) {
+    eeg_data <- x$signal
   }
 
-  montage_type <- match.arg(montage_type)
-
-  eeg_data <- x$signal
+  if (!is_edf) {
+    eeg_data <- x
+  }
 
   if (!is.data.frame(eeg_data)) {
     stop("'signal' must be a data frame with samples in rows and channels in columns.")
@@ -89,6 +93,9 @@ eeg_montage <- function(
   if (is.null(colnames(eeg_data))) {
     stop("Signal data must have column names corresponding to channel names.")
   }
+
+
+  montage_type <- match.arg(montage_type)
 
   if (montage_type == "average") {
     avg_signal <- rowMeans(eeg_data)
@@ -137,14 +144,18 @@ eeg_montage <- function(
     colnames(result) <- new_names
   }
 
-    result <- list(
+  if (is_edf) {
+    out <- list(
       signal = as.data.frame(result),
       sampling_frequency = x$sampling_frequency,
-      time_stamps = x$time_stamps,
+      time = x$time,
       signal_names = new_names,
       record_name = x$record_name
     )
+    class(out) <- "edf"
+  } else {
+    out = result
+  }
 
-    class(result) <- "edf"
-    return(result)
+  return(out)
 }

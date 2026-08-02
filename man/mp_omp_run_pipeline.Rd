@@ -58,7 +58,7 @@ An object of class \code{"mp"} containing:
 \item{reconstruction}{Matrix containing the reconstructed signal(s).}
 \item{gabors}{List of matrices containing selected atoms for each channel.}
 \item{t}{Time vector corresponding to signal samples.}
-\item{sf}{Sampling frequency.}
+\item{sampling_frequency}{Sampling frequency.}
 }
 \description{
 Executes the complete Orthogonal Matching Pursuit (OMP) or Matching Pursuit

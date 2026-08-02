@@ -52,7 +52,7 @@
 #' A list containing the result of the Orthogonal Matching Pursuit
 #' decomposition with the following elements:
 #'
-#' \item{gabors}{Matrix of selected atoms (dictionary columns) used in the
+#' \item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
 #'   reconstruction.}
 #' \item{original_signal}{The original signal reconstructed as a vector
 #'   (including intercept if \code{fit_intercept = TRUE}).}
@@ -350,8 +350,8 @@ omp_core <- function(
   # Output
   if (inherits(dictionary, "topk")) {
     list(
-      gabors = selected_atoms,
-      original_signal = sig_original,
+      selected_atoms = selected_atoms,
+      signal = sig_original,
       reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
       coefs = coefs_selected,
       energy = energy,
@@ -367,8 +367,8 @@ omp_core <- function(
     )
   } else {
     list(
-      gabors = selected_atoms,
-      original_signal = sig_original,
+      selected_atoms = selected_atoms,
+      signal = sig_original,
       reconstruction = as.vector(selected_atoms %*% coefs_selected + intercept),
       coefs = coefs_selected,
       energy = energy,

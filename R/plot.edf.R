@@ -83,7 +83,7 @@ plot.edf <- function(
   par(bg = bg_colour)
 
   eeg <- as.matrix(x$signal)
-  sf <- x$sampling_frequency
+  sampling_frequency <- x$sampling_frequency
   channels <- ncol(eeg)
 
   if (rainbow) {
@@ -100,8 +100,8 @@ plot.edf <- function(
   md <- apply(eeg, 2, median)
   eeg <- sweep(eeg, 2, md, "-")
 
-  from <- begin * sf
-  to <- end * sf
+  from <- begin * sampling_frequency
+  to <- end * sampling_frequency
 
   eeg <- eeg[from:to, ]
 
@@ -109,10 +109,10 @@ plot.edf <- function(
   n <- nrow(eeg)
 
   # time points
-  t <- seq(begin, by = 1 / sf, length.out = n)
+  t <- seq(begin, by = 1 / sampling_frequency, length.out = n)
 
   # duration of EEG signal (in sec.)
-  duration <- n / sf
+  duration <- n / sampling_frequency
 
   if (is.null(panel_height)) {
     panel_height <- ceiling(max(abs(range(eeg)))) / 2

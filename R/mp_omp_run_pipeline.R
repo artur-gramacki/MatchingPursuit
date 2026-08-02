@@ -54,7 +54,7 @@
 #' \item{reconstruction}{Matrix containing the reconstructed signal(s).}
 #' \item{gabors}{List of matrices containing selected atoms for each channel.}
 #' \item{t}{Time vector corresponding to signal samples.}
-#' \item{sf}{Sampling frequency.}
+#' \item{sampling_frequency}{Sampling frequency.}
 #'
 #' @export
 #'
@@ -159,13 +159,13 @@ mp_omp_run_pipeline <- function(
     )
   }
 
-  sf <- sig$sampling_frequency
+  sampling_frequency <- sig$sampling_frequency
   signal <- sig$signal
-  duration <- nrow(signal) / sf
+  duration <- nrow(signal) / sampling_frequency
 
   atoms_dict <- read_dict(
     xml_file = xml_file,
-    sf = sf,
+    sampling_frequency = sampling_frequency,
     duration = duration,
     verbose = verbose
   )
@@ -173,7 +173,7 @@ mp_omp_run_pipeline <- function(
   topk_dict <- topk_atoms(
     atoms_dict = atoms_dict,
     signal = signal,
-    sf = sf,
+    sampling_frequency = sampling_frequency,
     topk = topk,
     verbose = verbose
   )
@@ -183,7 +183,7 @@ mp_omp_run_pipeline <- function(
     mode = "omp",
     dictionary = topk_dict,
     signal = signal,
-    sf = sf,
+    sampling_frequency = sampling_frequency,
     n_nonzero_coefs = n_nonzero_coefs,
     tol = tol,
     normalize = normalize,
@@ -196,7 +196,7 @@ mp_omp_run_pipeline <- function(
       mode = "mp",
       dictionary = topk_dict,
       signal = signal,
-      sf = sf,
+      sampling_frequency = sampling_frequency,
       n_nonzero_coefs = n_nonzero_coefs,
       tol = tol,
       normalize = normalize,

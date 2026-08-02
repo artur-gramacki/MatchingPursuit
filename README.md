@@ -10,7 +10,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchingPursuit)](https
 
 ## Purpose
 
-Sparse signal decomposition framework for one- and multi-channel biomedical and general time series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit ** algorithms.
+Sparse signal decomposition framework for one- and multi-channel biomedical and general time series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit** algorithms.
 
 Supported features:
 
@@ -26,6 +26,11 @@ Supported features:
 - Plotting time–frequency maps based on MP, OMP and EMPI results
 - Pre-filtering signals using notch, low-pass, high-pass, band-pass, and band-stop filters 
 
+Note:
+
+The terms **MP-R** and **OMP-R** with a suffix **R** refer to the corresponding backends rather than to algorithms. The terms **MP** and **OMP** without a suffix **R** refer to the corresponding algorithms rather than to a specific implementation.
+
+
 ## Installation
 
 You can install the released version from
@@ -37,7 +42,7 @@ install.packages("MatchingPursuit")
 
 ## Quick start
 
-### MP and OMP
+### MP-R and OMP-R
 The typical workflow consists of four steps:
 
 1. Read a signal.
@@ -87,9 +92,9 @@ The package contains three computational backends designed for different purpose
 
 | Backend                               | Main functions   | Purpose                                          | Recommended use                |
 |:--------------------------------------|:-----------------|:-------------------------------------------------|:-------------------------------|
-| **Optimized C++ backend (EMPI)**      | `empi_execute()` | Large datasets and production analyses           | Optimized implementation       |
-| **Matching Pursuit (MP)**             | `mp_core()`      | Learning, debugging and experimentation          | Reference implementation       |
-| **Orthogonal Matching Pursuit (OMP)** | `omp_core()`     | Greedy sparse solver with orthogonal projections | Higher reconstruction accuracy |
+| **EMPI**      | `empi_execute()` | Large datasets and production analyses           | Optimized implementation       |
+| **MP-R**             | `mp_core()`      | Learning, debugging and experimentation          | Reference implementation       |
+| **OMP-R** | `omp_core()`     | Greedy sparse solver with orthogonal projections | Higher reconstruction accuracy |
 
 Notes:
 
@@ -103,14 +108,14 @@ It performs dictionary construction, atom selection, and reconstruction internal
 3. Orthogonal Matching Pursuit extends the classical Matching Pursuit algorithm by recomputing 
 coefficients using orthogonal projections, often yielding more accurate sparse approximations.
 
-4. Unlike the MP/OMP workflow, which explicitly constructs a dictionary
+4. Unlike the MP-R/OMP-R workflow, which explicitly constructs a dictionary
 (`read_dict()`) and selects candidate atoms (`topk_atoms()`), EMPI performs
 these steps internally as part of a single optimized C++ pipeline.
 
 5. As a result:
 
-- MP/OMP provides full transparency and control over each stage
-- EMPI provides significantly higher performance with minimal user overhead
+- MP-R/OMP-R backends provides full transparency and control over each stage
+- EMPI backend provides significantly higher performance with minimal user overhead
 
 ## Typical workflow
  
@@ -119,7 +124,7 @@ these steps internally as part of a single optimized C++ pipeline.
                                          |
                       -----------------------------------------
                       |                                       |
-              MP / OMP workflow                         EMPI workflow
+           MP-R / OMP-R workflow                         EMPI workflow
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 

@@ -4,7 +4,7 @@
 #' Implements notch, low-pass, high-pass, band-pass, and band-stop filters
 #' with specified frequency ranges and Butterworth filter order.
 #'
-#' @param sf Sampling frequency.
+#' @param sampling_frequency Sampling frequency.
 #'
 #' @param notch Vector of two frequencies for notch filter.
 #'
@@ -48,7 +48,7 @@
 #' sampling_frequency <- out$sampling_frequency
 #'
 #' fc <- filters_coeff(
-#'   sf = sampling_frequency,
+#'   sampling_frequency = sampling_frequency,
 #'   notch = c(49, 51),
 #'   lowpass = 40,
 #'   highpass = 1,
@@ -77,7 +77,7 @@
 #' plot(signal_filt[, 1], type = "l", panel.first = grid())
 #'
 filters_coeff <- function (
-    sf = 256,
+    sampling_frequency = 256,
     notch = c(49, 51), notch_order = 2,
     lowpass = 30, lowpass_order = 4,
     highpass = 1, highpass_order = 4,
@@ -85,9 +85,9 @@ filters_coeff <- function (
     bandstop = c(0.5, 40), bandstop_order = 4)
 {
 
-  if (sf <= 0) stop("Sampling frequency must be positive.")
+  if (sampling_frequency <= 0) stop("Sampling frequency must be positive.")
 
-  nyq <- sf / 2
+  nyq <- sampling_frequency / 2
 
   if (any(notch <= 0 | notch >= nyq)) stop("Notch frequencies must be between 0 and Nyquist frequency.")
 
