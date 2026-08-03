@@ -36,14 +36,14 @@
 #'      \itemize{
 #'        \item 19 EEG channels + 1 EDF_Annotations channel
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec.
-#'        \item channel names: Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations
+#'        \item channel names: \code{Fp1, Fp2, F3, F4, F7, F8, Fz, C3, C4, Cz, T3, T5, T4, T6, P3, P4, Pz, O1, O2, EDF_Annotations}
 #'      }
 #'    \item \code{EEG_filter_resample_montage.db}, \code{EEG_filter_resample_montage.csv}, \code{EEG_filter_resample_montage.bin}
 #'      \itemize{
 #'        \item 18 EEG channels after application of the double-banana montage, resampling and filtering of the \code{EEG.edf} data
 #'        \item sampling frequency: 256 Hz, signal length: 10 sec (64 Hz after resampling).
-#'        \item channel names: Fp2_F4, F4_C4, C4_P4, P4_O2, Fp1_F3, F3_C3, C3_P3, P3_O1, Fp2_F8, F8_T4,
-#'                             T4_T6, T6_O2, Fp1_F7, F7_T3, T3_T5, T5_O1, Fz_Cz, Cz_Pz
+#'        \item channel names: \code{Fp2_F4, F4_C4, C4_P4, P4_O2, Fp1_F3, F3_C3, C3_P3, P3_O1, Fp2_F8, F8_T4,
+#'                             T4_T6, T6_O2, Fp1_F7, F7_T3, T3_T5, T5_O1, Fz_Cz, Cz_Pz}
 #'      }
 #'    \item \code{sample1.csv}, \code{sample1.db}
 #'      \itemize{

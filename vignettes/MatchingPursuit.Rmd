@@ -521,7 +521,24 @@ plot(
   bg_colour = "white",
   txt_col = "blue",
   zero_line = TRUE,
-  main = "EEG.edf file after filtering, resampling and banana montage"
+  main = "EEG after filtering, resampling, and double banana montage"
+)
+```
+
+The same approach can be used to visualize the original EEG recording before filtering, resampling, and montage construction.
+
+```{r plot_orig_eeg, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+
+plot(
+  x = eeg,
+  begin = 0,
+  end = 10,
+  panel_height = NULL,
+  rainbow = FALSE,
+  bg_colour = "white",
+  txt_col = "blue",
+  zero_line = TRUE,
+  main = "Original EEG before preprocessing"
 )
 ```
 
