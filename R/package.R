@@ -64,7 +64,7 @@
 #'      \itemize{
 #'        \item Example ECG recording from \url{https://physionet.org/content/ptb-xl/1.0.3/}
 #'        \item 12 ECG leads, 10 sec, 16-bit integer format
-#'        \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
+#'        \item standard lead names: \code{I, II, III, aVR, aVL, aVF, V1–V6}
 #'      }
 #'    \item \code{sample1_dict.xml}, \code{sample2_dict.xml}, \code{sample3_dict.xml}, \code{sample3_dict_EMPI.xml},
 #'    \code{EEG_filter_resample_montage_dict.xml}, \code{one_block_dict.xml}, \code{00001_lr_dict.xml}
