@@ -2,7 +2,7 @@
 % Please edit documentation in R/resample_signal.R
 \name{resample_signal}
 \alias{resample_signal}
-\title{Resample a signal}
+\title{Resample a signal (upsampling or downsampling)}
 \usage{
 resample_signal(signal, p, q, d = 5)
 }
@@ -23,7 +23,7 @@ A numeric vector, matrix, or data frame containing the resampled
   for matrices and data frames.
 }
 \description{
-Resamples one or more numeric signals using
+Resamples one or more dimensional numeric signals using
 \code{signal::resample()}.
 }
 \details{

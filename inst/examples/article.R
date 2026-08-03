@@ -366,10 +366,10 @@ signal_eeg_f_r_m <- eeg_montage(
   bipolar_pairs = pairs
 )
 
-# Original signal (first 6 rows, first 6 channels).
+# Signal after filtering and resampling (first 4 rows, first 6 channels).
 signal_eeg_f_r[1:4, 1:6]
 
-# Signal after banana montage (first 6 rows, first 6 channels).
+# Signal after banana montage (first 4 rows, first 6 channels).
 signal_eeg_f_r_m[1:4, 1:6]
 
 # EEG T-F ----

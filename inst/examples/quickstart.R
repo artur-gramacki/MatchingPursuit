@@ -48,15 +48,15 @@ sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 sample1 <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
 
 signal <- sample1$signal
-sf <- sample1$sampling_frequency
-duration <- nrow(sample1$signal) / sf
+sampling_frequency <- sample1$sampling_frequency
+duration <- nrow(sample1$signal) / sampling_frequency
 
 # STEP 2 - Read dictionary.
 xml_file <- system.file("extdata", "sample1_dict.xml", package = "MatchingPursuit")
 
 atoms_dict <- read_dict(
   xml_file,
-  sf,
+  sampling_frequency,
   duration,
   verbose = TRUE)
 
@@ -64,7 +64,7 @@ atoms_dict <- read_dict(
 dict_topk <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -74,7 +74,7 @@ fit <- mp_omp_execute(
   mode = "omp",
   dictionary = dict_topk,
   signal = signal,
-  sf = sf,
+  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
@@ -141,7 +141,7 @@ bip_montage <- eeg_montage(out_EEG, montage_type = c("bipolar"), bipolar_pairs =
 # This step is typically required during EEG processing.
 # Define commonly used EEG filtering parameters.
 fc <- filters_coeff(
-  sf = sampling_frequency,
+  sampling_frequency = sampling_frequency,
   notch = c(49, 51),
   lowpass = 40,
   highpass = 1,

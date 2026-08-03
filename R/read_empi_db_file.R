@@ -20,7 +20,7 @@
 #' @export
 #'
 #' @examples
-#' file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
+#' file <- system.file("extdata", "EEG_filter_resample_montage.db", package = "MatchingPursuit")
 #' out <- read_empi_db_file(file)
 #'
 #' n_channels <- ncol(out$signal)

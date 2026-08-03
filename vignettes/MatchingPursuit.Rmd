@@ -115,10 +115,8 @@ signals. The functionality of the package includes:
 ## Naming convention
 In this vignette, we use the following naming convention:
 
--  **MP** denotes a pure R implementation of the Matching Pursuit algorithm.
-- **OMP** denotes a pure R implementation of the Orthogonal Matching Pursuit algorithm.
-- **EMPI** denotes an implementation of the Matching Pursuit algorithm provided as an 
-external tool by Piotr T. Różański, available on [GitHub](https://github.com/develancer/empi).
+- The terms **MP-R** and **OMP-R** with a suffix **R** refer to the corresponding backends rather than to algorithms. The terms **MP** and **OMP** without a suffix **R** refer to the corresponding algorithms rather than to a specific implementation.
+- **EMPI** refers to the external backend implementing the Matching Pursuit algorithm, developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
 
 [Back to menu](#top)
 
@@ -302,87 +300,13 @@ standard names.
 file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
 
 # Read signal parameters and display them in a tabular form.
-read_edf_params(file)
-```
-
-### Step 2 (sometimes required) {.unnumbered}
-
-Sometimes it is necessary to change the sampling frequency (increase —
-*upsampling* or decrease — *downsampling*). The `read_edf_signals()`
-function provides this functionality. In the example below, the original
-sampling frequency is reduced from 256 Hz to 64 Hz.
-
-```{r read_edf_signal_resampling, include = TRUE, echo = TRUE, warning = FALSE}
-# Original signal
-eeg <- read_edf_signals(file, resampling = FALSE, from = 0, to = 10)
+eeg <- read_edf_signals(file)
 signal_eeg <- eeg$signal
 sampling_frequency <- eeg$sampling_frequency
-sampling_frequency
-
-# Resampled signal
-eeg_resampled <- read_edf_signals(file, resampling = TRUE, sf_new = 64, from = 0, to = 10)
-signal_eeg_r <- eeg_resampled$signal
-sampling_frequency_r <- eeg_resampled$sampling_frequency
-sampling_frequency_r
+time <- seq(0, nrow(signal_eeg) - 1) / sampling_frequency
 ```
 
-```{r sampling.results, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-par(mfrow = c(2, 1), pty = "m", mai = c(0.6, 0.5, 0.4, 0.5), par(mgp = c(1.5, 0.5, 0)))
-
-# Not-filtered signal (raw signal).
-plot(
-  signal_eeg[, 1],
-  type = "l",
-  panel.first = grid(),
-  main = "Original signal (256 Hz), channel #1",
-  xlab = "sample points",
-  ylab = "Amplitude",
-  col = "blue"
-)
-
-# Signal after filtering.
-plot(
-  signal_eeg_r[, 1],
-  type = "l",
-  panel.first = grid(),
-  main = "Signal after downsampling (64 Hz), channel #1",
-  xlab = "sample points",
-  ylab = "Amplitude",
-  col = "blue"
-)
-
-par(old_par)
-```
-
-### Step 3 (usually required) {.unnumbered}
-
-A bipolar montage is created (the classical *double banana* montage),
-where each channel compares two adjacent electrodes. In the first step,
-you define the pairs of electrodes to be connected using the `pairs`
-list. In the second step, the `eeg_montage()` function generates the
-required montage.
-
-```{r eeg_montage, include = TRUE, echo = TRUE, warning = FALSE}
-# Pairs of signals for bipolar montage (so called "double banana").
-pairs <- list(
-  c("Fp2", "F4"), c("F4", "C4"), c("C4", "P4"), c("P4", "O2"), c("Fp1", "F3"), c("F3", "C3"),  
-  c("C3", "P3"), c("P3", "O1"), c("Fp2", "F8"), c("F8", "T4"), c("T4", "T6"), c("T6", "O2"),
-  c("Fp1", "F7"), c("F7", "T3"), c("T3", "T5"), c("T5", "O1"), c("Fz", "Cz"), c("Cz", "Pz")
-)
-
-# Make the bipolar montage.
-eeg_m <- eeg_montage(eeg, montage_type = c("bipolar"), bipolar_pairs = pairs)
-signal_eeg_m <- eeg_m$signal
-
-# Original signal (first 6 rows, first 6 channels).
-signal_eeg[1:6, 1:6]
-
-# Signal after banana montage (first 6 rows, first 6 channels).
-signal_eeg_m[1:6, 1:6]
-
-```
-
-### Step 4 (usually required) {.unnumbered}
+### Step 2 (usually required) {.unnumbered}
 
 EEG signals are rarely analyzed without prior filtering. Using the
 `filters_coeff()` function, you can define the filter parameters and
@@ -400,55 +324,107 @@ fc <- filters_coeff(
 )
 
 # Filtering input signals.
-signal_eeg_m_f <- signal_eeg_m
+signal_eeg_f <- signal_eeg
 
-for (m in 1:ncol(signal_eeg_m)) {
-  signal_eeg_m_f[, m] = signal::filtfilt(fc$notch, signal_eeg_m[, m])      # 50Hz notch filter
-  signal_eeg_m_f[, m] = signal::filtfilt(fc$lowpass, signal_eeg_m_f[, m])  # Low pass IIR Butterworth
-  signal_eeg_m_f[, m] = signal::filtfilt(fc$highpass, signal_eeg_m_f[, m]) # High pass IIR Butterwoth
+for (m in 1:ncol(signal_eeg_f)) {
+  signal_eeg_f[, m] = signal::filtfilt(fc$notch, signal_eeg[, m])      # 50Hz notch filter
+  signal_eeg_f[, m] = signal::filtfilt(fc$lowpass, signal_eeg_f[, m])  # Low pass IIR Butterworth
+  signal_eeg_f[, m] = signal::filtfilt(fc$highpass, signal_eeg_f[, m]) # High pass IIR Butterwoth
 }
 ```
 
-For the selected channel (after the bipolar montage, it is named
-`r ch <- 1; colnames(signal_eeg_m_f)[ch]`), both the original and
-filtered signals are displayed. The effect of filtering is clearly
-beneficial, as noise—typically without diagnostic significance—has been
-removed from the signal.
+### Step 3 (sometimes required) {.unnumbered}
 
-```{r no_filtering_and_filtering_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 4}
-ch <- 1
-par(mfrow = c(2, 1), pty = "m", mai = c(0.6, 0.5, 0.4, 0.5), par(mgp = c(1.5, 0.5, 0)))
+Sometimes it is necessary to change the sampling frequency (increase —
+*upsampling* or decrease — *downsampling*). The `read_edf_signals()`
+function provides this functionality. In the example below, the original
+sampling frequency is reduced from 256 Hz to 64 Hz.
 
-time <- seq(0, nrow(signal_eeg) - 1) / sampling_frequency
-sr <- range(signal_eeg_m[, ch])
+```{r read_edf_signal_resampling, include = TRUE, echo = TRUE, warning = FALSE}
+signal_eeg_f_r <- resample_signal(signal = signal_eeg_f, p = 1, q = 4)
+time_64 <- seq(0, nrow(signal_eeg_f_r) - 1) / (sampling_frequency / 4)
+sampling_frequency_r <- 64
+```
 
-# Not-filtered signal (raw signal).
+The effect of the preprocessing (filtering and resampling) is illustrated below. 
+Although filtering removes baseline drift and high-frequency noise and downsampling 
+reduces the sampling frequency, the overall morphology of the EEG waveform is well preserved.
+
+```{r filtering_and__resampling_plot, include = TRUE, echo = FALSE, warning = FALSE, fig.width = 7, fig.height = 5}
+old_par <- par("mfrow", "mai", "mgp")
+par(mfrow = c(3, 1), pty = "m", mai = c(0.35, 0.5, 0.4, 0.1), mgp = c(1.5, 0.5, 0))
+
+rg <- range(c(signal_eeg[, 1], signal_eeg_f[, 1], signal_eeg_f_r[, 1]))
+
 plot(
   time,
-  signal_eeg_m[, ch],
+  signal_eeg[, 1],
   type = "l",
-  panel_first = grid(),
-  main = paste("Original EEG signal, channel #1 (", colnames(signal_eeg_m)[ch], ")", sep = ""),
   xlab = "Time (s)",
   ylab = "Amplitude",
+  main = "Original EEG signal, channel Fp1",
   col = "blue",
-  ylim = sr
+  ylim = rg,
+  panel.first = grid()
 )
+abline(h = 0, col = "gray")
 
-# Signal after filtering.
 plot(
   time,
-  signal_eeg_m_f[, ch],
+  signal_eeg_f[, 1],
   type = "l",
-  panel.first = grid(),
-  main = paste("EEG signal after preprocessing, channel #1 (", colnames(signal_eeg_m)[ch], ")", sep = ""),
   xlab = "Time (s)",
   ylab = "Amplitude",
+  main = "Filtered EEG signal, channel Fp1",
   col = "blue",
-  ylim = sr
+  ylim = rg,
+  panel.first = grid()
 )
+abline(h = 0, col = "gray")
 
+plot(
+  time_64,
+  signal_eeg_f_r[, 1],
+  type = "l",
+  xlab = "Time (s)",
+  ylab = "Amplitude",
+  main = "Filtered and downsampled EEG signal (64 Hz), channel Fp1",
+  col = "blue",
+  ylim = rg,
+  panel.first = grid()
+)
+abline(h = 0, col = "gray")
 par(old_par)
+```
+
+### Step 4 (usually required) {.unnumbered}
+
+A bipolar montage is created (the classical *double banana* montage),
+where each channel compares two adjacent electrodes. In the first step,
+you define the pairs of electrodes to be connected using the `pairs`
+list. In the second step, the `eeg_montage()` function generates the
+required montage.
+
+```{r eeg_montage, include = TRUE, echo = TRUE, warning = FALSE}
+# Pairs of signals for bipolar montage (so called "double banana").
+pairs <- list(
+  c("Fp2", "F4"), c("F4", "C4"), c("C4", "P4"), c("P4", "O2"), c("Fp1", "F3"), c("F3", "C3"),  
+  c("C3", "P3"), c("P3", "O1"), c("Fp2", "F8"), c("F8", "T4"), c("T4", "T6"), c("T6", "O2"),
+  c("Fp1", "F7"), c("F7", "T3"), c("T3", "T5"), c("T5", "O1"), c("Fz", "Cz"), c("Cz", "Pz")
+)
+
+# Make the bipolar montage.
+signal_eeg_f_r_m <- eeg_montage(
+  signal_eeg_f_r,
+  montage_type = c("bipolar"),
+  bipolar_pairs = pairs
+)
+
+# Original signal (first 6 rows, first 6 channels).
+signal_eeg_f_r[1:6, 1:6]
+
+# Signal after banana montage (first 6 rows, first 6 channels).
+signal_eeg_f_r_m[1:6, 1:6]
 ```
 
 ### Step 5 {.unnumbered}
@@ -460,7 +436,7 @@ explanation given [here](#important_note).
 # The empi_options parameter is NULL, so the EMPI program is 
 # run with the parameters "-o local --gabor -i 50"
 
-# sig <- list(signal_eeg_m_f, sampling_frequency)
+# sig <- list(signal_eeg_f_r_m, sampling_frequency_r)
 # names(sig) <- c("signal", "sampling_frequency")
 
 # empi_class <- empi_execute (
@@ -468,14 +444,14 @@ explanation given [here](#important_note).
 #   empi_options = NULL,
 #   write_to_file = TRUE,
 #   path = NULL,
-#   file_name = "EEG_bipolar_filtered.db"
+#   file_name = "EEG_filter_resample_montage.db"
 # )
 ```
 
 ### Step 6 {.unnumbered}
 
 Generating the final time-frequency map for the selected channel
-(`r ch <- 1; colnames(signal_eeg_m_f)[ch]`). The centers of atoms (in
+(`r ch <- 1; colnames(signal_eeg_f_r_m)[ch]`). The centers of atoms (in
 the sense of time and frequency coordinates) are now marked with white
 crosses.
 
@@ -493,7 +469,7 @@ by the generated atoms.
 
 ```{r eeg_tf_map, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 # Reading a SQLite file where all the generated atom's parameters are stored.
-file <- system.file("extdata", "EEG_bipolar_filtered.db", package = "MatchingPursuit")
+file <- system.file("extdata", "EEG_filter_resample_montage.db", package = "MatchingPursuit")
 
 # Generate time-frequency map based on atoms.
 out <- tf_map(
@@ -509,43 +485,35 @@ out <- tf_map(
 
 ### Step 7 (optional) {.unnumbered}
 
-The package also includes a function for displaying EEG signals. To do
-this, you can use `plot.edf()`, the `S3` method for the generic `plot()`
-function. This function requires an object of class `edf`, created with
-`read_edf_signals()`.
+The package also provides the `plot.edf()` function, an S3 method for 
+`plot()` function, for visualization of multichannel EEG recordings. The 
+function accepts an object of class `edf` returned by `read_edf_signals()` 
+and displays the selected time interval using a conventional stacked EEG layout.
 
-`panel_height` parameter controls the vertical distance between
-individual signals. If `NULL`, its value is set automatically so that
-all signals are clearly visible and do not overlap. The calculated value
-of parameter `panel_height` is displayed below the figure.
+Since the preprocessing functions are designed to operate on generic multichannel 
+signal matrices, they are independent of the `edf` class and can be applied to 
+signals imported from different file formats. Therefore, before using `plot.edf()`, 
+the processed signals are combined with the corresponding metadata into an object 
+of class `edf`.
 
-```{r plot_eeg_filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-temp <- eeg_m
-temp$signal <- signal_eeg_m_f
+The `panel_height` argument controls the vertical spacing between adjacent channels. 
+If `NULL`, an appropriate value is determined automatically to prevent overlap 
+between signals. The selected value is reported in the R console.
 
-plot(
-  x = temp,
-  begin = 0,
-  end = 10,
-  panel_height = NULL,
-  rainbow = FALSE,
-  bg_colour = "white",
-  txt_col = "blue",
-  zero_line = TRUE,
-  main = "EEG.edf file after banana montage and after filtering"
+```{r plot_eeg_filt_resamp_mont, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
+edf_processed <- structure(
+  list(
+    signal = as.data.frame(signal_eeg_f_r_m),
+    sampling_frequency = sampling_frequency_r,
+    time = time_64,
+    signal_names = colnames(signal_eeg_f_r_m),
+    record_name = basename(file)
+  ),
+  class = "edf"
 )
-```
-
-In the next example, we show a plot of the same EEG signal as above.
-However, this time, we display the unfiltered version. Undesirable
-artifacts (noise and drift) are clearly visible.
-
-```{r plot_eeg_no_filt, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-temp <- eeg_m
-temp$signal <- signal_eeg_m
 
 plot(
-  x = temp,
+  x = edf_processed,
   begin = 0,
   end = 10,
   panel_height = NULL,
@@ -553,7 +521,7 @@ plot(
   bg_colour = "white",
   txt_col = "blue",
   zero_line = TRUE,
-  main = "EEG.edf file after banana montage and without filtering"
+  main = "EEG.edf file after filtering, resampling and banana montage"
 )
 ```
 
@@ -980,15 +948,14 @@ as new atoms are added to the selected set.
 
 [Back to menu](#top)
 
-## Pure R implementation of the Matching Pursuit algorithm
+## Pure R implementation of the MP and OMP algorithms
 
-For educational and experimental purposes, the package also includes a pure R implementation of the Matching Pursuit algorithm, provided by the `mp_core()` function. Its interface and usage are intentionally kept very similar to those of the OMP implementation.
+For educational and experimental purposes, the package also provides pure R 
+implementations of the MP and OMP algorithms through the `mp_core()` and `omp_core()` 
+functions, respectively.
 
-[Back to menu](#top)
-
-## Matching Pursuit / Orthogonal Matching Pursuit workflow in the package 
-
-The OMP implementation uses a three-stage procedure.
+The MP-R and OMP-R backends use a three-stage procedure consisting of dictionary 
+generation or import with `read_dict()`, signal-dependent candidate atom selection with `topk_atoms()`, and sparse decomposition with `mp_omp_execute()`.
 
 ### Step 1 {.unnumbered}
 
@@ -1089,13 +1056,13 @@ out <- mp_omp_run_pipeline(
 
 [Back to menu](#top)
 
-## Relationship between MP / OMP and EMPI
+## Relationship between MP-R / OMP-R and EMPI backends
 
 The `topk_atoms()` function is designed to work with dictionaries exported from 
 the EMPI program. Dictionaries generated by EMPI can be read using `read_dict()` 
 and subsequently used as input for `topk_atoms()` and `mp_omp_execute()`.
 
-For meaningful comparisons between results generated by EMPI and MP/OMP
+For meaningful comparisons between results generated by EMPI and MP-R/OMP-R
 results generated in R, it is recommended to run EMPI with the options
 
 `-o none --full-atoms-in-signal`
@@ -1110,16 +1077,16 @@ dictionaries, including the simulation of continuous (quasi-infinite) dictionari
 (switch `-o global`). By default, atoms are allowed to extend beyond the signal boundaries, 
 with the signal assumed to be zero outside its observed range. This behavior can be 
 changed using the `--full-atoms-in-signal` switch, which restricts atoms to lie entirely 
-within the signal (see also Section 13 for details). 
+within the signal. 
 
-The diagram below illustrates the three main workflows for running the MP, OMP, and EMPI implementations.
+The diagram below illustrates the three main workflows for running the MP-R, OMP-R, and EMPI backends.
  
 ```
                                        START
                                          |
                       -----------------------------------------
                       |                                       |
-              MP / OMP workflow                         EMPI workflow
+           MP-R / OMP-R workflow                         EMPI workflow
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 
@@ -1135,7 +1102,7 @@ The diagram below illustrates the three main workflows for running the MP, OMP, 
                      |                                        |
                      ------------------------------------------
                                           |
-                                   plot() / tf_map()
+                                   plot() / tf_map()                                   
                                    
 read_*_signals() - select the appropriate function depending on the file format:
 read_csv_signals(), read_edf_signals(), read_wfdb_signals()

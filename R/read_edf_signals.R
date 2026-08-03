@@ -8,7 +8,7 @@
 #' @param resampling If \code{TRUE}, all signals are resampled
 #' (either upsampled or downsampled), depending on the original sampling rates of the channels.
 #'
-#' @param sampling_frequency_new Target sampling frequency used for upsampling or downsampling.
+#' @param sf_new Target sampling frequency used for upsampling or downsampling.
 #'
 #' @param from Starting time of the signal to be loaded (in seconds).
 #'
