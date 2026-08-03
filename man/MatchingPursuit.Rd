@@ -47,7 +47,7 @@ Example datasets available via the \code{system.file()} function:
    \item \code{EEG_filter_resample_montage.db}, \code{EEG_filter_resample_montage.csv}, \code{EEG_filter_resample_montage.bin}
      \itemize{
        \item 18 EEG channels after application of the double-banana montage, resampling and filtering of the \code{EEG.edf} data
-       \item sampling frequency: 256 Hz, signal length: 10 sec (64Hz after resampling).
+       \item sampling frequency: 256 Hz, signal length: 10 sec (64 Hz after resampling).
        \item channel names: Fp2_F4, F4_C4, C4_P4, P4_O2, Fp1_F3, F3_C3, C3_P3, P3_O1, Fp2_F8, F8_T4,
                             T4_T6, T6_O2, Fp1_F7, F7_T3, T3_T5, T5_O1, Fz_Cz, Cz_Pz
      }
