@@ -66,13 +66,13 @@
 #'        \item 12 ECG leads, 10 sec, 16-bit integer format
 #'        \item standard lead names: \code{I, II, III, aVR, aVL, aVF, V1–V6}
 #'      }
-#'    \item \code{sample1_dict.xml}, \code{sample2_dict.xml}, \code{sample3_dict.xml}, \code{sample3_dict_EMPI.xml},
-#'    \code{EEG_filter_resample_montage_dict.xml}, \code{one_block_dict.xml}, \code{00001_lr_dict.xml}
+#'    \item \code{sample1.xml}, \code{sample2.xml}, \code{sample3.xml}, \code{sample3_EMPI.xml},
+#'    \code{EEG_filter_resample_montage.xml}, \code{one_block.xml}, \code{00001_lr.xml}
 #'      \itemize{
 #'        \item XML files describing a multiscale Gabor dictionary.
 #'        \item such files can be generated from the EMPI program executed with the \code{--dictionary-output}
 #'        option, which allows you to save (in XML format) data about the dictionary used.
-#'        See the \code{read_dict()} function help page for examples and further details.
+#'        See the \code{read_gabor_dict()} function help page for examples and further details.
 #'      }
 #'  }
 #'

@@ -15,7 +15,7 @@ An object of class \code{wfdb}. The returned value is a list containing:
 \describe{
   \item{signal}{Matrix of signals stored in the WFDB file.}
   \item{sampling_frequency}{Sampling frequency.}
-  \item{time_stamps}{Time vector corresponding to signal samples.}
+  \item{time}{Time vector corresponding to signal samples.}
   \item{lead_names}{Names of the WFDB leads (channels).}
   \item{record_name}{Name of the file.}
 }

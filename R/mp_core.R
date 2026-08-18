@@ -31,9 +31,9 @@
 #' \code{tol} is specified.
 #'
 #' @param tol
-#' Stopping tolerance defined as the maximum allowed squared residual
-#' norm (\eqn{\|r\|^2}). The algorithm stops when the residual energy falls
-#' below this value. If specified, it overrides \code{n_nonzero_coefs}.
+#' Stopping tolerance expressed as the maximum allowed relative residual
+#' energy, \eqn{\|r\|_2^2 / \|x\|_2^2}. The algorithm stops when the residual
+#' energy falls below this value. If specified, it overrides \code{n_nonzero_coefs}.
 #'
 #' @param normalize
 #' Logical; if \code{TRUE}, dictionary atoms are normalized to
@@ -70,10 +70,10 @@
 #' @export
 #'
 #' @seealso
-#' \code{\link{read_dict}},
+#' \code{\link{read_gabor_dict}},
 #' \code{\link{topk_atoms}},
 #' \code{\link{mp_omp_execute}},
-#' \code{\link{mp_omp_run_pipeline}}
+#' \code{\link{mp_omp_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(
@@ -180,7 +180,9 @@ mp_core <- function(
   # 1. Normalize the dictionary columns (atoms must have an L2 norm of 1)
   # Often, the dictionary is already normalized, but this makes the calculations safer
   if (normalize) {
-    D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
+    # D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
+    # simpler:
+    D_norm <- sweep(D, 2, norms, "/")
   } else {
     D_norm <- D
   }
@@ -202,7 +204,9 @@ mp_core <- function(
 
   for (k in 1:max_iter) {
     # 2. Calculating the scalar products of the remainder with all atoms
-    projections <- t(D_norm) %*% residual
+    # projections <- t(D_norm) %*% residual
+    # much faster:
+    projections <- crossprod(D_norm, residual)
 
     #3. Selecting the atom with the best fit (largest absolute value)
     best_atom_idx <- which.max(abs(projections))

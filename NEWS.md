@@ -1,20 +1,57 @@
 # MatchingPursuit 1.2.0
 
-* Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`). This implementation is intended for educational and experimental purposes. The R implementation does not replace the existing optimized C++ version. It is significantly slower and should not be used for large-scale computations.
+* Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`),
+  intended primarily for educational, methodological, and experimental use. It
+  complements the optimized external EMPI backend and allows the algorithm to be
+  inspected and modified directly in R.
 
-* The vignette was supplemented with examples of the Pure R implementation of the Matching Pursuit algorithm. Additionally, the three implementations of the Matching Pursuit algorithm are now more clearly distinguished, with the abbreviations MP, OMP, and EMPI used consistently throughout.
+* Expanded the package vignette with examples of the pure R Matching Pursuit
+  implementation. The available decomposition backends are now more clearly
+  distinguished, with the terms MP-R, OMP-R, and EMPI used consistently
+  throughout.
 
-* A significantly expanded README.md file providing a much more detailed overview of the package.
+* Significantly expanded `README.md` to provide a more comprehensive overview
+  of the package, its functionality, and typical workflows.
 
-* `plot.ecg()` and `read_ecg_signals()` functions were renamed to `plot.wfdb()` and `read_wfdb_signals()`
+* Renamed `plot.ecg()` and `read_ecg_signals()` to `plot.wfdb()` and
+  `read_wfdb_signals()`, respectively.
 
-* Now functions `read_csv_signals()`, `read_edf_signals()` and `read_wfdb_signals()` return objects of class `sig`, `edf` and `wfdb` respectively.
+* Updated `read_csv_signals()`, `read_edf_signals()`, and `read_wfdb_signals()`
+  to return objects of classes `sig`, `edf`, and `wfdb`, respectively.
+
+* Updated `empi_execute()`, `mp_omp_execute()`, and `topk_atoms()` to accept
+  objects of classes `sig`, `edf`, and `wfdb`.
+  
+* Added `as_sig()` for converting signal data and a specified sampling frequency
+  to an object of class `sig`.  
+
+* Standardized function names to improve consistency across the package API:
+  - `gabor_fun()` was renamed to `gabor_atom()`.
+  - `sig2bin()` was renamed to `sig_to_bin()`.
+  - `mp_omp_run_pipeline()` was renamed to `mp_omp_pipeline()`.
+  - `read_dict()` was renamed to `read_gabor_dict()`.
+  - `atom_params()` was renamed to `read_atom_params()`.
+  - `filters_coeff()` was renamed to `design_filters()`.
+  - `read_empi_db_file()` was renamed to `read_empi_db()`.
+  - `sig_to_bin()` was renamed to `signal_to_bin()`.
+  - `gabor_proj_fft()` was renamed to `gabor_projection_fft()`.
+
+* Simplified mp_omp_pipeline() to provide a higher-level MP/OMP decomposition 
+  workflow for signals stored in CSV format; signal-specific preprocessing is 
+  expected to be performed separately.
+  
+* Improved input validation, error handling, and internal code robustness across
+  several functions.  
 
 # MatchingPursuit 1.1.0
 
-* The project adopted a new naming convention for variables and functions, replacing dot-separated names (`name.of.some.variable`) with snake_case (`name_of_some_variable`).
+* The project adopted a new naming convention for variables and functions, 
+  replacing dot-separated names (`name.of.some.variable`) with snake_case 
+  (`name_of_some_variable`).
 
-* Implemented Orthogonal Matching Pursuit (OMP) and added support for XML-defined dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, `run_omp_pipeline()`, `omp_execute()` and `gabor_proj_fft()`). 
+* Implemented Orthogonal Matching Pursuit (OMP) and added support for XML-defined 
+  dictionaries (functions: `read_dict()`, `topk_atoms()`, `omp_core()`, 
+  `run_omp_run_pipeline()`, `omp_execute()` and `gabor_proj_fft()`). 
 
 * Extended examples added to the package-level documentation and to the vignette.
 
@@ -26,19 +63,26 @@
 
 * `read_ecg_signals()` function was added.
 
-* The `read_csv_files()` function also supports files where the channel names are given in the second line.
+* The `read_csv_files()` function also supports files where the channel names are 
+  given in the second line.
 
-* The `read_empi_db_file()` and `empi_execute()` functions now return object of class `mp`.
+* The `read_empi_db_file()` and `empi_execute()` functions now return object 
+  of class `mp`.
 
-* `empi2tf()` has been renamed to `tf_map()`, which provides support for both the EMPI and OMP algorithms.
+* `empi2tf()` has been renamed to `tf_map()`, which provides support for both 
+   the EMPI and OMP algorithms.
 
 # MatchingPursuit 1.0.1
 
-* Fixed a bug in the `empi2tf()` function that caused TF maps to be displayed incorrectly for channels other than the first one (only applies to signals with more than one channel).
+* Fixed a bug in the `empi2tf()` function that caused TF maps to be displayed 
+  incorrectly for channels other than the first one (only applies to signals with 
+  more than one channel).
 
-* `clear.cache()` function. Before deleting files from the cache, it displays a list of them and asks the user for permission to delete them.
+* `clear.cache()` function. Before deleting files from the cache, it displays 
+  a list of them and asks the user for permission to delete them.
 
-* `empi.execute()` function. Additional validation has been added to ensure that list items have the required names (`signal` and `sampling.rate`).
+* `empi.execute()` function. Additional validation has been added to ensure that 
+  list items have the required names (`signal` and `sampling.rate`).
 
 * `empi.install()` function. Added error handling for `download.file()` function.
 

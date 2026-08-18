@@ -23,8 +23,10 @@
 #' @param x Object of class \code{wfdb} (from \code{read_wfdb_signals()}).
 #'
 #' @param begin Time point (in seconds) at which to start plotting.
+#' If \code{NULL}, plotting starts at the beginning of the signal (0 seconds).
 #'
 #' @param end Time point (in seconds) at which to stop plotting.
+#' If \code{NULL}, plotting continues to the end of the signal.
 #'
 #' @param panel_height Height of each ECG channel panel (in mV).
 #' One large ECG-paper square corresponds to 0.5 mV. According to standard ECG paper:
@@ -59,8 +61,8 @@
 #'
 plot.wfdb <- function(
     x,
-    begin,
-    end,
+    begin = NULL,
+    end = NULL,
     panel_height = 3,
     small_squares = TRUE,
     zero_line = FALSE,
@@ -81,6 +83,7 @@ plot.wfdb <- function(
 
   wfdb <- as.matrix(x$signal)
   sampling_frequency <- x$sampling_frequency
+  signal_length <- nrow(wfdb) / sampling_frequency
   channels <- ncol(wfdb)
 
   main <- paste("record name: ", x$record_name, sep = "")
@@ -90,6 +93,29 @@ plot.wfdb <- function(
   # Following this line, each channel has a median of approximately zero.
   md <- apply(wfdb, 2, median)
   wfdb <- sweep(wfdb, 2, md, "-")
+
+  if (is.null(begin)) begin <- 0
+  if (is.null(end)) end <- signal_length
+
+  if (length(begin) != 1L || !is.numeric(begin) || !is.finite(begin)) {
+    stop("'begin' must be NULL or a single finite numeric value.")
+  }
+
+  if (length(end) != 1L || !is.numeric(end) || !is.finite(end)) {
+    stop("'end' must be NULL or a single finite numeric value.")
+  }
+
+  if (begin < 0 || begin > signal_length) {
+    stop("'begin' must be between 0 and the signal length.")
+  }
+
+  if (end < 0 || end > signal_length) {
+    stop("'end' must be between 0 and the signal length.")
+  }
+
+  if (end <= begin) {
+    stop("'end' must be greater than 'begin'.")
+  }
 
   from <- begin * sampling_frequency
   to <- end * sampling_frequency

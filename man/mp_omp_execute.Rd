@@ -9,7 +9,6 @@ mp_omp_execute(
   mode = NULL,
   dictionary,
   signal,
-  sampling_frequency,
   n_nonzero_coefs = NULL,
   tol = NULL,
   normalize = TRUE,
@@ -18,17 +17,16 @@ mp_omp_execute(
 )
 }
 \arguments{
-\item{mode}{\code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.}
+\item{mode}{\code{"omp"} or \code{"mp"}. Specifies the algorithm to use
+for signal decomposition.}
 
 \item{dictionary}{A \code{"topk"} object returned by
 \code{topk_atoms()}. It contains the candidate atoms and their associated
 time-frequency parameters.}
 
-\item{signal}{A matrix, data frame, or object coercible to a matrix
-containing the signal(s) to decompose. Signals are assumed to be stored in
-columns.}
-
-\item{sampling_frequency}{Sampling frequency of the signal in Hertz.}
+\item{signal}{An object of class \code{sig} returned by \code{read_csv_signals()},
+an object of class \code{edf} returned by \code{read_edf_signals()},
+or an object of class \code{wfdb} returned by \code{read_wfdb_signals()}.}
 
 \item{n_nonzero_coefs}{Maximum number of atoms selected during the decomposition
 for each signal channel.}
@@ -54,7 +52,7 @@ An object of class \code{"mp"} containing:
 \item{original_signal}{Matrix containing the original signal(s).}
 \item{reconstruction}{Matrix containing the reconstructed signal(s).}
 \item{selected_atoms}{List of matrices containing selected atoms for each channel.}
-\item{t}{Time vector corresponding to signal samples.}
+\item{time}{Time vector corresponding to signal samples.}
 \item{sampling_frequency}{Sampling frequency.}
 
 The \code{atoms} data frame contains:
@@ -93,7 +91,7 @@ using `tf_map()` or `plot()` functions.
 Typical workflow:
 
 \enumerate{
-\item Read a dictionary using \code{read_dict()}.
+\item Read a dictionary using \code{read_gabor_dict()}.
 \item Generate a signal-adaptive subset of atoms using \code{topk_atoms()}.
 \item Perform sparse decomposition using \code{mp_omp_execute()}.
 \item Visualize the result using \code{plot()} or \code{tf_map()}.
@@ -110,25 +108,24 @@ sig_file <- system.file(
   package = "MatchingPursuit"
 )
 
-sample <- read_csv_signals(
+signal <- read_csv_signals(
   sig_file,
   col_names_in_csv = TRUE
 )
 
-sampling_frequency <- sample$sampling_frequency
-signal <- sample$signal
-duration <- nrow(signal) / sampling_frequency
+sampling_frequency <- signal$sampling_frequency
+duration <- nrow(signal$signal) / sampling_frequency
 
 # +-------------------------------------------------------------+
 # | Step 2: Read dictionary definition                          |
 # +-------------------------------------------------------------+
 xml_file <- system.file(
   "extdata",
-  "sample3_dict.xml",
+  "sample3.xml",
    package = "MatchingPursuit"
 )
 
-atoms_dict <- read_dict(
+atoms_dict <- read_gabor_dict(
   xml_file = xml_file,
   sampling_frequency = sampling_frequency,
   duration = duration,
@@ -141,7 +138,6 @@ atoms_dict <- read_dict(
 topk_dict <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -153,7 +149,6 @@ fit_omp <- mp_omp_execute(
   mode = "omp",
   dictionary = topk_dict,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 20,
   verbose = TRUE,
   fit_intercept = FALSE,
@@ -170,7 +165,6 @@ fit_mp <- mp_omp_execute(
   mode = "mp",
   dictionary = topk_dict,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 20,
   verbose = TRUE
 )
@@ -189,7 +183,7 @@ plot(fit_mp, channel = 3)
 # | Execute the complete pipeline (steps 1-4)                   |
 # | using a single function                                     |
 # +-------------------------------------------------------------+
-fit <- mp_omp_run_pipeline(
+fit <- mp_omp_pipeline(
   mode = "mp",         # or "omp" for Orthogonal Matching Pursuit
   sig_file = sig_file,
   col_names_in_csv = TRUE,
@@ -203,9 +197,9 @@ plot(fit, channel = 3)
 
 }
 \seealso{
-\code{\link{read_dict}},
+\code{\link{read_gabor_dict}},
 \code{\link{topk_atoms}},
 \code{\link{omp_core}},
 \code{\link{mp_core}},
-\code{\link{mp_omp_run_pipeline}}
+\code{\link{mp_omp_pipeline}}
 }

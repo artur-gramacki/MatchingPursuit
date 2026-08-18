@@ -7,7 +7,6 @@
 topk_atoms(
   atoms_dict,
   signal,
-  sampling_frequency,
   topk = NULL,
   sigma_divisor = NULL,
   verbose = FALSE
@@ -15,14 +14,13 @@ topk_atoms(
 }
 \arguments{
 \item{atoms_dict}{A matrix describing Gabor atoms (e.g. output of
-\code{read_dict()}). Each row represents a candidate atom and must
+\code{read_gabor_dict()}). Each row represents a candidate atom and must
 contain the following columns: \code{block}, \code{time_sec}, \code{freq_hz},
 and \code{window_len}. Other columns are ignored.}
 
-\item{signal}{A numeric vector, matrix, or data frame representing the signal(s)
-to be analyzed. Each column is treated as a separate channel.}
-
-\item{sampling_frequency}{Sampling frequency (Hz) of the signal.}
+\item{signal}{An object of class \code{sig} returned by \code{read_csv_signals()},
+an object of class \code{edf} returned by \code{read_edf_signals()},
+or an object of class \code{wfdb} returned by \code{read_wfdb_signals()}.}
 
 \item{topk}{Number of best atoms to select per signal.
 If \code{NULL}, defaults to \code{ceiling(0.05 * nrow(atoms_dict))}.}
@@ -73,25 +71,24 @@ sig_file <- system.file(
   package = "MatchingPursuit"
 )
 
-sample3 <- read_csv_signals(
+signal <- read_csv_signals(
   sig_file,
   col_names_in_csv = TRUE
 )
 
-sampling_frequency <- sample3$sampling_frequency
-signal <- sample3$signal
-duration <- nrow(sample3$signal) / sampling_frequency
+sampling_frequency <- signal$sampling_frequency
+duration <- nrow(signal$signal) / sampling_frequency
 
 # +-------------------------------------------------------------+
 # | Step 2: Read dictionary                                     |
 # +-------------------------------------------------------------+
 xml_file <- system.file(
   "extdata",
-  "sample3_dict.xml",
+  "sample3.xml",
   package = "MatchingPursuit"
 )
 
-atoms_dict <- read_dict(
+atoms_dict <- read_gabor_dict(
   xml_file,
   sampling_frequency,
   duration,
@@ -109,7 +106,6 @@ out_topk_atoms <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
   sigma_divisor = NULL,
-  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -127,7 +123,6 @@ fit_1 <- mp_omp_execute(
   mode = "omp",
   dictionary = out_topk_atoms,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 50
 )
 
@@ -142,7 +137,7 @@ class(fit_1)
 # +-------------------------------------------------------------+
 fit_2 <- omp_core(
   dictionary = out_topk_atoms,
-  signal = signal,
+  signal = signal$signal,
   channel = 1,
   n_nonzero_coefs = 50
 )
@@ -154,7 +149,7 @@ plot(fit_1, channel = 3)
 
 }
 \seealso{
-\code{\link{read_dict}},
+\code{\link{read_gabor_dict}},
 \code{\link{mp_omp_execute}}
 \code{\link{omp_core}}
 \code{\link{mp_core}}

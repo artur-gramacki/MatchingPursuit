@@ -6,12 +6,12 @@
 \usage{
 \method{plot}{edf}(
   x,
-  begin,
-  end,
+  begin = NULL,
+  end = NULL,
   panel_height = NULL,
-  rainbow = TRUE,
-  bg_colour = "black",
-  txt_col = "white",
+  rainbow = FALSE,
+  bg_colour = "white",
+  txt_col = "black",
   zero_line = TRUE,
   main = NULL,
   ...
@@ -20,9 +20,11 @@
 \arguments{
 \item{x}{Object of class \code{edf} (from \code{read_edf_ signals()}).}
 
-\item{begin}{Time point (in seconds) at which to start plotting.}
+\item{begin}{Time point (in seconds) at which to start plotting.
+If \code{NULL}, plotting starts at the beginning of the signal (0 seconds).}
 
-\item{end}{Time point (in seconds) at which to stop plotting.}
+\item{end}{Time point (in seconds) at which to stop plotting.
+If \code{NULL}, plotting continues to the end of the signal.}
 
 \item{panel_height}{Controls the vertical spacing between individual signals.
 If \code{NULL}, the value is chosen automatically so that all signals are clearly

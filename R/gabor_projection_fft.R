@@ -11,9 +11,8 @@
 #' @param signal A numeric vector, matrix, or data frame representing the signal(s)
 #'   to be analyzed. Each column is treated as a separate channel.
 #'
-#' @note Users do not work directly with this function. It is used internally in the
-#' \code{topk_atoms()} function. However, it can be used by users for their own experiments
-#' and tests.
+#' @note This function is primarily intended for internal use by \code{topk_atoms()},
+#' but it is exported to support advanced experiments and methodological testing.
 #'
 #' @return A list containing two matrices computed from windowed FFT segments of the signal:
 #' \item{proj_mod_mtx}{Magnitudes of selected Gabor atom inner products
@@ -29,9 +28,9 @@
 #' sampling_frequency <- 256
 #' duration <- 1
 #'
-#' xml_file <- system.file("extdata", "one_block_dict.xml", package = "MatchingPursuit")
-#' block <- read_dict(xml_file, sampling_frequency, duration, verbose = TRUE)
-#' my_list <- gabor_proj_fft(block, signal)
+#' xml_file <- system.file("extdata", "one_block.xml", package = "MatchingPursuit")
+#' block <- read_gabor_dict(xml_file, sampling_frequency, duration, verbose = TRUE)
+#' my_list <- gabor_projection_fft(block, signal)
 #'
 #' pmm <- my_list$proj_mod_mtx
 #' scm <- my_list$fft_bin_mtx
@@ -42,7 +41,7 @@
 #' # Of course it gives 'pmm'
 #' head(Mod(scm))
 #'
-gabor_proj_fft <- function(block, signal) {
+gabor_projection_fft <- function(block, signal) {
 
   N <- nrow(signal)
   K <- ncol(signal)

@@ -77,10 +77,10 @@
 #' @export
 #'
 #' @seealso
-#' \code{\link{read_dict}},
+#' \code{\link{read_gabor_dict}},
 #' \code{\link{topk_atoms}},
 #' \code{\link{mp_omp_execute}},
-#' \code{\link{mp_omp_run_pipeline}}
+#' \code{\link{mp_omp_pipeline}}
 #'
 #' @examples
 #' dictionary <- matrix(

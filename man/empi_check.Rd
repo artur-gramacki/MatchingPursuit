@@ -2,13 +2,14 @@
 % Please edit documentation in R/empi_check.R
 \name{empi_check}
 \alias{empi_check}
-\title{Checks if EMPI external software is installed}
+\title{Check whether EMPI is installed}
 \usage{
 empi_check()
 }
 \value{
-The full path to the EMPI executable if it is found. Otherwise, returns \code{NULL}
-and displays a message suggesting installation using \code{empi_install()}.
+A character string containing the full path to the EMPI executable if found.
+If EMPI is not available, invisibly returns \code{NULL} and displays a
+message suggesting installation with \code{empi_install()}.
 }
 \description{
 The EMPI program is installed using the \code{empi_install()} function and stored in the

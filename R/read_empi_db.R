@@ -1,4 +1,4 @@
-#' Reads data from a SQLite file created by the Matching Pursuit algorithm
+#' Read EMPI decomposition results from a SQLite database
 #'
 #' Reads data from a SQLite file (\code{.db}) created by the Matching Pursuit algorithm.
 #' The reconstructed signal(s) and Gabor function(s) are also returned.
@@ -21,12 +21,12 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "EEG_filter_resample_montage.db", package = "MatchingPursuit")
-#' out <- read_empi_db_file(file)
+#' out <- read_empi_db(file)
 #'
 #' n_channels <- ncol(out$signal)
 #' signal <- out$signal
 #' reconstruction <- out$reconstruction
-#' t <- out$t
+#' t <- out$time
 #' sampling_frequency <- out$sampling_frequency
 #'
 #' old.par <- par("mfrow", "pty", "mai")
@@ -55,13 +55,21 @@
 #'
 #' par(old.par)
 #'
-read_empi_db_file <- function(db_file) {
+read_empi_db <- function(db_file) {
+
+  if (!is.character(db_file) ||
+      length(db_file) != 1L ||
+      is.na(db_file) ||
+      !nzchar(db_file)) {
+    stop("'db_file' must be a non-empty character string.")
+  }
 
   if (!file.exists(db_file)) {
     stop("Database file does not exist: ", db_file)
   }
 
   con <- dbConnect(drv = RSQLite::SQLite(), dbname = db_file)
+  on.exit(dbDisconnect(con), add = TRUE)
 
   ## list all tables
   tables <- dbListTables(con)
@@ -87,13 +95,17 @@ read_empi_db_file <- function(db_file) {
     )
   }
 
-  dbDisconnect(con)
+  ### dbDisconnect(con)
 
   # sampling rate in Hz
   sampling_frequency <- as.numeric(data_frames[["metadata"]]$value[3])
 
   # number of samples
   epoch_size <- data_frames[["segments"]]$sample_count
+
+  if (length(epoch_size) != 1L) {
+    stop("The EMPI database must contain exactly one signal segment.")
+  }
 
   # number of seconds
   s <- epoch_size / sampling_frequency
@@ -104,31 +116,51 @@ read_empi_db_file <- function(db_file) {
   # parameters of individual atoms
   atoms <- matrix(nrow = length(data_frames[["atoms"]][["segment_id"]]), ncol = 8)
   atoms <- as.data.frame(atoms)
-  k <- 0
-  for (i in 1:n_channels) {
-    # number of atoms. may be different in each channel
-    # in empi channels are numbered from 0
-    n_atoms <- length(which(data_frames[["atoms"]]$channel_id == (i - 1)))
-    for (j in 1:n_atoms) {
-      k <- k + 1
-      atoms[k, 1] <- i
-      atoms[k, 2] <- j
-      atoms[k, 3] <- data_frames[["atoms"]][["energy"]][k]
-      atoms[k, 4] <- data_frames[["atoms"]][["envelope"]][k]
-      atoms[k, 5] <- data_frames[["atoms"]][["f_Hz"]][k]
-      atoms[k, 6] <- data_frames[["atoms"]][["phase"]][k]
-      atoms[k, 7] <- data_frames[["atoms"]][["scale_s"]][k]
-      atoms[k, 8] <- data_frames[["atoms"]][["t0_s"]][k]
-    }
-  }
-  colnames(atoms) <- c("channel_id", "atom_number", "energy", "envelope", "frequency", "phase", "scale", "position")
+
+  # k <- 0
+  # for (i in 1:n_channels) {
+  #   # number of atoms. may be different in each channel
+  #   # in empi channels are numbered from 0
+  #   n_atoms <- length(which(data_frames[["atoms"]]$channel_id == (i - 1)))
+  #   for (j in 1:n_atoms) {
+  #     k <- k + 1
+  #     atoms[k, 1] <- i
+  #     atoms[k, 2] <- j
+  #     atoms[k, 3] <- data_frames[["atoms"]][["energy"]][k]
+  #     atoms[k, 4] <- data_frames[["atoms"]][["envelope"]][k]
+  #     atoms[k, 5] <- data_frames[["atoms"]][["f_Hz"]][k]
+  #     atoms[k, 6] <- data_frames[["atoms"]][["phase"]][k]
+  #     atoms[k, 7] <- data_frames[["atoms"]][["scale_s"]][k]
+  #     atoms[k, 8] <- data_frames[["atoms"]][["t0_s"]][k]
+  #   }
+  # }
+  # colnames(atoms) <- c("channel_id", "atom_number", "energy", "envelope", "frequency", "phase", "scale", "position")
+
+
+  # better than two for loops above. uses the ave() function
+  atoms_db <- data_frames[["atoms"]]
+
+  atoms <- data.frame(
+    channel_id = atoms_db$channel_id + 1L,
+    atom_number = stats::ave(
+      atoms_db$channel_id,
+      atoms_db$channel_id,
+      FUN = seq_along
+    ),
+    energy = atoms_db$energy,
+    envelope = atoms_db$envelope,
+    frequency = atoms_db$f_Hz,
+    phase = atoms_db$phase,
+    scale = atoms_db$scale_s,
+    position = atoms_db$t0_s
+  )
 
   # We read the input data from the .db file (they are stored there as float32 numbers)
   # For example: c0 74 23 f3  =  -3.81469
 
   signal <- matrix(nrow = epoch_size, ncol = n_channels)
 
-  for (k in 1:n_channels) {
+  for (k in seq_len(n_channels)) {
     temp <- data_frames[["samples"]][["samples_float32"]][k]
     utemp <- (unlist(temp))
     for (i in 1:epoch_size) {
@@ -137,8 +169,7 @@ read_empi_db_file <- function(db_file) {
       # to the order expected by readBin().
       b2 <- paste(b[4], b[3], b[2], b[1], sep = "")
       # https://stackoverflow.com/questions/39461349/converting-hex-format-to-float-numbers-in-r
-      signal[i, k] <-
-        readBin(as.raw(strtoi(substring(b2, (step <- seq(1, nchar(b2), by = 2)), step + 1), 16)), "double", n = 1, size = 4)
+      signal[i, k] <- readBin(as.raw(strtoi(substring(b2, (step <- seq(1, nchar(b2), by = 2)), step + 1), 16)), "double", n = 1, size = 4)
     }
 
   }
@@ -148,14 +179,14 @@ read_empi_db_file <- function(db_file) {
   reconstruction <- matrix(0, nrow = epoch_size, ncol = n_channels)
   selected_atoms <- list()
 
-  for (k in 1:n_channels) {
+  for (k in seq_len(n_channels)) {
     rows <- which(atoms$channel_id == k)
     atoms_channel <- atoms[rows,]
     colnames(atoms_channel) <- c("channel_id", "atom_number", "energy", "envelope", "frequency", "phase", "scale", "position")
     n_atoms <- length(which(data_frames[["atoms"]]$channel_id == (k - 1)))
     g <- matrix(0, nrow = epoch_size, ncol = n_atoms)
     for (i in 1:n_atoms) {
-      gab <- gabor_fun(
+      gab <- gabor_atom(
         number_of_samples = epoch_size,
         sampling_frequency = sampling_frequency,
         mean = atoms_channel$position[i],
@@ -175,7 +206,7 @@ read_empi_db_file <- function(db_file) {
     signal = signal,
     reconstruction = reconstruction,
     selected_atoms = selected_atoms,
-    time = gab$t,
+    time = gab$time,
     sampling_frequency = sampling_frequency)
 
   class(output) <- "mp"

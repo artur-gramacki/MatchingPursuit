@@ -1,15 +1,14 @@
-#' Reads input signal(s) from a data frame and returns them in binary format
+#' Convert multichannel signals to binary format
 #'
 #' @description
-#' Saves the given data (signals) in binary form. The input signal(s) must be a data frame:
-#' rows correspond to samples for all channels, and columns correspond to channels.
-#' The function is used internally by \code{empi_execute()}. The binary data consist of
-#' 4-byte floating-point values. Values are written using little-endian byte order.
+#' Converts a numeric matrix or data frame containing one or more signals
+#' to the binary format required by EMPI. Rows correspond to samples and
+#' columns to channels. Values are stored as 4-byte floating-point numbers
+#' using little-endian byte order.
 #'
-#' For multichannel signals, the binary output is written in time order: first all
-#' channels at \code{t = 0}, then all channels at at \code{t = }\eqn{\Delta t},
-#' and so on. In other words, the signal is stored in column-major order
-#' (rows = channels, columns = samples).
+#' For multichannel signals, samples are written in time order, with all channel values
+#' for a given time point stored consecutively: first all channels at \code{t = 0},
+#' then all channels at \code{t = }\eqn{\Delta t}, and so on.
 #'
 #' @param data Data frame containing the input signal(s).
 #'
@@ -36,7 +35,7 @@
 #' file <- system.file("extdata", "sample3.csv", package = "MatchingPursuit")
 #' out <- read_csv_signals(file, col_names_in_csv = TRUE)
 #'
-#' signal_bin <- sig2bin(data = out$signal, write_to_file = FALSE)
+#' signal_bin <- signal_to_bin(data = out$signal, write_to_file = FALSE)
 #'
 #' # We have 3 channels. The first 4 time points.
 #' head(out$signal, 4)
@@ -51,10 +50,14 @@
 #' readBin(signal_bin[41:44], what = "numeric", size = 4, endian = "little")
 #' readBin(signal_bin[45:48], what = "numeric", size = 4, endian = "little")
 #'
-sig2bin <- function(data, write_to_file = FALSE, path = NULL, file_name = NULL) {
+signal_to_bin <- function(data, write_to_file = FALSE, path = NULL, file_name = NULL) {
 
   if (!is.data.frame(data) && !is.matrix(data)) {
     stop("'data' must be a data frame or matrix.")
+  }
+
+  if (!all(vapply(data, is.numeric, logical(1)))) {
+    stop("'data' must contain numeric values only.")
   }
 
   signal_raw <- raw()

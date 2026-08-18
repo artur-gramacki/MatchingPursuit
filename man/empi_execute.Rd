@@ -9,13 +9,14 @@ empi_execute(
   empi_options = NULL,
   write_to_file = FALSE,
   path = NULL,
-  file_name = NULL
+  file_name = NULL,
+  ...
 )
 }
 \arguments{
-\item{signal}{List containing the signal in a data frame together with its sampling frequency.
-The data frame should have meaningful column names (channel names).
-The list must contain elements named \code{"signal"} and \code{"sampling_frequency"}.}
+\item{signal}{An object of class \code{sig} returned by \code{read_csv_signals()},
+an object of class \code{edf} returned by \code{read_edf_signals()},
+or an object of class \code{wfdb} returned by \code{read_wfdb_signals()}.}
 
 \item{empi_options}{If \code{NULL}, the EMPI program is run with
 \code{"-o local --gabor -i 50"} parameters. Otherwise, the user may specify any command-line
@@ -30,6 +31,9 @@ cache directory. This file stores the results of signal decomposition using the 
 If \code{NULL}, the file will be saved in the cache directory.}
 
 \item{file_name}{Name of the file to create if \code{write_to_file = TRUE}.}
+
+\item{...}{Additional arguments passed to \code{system()} when executing
+EMPI, such as \code{ignore.stdout = TRUE} or \code{ignore.stderr = TRUE}.}
 }
 \value{
 Results of signal decomposition using the MP algorithm. An object of class

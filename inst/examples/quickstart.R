@@ -45,16 +45,15 @@ out <- tf_map(
 # +-------------------------------------------------------------+
 # STEP 1 - Read sample data.
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-sample1 <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
+signal <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
 
-signal <- sample1$signal
-sampling_frequency <- sample1$sampling_frequency
-duration <- nrow(sample1$signal) / sampling_frequency
+sampling_frequency <- signal$sampling_frequency
+duration <- nrow(signal$signal) / sampling_frequency
 
 # STEP 2 - Read dictionary.
-xml_file <- system.file("extdata", "sample1_dict.xml", package = "MatchingPursuit")
+xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
 
-atoms_dict <- read_dict(
+atoms_dict <- read_gabor_dict(
   xml_file,
   sampling_frequency,
   duration,
@@ -64,7 +63,6 @@ atoms_dict <- read_dict(
 dict_topk <- topk_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   topk = 5000,
   verbose = TRUE
 )
@@ -74,7 +72,6 @@ fit <- mp_omp_execute(
   mode = "omp",
   dictionary = dict_topk,
   signal = signal,
-  sampling_frequency = sampling_frequency,
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
@@ -84,7 +81,7 @@ plot(fit, channel = 1, freq_divide = 4)
 
 # Combine steps 1–4 into a single pipeline.
 # The final result is identical as in step 4.
-out <- mp_omp_run_pipeline(
+out <- mp_omp_pipeline(
   mode = "omp",
   sig_file = sig_file,
   col_names_in_csv = FALSE,
@@ -103,7 +100,7 @@ plot(out, channel = 1, freq_divide = 4)
 # We're using the same functions here as in the above workflow.
 # The "mode" parameter is now set to "mp." Technically, this calls
 # the "mp_core()" function instead of "opm_core()".
-out <- mp_omp_run_pipeline(
+out <- mp_omp_pipeline(
   mode = "mp",
   sig_file = sig_file,
   col_names_in_csv = FALSE,
@@ -140,7 +137,7 @@ bip_montage <- eeg_montage(out_EEG, montage_type = c("bipolar"), bipolar_pairs =
 # STEP 3 - Filter the data.
 # This step is typically required during EEG processing.
 # Define commonly used EEG filtering parameters.
-fc <- filters_coeff(
+fc <- design_filters(
   sampling_frequency = sampling_frequency,
   notch = c(49, 51),
   lowpass = 40,
@@ -158,8 +155,7 @@ for (m in 1:ncol(sig_filt)) {
   sig_filt[, m] = signal::filtfilt(fc$highpass, sig_filt[, m])
 }
 
-signal_EEG_montage_filt <- list(sig_filt, sampling_frequency)
-names(signal_EEG_montage_filt) <- c("signal", "sampling_frequency")
+signal_EEG_montage_filt <- as_sig(sig_filt, sampling_frequency)
 
 # STEP 4 - Run the MP algorithm.
 empi_class <- empi_execute(signal = signal_EEG_montage_filt)
@@ -193,7 +189,7 @@ file_00001_lr_hea <- system.file("extdata", "00001_lr.hea", package = "MatchingP
 out_ecg <- read_wfdb_signals(file_00001_lr_hea)
 
 # Create a list compatible with the empi.execute() function.
-signal_ecg <- list(
+signal_ecg <- as_sig(
   signal = data.frame(out_ecg$signal),
   sampling_frequency = out_ecg$sampling_frequency
 )

@@ -9,10 +9,9 @@
 #' Continuous Dictionaries}. ACM Transactions on Mathematical Software, Volume 50, Issue 3,
 #' Article No. 17, pp. 1-17, \doi{10.1145/3674832}.
 #'
-#' @param signal List containing the signal in a data frame together with its sampling frequency.
-#' The data frame should have meaningful column names (channel names).
-#' The list must contain elements named \code{"signal"} and \code{"sampling_frequency"}.
-#'
+#' @param signal An object of class \code{sig} returned by \code{read_csv_signals()},
+#' an object of class \code{edf} returned by \code{read_edf_signals()},
+#' or an object of class \code{wfdb} returned by \code{read_wfdb_signals()}.
 #'
 #' @param empi_options If \code{NULL}, the EMPI program is run with
 #' \code{"-o local --gabor -i 50"} parameters. Otherwise, the user may specify any command-line
@@ -27,6 +26,9 @@
 #' If \code{NULL}, the file will be saved in the cache directory.
 #'
 #' @param file_name Name of the file to create if \code{write_to_file = TRUE}.
+#'
+#' @param ... Additional arguments passed to \code{system()} when executing
+#'   EMPI, such as \code{ignore.stdout = TRUE} or \code{ignore.stderr = TRUE}.
 #'
 #' @return Results of signal decomposition using the MP algorithm. An object of class
 #' \code{mp} is returned. If \code{write_to_file = TRUE}, the results are also written
@@ -78,17 +80,20 @@ empi_execute <- function(
     empi_options = NULL,
     write_to_file = FALSE,
     path = NULL,
-    file_name = NULL)
+    file_name = NULL,
+    ...)
 {
 
   empi_path <- empi_check()
 
   if(is.null(empi_path)) {
-    return()
+    stop("EMPI is not installed. Run empi_install() before using empi_execute().")
   }
 
-  if (!all(c("signal", "sampling_frequency") %in% names(signal))) {
-    stop("Input list must contain 'signal' and 'sampling_frequency'.")
+  if (!inherits(signal, "sig") &&
+      !inherits(signal, "edf") &&
+      !inherits(signal, "wfdb")) {
+    stop("'signal' must be an object of class 'sig', 'edf', or 'wfdb'.")
   }
 
   sig <- signal$signal
@@ -96,7 +101,7 @@ empi_execute <- function(
 
   n_channels <- ncol(sig)
 
-  signal_raw <- sig2bin(data = sig, write_to_file = FALSE)
+  signal_raw <- signal_to_bin(data = sig, write_to_file = FALSE)
 
   file_bin <- tempfile(fileext = ".bin")
   file_db <- tempfile(fileext = ".db")
@@ -129,7 +134,7 @@ empi_execute <- function(
     options,
     sep = "")
 
-  status <- system(command)
+  status <- system(command, ...)
 
   if (status != 0) {
     stop("EMPI execution failed.", call. = FALSE)
@@ -161,7 +166,7 @@ empi_execute <- function(
     }
   }
 
-  out <- read_empi_db_file(file_db)
+  out <- read_empi_db(file_db)
 
   return(out)
 }

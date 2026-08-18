@@ -53,7 +53,7 @@ frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropri
 
 \item{display_crosses}{Whether small crosses should be displayed at the centres of atoms.}
 
-\item{display_atom_numbers}{Whether atom numbers should be displayed in the cantres of atoms.}
+\item{display_atom_numbers}{Whether atom numbers should be displayed in the centres of atoms.}
 
 \item{display_grid}{Whether grid lines should be drawn.}
 
@@ -123,7 +123,7 @@ or 3) saved as an \code{.RData} object.
 }
 \examples{
 file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-empi_class <- read_empi_db_file(file)
+empi_class <- read_empi_db(file)
 
 # 'freq_divide' is set arbitrarily
 out <- tf_map(

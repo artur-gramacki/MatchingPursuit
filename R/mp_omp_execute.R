@@ -9,18 +9,16 @@
 #' The returned object is of class \code{"mp"} and can be visualized using
 #' \code{plot()} and \code{tf_map()}.
 #'
-#' @param mode
-#' \code{"omp"} or \code{"mp"}. Specifies the algorithm to use for signal decomposition.
+#' @param mode \code{"omp"} or \code{"mp"}. Specifies the algorithm to use
+#' for signal decomposition.
 #'
 #' @param dictionary A \code{"topk"} object returned by
 #' \code{topk_atoms()}. It contains the candidate atoms and their associated
 #' time-frequency parameters.
 #'
-#' @param signal A matrix, data frame, or object coercible to a matrix
-#' containing the signal(s) to decompose. Signals are assumed to be stored in
-#' columns.
-#'
-#' @param sampling_frequency Sampling frequency of the signal in Hertz.
+#' @param signal An object of class \code{sig} returned by \code{read_csv_signals()},
+#' an object of class \code{edf} returned by \code{read_edf_signals()},
+#' or an object of class \code{wfdb} returned by \code{read_wfdb_signals()}.
 #'
 #' @param n_nonzero_coefs Maximum number of atoms selected during the decomposition
 #' for each signal channel.
@@ -45,7 +43,7 @@
 #' \item{original_signal}{Matrix containing the original signal(s).}
 #' \item{reconstruction}{Matrix containing the reconstructed signal(s).}
 #' \item{selected_atoms}{List of matrices containing selected atoms for each channel.}
-#' \item{t}{Time vector corresponding to signal samples.}
+#' \item{time}{Time vector corresponding to signal samples.}
 #' \item{sampling_frequency}{Sampling frequency.}
 #'
 #' The \code{atoms} data frame contains:
@@ -74,18 +72,18 @@
 #' Typical workflow:
 #'
 #' \enumerate{
-#' \item Read a dictionary using \code{read_dict()}.
+#' \item Read a dictionary using \code{read_gabor_dict()}.
 #' \item Generate a signal-adaptive subset of atoms using \code{topk_atoms()}.
 #' \item Perform sparse decomposition using \code{mp_omp_execute()}.
 #' \item Visualize the result using \code{plot()} or \code{tf_map()}.
 #' }
 #'
 #' @seealso
-#' \code{\link{read_dict}},
+#' \code{\link{read_gabor_dict}},
 #' \code{\link{topk_atoms}},
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}},
-#' \code{\link{mp_omp_run_pipeline}}
+#' \code{\link{mp_omp_pipeline}}
 #'
 #' @export
 #'
@@ -100,25 +98,24 @@
 #'   package = "MatchingPursuit"
 #' )
 #'
-#' sample <- read_csv_signals(
+#' signal <- read_csv_signals(
 #'   sig_file,
 #'   col_names_in_csv = TRUE
 #' )
 #'
-#' sampling_frequency <- sample$sampling_frequency
-#' signal <- sample$signal
-#' duration <- nrow(signal) / sampling_frequency
+#' sampling_frequency <- signal$sampling_frequency
+#' duration <- nrow(signal$signal) / sampling_frequency
 #'
 #' # +-------------------------------------------------------------+
 #' # | Step 2: Read dictionary definition                          |
 #' # +-------------------------------------------------------------+
 #' xml_file <- system.file(
 #'   "extdata",
-#'   "sample3_dict.xml",
+#'   "sample3.xml",
 #'    package = "MatchingPursuit"
 #' )
 #'
-#' atoms_dict <- read_dict(
+#' atoms_dict <- read_gabor_dict(
 #'   xml_file = xml_file,
 #'   sampling_frequency = sampling_frequency,
 #'   duration = duration,
@@ -131,7 +128,6 @@
 #' topk_dict <- topk_atoms(
 #'   atoms_dict = atoms_dict,
 #'   signal = signal,
-#'   sampling_frequency = sampling_frequency,
 #'   topk = 5000,
 #'   verbose = TRUE
 #' )
@@ -143,7 +139,6 @@
 #'   mode = "omp",
 #'   dictionary = topk_dict,
 #'   signal = signal,
-#'   sampling_frequency = sampling_frequency,
 #'   n_nonzero_coefs = 20,
 #'   verbose = TRUE,
 #'   fit_intercept = FALSE,
@@ -160,7 +155,6 @@
 #'   mode = "mp",
 #'   dictionary = topk_dict,
 #'   signal = signal,
-#'   sampling_frequency = sampling_frequency,
 #'   n_nonzero_coefs = 20,
 #'   verbose = TRUE
 #' )
@@ -179,7 +173,7 @@
 #' # | Execute the complete pipeline (steps 1-4)                   |
 #' # | using a single function                                     |
 #' # +-------------------------------------------------------------+
-#' fit <- mp_omp_run_pipeline(
+#' fit <- mp_omp_pipeline(
 #'   mode = "mp",         # or "omp" for Orthogonal Matching Pursuit
 #'   sig_file = sig_file,
 #'   col_names_in_csv = TRUE,
@@ -195,7 +189,6 @@ mp_omp_execute <- function (
     mode = NULL,
     dictionary,
     signal,
-    sampling_frequency,
     n_nonzero_coefs = NULL,
     tol = NULL,
     normalize = TRUE,
@@ -211,22 +204,23 @@ mp_omp_execute <- function (
     stop("'mode' must be either 'mp' or 'omp'.")
   }
 
-  if (!is.matrix(signal)) {
-    if (is.vector(signal) || is.data.frame(signal)) {
-      signal <- as.matrix(signal)
-    } else {
-      stop("Parameter 'signal' must be a matrix or convertible to a matrix.")
-    }
+  if (!inherits(signal, "sig") &&
+      !inherits(signal, "edf") &&
+      !inherits(signal, "wfdb")) {
+    stop("'signal' must be an object of class 'sig', 'edf', or 'wfdb'.")
   }
+
+  sig <- as.matrix(signal$signal)
+  sampling_frequency <- signal$sampling_frequency
 
   if (mode == "omp") {
     # run omp_core() for all channels
     results <- lapply(
-      seq(1, ncol(signal)),
+      seq(1, ncol(sig)),
       function(ch) {
         res <- omp_core(
           dictionary = dictionary,
-          signal = signal,
+          signal = sig,
           channel = ch,
           tol = tol,
           n_nonzero_coefs = n_nonzero_coefs,
@@ -242,11 +236,11 @@ mp_omp_execute <- function (
   if (mode == "mp") {
     # run mp_core() for all channels
     results <- lapply(
-      seq(1, ncol(signal)),
+      seq(1, ncol(sig)),
       function(ch) {
         res <- mp_core(
           dictionary = dictionary,
-          signal = signal,
+          signal = sig,
           channel = ch,
           tol = tol,
           n_nonzero_coefs = n_nonzero_coefs,
@@ -271,7 +265,7 @@ mp_omp_execute <- function (
 
   n_channels <- length(results)
   n_samples <- nrow(results[[1]]$selected_atoms)
-  t <- seq(0, (n_samples - 1) / sampling_frequency, by = 1 / sampling_frequency)
+  time <- seq(0, (n_samples - 1) / sampling_frequency, by = 1 / sampling_frequency)
 
   original_signal <- matrix(NA, nrow = n_samples, ncol = n_channels)
   reconstruction <- matrix(NA, nrow = n_samples, ncol = n_channels)
@@ -322,7 +316,7 @@ mp_omp_execute <- function (
   result$signal <- original_signal
   result$reconstruction <- reconstruction
   result$selected_atoms <- selected_atoms
-  result$time <- t
+  result$time <- time
   result$sampling_frequency <- sampling_frequency
   class(result) <- "mp"
 

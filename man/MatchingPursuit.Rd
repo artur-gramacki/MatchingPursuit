@@ -70,15 +70,15 @@ Example datasets available via the \code{system.file()} function:
      \itemize{
        \item Example ECG recording from \url{https://physionet.org/content/ptb-xl/1.0.3/}
        \item 12 ECG leads, 10 sec, 16-bit integer format
-       \item standard lead names: I, II, III, aVR, aVL, aVF, V1–V6
+       \item standard lead names: \code{I, II, III, aVR, aVL, aVF, V1–V6}
      }
-   \item \code{sample1_dict.xml}, \code{sample2_dict.xml}, \code{sample3_dict.xml}, \code{sample3_dict_EMPI.xml},
-   \code{EEG_filter_resample_montage_dict.xml}, \code{one_block_dict.xml}, \code{00001_lr_dict.xml}
+   \item \code{sample1.xml}, \code{sample2.xml}, \code{sample3.xml}, \code{sample3_EMPI.xml},
+   \code{EEG_filter_resample_montage.xml}, \code{one_block.xml}, \code{00001_lr.xml}
      \itemize{
        \item XML files describing a multiscale Gabor dictionary.
        \item such files can be generated from the EMPI program executed with the \code{--dictionary-output}
        option, which allows you to save (in XML format) data about the dictionary used.
-       See the \code{read_dict()} function help page for examples and further details.
+       See the \code{read_gabor_dict()} function help page for examples and further details.
      }
  }
 
@@ -120,6 +120,13 @@ Conference on Signals, Systems and Computers, vol. 1, pp. 40-44 \doi{10.1109/ACS
 
 Różański, P.T. (2024). \emph{empi: GPU-Accelerated Match ing Pursuit with Continuous Dictionaries}.
 ACM Transactions on Mathematical Software, vol.50, no. 3, pp. 1-17, \doi{10.1145/3674832}
+}
+\seealso{
+Useful links:
+\itemize{
+  \item Report bugs at \url{https://github.com/artur-gramacki/MatchingPursuit/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Artur Gramacki \email{a.gramacki@gmail.com} (\href{https://orcid.org/0000-0002-1610-9743}{ORCID})

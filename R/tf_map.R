@@ -35,7 +35,7 @@
 #'
 #' @param display_crosses Whether small crosses should be displayed at the centres of atoms.
 #'
-#' @param display_atom_numbers Whether atom numbers should be displayed in the cantres of atoms.
+#' @param display_atom_numbers Whether atom numbers should be displayed in the centres of atoms.
 #'
 #' @param display_grid Whether grid lines should be drawn.
 #'
@@ -101,7 +101,7 @@
 #'
 #' @examples
 #' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-#' empi_class <- read_empi_db_file(file)
+#' empi_class <- read_empi_db(file)
 #'
 #' # 'freq_divide' is set arbitrarily
 #' out <- tf_map(
@@ -160,7 +160,7 @@ tf_map <- function(
   if (!inherits(x, "mp")) {
     # check if a string is a legal path to an existing file
     if (is.character(x) &&  length(x) == 1 && !is.na(x) && file.exists(x) && !dir.exists(x)) {
-      out <- read_empi_db_file(x)
+      out <- read_empi_db(x)
     } else {
       stop("'x' must be an object of class 'mp' or path to an SQLite file.")
     }

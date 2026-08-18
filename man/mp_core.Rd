@@ -32,9 +32,9 @@ If \code{tol = NULL}, the algorithm stops after selecting at most
 \code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
 \code{tol} is specified.}
 
-\item{tol}{Stopping tolerance defined as the maximum allowed squared residual
-norm (\eqn{\|r\|^2}). The algorithm stops when the residual energy falls
-below this value. If specified, it overrides \code{n_nonzero_coefs}.}
+\item{tol}{Stopping tolerance expressed as the maximum allowed relative residual
+energy, \eqn{\|r\|_2^2 / \|x\|_2^2}. The algorithm stops when the residual
+energy falls below this value. If specified, it overrides \code{n_nonzero_coefs}.}
 
 \item{normalize}{Logical; if \code{TRUE}, dictionary atoms are normalized to
 unit \eqn{\ell_2} norm before decomposition.}
@@ -113,8 +113,8 @@ fit <- mp_core(
 
 }
 \seealso{
-\code{\link{read_dict}},
+\code{\link{read_gabor_dict}},
 \code{\link{topk_atoms}},
 \code{\link{mp_omp_execute}},
-\code{\link{mp_omp_run_pipeline}}
+\code{\link{mp_omp_pipeline}}
 }

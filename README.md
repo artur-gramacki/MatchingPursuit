@@ -50,14 +50,14 @@ The typical workflow consists of four steps:
 3. Select the most relevant atoms.
 4. Perform MP or OMP decomposition.
 
-or, equivalently, execute the complete pipeline using a single function `mp_omp_run_pipeline()`. 
+or, equivalently, execute the complete pipeline using a single function `mp_omp_pipeline()`. 
 After executing you can plot time-frequency map.
 
 ```
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 xml_file <- system.file("extdata", "sample1_dict.xml", package = "MatchingPursuit")
 
-out <- mp_omp_run_pipeline(
+out <- mp_omp_pipeline(
   mode = "mp",                # or "omp" for Orthogonal Matching Pursuit
   sig_file = sig_file,
   col_names_in_csv = FALSE,
@@ -109,7 +109,7 @@ It performs dictionary construction, atom selection, and reconstruction internal
 coefficients using orthogonal projections, often yielding more accurate sparse approximations.
 
 4. Unlike the MP-R/OMP-R workflow, which explicitly constructs a dictionary
-(`read_dict()`) and selects candidate atoms (`topk_atoms()`), EMPI performs
+(`read_gabor_dict()`) and selects candidate atoms (`topk_atoms()`), EMPI performs
 these steps internally as part of a single optimized C++ pipeline.
 
 5. As a result:
@@ -128,9 +128,9 @@ these steps internally as part of a single optimized C++ pipeline.
                       |                                       | 
          ---------------------------                          |            
          |                         |                          | 
- mp_omp_run_pipeline()     read_*_signals()            read_*_signals()
+ mp_omp_pipeline()         read_*_signals()            read_*_signals()
          |                         │                          │
-         |                   read_dict()                      |             
+         |                 read_gabor_dict()                  |             
          |                         │                          │
          |                   topk_atoms()                     │
          |                        │                           │

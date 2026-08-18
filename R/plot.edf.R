@@ -9,8 +9,10 @@
 #' @param x Object of class \code{edf} (from \code{read_edf_ signals()}).
 #'
 #' @param begin Time point (in seconds) at which to start plotting.
+#' If \code{NULL}, plotting starts at the beginning of the signal (0 seconds).
 #'
 #' @param end Time point (in seconds) at which to stop plotting.
+#'  If \code{NULL}, plotting continues to the end of the signal.
 #'
 #' @param panel_height Controls the vertical spacing between individual signals.
 #' If \code{NULL}, the value is chosen automatically so that all signals are clearly
@@ -61,12 +63,12 @@
 #' )
 plot.edf <- function(
     x,
-    begin,
-    end,
+    begin = NULL,
+    end = NULL,
     panel_height = NULL,
-    rainbow = TRUE,
-    bg_colour = "black",
-    txt_col = "white",
+    rainbow = FALSE,
+    bg_colour = "white",
+    txt_col = "black",
     zero_line = TRUE,
     main = NULL,
     ...
@@ -84,6 +86,7 @@ plot.edf <- function(
 
   eeg <- as.matrix(x$signal)
   sampling_frequency <- x$sampling_frequency
+  signal_length <- length(x$time) / sampling_frequency
   channels <- ncol(eeg)
 
   if (rainbow) {
@@ -99,6 +102,29 @@ plot.edf <- function(
   # Following this line, each channel has a median of approximately zero.
   md <- apply(eeg, 2, median)
   eeg <- sweep(eeg, 2, md, "-")
+
+  if (is.null(begin)) begin <- 0
+  if (is.null(end)) end <- signal_length
+
+  if (length(begin) != 1L || !is.numeric(begin) || !is.finite(begin)) {
+    stop("'begin' must be NULL or a single finite numeric value.")
+  }
+
+  if (length(end) != 1L || !is.numeric(end) || !is.finite(end)) {
+    stop("'end' must be NULL or a single finite numeric value.")
+  }
+
+  if (begin < 0 || begin > signal_length) {
+    stop("'begin' must be between 0 and the signal length.")
+  }
+
+  if (end < 0 || end > signal_length) {
+    stop("'end' must be between 0 and the signal length.")
+  }
+
+  if (end <= begin) {
+    stop("'end' must be greater than 'begin'.")
+  }
 
   from <- begin * sampling_frequency
   to <- end * sampling_frequency

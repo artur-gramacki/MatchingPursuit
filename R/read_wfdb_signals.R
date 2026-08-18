@@ -21,7 +21,7 @@
 #' \describe{
 #'   \item{signal}{Matrix of signals stored in the WFDB file.}
 #'   \item{sampling_frequency}{Sampling frequency.}
-#'   \item{time_stamps}{Time vector corresponding to signal samples.}
+#'   \item{time}{Time vector corresponding to signal samples.}
 #'   \item{lead_names}{Names of the WFDB leads (channels).}
 #'   \item{record_name}{Name of the file.}
 #' }
@@ -75,12 +75,12 @@ read_wfdb_signals <- function(file) {
   sampling_frequency <- attr(out$header, "record_line")$frequency
   record_name <- attr(out$header, "record_line")$record_name
 
-  time_stamps <- seq(0, by = 1 / sampling_frequency, length.out = nrow(signal))
+  time <- seq(0, by = 1 / sampling_frequency, length.out = nrow(signal))
 
   result <- list(
     signal = signal,
     sampling_frequency = sampling_frequency,
-    time_stamps = time_stamps,
+    time = time,
     lead_names = lead_names,
     record_name = record_name
   )

@@ -6,8 +6,8 @@
 \usage{
 \method{plot}{wfdb}(
   x,
-  begin,
-  end,
+  begin = NULL,
+  end = NULL,
   panel_height = 3,
   small_squares = TRUE,
   zero_line = FALSE,
@@ -17,9 +17,11 @@
 \arguments{
 \item{x}{Object of class \code{wfdb} (from \code{read_wfdb_signals()}).}
 
-\item{begin}{Time point (in seconds) at which to start plotting.}
+\item{begin}{Time point (in seconds) at which to start plotting.
+If \code{NULL}, plotting starts at the beginning of the signal (0 seconds).}
 
-\item{end}{Time point (in seconds) at which to stop plotting.}
+\item{end}{Time point (in seconds) at which to stop plotting.
+If \code{NULL}, plotting continues to the end of the signal.}
 
 \item{panel_height}{Height of each ECG channel panel (in mV).
 One large ECG-paper square corresponds to 0.5 mV. According to standard ECG paper:

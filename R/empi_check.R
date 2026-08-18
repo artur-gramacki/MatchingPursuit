@@ -1,12 +1,13 @@
-#' Checks if EMPI external software is installed
+#' Check whether EMPI is installed
 #'
 #' The EMPI program is installed using the \code{empi_install()} function and stored in the
 #' cache directory. This function checks whether the EMPI program is still available there
 #' (users have full access to the cache directory and may remove its contents at any time).
 #'
 #' @return
-#' The full path to the EMPI executable if it is found. Otherwise, returns \code{NULL}
-#' and displays a message suggesting installation using \code{empi_install()}.
+#' A character string containing the full path to the EMPI executable if found.
+#' If EMPI is not available, invisibly returns \code{NULL} and displays a
+#' message suggesting installation with \code{empi_install()}.
 #'
 #' @seealso
 #' \code{\link{empi_install}},
