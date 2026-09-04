@@ -1,9 +1,28 @@
-#' Methods for objects of class "topk"
+#' Methods for Top-k Objects
 #'
 #' Print and summarize objects returned by \code{topk_gabor_atoms()}.
 #'
 #' @name topk-methods
 #' @seealso \code{\link{topk_gabor_atoms}}
+#'
+#' @examples
+#' signal <- read_csv_signals(system.file("extdata", "sample1.csv", package = "MatchingPursuit"))
+#' xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
+#'
+#' dictionary <- read_gabor_dict(
+#'   xml_file = xml_file,
+#'   sampling_frequency = signal$sampling_frequency,
+#'   duration = max(signal$time)
+#' )
+#'
+#' out_topk <- topk_gabor_atoms(
+#'   atoms_dict = dictionary,
+#'   signal = signal,
+#'   topk = 100
+#' )
+#'
+#' print(out_topk)
+#' summary(out_topk)
 NULL
 
 
@@ -30,11 +49,11 @@ print.topk <- function(x, ...) {
   n_candidates <- nrow(x$inner_products)
 
   cat("Top-k Gabor atoms object (class 'topk')\n")
-  cat("--------------------------------------------------\n")
-  cat("Candidate atoms:  ", n_candidates, "\n")
-  cat("Selected atoms :  ", n_selected, "per channel\n")
-  cat("Signal channels:  ", n_channels, "\n")
-  cat("Signal length:    ", signal_length, "samples\n")
+  cat("-----------------------------------------\n")
+  cat("Candidate atoms:  ", n_candidates, "\n", sep = "")
+  cat("Selected atoms:   ", n_selected, " per channel\n", sep = "")
+  cat("Signal channels:  ", n_channels, "\n", sep = "")
+  cat("Signal length:    ", signal_length, " samples\n", sep = "")
 
   invisible(x)
 }
@@ -45,7 +64,8 @@ print.topk <- function(x, ...) {
 #'
 #' @return
 #' \code{summary.topk()} returns an object of class \code{"summary.topk"}
-#' containing basic information about the selected atoms and their parameters.
+#' containing basic information about the selected atoms and ranges of their
+#' Gabor parameters.
 #'
 #' @export
 summary.topk <- function(object, ...) {
@@ -62,22 +82,11 @@ summary.topk <- function(object, ...) {
 
   n_candidates <- nrow(object$inner_products)
 
-  frequency_range <- if (length(object$frequency) > 0L) {
-    range(object$frequency, na.rm = TRUE)
-  } else {
-    c(NA_real_, NA_real_)
-  }
-
-  scale_range <- if (length(object$scale) > 0L) {
-    range(object$scale, na.rm = TRUE)
-  } else {
-    c(NA_real_, NA_real_)
-  }
-
-  position_range <- if (length(object$position) > 0L) {
-    range(object$position, na.rm = TRUE)
-  } else {
-    c(NA_real_, NA_real_)
+  safe_range <- function(x) {
+    if (length(x) == 0L) return(c(NA_real_, NA_real_))
+    x <- x[is.finite(x)]
+    if (length(x) == 0L) return(c(NA_real_, NA_real_))
+    range(x)
   }
 
   out <- list(
@@ -85,9 +94,12 @@ summary.topk <- function(object, ...) {
     n_selected = n_selected,
     n_channels = n_channels,
     signal_length = signal_length,
-    frequency_range = frequency_range,
-    scale_range = scale_range,
-    position_range = position_range
+    frequency_range = safe_range(object$frequency),
+    phase_range = safe_range(object$phase),
+    scale_range = safe_range(object$scale),
+    position_range = safe_range(object$position),
+    atom_begin_range = safe_range(object$atom_begin),
+    window_len_range = safe_range(object$window_len)
   )
 
   class(out) <- "summary.topk"
@@ -103,40 +115,76 @@ summary.topk <- function(object, ...) {
 #' @export
 print.summary.topk <- function(x, ...) {
 
-  cat("Summary of Top-k Gabor atoms object (class 'topk')\n")
-  cat("--------------------------------------------------\n")
-  cat("Candidate atoms: ", x$n_candidates, "\n")
-  cat("Selected atoms:  ", x$n_selected, " per channel\n")
-  cat("Signal channels: ", x$n_channels, "\n")
-  cat("Signal length:   ", x$signal_length, " samples\n")
+  cat("Summary of Top-k Gabor atoms object (class 'summary.topk')\n")
+  cat("----------------------------------------------------------\n")
+  cat("Candidate atoms:  ", x$n_candidates, "\n", sep = "")
+  cat("Selected atoms:   ", x$n_selected, " per channel\n", sep = "")
+  cat("Signal channels:  ", x$n_channels, "\n", sep = "")
+  cat("Signal length:    ", x$signal_length, " samples\n", sep = "")
 
   if (all(is.finite(x$frequency_range))) {
     cat(
-      "  Frequency range:",
+      "Frequency range:  ",
       format(x$frequency_range[1]),
-      "-",
+      " - ",
       format(x$frequency_range[2]),
-      "Hz\n"
+      " Hz\n",
+      sep = ""
+    )
+  }
+
+  if (all(is.finite(x$phase_range))) {
+    cat(
+      "Phase range:      ",
+      format(x$phase_range[1]),
+      " - ",
+      format(x$phase_range[2]),
+      " rad\n",
+      sep = ""
     )
   }
 
   if (all(is.finite(x$scale_range))) {
     cat(
-      "  Scale range    :",
+      "Scale range:      ",
       format(x$scale_range[1]),
-      "-",
+      " - ",
       format(x$scale_range[2]),
-      "s\n"
+      " s\n",
+      sep = ""
     )
   }
 
   if (all(is.finite(x$position_range))) {
     cat(
-      "  Position range :",
+      "Position range:   ",
       format(x$position_range[1]),
-      "-",
+      " - ",
       format(x$position_range[2]),
-      "s\n"
+      " s\n",
+      sep = ""
+    )
+  }
+
+  if (all(is.finite(x$atom_begin_range))) {
+    cat(
+      "Atom begin range: ",
+      format(x$atom_begin_range[1]),
+      " - ",
+      format(x$atom_begin_range[2]),
+      " s\n",
+      sep = ""
+    )
+  }
+
+  if (all(is.finite(x$window_len_range))) {
+    cat(
+      "Window length:    ",
+      format(x$window_len_range[1]),
+      " - ",
+      format(x$window_len_range[2]),
+      " s\n",
+      sep = ""
     )
   }
 

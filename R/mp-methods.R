@@ -33,7 +33,7 @@
 #' the T-F map may contain no blobs. If the sampling frequency is \code{f},
 #' the maximum frequency in the T-F map will be
 #' \code{ceiling(f / 2 / freq_divide)}
-#' (\code{f / 2} follows the Nyquist rule). If \code{NULL}, it is determined
+#' (\code{f / 2} corresponds to the Nyquist frequency). If \code{NULL}, it is determined
 #' from the atom with the highest frequency \code{fmax} according to
 #' \code{freq_divide = (f / 2) / fmax}.
 #'
