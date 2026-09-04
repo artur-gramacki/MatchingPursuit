@@ -2,7 +2,7 @@
 % Please edit documentation in R/mp_core.R
 \name{mp_core}
 \alias{mp_core}
-\title{Implements the Classical Matching Pursuit (MP) Algorithm}
+\title{Implements the classical Matching Pursuit (MP) algorithm}
 \usage{
 mp_core(
   dictionary,
@@ -10,16 +10,16 @@ mp_core(
   channel = NULL,
   n_nonzero_coefs = NULL,
   tol = NULL,
-  normalize = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{dictionary}{A dictionary of atoms. Can be a matrix, data frame, or any
-object coercible to a matrix. Atoms are assumed to be stored in columns.
-Alternatively, a \code{"topk"} object returned by \code{topk_atoms()}.}
+\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
+Atoms are assumed to be stored in columns.
+Dictionary atoms are internally normalized to unit L2 norm before decomposition.
+Therefore, atom selection is invariant to arbitrary scaling of dictionary columns.}
 
-\item{signal}{A signal matrix or an object coercible to a matrix. Signals are
+\item{signal}{Can be a numeric vector, matrix, or data frame. Signals are
 assumed to be stored in columns. The signal length (number of rows) must
 match the atom length.}
 
@@ -30,14 +30,12 @@ If \code{tol = NULL}, the algorithm stops after selecting at most
 \code{n_nonzero_coefs} atoms. If both \code{n_nonzero_coefs} and
 \code{tol} are \code{NULL}, the default value is
 \code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
-\code{tol} is specified.}
+\code{tol} is specified. Note that in classical
+MP, the same dictionary atom may be selected more than once.}
 
 \item{tol}{Stopping tolerance expressed as the maximum allowed relative residual
 energy, \eqn{\|r\|_2^2 / \|x\|_2^2}. The algorithm stops when the residual
 energy falls below this value. If specified, it overrides \code{n_nonzero_coefs}.}
-
-\item{normalize}{Logical; if \code{TRUE}, dictionary atoms are normalized to
-unit \eqn{\ell_2} norm before decomposition.}
 
 \item{verbose}{Logical; flag indicating whether progress information should be printed.}
 }
@@ -45,37 +43,49 @@ unit \eqn{\ell_2} norm before decomposition.}
 A list containing the result of the Matching Pursuit
 decomposition with the following elements:
 
-\item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
-  reconstruction.}
-\item{signal}{The original signal reconstructed as a vector.}
+\item{selected_atoms}{Matrix of selected unit-L2-normalized dictionary
+atoms used in the reconstruction.}
+
+\item{signal}{The analyzed signal channel returned as a numeric vector.}
+
 \item{reconstruction}{The MP approximation of the signal.}
+
 \item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
-\item{energy}{Energy contribution of selected atoms, computed as \code{coefs^2}.}
+
+\item{energy}{
+Numeric vector containing the reduction in squared residual norm
+associated with each pursuit iteration,
+\eqn{E_k = \|r_{k-1}\|_2^2 - \|r_k\|_2^2}.}
+
 \item{support}{Integer vector of selected atom indices at every iteration.}
+
 \item{residual}{Final residual vector.}
+
+\item{relative_residual_energy}{
+Relative residual energy, \eqn{\|r_k\|_2^2 / \|x\|_2^2}, including the
+initial value before the first iteration and the value after each Matching
+Pursuit iteration. Values close to zero indicate a better reconstruction.}
+
 \item{n_iters}{Number of iterations performed by the algorithm.}
-\item{relative_residual_energy}{Fraction of the original signal energy that
-remains unexplained after each Matching Pursuit iteration. Values close to zero
-indicate a better reconstruction.}
-
-If \code{dictionary} is a \code{"topk"} object, the result additionally
-contains:
-
-\item{frequency}{Frequencies of selected atoms.}
-\item{phase}{Phases of selected atoms.}
-\item{scale}{Scales of selected atoms.}
-\item{position}{Positions of selected atoms.}
 }
 \description{
 Computes a sparse representation of a signal using the classical Matching
 Pursuit (MP) algorithm and a dictionary of atoms.
 }
 \details{
-This is a pure R implementation of the MP algorithm. It is primarily
-intended for reference and educational purposes and is slower and less
-numerically precise than the C++ implementation provided with this package.
-See \code{empi_locate()}, \code{empi_install()}, \code{empi_check()}, and
-\code{empi_execute()} for information about the C++ implementation.
+This is a native R implementation of the classical MP algorithm supporting
+arbitrary matrix-based dictionaries. It provides direct access to the
+decomposition procedure and can be used independently of the Gabor-specific
+workflow. For high-performance Matching Pursuit decomposition using the
+external EMPI backend, see \code{empi_locate()}, \code{empi_install()},
+\code{empi_check()}, and \code{empi_execute()}.
+
+
+Dictionary atoms are normalized internally to unit L2 norm. For classical
+MP, the reduction in squared residual norm at iteration \eqn{k} is therefore
+theoretically equal to the squared MP coefficient. The former definition
+is used explicitly to maintain a consistent interpretation of
+\code{energy} across MP and OMP decompositions.
 }
 \examples{
 dictionary <- matrix(
@@ -98,23 +108,28 @@ c(
 nrow = 5, byrow = TRUE
 )
 
-# set 'verbose = TRUE' to see the progress
-
 fit <- mp_core(
   dictionary = dictionary,
   signal = signal,
   channel = 1,
   n_nonzero_coefs = 3,
-  normalize = TRUE,
   verbose = TRUE
 )
+
+fit$coefs
+# [1] 6.274348 2.535423 1.870568
+
+fit$support
+# [1] 9 5 7
+
+fit$relative_residual_energy
+# [1] 1.0000000 0.2842283 0.1673489 0.1037303
 
 # More realistic example, see mp_omp_execute() examples.
 
 }
 \seealso{
 \code{\link{read_gabor_dict}},
-\code{\link{topk_atoms}},
-\code{\link{mp_omp_execute}},
-\code{\link{mp_omp_pipeline}}
+\code{\link{topk_gabor_atoms}},
+\code{\link{mp_omp_execute}}
 }

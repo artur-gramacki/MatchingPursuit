@@ -2,7 +2,7 @@
 % Please edit documentation in R/as_sig.R
 \name{as_sig}
 \alias{as_sig}
-\title{Convert a Signal to a \code{sig} Object}
+\title{Convert a signal to a \code{sig} object}
 \usage{
 as_sig(signal, sampling_frequency)
 }

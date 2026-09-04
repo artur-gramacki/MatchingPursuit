@@ -23,11 +23,6 @@
 #' out[which(out$channel_id == 1), ]
 #' out[which(out$channel_id == 18), ]
 #'
-#' # Example database containing data from a single channel
-#' file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-#' out <- read_atom_params(file)
-#' out
-#'
 read_atom_params <- function(db_file) {
 
   if (!file.exists(db_file)) {

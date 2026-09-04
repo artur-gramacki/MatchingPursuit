@@ -1,4 +1,4 @@
-#' Clear MatchingPursuit Cache
+#' Clear MatchingPursuit cache
 #'
 #' Deletes all files in the MatchingPursuit cache directory.
 #'

@@ -2,31 +2,66 @@
 % Please edit documentation in R/gabor_projection_fft.R
 \name{gabor_projection_fft}
 \alias{gabor_projection_fft}
-\title{FFT-based fast computation of inner products between a signal and Gabor atoms}
+\title{FFT-based computation of projections onto Gabor atoms}
 \usage{
-gabor_projection_fft(block, signal)
+gabor_projection_fft(block, signal, sigma_divisor = NULL)
 }
 \arguments{
-\item{block}{See the vignette for a description of the structure of blocks.}
+\item{block}{A matrix describing a single Gabor dictionary block, typically
+obtained as a subset of the output of \code{read_gabor_dict()}.
+It must contain at least the columns \code{time_sample},
+\code{window_len}, \code{fft_size}, and \code{freq_bin}.}
 
-\item{signal}{A numeric vector, matrix, or data frame representing the signal(s)
-to be analyzed. Each column is treated as a separate channel.}
+\item{signal}{A numeric vector, matrix, or data frame containing the
+signal(s) to be analyzed. For matrices and data frames, each column is
+treated as a separate signal channel.}
+
+\item{sigma_divisor}{Optional positive numeric value controlling the width
+of the Gaussian envelope. The envelope scale is calculated as
+\code{(window_len + 1) / sigma_divisor}. If \code{NULL}, a divisor of
+\code{3} is used.}
 }
 \value{
-A list containing two matrices computed from windowed FFT segments of the signal:
-\item{proj_mod_mtx}{Magnitudes of selected Gabor atom inner products
-(absolute values of projection coefficients).}
-\item{fft_bin_mtx}{Complex Fourier coefficients used to compute inner products with Gabor atoms.}
+A list with two matrices:
+
+\item{proj_mod_mtx}{
+  Magnitudes of the complex projection coefficients. Rows correspond to
+  atoms in \code{block} and columns to signal channels.
+}
+
+\item{fft_bin_mtx}{
+  Complex Fourier coefficients corresponding to the Gabor frequencies.
+  Rows correspond to atoms in \code{block} and columns to signal channels.
+}
 }
 \description{
-This function computes inner products between a windowed signal and a set of Gabor
-atoms using FFT-based frequency-domain operations. Instead of explicitly constructing
-and shifting atoms in the time domain, it extracts selected Fourier coefficients
-corresponding to Gabor frequencies. The resulting values provide both complex
-projection coefficients and their magnitudes.
+Computes complex projection coefficients between one or more signals and a
+set of Gabor atoms using FFT-based frequency-domain operations.
+}
+\details{
+For each time position defined in \code{block}, the corresponding signal
+segment is multiplied by a normalized Gaussian envelope and transformed
+using the Fast Fourier Transform. Only Fourier coefficients corresponding
+to the frequencies specified in the dictionary are retained.
+
+Atom supports may extend beyond the observed signal boundaries. In this
+case, samples outside the signal are treated as zero. The complete Gaussian
+envelope is normalized before boundary truncation; the part overlapping the
+observed signal is not renormalized.
+
+
+The Gaussian envelope is constructed over the complete atom support and
+normalized to unit L2 norm before it is applied to the signal. If the atom
+support extends before the first signal sample or beyond the last signal
+sample, only the overlapping signal samples contribute to the projection;
+values outside the observed signal are implicitly treated as zero.
+
+Consequently, the visible part of a boundary-crossing atom is not
+renormalized. This preserves the normalization of the complete atom
+independently of its position relative to the signal boundaries.
 }
 \note{
-This function is primarily intended for internal use by \code{topk_atoms()},
+This function is primarily intended for internal use by \code{topk_gabor_atoms()},
 but it is exported to support advanced experiments and methodological testing.
 }
 \examples{
@@ -35,16 +70,24 @@ sampling_frequency <- 256
 duration <- 1
 
 xml_file <- system.file("extdata", "one_block.xml", package = "MatchingPursuit")
-block <- read_gabor_dict(xml_file, sampling_frequency, duration, verbose = TRUE)
-my_list <- gabor_projection_fft(block, signal)
 
-pmm <- my_list$proj_mod_mtx
-scm <- my_list$fft_bin_mtx
+block <- read_gabor_dict(
+  xml_file = xml_file,
+  full_atoms_in_signal = FALSE,
+  sampling_frequency = sampling_frequency,
+  duration = duration,
+  verbose = TRUE
+)
+
+out <- gabor_projection_fft(block, signal)
+
+pmm <- out$proj_mod_mtx
+scm <- out$fft_bin_mtx
 
 head(scm)
 head(pmm)
 
-# Of course it gives 'pmm'
+# Projection magnitudes are the moduli of the complex coefficients
 head(Mod(scm))
 
 }

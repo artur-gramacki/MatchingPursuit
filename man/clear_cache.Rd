@@ -2,7 +2,7 @@
 % Please edit documentation in R/clear_cache.R
 \name{clear_cache}
 \alias{clear_cache}
-\title{Clear MatchingPursuit Cache}
+\title{Clear MatchingPursuit cache}
 \usage{
 clear_cache()
 }

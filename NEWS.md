@@ -1,3 +1,33 @@
+# MatchingPursuit 1.3.0
+
+* Simplified the native MP/OMP core interfaces. `mp_core()` and `omp_core()`
+  now operate directly on numeric matrix dictionaries, no longer accept
+  `topk` objects, and always normalize dictionary atoms internally to
+  unit L2 norm.
+  
+* Extended the native R implementations of Matching Pursuit and Orthogonal
+  Matching Pursuit to support arbitrary user-defined matrix dictionaries.
+
+* Added a high-level Gabor-based MP/OMP workflow through `mp_omp_execute()`.
+
+* Added `omp_reference()`, a simple educational and reference implementation
+  of Orthogonal Matching Pursuit.
+
+* Added and improved S3 methods for package objects, including printing,
+  summaries, and plotting.
+
+* Improved Gabor dictionary handling and atom preselection, including
+  `read_gabor_dict()` and `topk_gabor_atoms()`.
+
+* Updated package documentation, examples, README, and vignette to reflect
+  the current MP-R, OMP-R, and EMPI workflows.
+
+* Improved input validation, error handling, and overall code consistency.
+
+* Renamed selected functions for consistency with the current API:
+  - `mp_omp_pipeline()` was renamed to `mp_omp_execute()`.
+  - `topk_atoms()` was renamed to `topk_gabor_atoms()`.
+
 # MatchingPursuit 1.2.0
 
 * Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`),
@@ -13,7 +43,7 @@
 * Significantly expanded `README.md` to provide a more comprehensive overview
   of the package, its functionality, and typical workflows.
 
-* Renamed `plot.ecg()` and `read_ecg_signals()` to `plot.wfdb()` and
+* 00:56 01.09.2026 and
   `read_wfdb_signals()`, respectively.
 
 * Updated `read_csv_signals()`, `read_edf_signals()`, and `read_wfdb_signals()`
@@ -36,7 +66,7 @@
   - `sig_to_bin()` was renamed to `signal_to_bin()`.
   - `gabor_proj_fft()` was renamed to `gabor_projection_fft()`.
 
-* Simplified mp_omp_pipeline() to provide a higher-level MP/OMP decomposition 
+* Simplified `mp_omp_pipeline()` to provide a higher-level MP/OMP decomposition 
   workflow for signals stored in CSV format; signal-specific preprocessing is 
   expected to be performed separately.
   

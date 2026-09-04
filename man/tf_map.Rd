@@ -9,11 +9,10 @@ tf_map(
   channel,
   mode = "sqrt",
   freq_divide = NULL,
-  increase_factor = 1,
+  increase_factor = 4,
   shortening_factor_x = 2,
   shortening_factor_y = 2,
-  display_crosses = TRUE,
-  display_atom_numbers = FALSE,
+  atom_centers = "crosses",
   display_grid = FALSE,
   color = "white",
   palette = "my custom palette",
@@ -25,7 +24,7 @@ tf_map(
   draw_ellipses = FALSE,
   plot_signals = TRUE,
   write_atoms = FALSE,
-  verbose = TRUE
+  verbose = FALSE
 )
 }
 \arguments{
@@ -51,9 +50,9 @@ frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropri
 
 \item{shortening_factor_y}{Usually, a value of 2 provides better atom visualization.}
 
-\item{display_crosses}{Whether small crosses should be displayed at the centres of atoms.}
-
-\item{display_atom_numbers}{Whether atom numbers should be displayed in the centres of atoms.}
+\item{atom_centers}{\code{"crosses"}, \code{"numbers"}, or \code{NULL}. Determines
+how the centres of atoms (represented as so-called blobs) are marked on the T-F map
+(with small crosses, atom numbers, or no markers).}
 
 \item{display_grid}{Whether grid lines should be drawn.}
 
@@ -105,6 +104,11 @@ Regardless of the output mode, the function also returns:
     \item{gabor_functions}{All Gabor functions.}
     \item{reconstruction}{Reconstructed signal.}
     \item{signal}{ Original signal.}
+    \item{signal_energy}{Energy of the original signal for the selected channel.}
+    \item{reconstruction_energy}{Energy of the reconstructed signal for the selected channel.}
+    \item{residual_energy}{Energy of the reconstruction residual.}
+    \item{explained_energy}{Proportion of the original signal energy explained by the reconstruction,
+    \code{1 - sum((signal - reconstruction)^2) / sum(signal^2)}.}
     \item{sampling_frequency}{Sampling frequency.}
     \item{grid_size_t}{Grid size along the time axis.}
     \item{grid_size_f}{Grid size along the frequency axis.}
@@ -121,30 +125,38 @@ Creates a time-frequency map using atoms from the Matching Pursuit algorithm.
 The resulting map can be: 1) displayed on the screen, 2) saved as a \code{.png} file,
 or 3) saved as an \code{.RData} object.
 }
+\details{
+The function also computes basic reconstruction-quality measures for the
+selected channel, including signal energy, residual energy, and normalized
+reconstruction error (NRE).
+}
 \examples{
-file <- system.file("extdata", "sample1.db", package = "MatchingPursuit")
-empi_class <- read_empi_db(file)
+file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read_csv_signals(file)
+
+sample1_empi_out <- empi_execute (
+  signal = signal,
+  empi_options = "-o local --gabor -i 25",
+)
 
 # 'freq_divide' is set arbitrarily
 out <- tf_map(
-  x = empi_class,
+  x = sample1_empi_out,
   channel = 1,
   mode = "sqrt",
   freq_divide = 4,
   increase_factor= 4,
-  display_crosses = TRUE,
-  display_atom_numbers = FALSE,
+  atom_centers = "crosses",
   out_mode = "plot",
 )
 
 # 'freq_divide' is determined based on the atom with the highest frequency
 out <- tf_map(
-  x = empi_class,
+  x = sample1_empi_out,
   channel = 1,
   mode = "sqrt",
   increase_factor= 4,
-  display_crosses = TRUE,
-  display_atom_numbers = FALSE,
+  atom_centers = "numbers",
   out_mode = "plot",
 )
 

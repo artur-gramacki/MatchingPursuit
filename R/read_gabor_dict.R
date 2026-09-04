@@ -5,6 +5,11 @@
 #' @param xml_file
 #' Path to the XML file containing the dictionary definition.
 #'
+#' @param full_atoms_in_signal
+#' Logical. If \code{TRUE}, only atoms whose complete support lies within
+#' the signal are generated. If \code{FALSE}, atom support may extend beyond
+#' the signal boundaries.
+#'
 #' @param sampling_frequency
 #' Sampling frequency (in Hz) of the signal associated with the dictionary.
 #'
@@ -19,12 +24,12 @@
 #' @return A matrix where each row describes a Gabor atom with the following columns:
 #'
 #' \item{block}{Block identifier from the XML file.}
-#' \item{time_sample}{Time position of the atom (in samples).}
-#' \item{time_sec}{Time position of the atom (in seconds).}
+#' \item{time_sample}{Start position of the atom support (in samples).}
+#' \item{time_sec}{Start position of the atom support (in seconds).}
 #' \item{freq_bin}{Frequency bin index.}
 #' \item{freq_hz}{Frequency in Hertz.}
-#' \item{window_len}{Window length used for the atom.}
-#' \item{fft_size}{FFT size used for the atom.}
+#' \item{window_len}{Window length of the atom support, in samples.}
+#' \item{fft_size}{FFT size used to define the frequency grid.}
 #'
 #' @details
 #' Each \code{<block>} in the XML file defines a time-frequency scale of atoms
@@ -43,9 +48,9 @@
 #'<?xml version="1.0" encoding="ISO-8859-1"?>
 #'<dict>
 #'  <block>
-#'    <param name="windowLen" value="30"/>
-#'    <param name="windowShift" value="72"/>
-#'    <param name="fftSize" value="32"/>
+#'    <param name="windowLen" value="31"/>
+#'    <param name="windowShift" value="2"/>
+#'    <param name="fftSize" value="64"/>
 #'  </block>
 #'</dict>
 #' }
@@ -54,62 +59,60 @@
 #' a multiresolution Gabor dictionary. Smaller windows provide better time
 #' resolution, while larger windows improve frequency resolution.
 #'
-#' This implementation assumes a \emph{finite signal support model}
-#' and restricts dictionary generation to atoms fully contained within
-#' the signal support. In particular, only atoms satisfying:
-#' \deqn{0 \leq t \leq N - L} are generated, where \eqn{t} is the atom start
-#' position, \eqn{N} is the signal length, and \eqn{L} is the window length.
-#' Atoms that would extend beyond the left or right boundary of the signal
-#' are \strong{not included in the dictionary}. If the signal duration is
-#' shorter than the window length, no time positions are generated for that block.
+#' The treatment of atoms near signal boundaries is controlled by
+#' \code{full_atoms_in_signal}.
 #'
-#' @section Usage in sparse decomposition pipeline:
-#' The output of \code{read_gabor_dict()} is a low-level dictionary of atom
-#' parameters (time-frequency grid description). It serves as an input
-#' to \code{topk_atoms()}, which:
+#' If \code{TRUE}, only atoms fully contained within the signal support are
+#' generated. In this case, atom start positions satisfy
+#' \deqn{0 \leq t \leq N - L,}
+#' where \eqn{t} is the atom start position, \eqn{N} is the signal length,
+#' and \eqn{L} is the window length. If the signal is shorter than the window
+#' length, no time positions are generated for that block.
+#'
+#' If \code{FALSE}, atom centres are allowed at positions throughout the
+#' signal, and the support of an atom may extend beyond the signal boundaries.
+#'
+#' @section Usage in sparse decomposition workflow:
+#' The output of \code{read_gabor_dict()} is a low-level description of the
+#' Gabor time-frequency grid. It serves as input to \code{topk_gabor_atoms()},
+#' which:
 #' \itemize{
 #'   \item evaluates complex Gabor atoms,
-#'   \item computes phase-invariant cross-correlations with the signal,
-#'   \item selects the best \code{topk} atoms per channel,
-#'   \item constructs a full real-valued atom representation with optimal phase.
+#'   \item computes phase-invariant projections onto the signal,
+#'   \item selects the best \code{topk} atoms for each channel,
+#'   \item constructs real-valued atom representations using optimal phases.
 #' }
 #'
-#' The resulting \code{"topk"} object contains precomputed atoms and metadata
-#' that are directly consumed by \code{omp_core()} for sparse decomposition.
-#' In a typical native R workflow, the output of \code{read_gabor_dict()} is passed
-#' to \code{topk_atoms()}, and the resulting \code{"topk"} object is then used
-#' by \code{mp_omp_execute()} or the lower-level \code{mp_core()} and
-#' \code{omp_core()} functions.
+#' The resulting \code{"topk"} object contains channel-specific atom matrices
+#' and associated metadata. Individual atom matrices can subsequently be passed
+#' to \code{mp_core()} or \code{omp_core()} for sparse decomposition.
+#' The higher-level \code{mp_omp_execute()} function performs these preparation
+#' steps internally.
 #'
-#' @section Exporting dictionaries from the EMPI program:
-#' The EMPI program can export dictionary definitions as an XML file containing
-#' atom parameters. This file may include additional elements that are not used
-#' in this package, these are safely ignored by the \code{read_gabor_dict()} function.
-#' This feature enables direct comparison between the EMPI implementation of the
-#' Matching Pursuit (MP) algorithm and the Orthogonal Matching Pursuit (OMP)
-#' algorithm implemented in \code{omp_core()}.
-#' It should be noted that EMPI includes several advanced optimization strategies
-#' that are not present in the current OMP implementation. To ensure
-#' comparability of results, EMPI is executed with the parameters
-#' \code{-o none} and \code{--full-atoms-in-signal}. Their exact meaning is
-#' described in the EMPI documentation (see \code{README.md}).
+#' @section EMPI compatibility:
+#' XML dictionary definitions exported by EMPI can be read directly by this
+#' function. Additional XML elements not used by \code{read_gabor_dict()} are
+#' ignored. The argument \code{full_atoms_in_signal} controls the boundary
+#' convention corresponding to the EMPI \code{--full-atoms-in-signal} option.
+#'
+#' For full details on the EMPI options and their behavior, see the
+#' EMPI documentation in \code{README.md}.
 #'
 #' @importFrom xml2 read_xml xml_find_all xml_attr
 #'
 #' @export
 #'
 #' @seealso
-#' \code{\link{topk_atoms}},
+#' \code{\link{topk_gabor_atoms}},
 #' \code{\link{mp_omp_execute}},
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}},
-#' \code{\link{mp_omp_pipeline}},
 #' \code{\link{generate_xml_dict}}
 #'
 #'
 #' @examples
 #' # +-------------------------------------------------------------+
-#' # | Read signal                                                 |
+#' # | Step 1: Read signal                                         |
 #' # +-------------------------------------------------------------+
 #' sig_file <- system.file(
 #'   "extdata",
@@ -125,70 +128,62 @@
 #' sampling_frequency <- sample3$sampling_frequency
 #' duration <- nrow(sample3$signal) / sampling_frequency
 #'
-#' # +---------------------------------------------------------------+
-#' # | Read dictionary definition                                    |
-#' # +---------------------------------------------------------------+
+#' # +-------------------------------------------------------------+
+#' # | Step 2: Read dictionary                                     |
+#' # +-------------------------------------------------------------+
 #' xml_file <- system.file(
 #'   "extdata",
 #'   "sample3.xml",
 #'   package = "MatchingPursuit"
 #' )
 #'
-#' atoms_dict <- read_gabor_dict(
-#'   xml_file,
-#'   sampling_frequency,
-#'   duration,
+#' # +-------------------------------------------------------------+
+#' # | Step 3: Compare boundary conventions                        |
+#' # +-------------------------------------------------------------+
+#' # Generate only atoms whose complete support lies within
+#' # the signal boundaries.
+#' atoms_full <- read_gabor_dict(
+#'   xml_file = xml_file,
+#'   sampling_frequency = sampling_frequency,
+#'   duration = duration,
+#'   full_atoms_in_signal = TRUE,
 #'   verbose = TRUE
 #' )
 #'
-#' # +---------------------------------------------------------------+
-#' # | Running the EMPI program with the                             |
-#' # | --dictionary-output option allows you to save                 |
-#' # | (in XML format) data about the dictionary used.               |
-#' # +---------------------------------------------------------------+
-#'
-#' #
-#' # Uncomment to run empi_execute() function
-#' #
-#' # dest_dir <- tools::R_user_dir("MatchingPursuit", "cache")
-#'
-#' # opts <- paste0(
-#' #  "-o none --gabor -i 50 --full-atoms-in-signal --dictionary-output ",
-#' #  dest_dir,
-#' #   "/sample3_EMPI.xml"
-#' # )
-#'
-#' # out_sample3 <- empi_execute(
-#' #   signal = sample3,
-#' #   empi_options = opts
-#' # )
-#'
-#' # +---------------------------------------------------------------+
-#' # | Please compare the sample3.xml and sample3_EMPI.xml           |
-#' # | files and find out which fields in the latter file are not    |
-#' # | used in the read_gabor_dict() function.                       |
-#' # +---------------------------------------------------------------+
-#' con <- file(xml_file, open = "r")
-#' cat(readLines(con, n = 22), sep = "\n")
-#' close(con)
-#'
-#' xml_file_2 <- system.file(
-#'   "extdata",
-#'   "sample3_EMPI.xml",
-#'   package = "MatchingPursuit"
+#' # Allow atom support to extend beyond the signal boundaries.
+#' # Atom centres still remain within the signal.
+#' atoms_overstep <- read_gabor_dict(
+#'   xml_file = xml_file,
+#'   sampling_frequency = sampling_frequency,
+#'   duration = duration,
+#'   full_atoms_in_signal = FALSE,
+#'   verbose = TRUE
 #' )
 #'
-#' con <- file(xml_file_2, open = "r")
-#' for (i in 1:35) {
-#'   cat(readLines(con, n = 1), sep = "\n")
-#' }
-#' close(con)
+#' # Allowing boundary overstep increases the number of dictionary atoms.
+#' nrow(atoms_full)
+#' nrow(atoms_overstep)
+#'
+#' # With full_atoms_in_signal = TRUE, atom start positions
+#' # are always non-negative.
+#' range(atoms_full[, "time_sample"])
+#'
+#' # With full_atoms_in_signal = FALSE, atoms centred near the beginning
+#' # of the signal may have negative start positions.
+#' range(atoms_overstep[, "time_sample"])
 #'
 read_gabor_dict <- function (
     xml_file,
     sampling_frequency,
     duration,
-    verbose = FALSE) {
+    verbose = FALSE,
+    full_atoms_in_signal = FALSE) {
+
+  if (!is.logical(full_atoms_in_signal) ||
+      length(full_atoms_in_signal) != 1L ||
+      is.na(full_atoms_in_signal)) {
+    stop("'full_atoms_in_signal' must be TRUE or FALSE.")
+  }
 
   if (!is.numeric(sampling_frequency) ||
       length(sampling_frequency) != 1L ||
@@ -235,17 +230,30 @@ read_gabor_dict <- function (
     window_shift <- as.integer(params[["windowShift"]])
     fft_size <- as.integer(params[["fftSize"]])
 
-    end_time <- signal_length - window_len
-
-    if (end_time >= 0) {
-      time_positions <- seq(
+    # Only atoms fully contained within the signal
+    if (full_atoms_in_signal) {
+      end_time <- signal_length - window_len
+      if (end_time >= 0) {
+        time_positions <- seq(
+          from = 0,
+          to = end_time,
+          by = window_shift
+        )
+      } else {
+        time_positions <- integer(0)  # no time positions
+      }
+    } else {
+      # Atom centres may span the entire signal.
+      # Atom support is allowed to extend beyond signal boundaries.
+      center_offset <- floor(window_len / 2)
+      center_positions <- seq(
         from = 0,
-        to = end_time,
+        to = signal_length - 1L,
         by = window_shift
       )
-    } else {
-      time_positions <- integer(0)  # no time positions
+      time_positions <- center_positions - center_offset
     }
+
 
     freq_bins <- 0:(floor(fft_size / 2) - 1)
 
@@ -287,6 +295,12 @@ read_gabor_dict <- function (
   if (verbose) {
     message("===================================", sep = "")
     message("Total atoms: ", length(all_atoms), sep = "")
+    message("read_gabor_dict() executed successfully.")
+    message('XML file can be found in: ', xml_file, "\n")
+  }
+
+  if (length(all_atoms) == 0L) {
+    stop("No atoms could be generated for the specified signal and dictionary.")
   }
 
   # convert to matrix
@@ -295,6 +309,7 @@ read_gabor_dict <- function (
     ncol = 7,
     byrow = TRUE
   )
+
   colnames(mat) <- names(all_atoms[[1]])
 
   return(mat)

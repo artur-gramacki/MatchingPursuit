@@ -1,4 +1,4 @@
-#' Convert a Signal to a \code{sig} Object
+#' Convert a signal to a \code{sig} object
 #'
 #' Creates an object of class \code{sig} from signal data already available
 #' in \proglang{R}. The function provides a convenient way to prepare signals

@@ -10,17 +10,16 @@ omp_core(
   channel = NULL,
   n_nonzero_coefs = NULL,
   tol = NULL,
-  normalize = TRUE,
-  fit_intercept = TRUE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{dictionary}{A dictionary of atoms. Can be a matrix, data frame, or any
-object coercible to a matrix. Atoms are assumed to be stored in columns.
-Alternatively, a \code{"topk"} object returned by \code{topk_atoms()}.}
+\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
+Atoms are assumed to be stored in columns.
+Dictionary atoms are internally normalized to unit L2 norm before decomposition.
+Therefore, atom selection is invariant to arbitrary scaling of dictionary columns.}
 
-\item{signal}{A signal matrix or an object coercible to a matrix. Signals are
+\item{signal}{Can be a numeric vector, matrix, or data frame. Signals are
 assumed to be stored in columns. The signal length (number of rows) must
 match the atom length.}
 
@@ -33,15 +32,12 @@ If \code{tol = NULL}, the algorithm stops after selecting at most
 \code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
 \code{tol} is specified.}
 
-\item{tol}{Stopping tolerance defined as the maximum allowed squared residual
-norm (\eqn{\|r\|^2}). The algorithm stops when the residual energy falls
-below this value. If specified, it overrides \code{n_nonzero_coefs}.}
-
-\item{normalize}{Logical; if \code{TRUE}, dictionary atoms are normalized to
-unit \eqn{\ell_2} norm before decomposition.}
-
-\item{fit_intercept}{Logical; if \code{TRUE}, the signal and dictionary atoms
-are centered before decomposition and an intercept term is estimated.}
+\item{tol}{Optional stopping tolerance for the relative residual energy,
+defined as
+\deqn{\|r_k\|_2^2 / \|x\|_2^2.}
+The algorithm stops when this value is less than or equal to
+\code{tol}. If specified, \code{tol} overrides
+\code{n_nonzero_coefs}.}
 
 \item{verbose}{Logical; flag indicating whether progress information should be printed.}
 }
@@ -49,40 +45,79 @@ are centered before decomposition and an intercept term is estimated.}
 A list containing the result of the Orthogonal Matching Pursuit
 decomposition with the following elements:
 
-\item{selected_atoms}{Matrix of selected atoms (dictionary columns) used in the
-  reconstruction.}
-\item{original_signal}{The original signal reconstructed as a vector
-  (including intercept if \code{fit_intercept = TRUE}).}
-\item{reconstruction}{The OMP approximation of the signal including intercept
-  (if applicable).}
-\item{coefs}{Numeric vector of estimated coefficients for selected atoms.}
-\item{energy}{Energy contribution of selected atoms, computed as
-  \code{coefs^2 * colSums(selected_atoms^2)}.}
-\item{intercept}{Estimated intercept term (0 if \code{fit_intercept = FALSE}).}
-\item{support}{Integer vector of selected atom indices.}
-\item{residual}{Final residual vector.}
-\item{n_iters}{Number of iterations performed by the algorithm.}
+\item{selected_atoms}{
+  Matrix of selected unit-L2-normalized dictionary atoms used in the reconstruction.}
 
-If \code{dictionary} is a \code{"topk"} object, the result additionally
-contains:
+\item{signal}{
+  The analyzed signal channel returned as a numeric vector.}
 
-\item{frequency}{Frequencies of selected atoms.}
-\item{phase}{Phases of selected atoms.}
-\item{scale}{Scales of selected atoms.}
-\item{position}{Positions of selected atoms.}
+\item{reconstruction}{
+  OMP reconstruction of the signal}
+
+\item{coefs}{
+  Final least-squares coefficients corresponding to
+  \code{selected_atoms}.}
+
+\item{energy}{
+  Numeric vector containing the reduction in residual energy produced at
+  each OMP iteration,
+  \eqn{\|r_{k-1}\|_2^2 - \|r_k\|_2^2}.
+}
+\item{support}{
+  Indices of the selected atoms in the input dictionary, in selection
+  order.}
+
+\item{residual}{
+  Final residual vector.}
+
+\item{relative_residual_energy}{
+  Relative residual energy after initialization and after each OMP
+  iteration.}
+
+\item{n_iters}{
+  Number of OMP iterations performed.}
 }
 \description{
-This function implements the Orthogonal Matching Pursuit (OMP) algorithm to
-compute a sparse representation of a signal using a dictionary of atoms.
-This is an efficient implementation with incremental Cholesky factorization for
-efficient least-squares solving. The implementation follows the algorithm used
-by sklearn.linear_model.OrthogonalMatchingPursuit, including incremental Cholesky
-updates for solving the least-squares problem.
+Performs Orthogonal Matching Pursuit (OMP) to obtain a sparse
+representation of a signal using a dictionary of candidate atoms.
 }
 \details{
-Unlike classical Matching Pursuit, OMP recomputes all selected coefficients
-at each iteration by solving a least-squares problem, which generally
-yields more accurate sparse approximations for a given number of atoms.
+Unlike classical Matching Pursuit, OMP recomputes the coefficients of all
+previously selected atoms at each iteration by solving a least-squares
+problem. This makes the residual orthogonal to the subspace spanned by the
+selected atoms and generally provides a more accurate approximation for a
+given number of atoms.
+
+The least-squares problem is solved efficiently using incremental Cholesky
+factorization.
+
+
+At each iteration, the atom with the largest absolute correlation with the
+current residual is selected. All coefficients associated with the selected
+atoms are then recomputed simultaneously by least squares, and the residual
+is updated.
+
+For OMP, the quantity stored in \code{energy} is not calculated from the
+final coefficient of an individual atom. Selected atoms can be strongly
+correlated, and therefore quantities such as
+\code{coefs^2 * colSums(selected_atoms^2)} are not additive contributions
+to the energy of the reconstruction.
+
+Instead, the energy associated with the atom selected at iteration
+\eqn{k} is defined as the reduction in residual energy:
+
+\deqn{
+E_k = \|r_{k-1}\|_2^2 - \|r_k\|_2^2.
+}
+
+Thus, \code{energy[k]} quantifies the reduction in residual energy
+associated with the \eqn{k}-th OMP iteration, after adding a new atom
+and re-estimating all active coefficients.
+
+\deqn{
+\sum_k E_k =
+\|x\|_2^2 - \|r_K\|_2^2.
+}
 }
 \examples{
 dictionary <- matrix(
@@ -110,61 +145,24 @@ fit <- omp_core(
   signal = signal,
   channel = 1,
   n_nonzero_coefs = 3,
-  fit_intercept = FALSE,
   verbose = TRUE
 )
 
-fit$coef
+fit$coefs
 # [1] 5.282278 2.637693 2.195920
 
 fit$support
 # [1] 9 5 7
 
-# More realistic example, see omp_execute() examples.
+fit$relative_residual_energy
+# [1] 1.00000000 0.28422833 0.16609350 0.08795047
 
-#--------------------------------------------------------
-# Comparison with the Python implementation.
-# The results are identical.
-#--------------------------------------------------------
-# import numpy as np
-# from sklearn.linear_model import OrthogonalMatchingPursuit
-# from sklearn.preprocessing import normalize
-
-# import sklearn
-# print(sklearn.__version__)
-# 1.8.0
-
-# A = np.array([
-#   [ 1.0,  0.9,  0.1,  1.0, -0.2,  0.3,  0.7, -0.5,  1.2,  0.4],
-#   [ 0.2,  1.0,  0.8, -0.3,  1.0, -0.6,  0.5,  0.9, -0.1,  0.8],
-#   [ 0.0,  0.1,  1.0,  0.5,  0.7,  1.1, -0.4,  0.2,  0.6, -0.7],
-#   [ 0.9, -0.2,  0.4,  1.3,  0.1,  0.0,  0.8, -0.9,  0.5,  1.0],
-#   [-0.3,  0.6,  1.1, -0.4,  0.2,  0.7, -0.8,  1.0,  0.3,  0.9]
-# ])
-# A = normalize(A, axis = 0)
-
-# y = np.array([
-#   [4, 3, 5, 2],
-#   [2, 1, 2, 3],
-#   [3, 2, 4, 1],
-#   [5, 4, 3, 2],
-#   [1, 3, 2, 4]
-# ])
-
-# omp = OrthogonalMatchingPursuit(n_nonzero_coefs = 3, fit_intercept = False)
-# omp.fit(A, y)
-
-# print(omp.coef_)
-
-# [[0.   0.   0.         0.   2.63769257 0.    2.19591982 0.  5.28227763 0.        ]
-#  [0.   0.   1.93331753 0.   0.         0.    0.         0.  3.65053608 2.21995968]
-#  [0.   0.   0.         0.   2.75657594 0.    0.         0.  6.55405854 0.64133666]
-#  [0.   0.   3.3515668  0.   0.         0.    0.         0.  0.98551322 2.81352305]]
+# For a complete Gabor decomposition workflow, see mp_omp_execute().
 
 }
 \seealso{
-\code{\link{read_gabor_dict}},
-\code{\link{topk_atoms}},
+\code{\link{topk_gabor_atoms}},
+\code{\link{mp_core}},
 \code{\link{mp_omp_execute}},
-\code{\link{mp_omp_pipeline}}
+\code{\link{tf_map}}
 }
