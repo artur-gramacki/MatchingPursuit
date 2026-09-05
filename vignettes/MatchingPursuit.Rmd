@@ -1248,34 +1248,8 @@ is designed for substantially faster decomposition of large dictionaries.
 The diagram below summarizes the three available decomposition workflows and
 their relationship within the package.
 
-```
-                                             INPUT SIGNAL
-                                                  |
-                        +-------------------------+---------------------------+
-                        |                         |                           |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-              | General matrix-   |    | Native R Gabor-      |    | External EMPI-based  |
-              | based MP/OMP      |    | based MP/OMP         |    | Matching Pursuit     |
-              | decomposition     |    | decomposition        |    | decomposition        |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-                        |                         |                           |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-              | User-defined      |    |   mp_omp_execute()   |    |    empi_execute()    |
-              | matrix dictionary |    +----------+-----------+    +----------+-----------+
-              +---------+---------+               |                           |
-                        |              +----------+-----------+    +----------+-----------+
-              +---------+---------+    | Object of class "mp" |    | Object of class "mp" |
-              |   mp_core()       |    +----------+-----------+    +----------+-----------+
-              |      or           |               |                           |
-              |   omp_core()      |               |                           |
-              +---------+---------+               +-------------+-------------+
-                        |                                       |
-              +---------+---------+                       +-----+------+
-              | Numerical         |                       |            |
-              | decomposition     |                       |            |
-              | results           |                  +----+----+  +----+-----+
-              +-------------------+                  | plot()  |  | tf_map() |
-                                                     +---------+  +----------+
+```{r fig_1, echo=FALSE, out.width="80%", fig.align="center"}
+knitr::include_graphics("../man/figures/main_workflows.png")
 ```
 
 The `mp_omp_execute()` function provides a high-level interface for Gabor-based MP 
@@ -1292,42 +1266,8 @@ to `mp_core()` or `omp_core()` for decomposition of each signal channel. Finally
 metadata and returns an object of class `mp`, which can be used directly with 
 `plot()` and `tf_map()`.
 
-```
-                                +-----------------------------------+
-                                |         mp_omp_execute()          |
-                                +-----------------------------------+
-                                                  |
-                                +-----------------+-----------------+
-                                |      Is XML file supplied?        |
-                                +-----------------------------------+
-                                       |                     |
-                  +--------------------+---------+   +-------+---------------------+
-                  |     generate_xml_dict()      |   |   User-supplied XML file    |
-                  +--------------------+---------+   +-------+---------------------+
-                                       |                     |  
-                                +------+---------------------+------+						  
-                                |        read_gabor_dict()          |
-                                +-----------------------------------+
-                                                  |
-                                +-----------------+-----------------+
-                                |       topk_gabor_atoms()          |
-                                +-----------------------------------+
-                                                  |
-                                      +-----------+----------+
-                                      |                      |
-                            +---------+---------+   +--------+----------+
-                            |     mp_core()     |   |    omp_core()     |
-                            +-------------------+   +-------------------+
-                                      |                      |
-                                +-----+----------------------+------+
-                                |     build object of class "mp"    |
-                                +-----------------+-----------------+
-                                                  |
-                                      +-----------+----------+
-                                      |                      |
-                                 +----+----+            +----+-----+
-                                 | plot()  |            | tf_map() |
-                                 +---------+            +----------+
+```{r fig_2, echo=FALSE, out.width="70%", fig.align="center"}
+knitr::include_graphics("../man/figures/flow_of_mp_omp_execute.png")
 ```
 
 [Back to menu](#top)

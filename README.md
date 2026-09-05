@@ -9,7 +9,9 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchingPursuit)](https
 
 ## Purpose
 
-Sparse signal decomposition framework for one- and multi-channel biomedical and general time-series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit** algorithms.
+Sparse signal decomposition framework for one- and multi-channel biomedical and 
+general time-series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit** 
+algorithms.
 
 
 Supported features:
@@ -31,7 +33,10 @@ Supported features:
 
 Note:
 
-The terms **MP-R** and **OMP-R**, with the suffix **R**, refer to the corresponding native R backends rather than to the algorithms themselves. The terms **MP** and **OMP**, without the suffix **R**, refer to the corresponding algorithms rather than to a specific implementation.
+The terms **MP-R** and **OMP-R**, with the suffix **R**, refer to the corresponding 
+native R backends rather than to the algorithms themselves. The terms **MP** and 
+**OMP**, without the suffix **R**, refer to the corresponding algorithms rather 
+than to a specific implementation.
 
 ## Installation
 
@@ -46,7 +51,10 @@ install.packages("MatchingPursuit")
 
 ### MP-R and OMP-R: Gabor-based decomposition
 
-For Gabor-based decomposition, `mp_omp_execute()` provides the high-level interface. It prepares the Gabor dictionary, selects candidate atoms, performs MP or OMP decomposition, combines the numerical results with Gabor metadata, and returns an object of class `"mp"`.
+For Gabor-based decomposition, `mp_omp_execute()` provides the high-level interface. 
+It prepares the Gabor dictionary, selects candidate atoms, performs MP or OMP 
+decomposition, combines the numerical results with Gabor metadata, and returns an 
+object of class `"mp"`.
 
 ```r
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -70,7 +78,8 @@ If `dictionary = NULL`, an XML Gabor dictionary specification is generated inter
 
 ### EMPI
 
-EMPI must first be installed using the `empi_install()` function. The decomposition can then be performed using `empi_execute()` and visualized using `plot()`.
+EMPI must first be installed using the `empi_install()` function. The decomposition 
+can then be performed using `empi_execute()` and visualized using `plot()`.
 
 ```r
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -85,7 +94,9 @@ plot(out, channel = 1, freq_divide = 4)
 
 ### Decomposition with a custom dictionary
 
-The native R implementations can operate directly on arbitrary user-defined dictionaries. Dictionary atoms are supplied as columns of a numeric matrix and are normalized internally to unit L2 norm.
+The native R implementations can operate directly on arbitrary user-defined 
+dictionaries. Dictionary atoms are supplied as columns of a numeric matrix and 
+are normalized internally to unit L2 norm.
 
 ```r
 N <- 256
@@ -111,7 +122,10 @@ out$coefs
 out$relative_residual_energy
 ```
 
-For small illustrative examples, `omp_reference()` provides a transparent educational implementation that follows the mathematical formulation of OMP explicitly, including least-squares coefficient updates and residual orthogonality checks.
+For small illustrative examples, `omp_reference()` provides a transparent 
+educational implementation that follows the mathematical formulation of OMP 
+explicitly, including least-squares coefficient updates and residual orthogonality 
+checks.
 
 ## Package architecture
 
@@ -125,89 +139,51 @@ The package provides three main decomposition routes.
 
 Notes:
 
-1. `mp_core()` and `omp_core()` are general-purpose low-level sparse solvers. They operate on arbitrary numeric matrix dictionaries and are independent of the Gabor-specific workflow.
+1. `mp_core()` and `omp_core()` are general-purpose low-level sparse solvers. 
+They operate on arbitrary numeric matrix dictionaries and are independent of the 
+Gabor-specific workflow.
 
-2. `mp_omp_execute()` provides the high-level native R interface for Gabor-based decomposition. If no XML dictionary specification is supplied, `generate_xml_dict()` creates one internally. The specification is processed by `read_gabor_dict()`, after which `topk_gabor_atoms()` selects channel-specific candidate Gabor atoms. The resulting atom matrices are passed to `mp_core()` or `omp_core()`, and the numerical results are combined with Gabor metadata to construct an object of class `"mp"`.
+2. `mp_omp_execute()` provides the high-level native R interface for Gabor-based 
+decomposition. If no XML dictionary specification is supplied, `generate_xml_dict()` 
+creates one internally. The specification is processed by `read_gabor_dict()`, 
+after which `topk_gabor_atoms()` selects channel-specific candidate Gabor atoms. 
+The resulting atom matrices are passed to `mp_core()` or `omp_core()`, and the 
+numerical results are combined with Gabor metadata to construct an object of 
+class `"mp"`.
 
-3. EMPI is an optional external high-performance C++ backend specialized in Gabor-based Matching Pursuit. It supports optimized CPU execution and GPU acceleration.
+3. EMPI is an optional external high-performance C++ backend specialized in 
+Gabor-based Matching Pursuit. It supports optimized CPU execution and GPU 
+acceleration.
 
-4. `omp_reference()` is a straightforward educational and reference implementation of OMP intended for small illustrative examples. It explicitly solves the least-squares problem using the normal-equation formula and is not intended for large-scale or numerically demanding computations.
+4. `omp_reference()` is a straightforward educational and reference 
+implementation of OMP intended for small illustrative examples. It explicitly 
+solves the least-squares problem using the normal-equation formula and is not 
+intended for large-scale or numerically demanding computations.
 
-## Typical workflow
+## Typical workflows
 
-```
-                                             INPUT SIGNAL
-                                                  |
-                        +-------------------------+---------------------------+
-                        |                         |                           |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-              | General matrix-   |    | Native R Gabor-      |    | External EMPI-based  |
-              | based MP/OMP      |    | based MP/OMP         |    | Matching Pursuit     |
-              | decomposition     |    | decomposition        |    | decomposition        |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-                        |                         |                           |
-              +---------+---------+    +----------+-----------+    +----------+-----------+
-              | User-defined      |    |   mp_omp_execute()   |    |    empi_execute()    |
-              | matrix dictionary |    +----------+-----------+    +----------+-----------+
-              +---------+---------+               |                           |
-                        |              +----------+-----------+    +----------+-----------+
-              +---------+---------+    | Object of class "mp" |    | Object of class "mp" |
-              |   mp_core()       |    +----------+-----------+    +----------+-----------+
-              |      or           |               |                           |
-              |   omp_core()      |               |                           |
-              +---------+---------+               +-------------+-------------+
-                        |                                       |
-              +---------+---------+                      +------+------+
-              | Numerical         |                      |             |
-              | decomposition     |                      |             |
-              | results           |                 +----+----+   +----+-----+
-              +-------------------+                 | plot()  |   | tf_map() |
-                                                    +---------+   +----------+
-```
+The diagram below summarizes the three available decomposition workflows and
+their relationship within the package.
 
-For the native R Gabor-based route, `mp_omp_execute()` internally performs the following steps:
+<p align="center">
+  <img src="man/figures/main_workflows.png" width="600">
+</p>
 
-```
-                                +-----------------------------------+
-                                |         mp_omp_execute()          |
-                                +-----------------------------------+
-                                                  |
-                                +-----------------+-----------------+
-                                |      Is XML file supplied?        |
-                                +-----------------------------------+
-                                       |                     |
-                  +--------------------+---------+   +-------+---------------------+
-                  |     generate_xml_dict()      |   |   User-supplied XML file    |
-                  +--------------------+---------+   +-------+---------------------+
-                                       |                     |  
-                                +------+---------------------+------+						  
-                                |        read_gabor_dict()          |
-                                +-----------------------------------+
-                                                  |
-                                +-----------------+-----------------+
-                                |       topk_gabor_atoms()          |
-                                +-----------------------------------+
-                                                  |
-                                      +-----------+----------+
-                                      |                      |
-                            +---------+---------+   +--------+----------+
-                            |     mp_core()     |   |    omp_core()     |
-                            +-------------------+   +-------------------+
-                                      |                      |
-                                +-----+----------------------+------+
-                                |     build object of class "mp"    |
-                                +-----------------+-----------------+
-                                                  |
-                                      +-----------+----------+
-                                      |                      |
-                                 +----+----+            +----+-----+
-                                 | plot()  |            | tf_map() |
-                                 +---------+            +----------+
-```
+The `mp_omp_execute()` function provides a high-level interface for Gabor-based MP 
+and OMP decomposition. It combines the individual steps implemented by 
+`generate_xml_dict()`, `read_gabor_dict()`, `topk_gabor_atoms()`, and either 
+`mp_core()` or `omp_core()` into a single workflow.
 
-Signal input for the high-level workflows can be imported using `read_csv_signals()`, `read_edf_signals()`, or `read_wfdb_signals()`.
+<p align="center">
+  <img src="man/figures/flow_of_mp_omp_execute.png" width="520">
+</p>
 
-`tf_map()` is available for decomposition results that contain time-frequency metadata, such as Gabor-based MP/OMP and EMPI results.
+
+Signal input for the high-level workflows can be imported using `read_csv_signals()`, 
+`read_edf_signals()`, or `read_wfdb_signals()`.
+
+`tf_map()` is available for decomposition results that contain time-frequency metadata, 
+such as Gabor-based MP/OMP and EMPI results.
 
 ## Documentation
 
@@ -218,7 +194,8 @@ The package documentation includes:
 
 ## Supported input formats
 
-The package supports generic multichannel time-series together with commonly used biomedical formats:
+The package supports generic multichannel time-series together with commonly 
+used biomedical formats:
 
 - CSV (generic signals)
 - EDF / EDF+ (EEG, ECG)
