@@ -158,20 +158,20 @@ ref <- omp_reference(
 )
 
 ref$selected_atoms
-> [1] 1 4
+[1] 1 4
 
 ref$coefficients_original_dict
-> [1] 1.0 0.0 0.0 0.5
+[1] 1.0 0.0 0.0 0.5
 
 ref$normalized_reconstruction_error_original_dict
-> [1] 6.95e-16
+[1] 6.95e-16
 
 ref$orthogonality
-> [[1]]
-> -5.03e-15
+[[1]]
+-5.03e-15
 
-> [[2]]
-> -5.30e-15  7.07e-15
+[[2]]
+-5.30e-15  7.07e-15
 ```
 
 The reference implementation recovers the exact coefficients of the original 
