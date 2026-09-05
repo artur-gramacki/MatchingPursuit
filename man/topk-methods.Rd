@@ -5,7 +5,7 @@
 \alias{print.topk}
 \alias{summary.topk}
 \alias{print.summary.topk}
-\title{Methods for objects of class "topk"}
+\title{Methods for Top-k Objects}
 \usage{
 \method{print}{topk}(x, ...)
 
@@ -24,12 +24,32 @@
 \code{print.topk()} returns \code{x} invisibly.
 
 \code{summary.topk()} returns an object of class \code{"summary.topk"}
-containing basic information about the selected atoms and their parameters.
+containing basic information about the selected atoms and ranges of their
+Gabor parameters.
 
 \code{print.summary.topk()} returns \code{x} invisibly.
 }
 \description{
 Print and summarize objects returned by \code{topk_gabor_atoms()}.
+}
+\examples{
+signal <- read_csv_signals(system.file("extdata", "sample1.csv", package = "MatchingPursuit"))
+xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
+
+dictionary <- read_gabor_dict(
+  xml_file = xml_file,
+  sampling_frequency = signal$sampling_frequency,
+  duration = max(signal$time)
+)
+
+out_topk <- topk_gabor_atoms(
+  atoms_dict = dictionary,
+  signal = signal,
+  topk = 100
+)
+
+print(out_topk)
+summary(out_topk)
 }
 \seealso{
 \code{\link{topk_gabor_atoms}}
