@@ -96,7 +96,7 @@
 #' )
 #'
 #' # +-------------------------------------------------------------+
-#' # | Step 2: Run Matching Pursuit                                |
+#' # | Step 2: Run Matching Pursuit (using EMPI backend)           |
 #' # +-------------------------------------------------------------+
 #' fit_mp <- mp_omp_execute(
 #'   mode = "mp",
@@ -108,7 +108,7 @@
 #' plot(fit_mp, freq_divide = 4)
 #'
 #' # +-------------------------------------------------------------+
-#' # | Step 3: Run Orthogonal Matching Pursuit                     |
+#' # | Step 3: Run Orthogonal Matching Pursuit (OMP-R backend)     |
 #' # +-------------------------------------------------------------+
 #' fit_omp <- mp_omp_execute(
 #'   mode = "omp",
