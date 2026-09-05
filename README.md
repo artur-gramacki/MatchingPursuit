@@ -58,15 +58,12 @@ object of class `"mp"`.
 
 ```r
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
+signal <- read_csv_signals(sig_file)
 
-signal <- read_csv_signals(sig_file, col_names = "ch1")
-
-out <- mp_omp_execute(
+out_mp <- mp_omp_execute(
   signal = signal,
-  mode = "omp",                # use "mp" for Matching Pursuit
-  dictionary = xml_file,
-  topk = 5000,
+  mode = "mp",          # use "omp" for Orthogonal Matching Pursuit
+  topk = 10000,
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
@@ -75,6 +72,16 @@ plot(out, channel = 1, freq_divide = 4)
 ```
 
 If `dictionary = NULL`, an XML Gabor dictionary specification is generated internally.
+
+The below time–frequency map shows the energy distribution of the selected atoms. 
+White crosses indicate the centers of individual time–frequency blobs, i.e. 
+the atoms' central time and central frequency coordinates. The panels below 
+show the original signal and its reconstruction; in this example, the reconstruction 
+explains 96.9% of the signal energy.
+
+<p align="center">
+  <img src="man/figures/mp.png" width="800">
+</p>
 
 ### EMPI
 
@@ -85,12 +92,20 @@ can then be performed using `empi_execute()` and visualized using `plot()`.
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read_csv_signals(sig_file)
 
-out <- empi_execute(
+out_empi <- empi_execute(
   signal = signal
 )
 
-plot(out, channel = 1, freq_divide = 4)
+plot(out_empi, channel = 1, freq_divide = 4)
 ```
+This example illustrates an EMPI-based decomposition and its time–frequency 
+representation. The map reveals several localized components distributed across 
+time and frequency, while the reconstructed signal closely follows the original 
+waveform. In this case, the selected atoms explains 98.96% of the signal energy.
+
+<p align="center">
+  <img src="man/figures/empi.png" width="800">
+</p>
 
 ### Decomposition with a custom dictionary
 
@@ -118,14 +133,51 @@ out <- omp_core(
 )
 
 out$support
-out$coefs
+[1] 1 4
+
 out$relative_residual_energy
+[1] 1.000000e+00 2.012529e-01 4.867641e-32
 ```
+
+In the example above, OMP correctly identifies atoms 1 and 4, corresponding to 
+the 5 Hz sine and 10 Hz cosine components used to construct the signal. After 
+two iterations, the residual energy is effectively zero.
+
+## Educational OMP implementation
 
 For small illustrative examples, `omp_reference()` provides a transparent 
 educational implementation that follows the mathematical formulation of OMP 
 explicitly, including least-squares coefficient updates and residual orthogonality 
 checks.
+
+```r
+ref <- omp_reference(
+  dictionary = dictionary,
+  signal = signal,
+  n_nonzero_coefs = 2
+)
+
+ref$selected_atoms
+> [1] 1 4
+
+ref$coefficients_original_dict
+> [1] 1.0 0.0 0.0 0.5
+
+ref$normalized_reconstruction_error_original_dict
+> [1] 6.95e-16
+
+ref$orthogonality
+> [[1]]
+> -5.03e-15
+
+> [[2]]
+> -5.30e-15  7.07e-15
+```
+
+The reference implementation recovers the exact coefficients of the original 
+dictionary, while the near-zero reconstruction error and orthogonality values 
+confirm the expected OMP properties.
+
 
 ## Package architecture
 
