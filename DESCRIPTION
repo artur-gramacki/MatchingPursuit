@@ -34,7 +34,7 @@ Imports: edf, signal, RSQLite, DescTools, imager, raster, graphics,
         grDevices, utils, digest, EGM, xml2
 Suggests: knitr, rmarkdown, latex2exp, remotes
 VignetteBuilder: knitr
-Depends: R (>= 3.5.0)
+Depends: R (>= 4.0.0)
 License: GPL (>= 2)
 BugReports: https://github.com/artur-gramacki/MatchingPursuit/issues
 Encoding: UTF-8
