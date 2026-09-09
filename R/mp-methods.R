@@ -154,33 +154,22 @@ plot.mp <- function(
 #' @export
 print.mp <- function(x, ...) {
 
-  n_samples <- nrow(x$signal)
-  n_channels <- ncol(x$signal)
-  duration <- n_samples / x$sampling_frequency
-  n_atoms <- nrow(x$atoms)
-
-  signal_energy <- sum(x$signal^2, na.rm = TRUE)
-  residual_energy <- sum((x$signal - x$reconstruction)^2, na.rm = TRUE)
-
-  explained_energy <- if (signal_energy > 0) {
-    1 - residual_energy / signal_energy
-  } else {
-    NA_real_
+  if (!inherits(x, "mp")) {
+    stop("'x' must be an object of class 'mp'.")
   }
 
+  signal <- as.matrix(x$signal)
+
+  n_samples <- nrow(signal)
+  n_channels <- ncol(signal)
+  duration <- n_samples / x$sampling_frequency
+
   cat("Matching Pursuit object (class 'mp')\n")
-  cat("--------------------------------------------------\n")
-  cat("Samples:              ", n_samples, "\n", sep = "")
-  cat("Channels:             ", n_channels, "\n", sep = "")
-  cat("Sampling frequency:   ", x$sampling_frequency, " Hz\n", sep = "")
-  cat("Duration:             ", signif(duration, 6), " s\n", sep = "")
-  cat("Selected atoms:       ", n_atoms, "\n", sep = "")
-  cat(
-    "Explained energy:     ",
-    if (is.na(explained_energy)) "NA" else paste0(round(100 * explained_energy, 2), "%"),
-    "\n",
-    sep = ""
-  )
+  cat("--------------------------------------\n")
+  cat("Samples:            ", n_samples, "\n", sep = "")
+  cat("Channels:           ", n_channels, "\n", sep = "")
+  cat("Sampling frequency: ", x$sampling_frequency, " Hz\n", sep = "")
+  cat("Duration:           ", signif(duration, 6), " s\n", sep = "")
 
   invisible(x)
 }
@@ -189,97 +178,92 @@ print.mp <- function(x, ...) {
 #' @export
 summary.mp <- function(object, ...) {
 
-  n_samples <- nrow(object$signal)
-  n_channels <- ncol(object$signal)
+  if (!inherits(object, "mp")) {
+    stop("'object' must be an object of class 'mp'.")
+  }
+
+  signal <- as.matrix(object$signal)
+  reconstruction <- as.matrix(object$reconstruction)
+  n_samples <- nrow(signal)
+  n_channels <- ncol(signal)
   duration <- n_samples / object$sampling_frequency
-  n_atoms <- nrow(object$atoms)
+  channel_names <- colnames(signal)
 
-  # Number of selected atoms per channel
-  atoms_per_channel <- table(object$atoms$channel_id)
-
-  # Signal, residual, and explained energy
-  signal_energy <- sum(object$signal^2, na.rm = TRUE)
-  residual_energy <- sum(
-    (object$signal - object$reconstruction)^2,
-    na.rm = TRUE
-  )
-
-  explained_energy <- if (signal_energy > 0) {
-    1 - residual_energy / signal_energy
-  } else {
-    NA_real_
+  if (is.null(channel_names)) {
+    channel_names <- paste0("Channel ", seq_len(n_channels))
   }
 
-  # Ranges of atom parameters
-  if (n_atoms > 0) {
-    frequency_range <- range(object$atoms$frequency, na.rm = TRUE)
-    position_range <- range(object$atoms$position, na.rm = TRUE)
-    scale_range <- range(object$atoms$scale, na.rm = TRUE)
-  } else {
-    frequency_range <- c(NA_real_, NA_real_)
-    position_range <- c(NA_real_, NA_real_)
-    scale_range <- c(NA_real_, NA_real_)
+  atoms_per_channel <- tabulate(object$atoms$channel_id, nbins = n_channels)
+  channel_summary <- vector("list", n_channels)
+
+  for (i in seq_len(n_channels)) {
+    signal_i <- signal[, i]
+    reconstruction_i <- reconstruction[, i]
+    signal_energy <- sum(signal_i^2, na.rm = TRUE)
+    reconstruction_energy <- sum(reconstruction_i^2, na.rm = TRUE)
+    residual_energy <- sum((signal_i - reconstruction_i)^2, na.rm = TRUE)
+
+    explained_energy <- if (signal_energy > 0) {
+      1 - residual_energy / signal_energy
+    } else {
+      NA_real_
+    }
+
+    channel_summary[[i]] <- data.frame(
+      channel = i,
+      channel_name = channel_names[i],
+      selected_atoms = atoms_per_channel[i],
+      signal_energy = signal_energy,
+      reconstruction_energy = reconstruction_energy,
+      residual_energy = residual_energy,
+      explained_energy = explained_energy,
+      stringsAsFactors = FALSE
+    )
   }
+
+  channel_summary <- do.call(rbind, channel_summary)
 
   out <- list(
     samples = n_samples,
     channels = n_channels,
     sampling_frequency = object$sampling_frequency,
     duration = duration,
-    selected_atoms = n_atoms,
-    atoms_per_channel = atoms_per_channel,
-    signal_energy = signal_energy,
-    residual_energy = residual_energy,
-    explained_energy = explained_energy,
-    frequency_range = frequency_range,
-    position_range = position_range,
-    scale_range = scale_range
+    channel_summary = channel_summary
   )
 
   class(out) <- "summary.mp"
-
   out
 }
-
 
 #' @rdname mp-methods
 #' @export
 print.summary.mp <- function(x, ...) {
 
-  cat("Summary of Matching Pursuit object (class 'mp')\n")
-  cat("--------------------------------------------------\n")
-  cat("Samples:              ", x$samples, "\n", sep = "")
-  cat("Channels:             ", x$channels, "\n", sep = "")
-  cat("Sampling frequency:   ", x$sampling_frequency, " Hz\n", sep = "")
-  cat("Duration:             ", signif(x$duration, 6), " s\n", sep = "")
-  cat("Selected atoms:       ", x$selected_atoms, "\n", sep = "")
+  cat("Summary of Matching Pursuit object (class 'summary.mp')\n")
+  cat("--------------------------------------------------------\n")
+  cat("Samples:            ", x$samples, "\n", sep = "")
+  cat("Channels:           ", x$channels, "\n", sep = "")
+  cat("Sampling frequency: ", x$sampling_frequency, " Hz\n", sep = "")
+  cat("Duration:           ", signif(x$duration, 6), " s\n", sep = "")
 
-  cat("\nReconstruction:\n")
-  cat("Original signal energy: ",
-      signif(x$signal_energy, 6), "\n", sep = "")
-  cat("Residual energy:        ",
-      signif(x$residual_energy, 6), "\n", sep = "")
-  cat("Explained energy:       ",
-      if (is.na(x$explained_energy)) "NA" else paste0(round(100 * x$explained_energy, 2), "%"),
-      "\n", sep = "")
+  cat("\nPer-channel decomposition:\n\n")
+  cat("Explained energy = 1 - residual energy / signal energy\n")
+  cat("For MP, this measure is preferred because the reconstruction \n")
+  cat("and residualare not generally orthogonal, so reconstruction \n")
+  cat("energy / signal energy is not equivalent to explained energy.\n")
 
-  cat("\nSelected atoms per channel:\n")
-  for (i in seq_along(x$atoms_per_channel)) {
-    cat("Channel ", names(x$atoms_per_channel)[i], ": ",
-        x$atoms_per_channel[i], "\n", sep = "")
+  for (i in seq_len(nrow(x$channel_summary))) {
+
+    ch <- x$channel_summary[i, ]
+
+    cat("\nChannel ", ch$channel, " (", ch$channel_name,"): ", ch$selected_atoms, " atoms\n", sep = "")
+    cat("Signal energy:         ", signif(ch$signal_energy, 6), "\n", sep = "")
+    cat("Reconstruction energy: ", signif(ch$reconstruction_energy, 6), "\n", sep = "")
+    cat("Residual energy:       ", signif(ch$residual_energy, 6), "\n", sep = "")
+    cat(
+      "Explained energy:      ",
+      if (is.na(ch$explained_energy)) "NA" else paste0(round(100 * ch$explained_energy, 2), "%"), "\n", sep = "")
+
+    invisible(x)
   }
-
-  cat("\nAtom parameters:\n")
-  cat("Frequency range: ",
-      paste(signif(x$frequency_range, 4), collapse = " - "),
-      " Hz\n", sep = "")
-  cat("Position range:  ",
-      paste(signif(x$position_range, 4), collapse = " - "),
-      " s\n", sep = "")
-  cat("Scale range:     ",
-      paste(signif(x$scale_range, 4), collapse = " - "),
-      " s\n", sep = "")
-
-  invisible(x)
 }
-

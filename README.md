@@ -85,6 +85,10 @@ explains 96.9% of the signal energy.
 
 ### EMPI
 
+EMPI is an optional external third-party backend used for high-performance
+Matching Pursuit decomposition and is distributed separately under its own
+GPL license. It is not part of the MatchingPursuit package.
+
 EMPI must first be installed using the `empi_install()` function. The decomposition 
 can then be performed using `empi_execute()` and visualized using `plot()`.
 
@@ -255,4 +259,7 @@ used biomedical formats:
 
 ## License
 
-GPL-3
+MatchingPursuit is distributed under the GNU General Public License version 3 (GPL-3).
+
+EMPI is external third-party software, distributed separately under its own
+license, and is not part of the MatchingPursuit package.

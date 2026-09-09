@@ -9,7 +9,7 @@ mp_omp_execute(
   signal,
   mode = NULL,
   dictionary = NULL,
-  topk = 5000,
+  topk = NULL,
   full_atoms_in_signal = FALSE,
   n_nonzero_coefs = NULL,
   tol = NULL,
@@ -29,8 +29,10 @@ containing the dictionary specification. It can be generated using
 \code{generate_xml_dict()} or prepared manually by the user. If \code{NULL},
 the XML file is generated internally by the function.}
 
-\item{topk}{Positive integer specifying the number of highest-ranked atoms
-retained for each signal channel.}
+\item{topk}{Positive integer specifying the number of highest-ranked candidate
+atoms retained for each signal channel after ranking by their match to the
+signal. If \code{NULL}, the top 10\% of candidate atoms are retained for
+each channel.}
 
 \item{full_atoms_in_signal}{Logical. If \code{TRUE}, only atoms whose complete
 support lies within the signal are generated. If \code{FALSE}, atom support may
@@ -106,7 +108,7 @@ signal <- read_csv_signals(
 )
 
 # +-------------------------------------------------------------+
-# | Step 2: Run Matching Pursuit                                |
+# | Step 2: Run Matching Pursuit (using EMPI backend)           |
 # +-------------------------------------------------------------+
 fit_mp <- mp_omp_execute(
   mode = "mp",
@@ -118,7 +120,7 @@ fit_mp <- mp_omp_execute(
 plot(fit_mp, freq_divide = 4)
 
 # +-------------------------------------------------------------+
-# | Step 3: Run Orthogonal Matching Pursuit                     |
+# | Step 3: Run Orthogonal Matching Pursuit (OMP-R backend)     |
 # +-------------------------------------------------------------+
 fit_omp <- mp_omp_execute(
   mode = "omp",

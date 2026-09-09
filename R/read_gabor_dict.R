@@ -254,7 +254,6 @@ read_gabor_dict <- function (
       time_positions <- center_positions - center_offset
     }
 
-
     freq_bins <- 0:(floor(fft_size / 2) - 1)
 
     if (verbose) {
@@ -311,6 +310,9 @@ read_gabor_dict <- function (
   )
 
   colnames(mat) <- names(all_atoms[[1]])
+
+  ##rm(all_atoms)
+  ##gc(FALSE)
 
   return(mat)
 }

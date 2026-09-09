@@ -253,12 +253,11 @@ omp_core <- function(
   if (any(!is.finite(norms)) || any(norms < 1e-12)) {
     stop("Dictionary contains non-finite or zero/near-zero norm atoms.")
   }
-  D <- sweep(D, 2, norms, "/")
 
   # Pre-compute Dtsig only
   # D' * signal does not change during OMP, so compute it only once.
   # It is later used in the least-squares solution for the active set.
-  Dtsig <- crossprod(D, sig)
+  Dtsig <- as.vector(crossprod(D, sig)) / norms
 
   # Outputs
   support <- integer(0)
@@ -291,7 +290,7 @@ omp_core <- function(
   for (k in seq_len(max_iter)) {
 
     # 1. Select the atom most correlated with the current residual
-    corr <- as.vector(crossprod(D, residual))
+    corr <- as.vector(crossprod(D, residual)) / norms
 
     # Previously selected atoms must not be selected again.
     if (length(support) > 0) {
@@ -305,22 +304,18 @@ omp_core <- function(
     # least-squares problem from scratch, update the Cholesky factor
     # when one new atom enters the active set.
     if (k == 1) {
-      # atom norm
-      dj_norm_sq <- sum(D[, j]^2)
-      L_new <- matrix(sqrt(dj_norm_sq), nrow = 1)
+      L_new <- matrix(1, nrow = 1L, ncol = 1L)
     } else {
       # lazy Gram computation
       # Correlations of the new atom with previously selected atoms.
-      w <- crossprod(D[, support, drop = FALSE], D[, j])
+      w <- as.vector(crossprod(D[, support, drop = FALSE], D[, j])) / (norms[support] * norms[j])
 
       # Solve L v = w
       v <- forwardsolve(L, w)
-      dj_norm_sq <- sum(D[, j]^2)
+      alpha <- 1 - sum(v^2)
 
       # Schur-complement term. A value close to zero means that the new
       # atom is almost linearly dependent on the active dictionary.
-      alpha <- dj_norm_sq - sum(v^2)
-
       if (alpha <= 1e-12) {
         warning(paste("Near linear dependence detected at iteration", k))
         break
@@ -341,13 +336,10 @@ omp_core <- function(
     x_active <- as.numeric(backsolve(t(L), z))
 
     # 4. Build the full sparse coefficient vector
-    coefs <- rep(0, p)
-    coefs[support] <- x_active
-
     if (verbose) message("iteration: ", k, ", selected atom: ", j)
 
     # 5. Update residual
-    residual <- sig - D[, support, drop = FALSE] %*% x_active
+    residual <- sig -  D[, support, drop = FALSE] %*% (x_active / norms[support])
 
     # 6. Store residual energy and check stopping criterion
     residual_sq_norm <- sum(residual^2)
@@ -369,8 +361,8 @@ omp_core <- function(
     }
   }
 
-  selected_atoms <- D[, support, drop = FALSE]
-  coefs_selected  <- coefs[support]
+  selected_atoms <- sweep(D[, support, drop = FALSE], 2, norms[support], "/")
+  coefs_selected  <- x_active
 
   # Energy assigned to selected OMP atoms
   # IMPORTANT:
@@ -400,7 +392,7 @@ omp_core <- function(
   list(
     selected_atoms = selected_atoms,
     signal = sig_original,
-    reconstruction = as.vector(selected_atoms %*% coefs_selected),
+    reconstruction = as.vector(sig_original - residual),
     coefs = coefs_selected,
     energy = energy,
     support = support,

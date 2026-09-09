@@ -67,7 +67,7 @@ Useful links:
 Other contributors:
 \itemize{
   \item Jarosław Gramacki \email{j.gramacki@gmail.com} (\href{https://orcid.org/0000-0001-5032-1353}{ORCID}) [contributor]
-  \item Piotr T. Różański \email{piotr@develancer.pl} (\href{https://orcid.org/0000-0002-0457-6731}{ORCID}) [contributor]
+  \item Piotr T. Różański \email{piotr@develancer.pl} (\href{https://orcid.org/0000-0002-0457-6731}{ORCID}) (provided technical guidance on the operation of the EMPI software) [contributor]
 }
 
 }

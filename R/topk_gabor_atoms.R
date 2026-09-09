@@ -176,12 +176,12 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
     }
   }
 
-  proj_mod_mtx <- matrix(0, nrow = nrow(atoms_dict), ncol = ncol(sig))
+  proj_mod_mtx <- matrix(NA_real_, nrow = nrow(atoms_dict), ncol = ncol(sig))
   N <- nrow(sig)
 
-  # By default select 5% best atoms
+  # By default select 10% best atoms
   if (is.null(topk)) {
-    topk <- ceiling(0.05 * nrow(atoms_dict))
+    topk <- ceiling(0.1 * nrow(atoms_dict))
   }
 
   if (length(topk) != 1L ||
@@ -220,31 +220,37 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
 
   if (verbose) message("topk_gabor_atoms(), step 1 finished.")
 
+  #rm(my_list, block, ids, blocks_id)
+  #gc(FALSE)
+
   # ------------------------------------------------------------------+
   # STEP 2 ----
   # Generate top-k atoms with optimal phase
   #                           ^^^^^^^^^^^^^
   # ------------------------------------------------------------------+
-  atoms_list <- list()
 
-  for (s in 1:ncol(sig)) {
-    atoms_list[[s]] <- matrix(NA, nrow = N, ncol = topk)
-  }
-  names(atoms_list) <- paste0("signal_", 1:ncol(sig))
+  # atoms_list <- list()
+  # for (s in 1:ncol(sig)) {
+  #   atoms_list[[s]] <- matrix(NA, nrow = N, ncol = topk)
+  # }
+  # names(atoms_list) <- paste0("signal_", 1:ncol(sig))
 
-  times_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  times_center_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  freq_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  sigma_mtx <- matrix(NA,  nrow = topk, ncol = ncol(sig))
-  window_len_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  topk_idx_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
-  phase_mtx <- matrix(NA, nrow = topk, ncol = ncol(sig))
+  atoms_list <- vector("list", ncol(sig))
+  names(atoms_list) <- paste0("signal_", seq_len(ncol(sig)))
+
+  times_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
+  times_center_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
+  freq_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
+  sigma_mtx <- matrix(NA_real_,  nrow = topk, ncol = ncol(sig))
+  window_len_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
+  topk_idx_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
+  phase_mtx <- matrix(NA_real_, nrow = topk, ncol = ncol(sig))
 
   for (i in 1:ncol(sig)) {
     topk_idx <- order(proj_mod_mtx[, i], decreasing = TRUE)[1:topk]
     topk_atoms_dict <- atoms_dict[topk_idx, , drop = FALSE]
 
-    atoms_mtx <- matrix(NA, nrow = N, ncol = topk)
+    atoms_mtx <- matrix(NA_real_, nrow = N, ncol = topk)
     times_vec <- numeric(topk)
     times_center_vec <- numeric(topk)
     freq_vec <- numeric(topk)
@@ -253,6 +259,7 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
     phase_vec <- numeric(topk)
 
     blocks_id <- unique(topk_atoms_dict[,"block"])
+
     topk_proj_mod_mtx <- matrix(0, nrow = nrow(topk_atoms_dict), ncol = ncol(sig))
     topk_fft_bin_mtx <- matrix(0 + 0i, nrow = nrow(topk_atoms_dict), ncol = ncol(sig))
 
@@ -266,6 +273,7 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
 
     # optimal phis
     phi_vec <- Arg(as.vector(topk_fft_bin_mtx[, i]))
+    ###rm(topk_fft_bin_mtx)
 
     for (j in 1:nrow(topk_atoms_dict)) {
 
@@ -326,7 +334,11 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
     } ### for (j in topk_idx)
 
     if (verbose) {
-      message("topk_gabor_atoms(), step 2, signal ", i, " finished.")
+      if (ncol(sig) == 1) {
+        message("topk_gabor_atoms(), step 2 finished.")
+      } else{
+        message("topk_gabor_atoms(), step 2, signal ", i, " finished.")
+      }
       message(topk, " out of ",  nrow(atoms_dict), " atoms selected successfully.\n")
     }
 
@@ -340,6 +352,19 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
     topk_idx_mtx[, i] <- topk_idx
 
   } ###  for (i in 1:ncol(sig))
+
+  # rm(
+  #   atoms_mtx,
+  #   topk_atoms_dict,
+  #   phi_vec,
+  #   times_vec,
+  #   times_center_vec,
+  #   freq_vec,
+  #   sigma_vec,
+  #   window_len_vec,
+  #   phase_vec
+  # )
+  ###gc(FALSE)
 
   output <- list(
     inner_products = proj_mod_mtx,

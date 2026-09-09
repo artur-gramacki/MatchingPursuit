@@ -296,9 +296,7 @@ tf_map <- function(
   signal_energy <- sum(signal^2, na.rm = TRUE)
   reconstruction_energy <- sum(reconstruction^2, na.rm = TRUE)
 
-  residual <- signal - reconstruction
-  residual_energy <- sum(residual^2, na.rm = TRUE)
-
+  residual_energy <- sum((signal - reconstruction)^2, na.rm = TRUE)
   explained_energy <- if (signal_energy > 0) {
     1 - residual_energy / signal_energy
   } else {

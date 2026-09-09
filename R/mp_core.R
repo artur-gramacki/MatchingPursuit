@@ -214,7 +214,8 @@ mp_core <- function(
 
   # D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
   # simpler:
-  D_norm <- sweep(D, 2, norms, "/")
+  # Don't need D_norm, as: <D / ||D||, residual>  =  <D, residual> / ||D|| (***)
+  # D_norm <- sweep(D, 2, norms, "/")
 
   # Integer vector of selected atom indices.
   support <- integer(max_iter)
@@ -236,7 +237,8 @@ mp_core <- function(
   for (k in 1:max_iter) {
     # Compute correlations between all unit-norm dictionary atoms
     # and the current residual.
-    projections <- as.vector(crossprod(D_norm, residual))
+    projections <- as.vector(crossprod(D, residual)) / norms
+
 
     # Selecting the atom with the best fit (largest absolute value)
     # Classical MP may select the same atom more than once.
@@ -252,7 +254,7 @@ mp_core <- function(
     }
 
     # Matching Pursuit residual update.
-    residual <- residual - best_projection * D_norm[, best_atom_idx]
+    residual <- residual - best_projection * D[, best_atom_idx] / norms[best_atom_idx]
 
     # Store absolute and relative residual energy.
     residual_energy[k + 1L] <- sum(residual^2)
@@ -277,8 +279,9 @@ mp_core <- function(
 
   relative_residual_energy <- relative_residual_energy[seq_len(k + 1L)]
   # for k = 1 it can return a vector, not a matrix. Then 'drop = FALSE' prevents this
-  selected_atoms <- D_norm[, support, drop = FALSE]
 
+  # we normalize only the atoms actually selected by MP, not the entire dictionary.
+  selected_atoms <- sweep(D[, support, drop = FALSE], 2, norms[support], "/")
 
   # Energy attributed to iteration k is defined as the decrease in
   # squared residual norm:

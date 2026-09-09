@@ -21,8 +21,10 @@
 #' \code{generate_xml_dict()} or prepared manually by the user. If \code{NULL},
 #' the XML file is generated internally by the function.
 #'
-#' @param topk Positive integer specifying the number of highest-ranked atoms
-#' retained for each signal channel.
+#' @param topk Positive integer specifying the number of highest-ranked candidate
+#' atoms retained for each signal channel after ranking by their match to the
+#' signal. If \code{NULL}, the top 10\% of candidate atoms are retained for
+#' each channel.
 #'
 #' @param full_atoms_in_signal Logical. If \code{TRUE}, only atoms whose complete
 #' support lies within the signal are generated. If \code{FALSE}, atom support may
@@ -140,7 +142,7 @@ mp_omp_execute <- function (
     signal,
     mode = NULL,
     dictionary = NULL,
-    topk = 5000,
+    topk = NULL,
     full_atoms_in_signal = FALSE,
     n_nonzero_coefs = NULL,
     tol = NULL,
@@ -181,52 +183,6 @@ mp_omp_execute <- function (
     verbose = verbose
   )
 
-  topk_atoms <- topk_gabor_atoms(
-    atoms_dict = atoms_dict,
-    signal = signal,
-    topk = topk,
-    verbose = verbose
-  )
-
-  if (mode == "omp") {
-    # run omp_core() for all channels
-    results <- vector("list", ncol(sig))
-
-    for (ch in seq_len(ncol(sig))) {
-      D <- as.matrix(topk_atoms$atoms[[ch]])
-      res <- omp_core(
-        dictionary = D,
-        signal = sig,
-        channel = ch,
-        tol = tol,
-        n_nonzero_coefs = n_nonzero_coefs,
-        verbose = verbose
-      )
-      if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
-      results[[ch]] <- res
-    }
-  }
-
-  if (mode == "mp") {
-    # run mp_core() for all channels
-    results <- vector("list", ncol(sig))
-
-    for (ch in seq_len(ncol(sig))) {
-      D <- as.matrix(topk_atoms$atoms[[ch]])
-      res <- mp_core(
-        dictionary = D,
-        signal = sig,
-        channel = ch,
-        tol = tol,
-        n_nonzero_coefs = n_nonzero_coefs,
-        verbose = verbose
-      )
-      if (verbose) message("mp_omp_execute(): channel ", ch, " processed.")
-      results[[ch]] <- res
-    }
-  }
-
-  # Create 'mp' class object, compatible with tf_map() and plot.mp()
   channel_id <- c()
   atom_number <- c()
   energy <- c()
@@ -237,33 +193,57 @@ mp_omp_execute <- function (
   position <- c()
   selected_atoms <-list()
 
-  n_channels <- length(results)
-  n_samples <- nrow(results[[1]]$selected_atoms)
-  time <- seq(0, (n_samples - 1) / sampling_frequency, by = 1 / sampling_frequency)
+  results <- vector("list", ncol(sig))
 
-  original_signal <- matrix(NA, nrow = n_samples, ncol = n_channels)
-  reconstruction <- matrix(NA, nrow = n_samples, ncol = n_channels)
+  for (ch in seq_len(ncol(sig))) {
 
-  for (r in 1:n_channels) {
+    signal_one_ch <- as_sig(sig[, ch], sampling_frequency)
 
-    num_atoms <- ncol(results[[r]]$selected_atoms)
-    selected_atoms[[r]] <- results[[r]]$selected_atoms
-    reconstruction[, r] <- results[[r]]$selected_atoms %*% results[[r]]$coefs
-    original_signal[, r] <- results[[r]]$signal
+    topk_atoms <- topk_gabor_atoms(
+      atoms_dict = atoms_dict,
+      signal = signal_one_ch,
+      topk = topk,
+      verbose = verbose
+    )
 
-    support <- results[[r]]$support
-    fr <- topk_atoms$frequency[support, r]
-    ph <- topk_atoms$phase[support, r]
-    sc <- topk_atoms$scale[support, r]
-    po <- topk_atoms$position[support, r]
+    D <- as.matrix(topk_atoms$atoms[[1]])
 
-    i1 <- rep(r, num_atoms)
+    if (mode == "omp") {
+      res <- omp_core(
+        dictionary = D,
+        signal = sig,
+        channel = ch,
+        tol = tol,
+        n_nonzero_coefs = n_nonzero_coefs,
+        verbose = verbose
+      )
+    }
+    if (mode == "mp") {
+      res <- mp_core(
+        dictionary = D,
+        signal = sig,
+        channel = ch,
+        tol = tol,
+        n_nonzero_coefs = n_nonzero_coefs,
+        verbose = verbose
+      )
+    }
+
+    results[[ch]] <- res
+    num_atoms <- ncol(results[[ch]]$selected_atoms)
+    support <- results[[ch]]$support
+    fr <- topk_atoms$frequency[support, ]
+    ph <- topk_atoms$phase[support, ]
+    sc <- topk_atoms$scale[support, ]
+    po <- topk_atoms$position[support, ]
+
+    i1 <- rep(ch, num_atoms)
     channel_id <- c(channel_id, i1)
 
     i2 <- seq(1, num_atoms)
     atom_number <- c(atom_number, i2)
 
-    i3 <- results[[r]]$energy
+    i3 <- results[[ch]]$energy
     energy <- c(energy, i3)
 
     i4 <- rep("gauss", num_atoms)
@@ -280,6 +260,21 @@ mp_omp_execute <- function (
 
     i8 <- po
     position <-c(position, i8)
+
+    message("mp_omp_execute(): method = \"", mode, "\", channel = ", ch, " Successfully processed.")
+  }
+
+  n_channels <- length(results)
+  n_samples <- nrow(results[[1]]$selected_atoms)
+  time <- seq(0, (n_samples - 1) / sampling_frequency, by = 1 / sampling_frequency)
+
+  original_signal <- matrix(NA, nrow = n_samples, ncol = n_channels)
+  reconstruction <- matrix(NA, nrow = n_samples, ncol = n_channels)
+
+  for (r in 1:n_channels) {
+    selected_atoms[[r]] <- results[[r]]$selected_atoms
+    reconstruction[, r] <- results[[r]]$selected_atoms %*% results[[r]]$coefs
+    original_signal[, r] <- results[[r]]$signal
   }
 
   out <- list()
