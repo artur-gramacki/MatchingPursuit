@@ -249,7 +249,7 @@ such as Gabor-based MP/OMP and EMPI results.
 The complete code used to reproduce the analyses and results presented in the
 SoftwareX article is provided in:
 
-[`replication_script.R`](https://github.com/artur-gramacki/MatchingPursuit/blob/1.3.0/replication_script.R)
+[`replication_script.R`](https://github.com/artur-gramacki/MatchingPursuit/releases/download/1.3.0/replication_script.R)
 
 The script includes signal generation, decomposition settings, reconstruction
 accuracy evaluation, runtime measurements, and the EEG example.
