@@ -102,6 +102,15 @@ for (rep in seq_len(n_rep)) {
 
     sig <- as_sig(signal, fs)
 
+    # "global" was used as the most complete optimization mode for this benchmark;
+    # "local" is faster but uses only local optimization, whereas "none" disables
+    # continuous atom optimization and provides the fastest, simplified variant.
+    #
+    # A very small residual threshold (-r 1e-11) was used to prevent early stopping
+    # and ensure that exactly 10 atoms were selected.
+    #
+    # See the EMPI README.md documentation for details on optimization modes
+    # and stopping criteria.
     time_empi <-  system.time({
     out_empi <- empi_execute(
         signal = sig,
@@ -228,9 +237,9 @@ for (m in 1:ncol(eeg_f)) {
 # +------------------------+
 # | Downsampling (optional)|
 # +------------------------+
-sf_r <- 64
+sf_r <- 128
 eeg_f_r <- resample_signal(
-  signal = eeg_f, p = 1, q = 4
+  signal = eeg_f, p = 1, q = 2
 )
 
 # +------------------------+
@@ -253,7 +262,7 @@ eeg_f_r_m <- eeg_montage(
 # +------------------------+
 # | Convert to "sig" object|
 # +------------------------+
-sig <- as_sig(eeg_f_r_m, sf_r)
+sig <- as_sig(eeg_f_r_m[,1], sf_r)
 
 # +------------------------+
 # |  MP decomposition      |
@@ -261,14 +270,14 @@ sig <- as_sig(eeg_f_r_m, sf_r)
 out_mp <- mp_omp_execute(
   mode = "mp",
   signal = sig,
-  topk = 10000,
-  n_nonzero_coefs = 50
+  n_nonzero_coefs = 50,
+  verbose = TRUE
 )
 
 # +------------------------+
 # |  Time-Frequency map    |
 # +------------------------+
-plot(out_mp, channel = 1)
+plot(out_mp)
 
 
 
