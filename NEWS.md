@@ -10,6 +10,9 @@
 
 * Added a high-level Gabor-based MP/OMP workflow through `mp_omp_execute()`.
 
+* Standardized the MP-R, OMP-R, and EMPI workflows to use a common
+  result representation for downstream analysis and visualization.
+
 * Added `omp_reference()`, a simple educational and reference implementation
   of Orthogonal Matching Pursuit.
 
@@ -30,12 +33,12 @@
 
 # MatchingPursuit 1.2.0
 
-* Added a pure R implementation of the Matching Pursuit algorithm (`mp_core()`),
+* Added a native R implementation of the Matching Pursuit algorithm (`mp_core()`),
   intended primarily for educational, methodological, and experimental use. It
   complements the optimized external EMPI backend and allows the algorithm to be
   inspected and modified directly in R.
 
-* Expanded the package vignette with examples of the pure R Matching Pursuit
+* Expanded the package vignette with examples of the native R Matching Pursuit
   implementation. The available decomposition backends are now more clearly
   distinguished, with the terms MP-R, OMP-R, and EMPI used consistently
   throughout.
@@ -43,8 +46,7 @@
 * Significantly expanded `README.md` to provide a more comprehensive overview
   of the package, its functionality, and typical workflows.
 
-* 00:56 01.09.2026 and
-  `read_wfdb_signals()`, respectively.
+* Renamed `plot.ecg()` and `read_ecg_signals() `to `plot.wfdb()` and `read_wfdb_signals()`, respectively.
 
 * Updated `read_csv_signals()`, `read_edf_signals()`, and `read_wfdb_signals()`
   to return objects of classes `sig`, `edf`, and `wfdb`, respectively.
