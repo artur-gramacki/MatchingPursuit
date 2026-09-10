@@ -63,12 +63,11 @@ signal <- read_csv_signals(sig_file)
 out_mp <- mp_omp_execute(
   signal = signal,
   mode = "mp",          # use "omp" for Orthogonal Matching Pursuit
-  topk = 10000,
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
 
-plot(out, channel = 1, freq_divide = 4)
+plot(out_mp, channel = 1)
 ```
 
 If `dictionary = NULL`, an XML Gabor dictionary specification is generated internally.
@@ -77,7 +76,7 @@ The below time–frequency map shows the energy distribution of the selected ato
 White crosses indicate the centers of individual time–frequency blobs, i.e. 
 the atoms' central time and central frequency coordinates. The panels below 
 show the original signal and its reconstruction; in this example, the reconstruction 
-explains 96.9% of the signal energy.
+explains 98.69% of the signal energy.
 
 <p align="center">
   <img src="man/figures/mp.png" width="800">
@@ -100,12 +99,12 @@ out_empi <- empi_execute(
   signal = signal
 )
 
-plot(out_empi, channel = 1, freq_divide = 4)
+plot(out_empi, channel = 1)
 ```
 This example illustrates an EMPI-based decomposition and its time–frequency 
 representation. The map reveals several localized components distributed across 
 time and frequency, while the reconstructed signal closely follows the original 
-waveform. In this case, the selected atoms explains 98.96% of the signal energy.
+waveform. In this case, the selected atoms explain 98.96% of the signal energy.
 
 <p align="center">
   <img src="man/figures/empi.png" width="800">
@@ -240,6 +239,16 @@ Signal input for the high-level workflows can be imported using `read_csv_signal
 
 `tf_map()` is available for decomposition results that contain time-frequency metadata, 
 such as Gabor-based MP/OMP and EMPI results.
+
+## Reproducing the SoftwareX examples
+
+The complete code used to reproduce the analyses and results presented in the
+SoftwareX article is provided in:
+
+[`replication_script.R`](./replication_script.R)
+
+The script includes signal generation, decomposition settings, reconstruction
+accuracy evaluation, runtime measurements, and the EEG example.
 
 ## Documentation
 
