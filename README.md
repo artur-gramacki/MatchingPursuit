@@ -13,6 +13,10 @@ Sparse signal decomposition framework for one- and multi-channel biomedical and
 general time-series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit** 
 algorithms.
 
+The package provides three decomposition backends: native R implementations of MP and OMP 
+(**MP-R** and **OMP-R**), and the optional external **EMPI** backend for high-performance 
+MP decomposition.
+
 
 Supported features:
 
@@ -29,7 +33,7 @@ Supported features:
     - WFDB records
     - three standard EEG montages (bipolar, referential, and average-reference montages)
 - Plotting time-frequency maps for Gabor-based MP, OMP, and EMPI results
-- Pre-filtering signals using notch, low-pass, high-pass, band-pass, and band-stop filters
+- Signal preprocessing using notch, low-pass, high-pass, band-pass, and band-stop filters
 
 Note:
 
@@ -72,14 +76,14 @@ plot(out_mp, channel = 1)
 
 If `dictionary = NULL`, an XML Gabor dictionary specification is generated internally.
 
-The below time–frequency map shows the energy distribution of the selected atoms. 
+The time–frequency map below shows the energy distribution of the selected atoms. 
 White crosses indicate the centers of individual time–frequency blobs, i.e. 
 the atoms' central time and central frequency coordinates. The panels below 
 show the original signal and its reconstruction; in this example, the reconstruction 
 explains 98.69% of the signal energy.
 
 <p align="center">
-  <img src="man/figures/mp.png" width="800">
+  <img src="man/figures/mp.png" width="700">
 </p>
 
 ### EMPI
@@ -107,7 +111,7 @@ time and frequency, while the reconstructed signal closely follows the original
 waveform. In this case, the selected atoms explain 98.96% of the signal energy.
 
 <p align="center">
-  <img src="man/figures/empi.png" width="800">
+  <img src="man/figures/empi.png" width="700">
 </p>
 
 ### Decomposition with a custom dictionary
@@ -148,10 +152,10 @@ two iterations, the residual energy is effectively zero.
 
 ## Educational OMP implementation
 
-For small illustrative examples, `omp_reference()` provides a transparent 
-educational implementation that follows the mathematical formulation of OMP 
-explicitly, including least-squares coefficient updates and residual orthogonality 
-checks.
+For small illustrative and validation examples, `omp_reference()` provides a 
+straightforward reference implementation that follows the mathematical 
+formulation of OMP explicitly, including least-squares coefficient updates 
+and residual orthogonality checks.
 
 ```r
 ref <- omp_reference(
@@ -245,7 +249,7 @@ such as Gabor-based MP/OMP and EMPI results.
 The complete code used to reproduce the analyses and results presented in the
 SoftwareX article is provided in:
 
-[`replication_script.R`](./replication_script.R)
+[`replication_script.R`](https://github.com/artur-gramacki/MatchingPursuit/blob/1.3.0/replication_script.R)
 
 The script includes signal generation, decomposition settings, reconstruction
 accuracy evaluation, runtime measurements, and the EEG example.
@@ -265,6 +269,13 @@ used biomedical formats:
 - CSV (generic signals)
 - EDF / EDF+ (EEG, ECG)
 - WFDB (physiological records)
+
+## Citation
+
+To cite MatchingPursuit in publications, use:
+```r
+citation("MatchingPursuit")
+```
 
 ## License
 
