@@ -332,12 +332,12 @@ for (m in 1:ncol(signal_eeg_f)) {
 
 Sometimes it is necessary to change the sampling frequency (increase —
 *upsampling* or decrease — *downsampling*). In the example below, the original
-sampling frequency is reduced from 256 Hz to 64 Hz.
+sampling frequency is reduced from 256 Hz to 128 Hz.
 
 ```{r read_edf_signal_resampling, include = TRUE, echo = TRUE, warning = FALSE}
-signal_eeg_f_r <- resample_signal(signal = signal_eeg_f, p = 1, q = 4)
-time_64 <- seq(0, nrow(signal_eeg_f_r) - 1) / (sampling_frequency / 4)
-sampling_frequency_r <- 64
+signal_eeg_f_r <- resample_signal(signal = signal_eeg_f, p = 1, q = 2)
+time_128 <- seq(0, nrow(signal_eeg_f_r) - 1) / (sampling_frequency / 2)
+sampling_frequency_r <- 128
 ```
 
 The effect of the preprocessing (filtering and resampling) is illustrated below. 
@@ -377,12 +377,12 @@ plot(
 abline(h = 0, col = "gray")
 
 plot(
-  time_64,
+  time_128,
   signal_eeg_f_r[, 1],
   type = "l",
   xlab = "Time (s)",
   ylab = "Amplitude",
-  main = "Filtered and downsampled EEG signal (64 Hz), channel Fp1",
+  main = "Filtered and downsampled EEG signal (128 Hz), channel Fp1",
   col = "blue",
   ylim = rg,
   panel.first = grid()
@@ -492,7 +492,7 @@ edf_processed <- structure(
   list(
     signal = as.data.frame(signal_eeg_f_r_m),
     sampling_frequency = sampling_frequency_r,
-    time = time_64,
+    time = time_128,
     signal_names = colnames(signal_eeg_f_r_m),
     record_name = basename(file)
   ),
