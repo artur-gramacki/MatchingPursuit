@@ -5,31 +5,34 @@
   `topk` objects, and always normalize dictionary atoms internally to
   unit L2 norm.
   
-* Extended the native R implementations of Matching Pursuit and Orthogonal
-  Matching Pursuit to support arbitrary user-defined matrix dictionaries.
+* Updated the high-level Gabor-based MP/OMP workflow in `mp_omp_execute()`,
+  which now internally calls `read_gabor_dict()` and `topk_gabor_atoms()`.
+  The `dictionary` argument has changed: it now accepts either `NULL` or a path
+  to an XML dictionary file, instead of a precomputed `topk` object. When
+  `dictionary = NULL`, the XML dictionary is generated internally.
+  
+* Added the `full_atoms_in_signal` parameter to `mp_omp_execute()`, which
+  controls whether Gabor atoms must be fully contained within the signal
+  boundaries. Allowing atoms to extend beyond the signal boundaries can
+  substantially improve decomposition quality, particularly near the
+  beginning and end of the signal.  
 
-* Added a high-level Gabor-based MP/OMP workflow through `mp_omp_execute()`.
+* Renamed `topk_atoms()` function to `topk_gabor_atoms()`.
 
-* Standardized the MP-R, OMP-R, and EMPI workflows to use a common
-  result representation for downstream analysis and visualization.
-
+* Removed the `mp_omp_pipeline()` function because its functionality is now
+  provided by `mp_omp_execute()`.
+  
 * Added `omp_reference()`, a simple educational and reference implementation
   of Orthogonal Matching Pursuit.
 
-* Added and improved S3 methods for package objects, including printing,
-  summaries, and plotting.
-
-* Improved Gabor dictionary handling and atom preselection, including
-  `read_gabor_dict()` and `topk_gabor_atoms()`.
+* Added and improved S3 methods for package objects, including methods for 
+  printing, summarizing, and plotting.
 
 * Updated package documentation, examples, README, and vignette to reflect
   the current MP-R, OMP-R, and EMPI workflows.
 
 * Improved input validation, error handling, and overall code consistency.
 
-* Renamed selected functions for consistency with the current API:
-  - `mp_omp_pipeline()` was renamed to `mp_omp_execute()`.
-  - `topk_atoms()` was renamed to `topk_gabor_atoms()`.
 
 # MatchingPursuit 1.2.0
 

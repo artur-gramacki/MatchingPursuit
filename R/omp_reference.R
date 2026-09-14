@@ -2,7 +2,7 @@
 #'
 #' A straightforward reference implementation of the Orthogonal Matching
 #' Pursuit (OMP) algorithm that closely follows its mathematical formulation.
-#' The function is intended for educational and reference purposes and does
+#' The function is intended for reference and illustrative purposes and does
 #' not use computational optimizations. The least-squares problem is solved
 #' explicitly using the normal-equation formula.
 #'
@@ -94,7 +94,8 @@
 #' @export
 #'
 #' @seealso
-#' \code{\link{omp_core}}
+#' \code{\link{omp_core}},
+#' \code{\link{mp_omp_execute}}
 #'
 #' @examples
 #'

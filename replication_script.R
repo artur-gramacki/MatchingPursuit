@@ -85,7 +85,7 @@ clean <-
 clean <- clean / sqrt(sum(clean^2))
 
 results <- data.frame()
-n_rep <- 10
+n_rep <- 30
 snr_values <- c(20, 10, 0)
 
 for (rep in seq_len(n_rep)) {
@@ -102,8 +102,8 @@ for (rep in seq_len(n_rep)) {
 
     sig <- as_sig(signal, fs)
 
-    # "global" was used as the most complete optimization mode for this benchmark;
-    # "local" is faster but uses only local optimization, whereas "none" disables
+    # "-o global" was used as the most complete optimization mode for this benchmark;
+    # "-o local" is faster but uses only local optimization, whereas "-o none" disables
     # continuous atom optimization and provides the fastest, simplified variant.
     #
     # A very small residual threshold (-r 1e-11) was used to prevent early stopping
@@ -196,6 +196,15 @@ names(table_results) <- c(
   "Explained_energy_mean_SD",
   "Time_mean_SD"
 )
+
+table_results$Method <- factor(
+  table_results$Method,
+  levels = c("MP-R", "OMP-R", "EMPI")
+)
+
+table_results <- table_results[
+  order(table_results$SNR_dB, table_results$Method),
+]
 
 table_results
 
