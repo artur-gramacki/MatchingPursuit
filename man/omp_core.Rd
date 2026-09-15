@@ -17,7 +17,7 @@ omp_core(
 \item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
 Atoms are assumed to be stored in columns.
 Dictionary atoms are internally normalized to unit L2 norm before decomposition.
-Therefore, atom selection is invariant to arbitrary scaling of dictionary columns.}
+Therefore, atom selection is invariant to non-zero scaling of dictionary columns.}
 
 \item{signal}{Can be a numeric vector, matrix, or data frame. Signals are
 assumed to be stored in columns. The signal length (number of rows) must

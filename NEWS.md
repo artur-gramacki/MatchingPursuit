@@ -1,9 +1,10 @@
 # MatchingPursuit 1.3.0
 
 * Simplified the native MP/OMP core interfaces. `mp_core()` and `omp_core()`
-  now operate directly on numeric matrix dictionaries, no longer accept
-  `topk` objects, and always normalize dictionary atoms internally to
-  unit L2 norm.
+  now accept numeric vector, matrix, or data frame dictionaries directly and 
+  no longer accept `topk` objects. Dictionary atoms are internally normalized 
+  to unit L2 norm before decomposition, making atom selection invariant to
+  non-zero scaling of dictionary columns.
   
 * Updated the high-level Gabor-based MP/OMP workflow in `mp_omp_execute()`,
   which now internally calls `read_gabor_dict()` and `topk_gabor_atoms()`.
@@ -32,7 +33,6 @@
   the current MP-R, OMP-R, and EMPI workflows.
 
 * Improved input validation, error handling, and overall code consistency.
-
 
 # MatchingPursuit 1.2.0
 
