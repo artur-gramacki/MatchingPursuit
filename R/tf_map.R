@@ -108,6 +108,7 @@
 #' @export
 #'
 #' @examples
+#' if (interactive()) {
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file)
 #'
@@ -136,6 +137,7 @@
 #'   atom_centers = "numbers",
 #'   out_mode = "plot",
 #' )
+#' }
 #'
 tf_map <- function(
     x = NULL,

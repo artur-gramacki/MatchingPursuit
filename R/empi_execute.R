@@ -52,7 +52,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' if (interactive()) {
 #' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 #' signal <- read_csv_signals(file)
 #'

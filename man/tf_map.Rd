@@ -131,6 +131,7 @@ selected channel, including signal energy, residual energy, and normalized
 reconstruction error (NRE).
 }
 \examples{
+if (interactive()) {
 file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
 signal <- read_csv_signals(file)
 
@@ -159,5 +160,6 @@ out <- tf_map(
   atom_centers = "numbers",
   out_mode = "plot",
 )
+}
 
 }
