@@ -283,7 +283,7 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
       window_len <- as.integer(topk_atoms_dict[j, "window_len"])
 
       n <- 0:(window_len - 1)
-      c <- (window_len - 1) / 2
+      center <- (window_len - 1) / 2
 
       if (is.null(sigma_divisor)) {
         sigma <- (window_len + 1) / 3
@@ -291,7 +291,7 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
         sigma <- (window_len + 1) / sigma_divisor
       }
 
-      w <- exp(-pi * ((n - c) / sigma)^2)
+      w <- exp(-pi * ((n - center) / sigma)^2)
       phi <- phi_vec[j]
 
       # ------------------------------------------------------------------+
@@ -352,19 +352,6 @@ topk_gabor_atoms <- function(atoms_dict, signal, topk = NULL, sigma_divisor = NU
     topk_idx_mtx[, i] <- topk_idx
 
   } ###  for (i in 1:ncol(sig))
-
-  # rm(
-  #   atoms_mtx,
-  #   topk_atoms_dict,
-  #   phi_vec,
-  #   times_vec,
-  #   times_center_vec,
-  #   freq_vec,
-  #   sigma_vec,
-  #   window_len_vec,
-  #   phase_vec
-  # )
-  ###gc(FALSE)
 
   output <- list(
     inner_products = proj_mod_mtx,

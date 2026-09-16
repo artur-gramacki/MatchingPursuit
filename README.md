@@ -11,12 +11,11 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchingPursuit)](https
 
 Sparse signal decomposition framework for one- and multi-channel biomedical and 
 general time-series data using the **Matching Pursuit** and **Orthogonal Matching Pursuit** 
-algorithms.
+algorithms. For multi-channel signals, each channel is decomposed independently; 
+atoms are not selected jointly across channels.
 
-The package provides three decomposition backends: native R implementations of MP and OMP 
-(**MP-R** and **OMP-R**), and the optional external **EMPI** backend for high-performance 
-MP decomposition.
-
+The package provides two native R decomposition implementations, **MP-R** and **OMP-R**, 
+together with the optional external **EMPI** backend for high-performance MP decomposition.
 
 Supported features:
 
@@ -86,34 +85,6 @@ explains 98.69% of the signal energy.
   <img src="man/figures/mp.png" width="700">
 </p>
 
-### EMPI
-
-EMPI is an optional external third-party backend used for high-performance
-Matching Pursuit decomposition and is distributed separately under its own
-GPL license. It is not part of the MatchingPursuit package.
-
-EMPI must first be installed using the `empi_install()` function. The decomposition 
-can then be performed using `empi_execute()` and visualized using `plot()`.
-
-```r
-sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
-signal <- read_csv_signals(sig_file)
-
-out_empi <- empi_execute(
-  signal = signal
-)
-
-plot(out_empi, channel = 1)
-```
-This example illustrates an EMPI-based decomposition and its time–frequency 
-representation. The map reveals several localized components distributed across 
-time and frequency, while the reconstructed signal closely follows the original 
-waveform. In this case, the selected atoms explain 98.96% of the signal energy.
-
-<p align="center">
-  <img src="man/figures/empi.png" width="700">
-</p>
-
 ### Decomposition with a custom dictionary
 
 The native R implementations can operate directly on arbitrary user-defined 
@@ -149,6 +120,35 @@ out$relative_residual_energy
 In the example above, OMP correctly identifies atoms 1 and 4, corresponding to 
 the 5 Hz sine and 10 Hz cosine components used to construct the signal. After 
 two iterations, the residual energy is effectively zero.
+
+### EMPI
+
+EMPI is an optional external third-party backend used for high-performance
+Matching Pursuit decomposition and is distributed separately under its own
+GPL license. It is not part of the MatchingPursuit package.
+
+EMPI must first be installed using the `empi_install()` function. The decomposition 
+can then be performed using `empi_execute()` and visualized using `plot()`.
+
+```r
+sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read_csv_signals(sig_file)
+
+out_empi <- empi_execute(
+  signal = signal
+)
+
+plot(out_empi, channel = 1)
+```
+This example illustrates an EMPI-based decomposition and its time–frequency 
+representation. The map reveals several localized components distributed across 
+time and frequency, while the reconstructed signal closely follows the original 
+waveform. In this case, the selected atoms explain 98.96% of the signal energy.
+
+<p align="center">
+  <img src="man/figures/empi.png" width="700">
+</p>
+
 
 ## Educational OMP implementation
 
@@ -194,55 +194,54 @@ The package provides three main decomposition routes.
 |:--|:--|:--|:--|
 | **General matrix-based MP/OMP** | `mp_core()`, `omp_core()` | Sparse decomposition with arbitrary matrix dictionaries | General sparse decomposition and experimentation |
 | **Native R Gabor-based MP/OMP** | `mp_omp_execute()` | High-level Gabor-based MP or OMP decomposition | Time-frequency decomposition in R |
-| **External EMPI-based MP** | `empi_execute()` | Optimized Gabor-based Matching Pursuit | Large-scale time-frequency decomposition |
-
-Notes:
-
-1. `mp_core()` and `omp_core()` are general-purpose low-level sparse solvers. 
-They operate on arbitrary numeric matrix dictionaries and are independent of the 
-Gabor-specific workflow.
-
-2. `mp_omp_execute()` provides the high-level native R interface for Gabor-based 
-decomposition. If no XML dictionary specification is supplied, `generate_xml_dict()` 
-creates one internally. The specification is processed by `read_gabor_dict()`, 
-after which `topk_gabor_atoms()` selects channel-specific candidate Gabor atoms. 
-The resulting atom matrices are passed to `mp_core()` or `omp_core()`, and the 
-numerical results are combined with Gabor metadata to construct an object of 
-class `"mp"`.
-
-3. EMPI is an optional external high-performance C++ backend specialized in 
-Gabor-based Matching Pursuit. It supports optimized CPU execution and GPU 
-acceleration.
-
-4. `omp_reference()` is a straightforward educational and reference 
-implementation of OMP intended for small illustrative examples. It explicitly 
-solves the least-squares problem using the normal-equation formula and is not 
-intended for large-scale or numerically demanding computations.
+| **External EMPI-based MP** | `empi_execute()` | Optimized Gabor-based Matching Pursuit | High-performance time-frequency decomposition |
 
 ## Typical workflows
 
-The diagram below summarizes the three available decomposition workflows and
-their relationship within the package.
+The diagram below summarizes the **three available decomposition workflows** and
+their relationship within the package. Blue boxes denote R functions, whereas 
+peach boxes represent workflow components, inputs, or returned objects. 
+The dashed red line connects `mp_omp_execute()` in panel (a) with its internal 
+workflow shown in panel (b).
 
 <p align="center">
-  <img src="man/figures/main_workflows.png" width="600">
+  <img src="man/figures/main_workflows.png" width="800">
 </p>
 
-The `mp_omp_execute()` function provides a high-level interface for Gabor-based MP 
-and OMP decomposition. It combines the individual steps implemented by 
-`generate_xml_dict()`, `read_gabor_dict()`, `topk_gabor_atoms()`, and either 
-`mp_core()` or `omp_core()` into a single workflow.
+The **general matrix-based MP/OMP workflow** operates directly on a user-defined numeric
+dictionary and input signal through `mp_core()` or `omp_core()`. It is independent
+of the Gabor-specific dictionary construction utilities and can therefore be used
+with arbitrary matrix dictionaries. These functions return low-level decomposition
+results, giving the user direct control over the dictionary and the decomposition
+procedure.
 
-<p align="center">
-  <img src="man/figures/flow_of_mp_omp_execute.png" width="520">
-</p>
+The **native R Gabor-based MP/OMP workflow**, implemented by `mp_omp_execute()`,
+provides a higher-level interface for Gabor-based MP and OMP decomposition. It
+integrates dictionary specification or generation, dictionary reading,
+channel-specific atom preselection, decomposition with `mp_core()` or `omp_core()`,
+and aggregation of the results into an object of class `"mp"`. If no XML dictionary
+specification is supplied, `generate_xml_dict()` creates one internally; otherwise,
+the user-provided XML file is used. The specification is processed by
+`read_gabor_dict()`, after which `topk_gabor_atoms()` selects candidate Gabor atoms
+for each signal channel.
+
+The **external EMPI-based MP workflow** provides an alternative MP implementation
+through `empi_execute()`. In this case, decomposition is performed by the external
+high-performance C++ EMPI backend rather than by the native R MP/OMP core functions.
+The wrapper integrates the external decomposition results into the same
+package-level `"mp"` representation, allowing them to be handled using the same
+downstream visualization functions, including `plot()` and `tf_map()`.
+
+Thus, the three workflows differ in their level of abstraction, 
+dictionary representation, and decomposition backend:: direct matrix-based 
+MP/OMP for arbitrary user-defined dictionaries, the integrated native Gabor MP/OMP
+workflow, and the external EMPI-based Gabor MP workflow. The latter two return a
+common `"mp"` object, facilitating consistent visualization and interpretation
+within the package.
 
 
-Signal input for the high-level workflows can be imported using `read_csv_signals()`, 
-`read_edf_signals()`, or `read_wfdb_signals()`.
 
-`tf_map()` is available for decomposition results that contain time-frequency metadata, 
-such as Gabor-based MP/OMP and EMPI results.
+
 
 ## Reproducing the SoftwareX examples
 

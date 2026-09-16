@@ -14,9 +14,9 @@
   
 * Added the `full_atoms_in_signal` parameter to `mp_omp_execute()`, which
   controls whether Gabor atoms must be fully contained within the signal
-  boundaries. Allowing atoms to extend beyond the signal boundaries can
-  substantially improve decomposition quality, particularly near the
-  beginning and end of the signal.  
+  boundaries. When set to `FALSE`, additional boundary-crossing atoms are
+  included in the candidate dictionary, which can substantially improve
+  decomposition quality near the beginning and end of the signal.
 
 * Renamed `topk_atoms()` function to `topk_gabor_atoms()`.
 

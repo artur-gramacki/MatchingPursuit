@@ -4,8 +4,9 @@
 #'
 #' The generated dictionary contains multiple Gabor blocks with logarithmically
 #' distributed window lengths. The smallest window length is fixed to 17 samples
-#' and the largest window length is the largest odd integer not exceeding
-#' \code{3*N}
+#' and the maximum window length is determined by \code{max_window_length}.
+#' It can be set to the largest odd integer not exceeding either \code{3*N}
+#' or \code{N-1}. The \code{3*N} upper limit is chosen heuristically.
 #'
 #' The window lengths are generated on a logarithmic scale and then quantized
 #' to obtain a set of practical window sizes. Window lengths are forced to be
@@ -22,13 +23,17 @@
 #' This corresponds to the zero-padding strategy commonly used in MPTK-like
 #' Gabor dictionaries.
 #'
-#' @param N Integer. Length of the analyzed signal in samples. The maximum
-#' window length is the largest odd integer not exceeding \code{3*N}; this
-#' upper limit is  chosen heuristically.
+#' @param N Integer. Length of the analyzed signal in samples.
 #'
 #' @param file Character string. Path to the XML file that will be created.
 #'   The output follows the MPTK dictionary XML structure and contains Gabor
 #'   blocks.
+#'
+#' @param max_window_length Character string specifying the upper limit used
+#'   when generating window lengths. \code{"3N"} uses the largest odd integer not
+#'   exceeding \code{3*N}, whereas \code{"N-1"} limits the largest window
+#'   length to the largest odd integer not exceeding \code{N-1}.
+#'   The default is \code{"3N"}.
 #'
 #' @return
 #' The function writes an XML dictionary file to \code{file}. Invisibly returns a
@@ -49,13 +54,13 @@
 #'
 #' \enumerate{
 #'   \item Minimum window length: 17 samples.
-#'   \item Maximum window length: \code{3*N} samples.
+#'   \item Maximum window length: determined by \code{max_window_length}.
 #'   \item Number of scales:
 #'   \deqn{K = ceil(log2(N)) + 3}
 #'   \item Logarithmic spacing of scales:
 #'   \deqn{L_k = 17 r^k}
 #'   where
-#'   \deqn{r=((3*N)/17)^{1/(K-1)}}
+#'   \deqn{r=(L_{max}/17)^{1/(K-1)}}
 #'   \item Quantization of window lengths depending on their size.
 #'   \item Enforcement of odd window lengths.
 #'   \item Window shift proportional to window length.
@@ -65,11 +70,13 @@
 #' @export
 #'
 #' @seealso
-#' \code{\link{read_gabor_dict}},
+#' \code{\link{read_gabor_dict}}
 #'
 #' @examples
-#' # Generate a dictionary for a 4096-sample signal
+#' # Generate a dictionary for a 256-sample signal
 #' xml_file <- tempfile(fileext = ".xml")
+#'
+#' # Default setting: maximum window length based on 3*N
 #' dict <- generate_xml_dict(
 #'   N = 256,
 #'   file = xml_file
@@ -77,18 +84,29 @@
 #'
 #' dict
 #'
+#' # Read the generated Gabor dictionary for a 2-second,
+#' # 128-Hz signal (256 samples)
 #' atoms_dict <- read_gabor_dict(
 #'   xml_file,
-#'   sampling_frequency = 64,
+#'   sampling_frequency = 128,
 #'   duration = 2,
-#'   full_atoms_in_signal = TRUE,
+#'   full_atoms_in_signal = FALSE,
 #'   verbose = TRUE
 #' )
 #'
 #' head(atoms_dict)
 #' tail(atoms_dict)
 #'
-generate_xml_dict <- function(N, file) {
+#' # Alternative setting: limit the maximum window length to N-1
+#' dict <- generate_xml_dict(
+#'   N = 256,
+#'   file = xml_file,
+#'   max_window_length = "N-1"
+#' )
+#'
+#' dict
+#'
+generate_xml_dict <- function(N, file, max_window_length = c("3N", "N-1")) {
 
   if (!is.numeric(N) ||
       length(N) != 1L ||
@@ -105,15 +123,20 @@ generate_xml_dict <- function(N, file) {
     stop("'file' must be a non-empty character string.")
   }
 
+  max_window_length <- match.arg(max_window_length)
+
   N <- as.integer(N)
 
   Lmin <- 17
-  # Lmax <- N - 1
-  Lmax <- 3 * N
+
+  if (max_window_length == "N-1") {
+    Lmax <- N - 1
+  } else {
+    Lmax <- 3 * N
+  }
 
   # Gabor windows are constrained to odd lengths.
   if (Lmax %% 2L == 0L) {
-    # Lmax <- Lmax - 1L
     Lmax <- Lmax - 1L
   }
 

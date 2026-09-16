@@ -239,7 +239,7 @@ summary.mp <- function(object, ...) {
 #' @export
 print.summary.mp <- function(x, ...) {
 
-  cat("Summary of Matching Pursuit object (class 'summary.mp')\n")
+  cat("Summary of Matching Pursuit object (class 'mp')\n")
   cat("--------------------------------------------------------\n")
   cat("Samples:            ", x$samples, "\n", sep = "")
   cat("Channels:           ", x$channels, "\n", sep = "")

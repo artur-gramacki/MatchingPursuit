@@ -94,7 +94,7 @@ The results from all channels are combined into an object of class
 }
 \examples{
 # +-------------------------------------------------------------+
-# | Step 1: Read signal                                         |
+# | Read signal                                                 |
 # +-------------------------------------------------------------+
 file <- system.file(
   "extdata",
@@ -108,7 +108,7 @@ signal <- read_csv_signals(
 )
 
 # +-------------------------------------------------------------+
-# | Step 2: Run Matching Pursuit (using EMPI backend)           |
+# | Run Matching Pursuit (MP-R backend)                         |
 # +-------------------------------------------------------------+
 fit_mp <- mp_omp_execute(
   mode = "mp",
@@ -119,8 +119,23 @@ fit_mp <- mp_omp_execute(
 
 plot(fit_mp, freq_divide = 4)
 
+# The '--full-atoms-in-signal' option restricts the
+# decomposition to atoms fully contained within the analyzed
+# signal. Compare the two time-frequency maps obtained with
+# and without this option.
+
+fit_mp <- mp_omp_execute(
+  mode = "mp",
+  signal = signal,
+  full_atoms_in_signal = TRUE,
+  n_nonzero_coefs = 50,
+  verbose = TRUE
+)
+
+plot(fit_mp, freq_divide = 4)
+
 # +-------------------------------------------------------------+
-# | Step 3: Run Orthogonal Matching Pursuit (OMP-R backend)     |
+# | Run Orthogonal Matching Pursuit (OMP-R backend)             |
 # +-------------------------------------------------------------+
 fit_omp <- mp_omp_execute(
   mode = "omp",
@@ -132,7 +147,7 @@ fit_omp <- mp_omp_execute(
 plot(fit_omp, freq_divide = 4)
 
 # +-------------------------------------------------------------+
-# | Step 4: Use an external XML dictionary specification        |
+# | Use an external XML dictionary specification                |
 # +-------------------------------------------------------------+
 xml_file <- system.file(
   "extdata",
@@ -147,6 +162,8 @@ fit_mp_xml <- mp_omp_execute(
   n_nonzero_coefs = 50,
   verbose = TRUE
 )
+
+plot(fit_mp_xml, freq_divide = 4)
 
 }
 \seealso{

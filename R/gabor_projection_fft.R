@@ -105,7 +105,7 @@ gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
     # Full Gaussian envelope
     # ---------------------------------------------------------------+
     n <- 0:(window_len - 1)
-    c <- (window_len - 1) / 2
+    center <- (window_len - 1) / 2
 
     if (is.null(sigma_divisor)) {
       sigma <- (window_len + 1) / 3
@@ -113,7 +113,7 @@ gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
       sigma <- (window_len + 1) / sigma_divisor
     }
 
-    w <- exp(-pi * ((n - c) / sigma)^2)
+    w <- exp(-pi * ((n - center) / sigma)^2)
 
     # Normalize the complete envelope before boundary truncation
     w_norm <- w / sqrt(sum(w^2))

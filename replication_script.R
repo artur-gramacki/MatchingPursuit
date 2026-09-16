@@ -60,10 +60,10 @@ out$relative_residual_energy
 # SNR: Signal-to-Noise Ratio
 # SNR = 20 dB -> the signal power is 100 times higher than the noise power
 # SNR = 10 dB -> the signal power is 00 times higher than the noise power
-# SNR = 0 dB -> the signal and noise have the same power
+# SNR =  0 dB -> the signal and noise have the same power
 #
-# EE: Explained_Energy
-# RRE - Relative_Reconstruction_Error
+# EE:  Explained_Energy
+# RRE: Relative Reconstruction Error
 #       (an RRE of 0 indicates perfect reconstruction;
 #       lower values indicate better reconstruction quality)
 

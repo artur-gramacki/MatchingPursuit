@@ -254,7 +254,9 @@ read_gabor_dict <- function (
       time_positions <- center_positions - center_offset
     }
 
-    freq_bins <- 0:(floor(fft_size / 2) - 1)
+    # Because the signal is real-valued, it is sufficient to consider
+    # non-negative frequencies from 0 to the Nyquist frequency.
+    freq_bins <- 0:floor(fft_size / 2)
 
     if (verbose) {
       message(
