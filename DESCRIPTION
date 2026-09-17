@@ -26,7 +26,7 @@ SystemRequirements: external tool (installed via empi_install()
         Pursuit algorithm (Enhanced Matching Pursuit Implementation;
         EMPI) by Piotr T. Różański, available at
         https://github.com/develancer/empi.
-Imports: edf, signal, RSQLite, DescTools, imager, raster, graphics,
+Imports: edf, signal, RSQLite, imager, raster, graphics,
         grDevices, utils, digest, EGM, xml2
 Suggests: knitr, rmarkdown, latex2exp, remotes
 VignetteBuilder: knitr

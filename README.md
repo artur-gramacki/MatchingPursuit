@@ -1,7 +1,7 @@
 # MatchingPursuit: An R Framework for Sparse Time-Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit
 
 <!-- badges: start -->
-[![CRAN status](http://www.r-pkg.org/badges/version/MatchingPursuit)](https://CRAN.R-project.org/package=MatchingPursuit)
+[![CRAN status](https://www.r-pkg.org/badges/version/MatchingPursuit)](https://CRAN.R-project.org/package=MatchingPursuit)
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/MatchingPursuit)](https://CRAN.R-project.org/package=MatchingPursuit)
 [![CRAN total
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/MatchingPursuit)](https://cran.r-project.org/package=MatchingPursuit)
@@ -125,7 +125,7 @@ two iterations, the residual energy is effectively zero.
 
 EMPI is an optional external third-party backend used for high-performance
 Matching Pursuit decomposition and is distributed separately under its own
-GPL license. It is not part of the MatchingPursuit package.
+license. It is not part of the MatchingPursuit package.
 
 EMPI must first be installed using the `empi_install()` function. The decomposition 
 can then be performed using `empi_execute()` and visualized using `plot()`.
@@ -233,15 +233,11 @@ package-level `"mp"` representation, allowing them to be handled using the same
 downstream visualization functions, including `plot()` and `tf_map()`.
 
 Thus, the three workflows differ in their level of abstraction, 
-dictionary representation, and decomposition backend:: direct matrix-based 
+dictionary representation, and decomposition backend: direct matrix-based 
 MP/OMP for arbitrary user-defined dictionaries, the integrated native Gabor MP/OMP
 workflow, and the external EMPI-based Gabor MP workflow. The latter two return a
 common `"mp"` object, facilitating consistent visualization and interpretation
 within the package.
-
-
-
-
 
 ## Reproducing the SoftwareX examples
 

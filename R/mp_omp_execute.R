@@ -100,60 +100,74 @@
 #' # +-------------------------------------------------------------+
 #' # | Run Matching Pursuit (MP-R backend)                         |
 #' # +-------------------------------------------------------------+
+#' # set  "mode = omp" to run Orthogonal Matching Pursuit (OMP-R backend)
+#' #
+#' # topk is set to a relatively small value to reduce computation time.
+#' # If this parameter is omitted, the function sets topk by default to 10%
+#' # of the total number of atoms in the dictionary.
+#' #
+#' # In practical applications, n_nonzero_coefs is typically set to a larger
+#' # value, e.g. 50.
+#' #
 #' fit_mp <- mp_omp_execute(
 #'   mode = "mp",
 #'   signal = signal,
-#'   n_nonzero_coefs = 50,
+#'   n_nonzero_coefs = 25,
+#'   topk = 5000,
 #'   verbose = TRUE
 #' )
 #'
 #' plot(fit_mp, freq_divide = 4)
+#'
+#' # ### NOTE ###
+#' # Additional examples are provided below for illustration.
+#' # They are commented out because they may take longer to run.
 #'
 #' # The '--full-atoms-in-signal' option restricts the
 #' # decomposition to atoms fully contained within the analyzed
 #' # signal. Compare the two time-frequency maps obtained with
 #' # and without this option.
 #'
-#' fit_mp <- mp_omp_execute(
-#'   mode = "mp",
-#'   signal = signal,
-#'   full_atoms_in_signal = TRUE,
-#'   n_nonzero_coefs = 50,
-#'   verbose = TRUE
-#' )
-#'
-#' plot(fit_mp, freq_divide = 4)
+#' # fit_mp <- mp_omp_execute(
+#' #   mode = "mp",
+#' #   signal = signal,
+#' #   full_atoms_in_signal = TRUE,
+#' #   n_nonzero_coefs = 50,
+#' #   verbose = TRUE
+#' # )
+
+#' # plot(fit_mp, freq_divide = 4)
 #'
 #' # +-------------------------------------------------------------+
 #' # | Run Orthogonal Matching Pursuit (OMP-R backend)             |
 #' # +-------------------------------------------------------------+
-#' fit_omp <- mp_omp_execute(
-#'   mode = "omp",
-#'   signal = signal,
-#'   n_nonzero_coefs = 50,
-#'   verbose = TRUE
-#' )
+#' # fit_omp <- mp_omp_execute(
+#' #   mode = "omp",
+#' #   signal = signal,
+#' #   n_nonzero_coefs = 50,
+#' #   verbose = TRUE
+#' # )
 #'
-#' plot(fit_omp, freq_divide = 4)
+#' # plot(fit_omp, freq_divide = 4)
 #'
 #' # +-------------------------------------------------------------+
 #' # | Use an external XML dictionary specification                |
 #' # +-------------------------------------------------------------+
-#' xml_file <- system.file(
-#'   "extdata",
-#'   "sample1.xml",
-#'   package = "MatchingPursuit"
-#' )
+#' # xml_file <- system.file(
+#' #   "extdata",
+#' #   "sample1.xml",
+#' #    package = "MatchingPursuit"
+#' # )
 #'
-#' fit_mp_xml <- mp_omp_execute(
-#'   mode = "mp",
-#'   signal = signal,
-#'   dictionary = xml_file,
-#'   n_nonzero_coefs = 50,
-#'   verbose = TRUE
-#' )
+#' # fit_mp_xml <- mp_omp_execute(
+#' #   mode = "mp",
+#' #   signal = signal,
+#' #   dictionary = xml_file,
+#' #   n_nonzero_coefs = 50,
+#' #   verbose = TRUE
+#' # )
 #'
-#' plot(fit_mp_xml, freq_divide = 4)
+#' # plot(fit_mp_xml, freq_divide = 4)
 #'
 mp_omp_execute <- function (
     signal,

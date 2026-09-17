@@ -11,7 +11,6 @@
 #' @importFrom graphics rasterImage par points text axis mtext layout plot.new plot.window box abline title
 #' @importFrom grDevices hcl.colors graphics.off pdf dev.off png
 #' @importFrom utils tail
-#' @importFrom DescTools DrawEllipse
 #' @importFrom imager as.cimg resize
 #'
 #' @param x An object of class \code{mp} or a path to a SQLite file created by \code{empi_execute()}.
@@ -370,16 +369,27 @@ tf_map <- function(
   for (n in 1:num_atoms) {
 
     if (draw_ellipses && out_mode == "plot") {
-      ellipse <- DrawEllipse(
-        x = position[n],
-        y = frequency[n],
-        # from Heisenberg rule: delta_t x delta_omega >= 1/2
-        radius.x = (scale[n] / 2),
-        radius.y = 1 / ((scale[n])),
+      # ellipse <- DrawEllipse(
+      #   x = position[n],
+      #   y = frequency[n],
+      #   # from Heisenberg rule: delta_t x delta_omega >= 1/2
+      #   radius.x = (scale[n] / 2),
+      #   radius.y = 1 / ((scale[n])),
+      #   col = "lightgray",
+      #   border = "black",
+      #   plot = TRUE,
+      #   nv = 100)
+      #
+      # To avoid loading DescTools (I use only one function from it, DrawEllipse).
+      theta.inc <- 2 * pi / 100
+      theta <- seq(0, 2 * pi - theta.inc, by = theta.inc)
+
+      graphics::polygon(
+        x = position[n] + (scale[n] / 2) * cos(theta),
+        y = frequency[n] + (1 / scale[n]) * sin(theta),
         col = "lightgray",
-        border = "black",
-        plot = TRUE,
-        nv = 100)
+        border = "black"
+      )
 
       if (atom_centers == "crosses") {
         points(position[n], frequency[n] , pch = 3, col = "black", cex = 1)

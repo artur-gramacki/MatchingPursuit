@@ -464,7 +464,8 @@ explanation given [here](#important_note).
 # The empi_options parameter is NULL, so the EMPI program is 
 # run with the parameters "-o local --gabor -i 50"
 
-# sig <- as_sig(signal_eeg_f_r_m, sampling_frequency_r)
+# # To make the RDS file smaller (CRAN requirement), we select only one channel.
+# sig <- as_sig(signal_eeg_f_r_m[, 2], sampling_frequency_r)
 
 # eeg_empi_out <- empi_execute (
 #   signal = sig,
@@ -490,18 +491,14 @@ decomposed.
 
 Additionally, the energy of the input signal and the reconstructed
 signal (from the generated atoms) is calculated. The results show that
-nearly all of the energy of the original signal (97.75%) is “explained”
+nearly all of the energy of the original signal (96.18%) is “explained”
 by the generated atoms.
 
 ```{r eeg_tf_map, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 file <- system.file("extdata", "eeg_empi_out.rds", package = "MatchingPursuit")
 eeg_empi_out <- readRDS(file = file)
 
-plot(
-  eeg_empi_out, 
-  channel = 2, 
-  verbose = TRUE
-)
+plot(eeg_empi_out)
 ```
 
 ### Step 7 - Displaying EEG signals using `plot()` (optional) {.unnumbered}
@@ -621,7 +618,7 @@ ecg_empi_out <- readRDS(file = file)
 # Create time-frequency map based on atoms.
 out <- tf_map(
   x = ecg_empi_out,
-  channel = 2,
+  channel = 1,
   verbose = TRUE
 )
 ```

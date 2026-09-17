@@ -18,7 +18,13 @@ Returns \strong{Enhanced Matching Pursuit Implementation} binary locations for
 the following operating systems: Windows, Linux, macOS-arm64.
 }
 \examples{
-empi_locate()
+sys <- Sys.info()[["sysname"]]
+mach <- Sys.info()[["machine"]]
+
+if (sys \%in\% c("Windows", "Linux") ||
+    (sys == "Darwin" && mach == "arm64")) {
+  empi_locate()
+}
 
 }
 \seealso{

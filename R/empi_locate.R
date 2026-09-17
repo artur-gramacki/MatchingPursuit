@@ -20,7 +20,13 @@
 #' @export
 #'
 #' @examples
-#' empi_locate()
+#' sys <- Sys.info()[["sysname"]]
+#' mach <- Sys.info()[["machine"]]
+#'
+#' if (sys %in% c("Windows", "Linux") ||
+#'     (sys == "Darwin" && mach == "arm64")) {
+#'   empi_locate()
+#' }
 #'
 empi_locate <- function() {
 
