@@ -1,3 +1,19 @@
+<style>
+body {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 30px;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+</style>
+
 # MatchingPursuit: An R Framework for Sparse Time-Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit
 
 <!-- badges: start -->
@@ -218,12 +234,15 @@ procedure.
 The **native R Gabor-based MP/OMP workflow**, implemented by `mp_omp_execute()`,
 provides a higher-level interface for Gabor-based MP and OMP decomposition. It
 integrates dictionary specification or generation, dictionary reading,
-channel-specific atom preselection, decomposition with `mp_core()` or `omp_core()`,
-and aggregation of the results into an object of class `"mp"`. If no XML dictionary
+channel-specific atom preselection, reconstruction of the selected atoms as a
+sparse or dense matrix, decomposition with `mp_core()` or `omp_core()`, and
+aggregation of the results into an object of class `"mp"`. If no XML dictionary
 specification is supplied, `generate_xml_dict()` creates one internally; otherwise,
 the user-provided XML file is used. The specification is processed by
 `read_gabor_dict()`, after which `topk_gabor_atoms()` selects candidate Gabor atoms
-for each signal channel.
+for each signal channel. The selected atoms are then reconstructed by
+`gabor_atoms_matrix()` as a sparse or dense dictionary matrix and passed to
+`mp_core()` or `omp_core()` for decomposition.
 
 The **external EMPI-based MP workflow** provides an alternative MP implementation
 through `empi_execute()`. In this case, decomposition is performed by the external

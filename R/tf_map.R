@@ -559,23 +559,26 @@ tf_map <- function(
   # Restore
   par(old_par)
 
-  list(
-    atoms = out$atoms,
-    gabor_functions = gabors,
-    reconstruction = reconstruction,
-    signal = signal,
-    sampling_frequency = sampling_frequency,
-    signal_energy = signal_energy,
-    reconstruction_energy = reconstruction_energy,
-    residual_energy = residual_energy,
-    explained_energy  = explained_energy,
-    grid_size_t = t,
-    grid_size_f = y,
-    epochSize = epochSize,
-    number_of_secs = s,
-    tf_map = tf_map,
-    tf_map_resampled = tf_map_resampled,
-    channel = channel,
-    freq_divide = freq_divide)
+  invisible(
+    list(
+      atoms = out$atoms,
+      gabor_functions = gabors,
+      reconstruction = reconstruction,
+      signal = signal,
+      sampling_frequency = sampling_frequency,
+      signal_energy = signal_energy,
+      reconstruction_energy = reconstruction_energy,
+      residual_energy = residual_energy,
+      explained_energy  = explained_energy,
+      grid_size_t = t,
+      grid_size_f = y,
+      epochSize = epochSize,
+      number_of_secs = s,
+      tf_map = tf_map,
+      tf_map_resampled = tf_map_resampled,
+      channel = channel,
+      freq_divide = freq_divide
+    )
+  )
 }
 

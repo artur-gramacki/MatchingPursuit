@@ -26,15 +26,24 @@
 #' signal. If \code{NULL}, the top 10\% of candidate atoms are retained for
 #' each channel.
 #'
-#' @param full_atoms_in_signal Logical. If \code{TRUE}, only atoms whose complete
-#' support lies within the signal are generated. If \code{FALSE}, atom support may
-#' extend beyond the signal boundaries.
+#' @param full_atoms_in_signal Logical. If \code{TRUE}, only candidate atoms
+#' whose complete support lies within the signal are included in the dictionary.
+#' If \code{FALSE}, candidate atom supports may extend beyond the signal
+#' boundaries.
 #'
 #' @param n_nonzero_coefs Maximum number of atoms selected during the decomposition
 #' for each signal channel.
 #'
 #' @param tol Optional stopping tolerance defined as the maximum allowed
 #' relative residual energy. If specified, it overrides \code{n_nonzero_coefs}.
+#'
+#' @param sparse
+#' Logical; passed to \code{gabor_atoms_matrix()} when constructing the
+#' channel-specific matrix of selected Gabor atoms. If \code{TRUE}, the atom
+#' matrix is created directly as a sparse matrix; if \code{FALSE}, a dense
+#' matrix is created. Sparse storage can substantially reduce memory use and
+#' improve MP/OMP performance because individual Gabor atoms have localized
+#' support and are zero outside their support intervals. Defaults to \code{TRUE}.
 #'
 #' @param verbose Logical; if \code{TRUE}, progress information is printed
 #' during processing.
@@ -64,10 +73,13 @@
 #'
 #' @details
 #' The XML dictionary specification is first processed by
-#' \code{read_gabor_dict()}, after which \code{topk_gabor_atoms()} selects a
-#' channel-specific subset of candidate Gabor atoms. The selected dictionary
-#' is then passed to \code{mp_core()} or \code{omp_core()} independently for
-#' each signal channel.
+#' \code{read_gabor_dict()}. For each signal channel,
+#' \code{topk_gabor_atoms()} ranks the candidate Gabor atoms and retains the
+#' channel-specific top-ranked subset together with the parameters required to
+#' reconstruct those atoms. \code{gabor_atoms_matrix()} then materializes the
+#' selected atoms as a dense or sparse matrix, according to \code{sparse}.
+#' This matrix is passed to \code{mp_core()} or \code{omp_core()} for the
+#' actual decomposition of that channel.
 #'
 #' The results from all channels are combined into an object of class
 #' \code{"mp"}, which can be visualized using \code{plot()} and
@@ -76,6 +88,7 @@
 #' @seealso
 #' \code{\link{read_gabor_dict}},
 #' \code{\link{topk_gabor_atoms}},
+#' \code{\link{gabor_atoms_matrix}},
 #' \code{\link{generate_xml_dict}},
 #' \code{\link{omp_core}},
 #' \code{\link{mp_core}}
@@ -100,7 +113,7 @@
 #' # +-------------------------------------------------------------+
 #' # | Run Matching Pursuit (MP-R backend)                         |
 #' # +-------------------------------------------------------------+
-#' # set  "mode = omp" to run Orthogonal Matching Pursuit (OMP-R backend)
+#' # Set mode = "omp" to run Orthogonal Matching Pursuit (OMP-R backend).
 #' #
 #' # topk is set to a relatively small value to reduce computation time.
 #' # If this parameter is omitted, the function sets topk by default to 10%
@@ -112,8 +125,8 @@
 #' fit_mp <- mp_omp_execute(
 #'   mode = "mp",
 #'   signal = signal,
-#'   n_nonzero_coefs = 25,
-#'   topk = 5000,
+#'   n_nonzero_coefs = 50,
+#'   topk = 10000,
 #'   verbose = TRUE
 #' )
 #'
@@ -123,16 +136,17 @@
 #' # Additional examples are provided below for illustration.
 #' # They are commented out because they may take longer to run.
 #'
-#' # The '--full-atoms-in-signal' option restricts the
+#' # The 'full_atoms_in_signal' argument restricts the
 #' # decomposition to atoms fully contained within the analyzed
 #' # signal. Compare the two time-frequency maps obtained with
-#' # and without this option.
+#' # and without this restriction.
 #'
 #' # fit_mp <- mp_omp_execute(
 #' #   mode = "mp",
 #' #   signal = signal,
 #' #   full_atoms_in_signal = TRUE,
 #' #   n_nonzero_coefs = 50,
+#' #   topk = 10000,
 #' #   verbose = TRUE
 #' # )
 
@@ -177,6 +191,7 @@ mp_omp_execute <- function (
     full_atoms_in_signal = FALSE,
     n_nonzero_coefs = NULL,
     tol = NULL,
+    sparse = TRUE,
     verbose = FALSE
 ) {
 
@@ -201,7 +216,7 @@ mp_omp_execute <- function (
 
   if (is.null(dictionary)) {
     xml_file <- tempfile(fileext = ".xml")
-    dict <- generate_xml_dict(N = signal_length, file = xml_file)
+    generate_xml_dict(N = signal_length, file = xml_file)
   } else {
     xml_file <- dictionary
   }
@@ -226,18 +241,21 @@ mp_omp_execute <- function (
 
   results <- vector("list", ncol(sig))
 
+  topk_atoms <- topk_gabor_atoms(
+    atoms_dict = atoms_dict,
+    signal = signal,
+    topk = topk,
+    verbose = verbose
+  )
+
   for (ch in seq_len(ncol(sig))) {
 
-    signal_one_ch <- as_sig(sig[, ch], sampling_frequency)
-
-    topk_atoms <- topk_gabor_atoms(
-      atoms_dict = atoms_dict,
-      signal = signal_one_ch,
-      topk = topk,
+    D <- gabor_atoms_matrix(
+      x = topk_atoms,
+      channel = ch,
+      sparse = sparse,
       verbose = verbose
     )
-
-    D <- as.matrix(topk_atoms$atoms[[1]])
 
     if (mode == "omp") {
       res <- omp_core(
@@ -246,9 +264,11 @@ mp_omp_execute <- function (
         channel = ch,
         tol = tol,
         n_nonzero_coefs = n_nonzero_coefs,
+        sparse = sparse,
         verbose = verbose
       )
     }
+
     if (mode == "mp") {
       res <- mp_core(
         dictionary = D,
@@ -256,17 +276,20 @@ mp_omp_execute <- function (
         channel = ch,
         tol = tol,
         n_nonzero_coefs = n_nonzero_coefs,
+        sparse = sparse,
         verbose = verbose
       )
     }
 
     results[[ch]] <- res
+
     num_atoms <- ncol(results[[ch]]$selected_atoms)
     support <- results[[ch]]$support
-    fr <- topk_atoms$frequency[support, ]
-    ph <- topk_atoms$phase[support, ]
-    sc <- topk_atoms$scale[support, ]
-    po <- topk_atoms$position[support, ]
+
+    fr <- topk_atoms$frequency[support, ch]
+    ph <- topk_atoms$phase[support, ch]
+    sc <- topk_atoms$scale[support, ch]
+    po <- topk_atoms$position[support, ch]
 
     i1 <- rep(ch, num_atoms)
     channel_id <- c(channel_id, i1)

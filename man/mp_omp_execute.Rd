@@ -13,6 +13,7 @@ mp_omp_execute(
   full_atoms_in_signal = FALSE,
   n_nonzero_coefs = NULL,
   tol = NULL,
+  sparse = TRUE,
   verbose = FALSE
 )
 }
@@ -34,15 +35,23 @@ atoms retained for each signal channel after ranking by their match to the
 signal. If \code{NULL}, the top 10\% of candidate atoms are retained for
 each channel.}
 
-\item{full_atoms_in_signal}{Logical. If \code{TRUE}, only atoms whose complete
-support lies within the signal are generated. If \code{FALSE}, atom support may
-extend beyond the signal boundaries.}
+\item{full_atoms_in_signal}{Logical. If \code{TRUE}, only candidate atoms
+whose complete support lies within the signal are included in the dictionary.
+If \code{FALSE}, candidate atom supports may extend beyond the signal
+boundaries.}
 
 \item{n_nonzero_coefs}{Maximum number of atoms selected during the decomposition
 for each signal channel.}
 
 \item{tol}{Optional stopping tolerance defined as the maximum allowed
 relative residual energy. If specified, it overrides \code{n_nonzero_coefs}.}
+
+\item{sparse}{Logical; passed to \code{gabor_atoms_matrix()} when constructing the
+channel-specific matrix of selected Gabor atoms. If \code{TRUE}, the atom
+matrix is created directly as a sparse matrix; if \code{FALSE}, a dense
+matrix is created. Sparse storage can substantially reduce memory use and
+improve MP/OMP performance because individual Gabor atoms have localized
+support and are zero outside their support intervals. Defaults to \code{TRUE}.}
 
 \item{verbose}{Logical; if \code{TRUE}, progress information is printed
 during processing.}
@@ -83,10 +92,13 @@ The returned object is of class \code{"mp"} and can be visualized using
 
 
 The XML dictionary specification is first processed by
-\code{read_gabor_dict()}, after which \code{topk_gabor_atoms()} selects a
-channel-specific subset of candidate Gabor atoms. The selected dictionary
-is then passed to \code{mp_core()} or \code{omp_core()} independently for
-each signal channel.
+\code{read_gabor_dict()}. For each signal channel,
+\code{topk_gabor_atoms()} ranks the candidate Gabor atoms and retains the
+channel-specific top-ranked subset together with the parameters required to
+reconstruct those atoms. \code{gabor_atoms_matrix()} then materializes the
+selected atoms as a dense or sparse matrix, according to \code{sparse}.
+This matrix is passed to \code{mp_core()} or \code{omp_core()} for the
+actual decomposition of that channel.
 
 The results from all channels are combined into an object of class
 \code{"mp"}, which can be visualized using \code{plot()} and
@@ -110,7 +122,7 @@ signal <- read_csv_signals(
 # +-------------------------------------------------------------+
 # | Run Matching Pursuit (MP-R backend)                         |
 # +-------------------------------------------------------------+
-# set  "mode = omp" to run Orthogonal Matching Pursuit (OMP-R backend)
+# Set mode = "omp" to run Orthogonal Matching Pursuit (OMP-R backend).
 #
 # topk is set to a relatively small value to reduce computation time.
 # If this parameter is omitted, the function sets topk by default to 10\%
@@ -122,8 +134,8 @@ signal <- read_csv_signals(
 fit_mp <- mp_omp_execute(
   mode = "mp",
   signal = signal,
-  n_nonzero_coefs = 25,
-  topk = 5000,
+  n_nonzero_coefs = 50,
+  topk = 10000,
   verbose = TRUE
 )
 
@@ -133,16 +145,17 @@ plot(fit_mp, freq_divide = 4)
 # Additional examples are provided below for illustration.
 # They are commented out because they may take longer to run.
 
-# The '--full-atoms-in-signal' option restricts the
+# The 'full_atoms_in_signal' argument restricts the
 # decomposition to atoms fully contained within the analyzed
 # signal. Compare the two time-frequency maps obtained with
-# and without this option.
+# and without this restriction.
 
 # fit_mp <- mp_omp_execute(
 #   mode = "mp",
 #   signal = signal,
 #   full_atoms_in_signal = TRUE,
 #   n_nonzero_coefs = 50,
+#   topk = 10000,
 #   verbose = TRUE
 # )
 # plot(fit_mp, freq_divide = 4)
@@ -182,6 +195,7 @@ plot(fit_mp, freq_divide = 4)
 \seealso{
 \code{\link{read_gabor_dict}},
 \code{\link{topk_gabor_atoms}},
+\code{\link{gabor_atoms_matrix}},
 \code{\link{generate_xml_dict}},
 \code{\link{omp_core}},
 \code{\link{mp_core}}

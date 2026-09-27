@@ -6,9 +6,9 @@
 #' Path to the XML file containing the dictionary definition.
 #'
 #' @param full_atoms_in_signal
-#' Logical. If \code{TRUE}, only atoms whose complete support lies within
-#' the signal are generated. If \code{FALSE}, atom support may extend beyond
-#' the signal boundaries.
+#' Logical. If \code{TRUE}, only candidate atoms whose complete support lies
+#' within the signal are included in the dictionary. If \code{FALSE}, candidate
+#' atom supports may extend beyond the signal boundaries.
 #'
 #' @param sampling_frequency
 #' Sampling frequency (in Hz) of the signal associated with the dictionary.
@@ -19,7 +19,7 @@
 #'
 #' @param verbose
 #' Logical; if \code{TRUE}, prints progress information about parsed blocks
-#' and generated atoms.
+#' and candidate atoms.
 #'
 #' @return A matrix where each row describes a Gabor atom with the following columns:
 #'
@@ -75,19 +75,17 @@
 #' @section Usage in sparse decomposition workflow:
 #' The output of \code{read_gabor_dict()} is a low-level description of the
 #' Gabor time-frequency grid. It serves as input to \code{topk_gabor_atoms()},
-#' which:
-#' \itemize{
-#'   \item evaluates complex Gabor atoms,
-#'   \item computes phase-invariant projections onto the signal,
-#'   \item selects the best \code{topk} atoms for each channel,
-#'   \item constructs real-valued atom representations using optimal phases.
-#' }
+#' which computes phase-invariant projections onto the signal and selects the
+#' best \code{topk} candidate atoms independently for each signal channel.
 #'
-#' The resulting \code{"topk"} object contains channel-specific atom matrices
-#' and associated metadata. Individual atom matrices can subsequently be passed
-#' to \code{mp_core()} or \code{omp_core()} for sparse decomposition.
-#' The higher-level \code{mp_omp_execute()} function performs these preparation
-#' steps internally.
+#' The resulting \code{"topk"} object stores the parameters required to
+#' reconstruct the selected atoms, but does not contain their full time-domain
+#' waveforms. These atoms can subsequently be materialized as a sparse or dense
+#' matrix using \code{gabor_atoms_matrix()} and passed to \code{mp_core()} or
+#' \code{omp_core()} for decomposition.
+#'
+#' The higher-level \code{mp_omp_execute()} function performs all of these
+#' preparation steps internally.
 #'
 #' @section EMPI compatibility:
 #' XML dictionary definitions exported by EMPI can be read directly by this
@@ -103,6 +101,7 @@
 #' @export
 #'
 #' @seealso
+#' \code{\link{gabor_atoms_matrix}},
 #' \code{\link{topk_gabor_atoms}},
 #' \code{\link{mp_omp_execute}},
 #' \code{\link{omp_core}},
@@ -202,8 +201,8 @@ read_gabor_dict <- function (
   signal_length <- round(sampling_frequency * duration)
 
   # Parse XML
-  doc <- read_xml(xml_file)
-  blocks <- xml_find_all(doc, ".//block")
+  doc <- xml2::read_xml(xml_file)
+  blocks <- xml2::xml_find_all(doc, ".//block")
 
   if (length(blocks) == 0L) {
     stop("No dictionary blocks found in the XML file.")
@@ -214,15 +213,13 @@ read_gabor_dict <- function (
   # Decode atoms
   all_atoms <- list()
 
-  atom_index <- 1
-
   for (block_id in seq_along(blocks)) {
     block <- blocks[[block_id]]
-    params_nodes <- xml_find_all(block, ".//param")
+    params_nodes <- xml2::xml_find_all(block, ".//param")
     params <- list()
     for (p in params_nodes) {
-      name <- xml_attr(p, "name")
-      value <- xml_attr(p, "value")
+      name <- xml2::xml_attr(p, "name")
+      value <- xml2::xml_attr(p, "value")
       params[[name]] <- value
     }
 
@@ -270,51 +267,65 @@ read_gabor_dict <- function (
       )
     }
 
-    count <- 0
+    # count <- 0
+    #
+    # for (t in time_positions) {
+    #   for (k in freq_bins) {
+    #     freq_hz <- k * sampling_frequency / fft_size
+    #     atom <- list(
+    #       block = block_id,
+    #       time_sample = t,
+    #       time_sec = t / sampling_frequency,
+    #       freq_bin = k,
+    #       freq_hz = freq_hz,
+    #       window_len = window_len,
+    #       fft_size = fft_size
+    #     )
+    #     all_atoms[[atom_index]] <- atom
+    #     atom_index <- atom_index + 1
+    #     count <- count + 1
+    #   }
+    # }
 
-    for (t in time_positions) {
-      for (k in freq_bins) {
-        freq_hz <- k * sampling_frequency / fft_size
-        atom <- list(
-          block = block_id,
-          time_sample = t,
-          time_sec = t / sampling_frequency,
-          freq_bin = k,
-          freq_hz = freq_hz,
-          window_len = window_len,
-          fft_size = fft_size
-        )
-        all_atoms[[atom_index]] <- atom
-        atom_index <- atom_index + 1
-        count <- count + 1
-      }
-    }
+    # Much faster than the above two "stupid" for loops
+    n_time <- length(time_positions)
+    n_freq <- length(freq_bins)
+    count <- n_time * n_freq
+
+    block_atoms <- cbind(
+      block = rep(block_id, count),
+      time_sample = rep(time_positions, each = n_freq),
+      time_sec = rep(time_positions / sampling_frequency, each = n_freq),
+      freq_bin = rep(freq_bins, times = n_time),
+      freq_hz = rep(freq_bins * sampling_frequency / fft_size, times = n_time),
+      window_len = rep(window_len, count),
+      fft_size = rep(fft_size, count)
+    )
+    all_atoms[[block_id]] <- block_atoms
 
     if (verbose) message("Atoms in block: ", count, sep = "")
   }
 
   if (verbose) {
     message("===================================", sep = "")
-    message("Total atoms: ", length(all_atoms), sep = "")
+    message("Total atoms: ", sum(sapply(all_atoms, nrow)), sep = "")
     message("read_gabor_dict() executed successfully.")
     message('XML file can be found in: ', xml_file, "\n")
   }
 
-  if (length(all_atoms) == 0L) {
+  if (sum(sapply(all_atoms, nrow)) == 0L) {
     stop("No atoms could be generated for the specified signal and dictionary.")
   }
 
   # convert to matrix
-  mat <- matrix(
-    unlist(all_atoms, use.names = FALSE),
-    ncol = 7,
-    byrow = TRUE
-  )
+  # mat <- matrix(
+  #   unlist(all_atoms, use.names = FALSE),
+  #   ncol = 7,
+  #   byrow = TRUE
+  # )
+  # colnames(mat) <- names(all_atoms[[1]])
 
-  colnames(mat) <- names(all_atoms[[1]])
-
-  ##rm(all_atoms)
-  ##gc(FALSE)
+  mat <- do.call(rbind, all_atoms)
 
   return(mat)
 }

@@ -25,7 +25,7 @@ is treated as a separate channel.}
 
 \item{topk}{Positive integer specifying the number of highest-ranked atoms
 retained for each signal channel. If \code{NULL}, the number is set to
-\code{ceiling(0.05 * nrow(atoms_dict))}.}
+\code{ceiling(0.1 * nrow(atoms_dict))}.}
 
 \item{sigma_divisor}{Optional positive numeric value controlling the width
 of the Gaussian envelope. The envelope scale is calculated as
@@ -33,30 +33,26 @@ of the Gaussian envelope. The envelope scale is calculated as
 envelopes. If \code{NULL}, a divisor of \code{3} is used.}
 
 \item{verbose}{Logical; if \code{TRUE}, progress information is printed
-during projection computation and atom reconstruction.}
+during projection computation and parameter storage.}
 }
 \value{
 An object of class \code{"topk"}, containing:
-\item{inner_products}{
-  Matrix of phase-invariant projection magnitudes for all candidate atoms.
-  Rows correspond to atoms in \code{atoms_dict} and columns to signal
-  channels.
+\item{n_candidates}{
+  Number of candidate atoms considered during the selection step.
+}
+\item{topk_inner_products}{
+  Matrix of phase-invariant projection magnitudes for the selected top-k
+  atoms. Rows correspond to selected atoms and columns to signal channels.
 }
 \item{topk_indices}{
-  Matrix containing the row indices in \code{atoms_dict} of the selected
-  top-k atoms for each signal channel.
-}
-\item{atoms}{
-  List of matrices containing the selected real-valued Gabor atoms.
-  Each list element corresponds to one signal channel; columns represent
-  individual atoms and rows correspond to signal samples.
+  Integer matrix containing the row indices in \code{atoms_dict} of the
+  selected top-k atoms for each signal channel.
 }
 \item{frequency}{
   Matrix of frequencies, in Hz, of the selected atoms.
 }
 \item{phase}{
-  Matrix of optimal phases, in radians, used to construct the selected
-  real-valued atoms.
+  Matrix of optimal phases, in radians, of the selected atoms.
 }
 \item{scale}{
   Matrix of Gaussian envelope scales (sigma), in seconds.
@@ -69,42 +65,63 @@ An object of class \code{"topk"}, containing:
   Values may be negative when boundary-crossing atoms are allowed.
 }
 \item{window_len}{
-  Matrix of atom support lengths, in seconds.
+  Matrix of complete atom support lengths, in seconds.
+}
+\item{atom_begin_sample}{
+  Integer matrix of zero-based start positions of the complete atom
+  supports, in samples. Values may be negative for boundary-crossing atoms.
+}
+\item{window_len_samples}{
+  Integer matrix of complete atom support lengths, in samples.
+}
+\item{sampling_frequency}{
+  Sampling frequency of the analyzed signal, in Hz.
+}
+\item{signal_length}{
+  Number of samples in the analyzed signal.
+}
+\item{sigma_divisor}{
+  Gaussian-envelope divisor used to calculate sigma. This is the supplied
+  \code{sigma_divisor}, or \code{3} when \code{sigma_divisor = NULL}.
 }
 }
 \description{
-Constructs a sparse, signal-dependent Gabor dictionary by selecting the
-atoms with the largest phase-invariant projections onto the input signal.
+Selects a signal-dependent subset of Gabor atoms with the largest
+phase-invariant projections onto the input signal. The selected atoms are
+represented by their parameters; full time-domain atom waveforms are not
+constructed or stored.
 }
 \details{
-In the first step, complex projection coefficients are computed for all
-candidate atoms using \code{gabor_projection_fft()}, and atoms are ranked
-according to the magnitudes of these coefficients. In the second step, the
-top-ranked atoms are reconstructed as real-valued time-domain atoms using
-their optimal phases.
+Complex projection coefficients are computed for candidate atoms block by
+block using \code{gabor_projection_fft()}. Only the current top-ranked
+projection values, corresponding atom indices, and complex coefficients are
+retained. The complex coefficients are subsequently used to determine the
+optimal phase of each selected atom.
 
 
 Candidate atoms are ranked separately for each signal channel according to
-the magnitudes of their complex projection coefficients. This makes the
-ranking independent of the phase of the corresponding real-valued Gabor
-atom. The phase of each selected atom is subsequently obtained from the
-complex coefficient and used to construct its real-valued representation.
+the magnitudes of their complex projection coefficients. Projection values
+are processed block by block, and only the current top-k values,
+corresponding atom indices, and complex coefficients are retained. This
+avoids storing the complete matrix of projection values for all candidate
+atoms.
+
+The ranking is independent of the phase of the corresponding real-valued
+Gabor atom. The optimal phase of each selected atom is obtained from its
+retained complex coefficient and stored together with the remaining Gabor
+parameters.
+
+Full time-domain atom waveforms are not materialized by this function. The
+returned object stores the parameters required to reconstruct the selected
+atoms later using \code{gabor_atoms_matrix()}, including their zero-based
+start positions and support lengths in samples, the sampling frequency,
+signal length, and the Gaussian-envelope divisor actually used.
 
 Atom supports may extend beyond the observed signal boundaries when the
 input dictionary was generated with \code{full_atoms_in_signal = FALSE}
-in \code{read_gabor_dict()}. In this case, signal values outside the
-observed interval are implicitly treated as zero.
-
-The complete real-valued Gabor atom is normalized before boundary
-truncation. If only part of an atom overlaps the observed signal, the
-retained fragment is not renormalized. Consequently, boundary-crossing
-atoms stored in the returned object may have an L2 norm smaller than one,
-whereas atoms whose complete support lies within the signal have unit
-L2 norm.
-
-The returned \code{"topk"} object contains the channel-specific atom matrices
-that can be passed to \code{mp_core()} or \code{omp_core()} for sparse
-signal decomposition.
+in \code{read_gabor_dict()}. In this case, \code{atom_begin_sample} may be
+negative. Retaining this value allows the correct fragment of a
+boundary-crossing atom to be reconstructed later.
 }
 \examples{
 # +-------------------------------------------------------------+
@@ -137,8 +154,8 @@ atoms_dict <- read_gabor_dict(
   xml_file = xml_file,
   sampling_frequency = sampling_frequency,
   duration = duration,
-  verbose = FALSE,
-  full_atoms_in_signal = TRUE
+  verbose = TRUE,
+  full_atoms_in_signal = FALSE
 )
 
 # +-------------------------------------------------------------+
@@ -147,18 +164,21 @@ atoms_dict <- read_gabor_dict(
 out_topk <- topk_gabor_atoms(
   atoms_dict = atoms_dict,
   signal = signal,
-  topk = 500,
+  topk = 5000,
   verbose = TRUE
 )
 
 class(out_topk)
-dim(out_topk$atoms[[1]])
-head(out_topk$frequency[, 1])
+summary(out_topk)
+
+# Selected atoms can subsequently be materialized as a matrix:
+D_sparse <- gabor_atoms_matrix(out_topk, sparse = TRUE)
 
 }
 \seealso{
 \code{\link{read_gabor_dict}},
 \code{\link{gabor_projection_fft}},
+\code{\link{gabor_atoms_matrix}},
 \code{\link{mp_core}},
 \code{\link{omp_core}},
 \code{\link{mp_omp_execute}}

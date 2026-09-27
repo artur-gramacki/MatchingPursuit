@@ -91,3 +91,8 @@ head(pmm)
 head(Mod(scm))
 
 }
+\seealso{
+\code{\link{read_gabor_dict}},
+\code{\link{topk_gabor_atoms}},
+\code{\link{gabor_atoms_matrix}}
+}

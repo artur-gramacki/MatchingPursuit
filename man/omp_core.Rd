@@ -10,27 +10,32 @@ omp_core(
   channel = NULL,
   n_nonzero_coefs = NULL,
   tol = NULL,
+  sparse = FALSE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
-Atoms are assumed to be stored in columns.
-Dictionary atoms are internally normalized to unit L2 norm before decomposition.
-Therefore, atom selection is invariant to non-zero scaling of dictionary columns.}
+\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, data frame, or an
+object derived from class \code{"Matrix"}. Atoms are assumed to be stored
+in columns. Dictionary atoms are internally normalized to unit L2 norm
+before decomposition. Therefore, atom selection is invariant to non-zero
+scaling of dictionary columns.}
 
 \item{signal}{Can be a numeric vector, matrix, or data frame. Signals are
 assumed to be stored in columns. The signal length (number of rows) must
 match the atom length.}
 
-\item{channel}{Index of the signal (channel) to decompose.}
+\item{channel}{Index of the signal channel to decompose. If \code{NULL}, channel 1 is used
+automatically for a single-channel signal. For multichannel signals,
+\code{channel} must be specified.}
 
 \item{n_nonzero_coefs}{Maximum number of non-zero coefficients in the sparse representation.
 If \code{tol = NULL}, the algorithm stops after selecting at most
 \code{n_nonzero_coefs} atoms. If both \code{n_nonzero_coefs} and
 \code{tol} are \code{NULL}, the default value is
-\code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
-\code{tol} is specified.}
+\code{max(1, floor(0.1 * ncol(dictionary)))}.
+If \code{tol} is specified, \code{n_nonzero_coefs} does not control the
+stopping criterion.}
 
 \item{tol}{Optional stopping tolerance for the relative residual energy,
 defined as
@@ -38,6 +43,13 @@ defined as
 The algorithm stops when this value is less than or equal to
 \code{tol}. If specified, \code{tol} overrides
 \code{n_nonzero_coefs}.}
+
+\item{sparse}{Logical; if \code{TRUE}, a dense dictionary is converted internally to a
+sparse matrix before OMP decomposition. This can substantially improve
+performance for dictionaries containing many zero values. If the supplied
+dictionary is already sparse, its sparse representation is preserved
+regardless of this argument.
+Defaults to \code{FALSE}.}
 
 \item{verbose}{Logical; flag indicating whether progress information should be printed.}
 }
@@ -161,6 +173,7 @@ fit$relative_residual_energy
 
 }
 \seealso{
+\code{\link{gabor_atoms_matrix}},
 \code{\link{topk_gabor_atoms}},
 \code{\link{mp_core}},
 \code{\link{mp_omp_execute}},

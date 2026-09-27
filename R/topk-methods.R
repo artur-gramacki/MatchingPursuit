@@ -3,7 +3,9 @@
 #' Print and summarize objects returned by \code{topk_gabor_atoms()}.
 #'
 #' @name topk-methods
-#' @seealso \code{\link{topk_gabor_atoms}}
+#' @seealso
+#' \code{\link{topk_gabor_atoms}},
+#' \code{\link{gabor_atoms_matrix}}
 #'
 #' @examples
 #' signal <- read_csv_signals(system.file("extdata", "sample1.csv", package = "MatchingPursuit"))
@@ -12,7 +14,7 @@
 #' dictionary <- read_gabor_dict(
 #'   xml_file = xml_file,
 #'   sampling_frequency = signal$sampling_frequency,
-#'   duration = max(signal$time)
+#'   duration = nrow(signal$signal) / signal$sampling_frequency
 #' )
 #'
 #' out_topk <- topk_gabor_atoms(
@@ -36,17 +38,17 @@ NULL
 #' @export
 print.topk <- function(x, ...) {
 
-  n_channels <- length(x$atoms)
+  n_channels <- ncol(x$topk_indices)
 
   if (n_channels > 0L) {
-    n_selected <- ncol(x$atoms[[1]])
-    signal_length <- nrow(x$atoms[[1]])
+    n_selected <- nrow(x$topk_indices)
+    signal_length <- x$signal_length
   } else {
     n_selected <- 0L
     signal_length <- 0L
   }
 
-  n_candidates <- nrow(x$inner_products)
+  n_candidates <- x$n_candidates
 
   cat("Top-k Gabor atoms object (class 'topk')\n")
   cat("-----------------------------------------\n")
@@ -70,17 +72,17 @@ print.topk <- function(x, ...) {
 #' @export
 summary.topk <- function(object, ...) {
 
-  n_channels <- length(object$atoms)
+  n_channels <- ncol(object$topk_indices)
 
   if (n_channels > 0L) {
-    n_selected <- ncol(object$atoms[[1]])
-    signal_length <- nrow(object$atoms[[1]])
+    n_selected <- nrow(object$topk_indices)
+    signal_length <- object$signal_length
   } else {
     n_selected <- 0L
     signal_length <- 0L
   }
 
-  n_candidates <- nrow(object$inner_products)
+  n_candidates <- object$n_candidates
 
   safe_range <- function(x) {
     if (length(x) == 0L) return(c(NA_real_, NA_real_))
@@ -115,7 +117,7 @@ summary.topk <- function(object, ...) {
 #' @export
 print.summary.topk <- function(x, ...) {
 
-  cat("Summary of Top-k Gabor atoms object (class 'summary.topk')\n")
+  cat("Summary of Top-k Gabor atoms object (class 'topk')\n")
   cat("----------------------------------------------------------\n")
   cat("Candidate atoms:  ", x$n_candidates, "\n", sep = "")
   cat("Selected atoms:   ", x$n_selected, " per channel\n", sep = "")

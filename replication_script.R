@@ -30,6 +30,7 @@ out_mp <- mp_omp_execute(
 )
 
 plot(out_mp)
+summary(out_mp)
 
 # +-------------------------------------------------------------+
 # | 3.2. Decomposition with a custom dictionary                 |

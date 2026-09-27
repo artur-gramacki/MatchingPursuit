@@ -55,6 +55,11 @@
 #'
 #' @importFrom stats mvfft
 #'
+#' @seealso
+#' \code{\link{read_gabor_dict}},
+#' \code{\link{topk_gabor_atoms}},
+#' \code{\link{gabor_atoms_matrix}}
+#'
 #' @export
 #'
 #' @examples
@@ -85,6 +90,19 @@
 #'
 gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
 
+  if (!is.null(sigma_divisor)) {
+    if (length(sigma_divisor) != 1L ||
+        !is.numeric(sigma_divisor) ||
+        !is.finite(sigma_divisor) ||
+        sigma_divisor <= 0) {
+      stop("'sigma_divisor' must be a positive finite number.")
+    }
+  }
+
+  if (nrow(block) == 0L) {
+    stop("'block' must contain at least one atom.")
+  }
+
   signal <- as.matrix(signal)
 
   N <- nrow(signal)
@@ -93,30 +111,60 @@ gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
   proj_mod_mtx <- matrix(0, nrow = nrow(block), ncol = K)
   fft_bin_mtx <- matrix(0 + 0i, nrow = nrow(block), ncol = K)
 
-  unique_times <- unique(block[, "time_sample"])
+  # window_len and fft_size are constant within a dictionary block,
+  # so their values can be taken from the first row.
+  window_len <- block[1L, "window_len"]
+  fft_size   <- block[1L, "fft_size"]
 
-  for (t_sample in unique_times) {
+  # ---------------------------------------------------------------+
+  # Full Gaussian envelope
+  # ---------------------------------------------------------------+
+  n <- 0:(window_len - 1)
+  center <- (window_len - 1) / 2
 
-    idx_in_dict <- which(block[, "time_sample"] == t_sample)
-    window_len <- block[idx_in_dict[1], "window_len"]
-    fft_size   <- block[idx_in_dict[1], "fft_size"]
+  if (is.null(sigma_divisor)) {
+    sigma <- (window_len + 1) / 3
+  } else {
+    sigma <- (window_len + 1) / sigma_divisor
+  }
 
-    # ---------------------------------------------------------------+
-    # Full Gaussian envelope
-    # ---------------------------------------------------------------+
-    n <- 0:(window_len - 1)
-    center <- (window_len - 1) / 2
+  w <- exp(-pi * ((n - center) / sigma)^2)
 
-    if (is.null(sigma_divisor)) {
-      sigma <- (window_len + 1) / 3
-    } else {
-      sigma <- (window_len + 1) / sigma_divisor
-    }
+  # Normalize the complete envelope before boundary truncation
+  w_norm <- w / sqrt(sum(w^2))
 
-    w <- exp(-pi * ((n - center) / sigma)^2)
 
-    # Normalize the complete envelope before boundary truncation
-    w_norm <- w / sqrt(sum(w^2))
+  # Previous implementation retained for reference.
+  # It was replaced because split() internally uses factor(), which introduced
+  # substantial overhead for large dictionary blocks.
+  #
+  ### time_sample <- block[, "time_sample"]
+  ### time_groups <- split(seq_len(nrow(block)), time_sample)
+  ###
+  ### for (idx_in_dict in time_groups) {
+  ###   t_sample <- time_sample[idx_in_dict[1L]]
+
+  time_sample <- block[, "time_sample"]
+
+  # Rows belonging to the same time position are normally contiguous.
+  # If not, sort them once before processing.
+  if (is.unsorted(time_sample)) {
+    ord <- order(time_sample)
+    time_sorted <- time_sample[ord]
+  } else {
+    ord <- seq_along(time_sample)
+    time_sorted <- time_sample
+  }
+
+  # Identify consecutive groups of equal time positions and their lengths
+  runs <- rle(time_sorted)
+  ends <- cumsum(runs$lengths)
+  starts <- ends - runs$lengths + 1L
+
+  for (g in seq_along(runs$values)) {
+
+    idx_in_dict <- ord[seq.int(starts[g], ends[g])]
+    t_sample <- runs$values[g]
 
     # ---------------------------------------------------------------+
     # Determine overlap between the complete atom and the signal

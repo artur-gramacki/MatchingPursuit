@@ -39,7 +39,7 @@ xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
 dictionary <- read_gabor_dict(
   xml_file = xml_file,
   sampling_frequency = signal$sampling_frequency,
-  duration = max(signal$time)
+  duration = nrow(signal$signal) / signal$sampling_frequency
 )
 
 out_topk <- topk_gabor_atoms(
@@ -52,5 +52,6 @@ print(out_topk)
 summary(out_topk)
 }
 \seealso{
-\code{\link{topk_gabor_atoms}}
+\code{\link{topk_gabor_atoms}},
+\code{\link{gabor_atoms_matrix}}
 }

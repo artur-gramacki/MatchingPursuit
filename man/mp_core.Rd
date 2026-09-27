@@ -10,32 +10,41 @@ mp_core(
   channel = NULL,
   n_nonzero_coefs = NULL,
   tol = NULL,
+  sparse = FALSE,
   verbose = FALSE
 )
 }
 \arguments{
-\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
-Atoms are assumed to be stored in columns.
-Dictionary atoms are internally normalized to unit L2 norm before decomposition.
-Therefore, atom selection is invariant to non-zero scaling of dictionary columns.}
+\item{dictionary}{A dictionary of atoms. Can be a numeric vector, matrix, data frame, or an
+object derived from class \code{"Matrix"}. Atoms are assumed to be stored
+in columns. Dictionary atoms are internally normalized to unit L2 norm
+before decomposition. Therefore, atom selection is invariant to non-zero
+scaling of dictionary columns.}
 
 \item{signal}{Can be a numeric vector, matrix, or data frame. Signals are
 assumed to be stored in columns. The signal length (number of rows) must
 match the atom length.}
 
-\item{channel}{Index of the signal (channel) to decompose.}
+\item{channel}{Index of the signal channel to decompose. If \code{NULL}, channel 1 is used
+automatically for a single-channel signal. For multichannel signals,
+\code{channel} must be specified.}
 
 \item{n_nonzero_coefs}{Maximum number of non-zero coefficients in the sparse representation.
 If \code{tol = NULL}, the algorithm stops after selecting at most
 \code{n_nonzero_coefs} atoms. If both \code{n_nonzero_coefs} and
 \code{tol} are \code{NULL}, the default value is
-\code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
-\code{tol} is specified. Note that in classical
-MP, the same dictionary atom may be selected more than once.}
+\code{max(1, floor(0.1 * ncol(dictionary)))}. If \code{tol} is specified,
+\code{n_nonzero_coefs} does not control the stopping criterion.
+Note that in classical MP, the same dictionary atom may be selected more than once.}
 
 \item{tol}{Stopping tolerance expressed as the maximum allowed relative residual
 energy, \eqn{\|r\|_2^2 / \|x\|_2^2}. The algorithm stops when the residual
 energy falls below this value. If specified, it overrides \code{n_nonzero_coefs}.}
+
+\item{sparse}{Logical; if \code{TRUE}, a dense dictionary is converted internally to a
+sparse matrix before the iterative MP calculations. If the supplied
+dictionary is already sparse, its sparse representation is preserved
+regardless of this argument. Defaults to \code{FALSE}.}
 
 \item{verbose}{Logical; flag indicating whether progress information should be printed.}
 }
@@ -129,6 +138,8 @@ fit$relative_residual_energy
 
 }
 \seealso{
+\code{\link{gabor_atoms_matrix}},
+\code{\link{omp_core}},
 \code{\link{read_gabor_dict}},
 \code{\link{topk_gabor_atoms}},
 \code{\link{mp_omp_execute}}

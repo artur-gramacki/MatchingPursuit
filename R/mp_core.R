@@ -11,10 +11,11 @@
 #' \code{empi_check()}, and \code{empi_execute()}.
 #'
 #' @param dictionary
-#' A dictionary of atoms. Can be a numeric vector, matrix, or data frame.
-#' Atoms are assumed to be stored in columns.
-#' Dictionary atoms are internally normalized to unit L2 norm before decomposition.
-#' Therefore, atom selection is invariant to non-zero scaling of dictionary columns.
+#' A dictionary of atoms. Can be a numeric vector, matrix, data frame, or an
+#' object derived from class \code{"Matrix"}. Atoms are assumed to be stored
+#' in columns. Dictionary atoms are internally normalized to unit L2 norm
+#' before decomposition. Therefore, atom selection is invariant to non-zero
+#' scaling of dictionary columns.
 #'
 #' @param signal
 #' Can be a numeric vector, matrix, or data frame. Signals are
@@ -22,21 +23,29 @@
 #' match the atom length.
 #'
 #' @param channel
-#' Index of the signal (channel) to decompose.
+#' Index of the signal channel to decompose. If \code{NULL}, channel 1 is used
+#' automatically for a single-channel signal. For multichannel signals,
+#' \code{channel} must be specified.
 #'
 #' @param n_nonzero_coefs
 #' Maximum number of non-zero coefficients in the sparse representation.
 #' If \code{tol = NULL}, the algorithm stops after selecting at most
 #' \code{n_nonzero_coefs} atoms. If both \code{n_nonzero_coefs} and
 #' \code{tol} are \code{NULL}, the default value is
-#' \code{max(1, floor(0.1 * ncol(dictionary)))}. Ignored when
-#' \code{tol} is specified. Note that in classical
-#' MP, the same dictionary atom may be selected more than once.
+#' \code{max(1, floor(0.1 * ncol(dictionary)))}. If \code{tol} is specified,
+#' \code{n_nonzero_coefs} does not control the stopping criterion.
+#' Note that in classical MP, the same dictionary atom may be selected more than once.
 #'
 #' @param tol
 #' Stopping tolerance expressed as the maximum allowed relative residual
 #' energy, \eqn{\|r\|_2^2 / \|x\|_2^2}. The algorithm stops when the residual
 #' energy falls below this value. If specified, it overrides \code{n_nonzero_coefs}.
+#'
+#' @param sparse
+#' Logical; if \code{TRUE}, a dense dictionary is converted internally to a
+#' sparse matrix before the iterative MP calculations. If the supplied
+#' dictionary is already sparse, its sparse representation is preserved
+#' regardless of this argument. Defaults to \code{FALSE}.
 #'
 #' @param verbose
 #' Logical; flag indicating whether progress information should be printed.
@@ -80,6 +89,8 @@
 #' @export
 #'
 #' @seealso
+#' \code{\link{gabor_atoms_matrix}},
+#' \code{\link{omp_core}},
 #' \code{\link{read_gabor_dict}},
 #' \code{\link{topk_gabor_atoms}},
 #' \code{\link{mp_omp_execute}}
@@ -130,8 +141,21 @@ mp_core <- function(
     channel = NULL,
     n_nonzero_coefs = NULL,
     tol = NULL,
+    sparse = FALSE,
     verbose = FALSE
 ) {
+
+  if (!is.logical(sparse) || length(sparse) != 1L || is.na(sparse)) {
+    stop("'sparse' must be TRUE or FALSE.")
+  }
+
+  if (!is.logical(verbose) || length(verbose) != 1L || is.na(verbose)) {
+    stop("'verbose' must be TRUE or FALSE.")
+  }
+
+  if (any(!is.finite(signal))) {
+    stop("Signal contains non-finite values.")
+  }
 
   # Signal
   if (is.vector(signal) || is.data.frame(signal) || is.matrix(signal)) {
@@ -153,8 +177,11 @@ mp_core <- function(
     stop("'channel' is out of range.")
   }
 
+  # The dictionary can also already be a Matrix object.
   if (is.vector(dictionary) || is.data.frame(dictionary) || is.matrix(dictionary)) {
     D <- as.matrix(dictionary)
+  } else if (inherits(dictionary, "Matrix")) {
+    D <- dictionary
   } else {
     stop("'dictionary' must be a matrix or convertible to a matrix.")
   }
@@ -162,10 +189,21 @@ mp_core <- function(
   # Normalize dictionary atoms to unit L2 norm.
   # This makes atom selection independent of arbitrary column scaling
   # and provides a common representation for arbitrary dictionaries.
-  norms <- sqrt(colSums(D^2))
+  #norms <- sqrt(colSums(D^2))
+  if (inherits(D, "Matrix")) {
+    norms <- sqrt(Matrix::colSums(D^2))
+  } else {
+    norms <- sqrt(colSums(D^2))
+  }
 
   if (any(!is.finite(norms)) || any(norms < 1e-12)) {
     stop("Dictionary contains non-finite or zero/near-zero norm atoms.")
+  }
+
+  # Convert the dictionary to sparse representation when requested.
+  # If a sparse Matrix object is supplied directly, no conversion is needed.
+  if (sparse && !inherits(D, "sparseMatrix")) {
+    D <- Matrix::Matrix(D, sparse = TRUE)
   }
 
   n <- nrow(D)
@@ -214,7 +252,7 @@ mp_core <- function(
 
   # D_norm <- apply(D, 2, function(col) col / sqrt(sum(col^2)))
   # simpler:
-  # Don't need D_norm, as: <D / ||D||, residual>  =  <D, residual> / ||D|| (***)
+  # Don't need D_norm, as: <D / ||D||, residual>  =  <D, residual> / ||D||
   # D_norm <- sweep(D, 2, norms, "/")
 
   # Integer vector of selected atom indices.
@@ -237,7 +275,7 @@ mp_core <- function(
   for (k in 1:max_iter) {
     # Compute correlations between all unit-norm dictionary atoms
     # and the current residual.
-    projections <- as.vector(crossprod(D, residual)) / norms
+    projections <- as.numeric(crossprod(D, residual)) / norms
 
 
     # Selecting the atom with the best fit (largest absolute value)
@@ -249,12 +287,12 @@ mp_core <- function(
     support[k] <- best_atom_idx
 
     if (verbose) {
-      message("iteration: ", k, ", selected atom: ", best_atom_idx, ", coefficient: ", signif(best_projection, 6)
-      )
+      # message("iteration: ", k, ", selected atom: ", best_atom_idx, ", coefficient: ", signif(best_projection, 6))
+      message("iteration: ", k, ", selected atom: ", best_atom_idx)
     }
 
     # Matching Pursuit residual update.
-    residual <- residual - best_projection * D[, best_atom_idx] / norms[best_atom_idx]
+    residual <- residual -best_projection * as.numeric(D[, best_atom_idx]) / norms[best_atom_idx]
 
     # Store absolute and relative residual energy.
     residual_energy[k + 1L] <- sum(residual^2)
@@ -281,7 +319,8 @@ mp_core <- function(
   # for k = 1 it can return a vector, not a matrix. Then 'drop = FALSE' prevents this
 
   # we normalize only the atoms actually selected by MP, not the entire dictionary.
-  selected_atoms <- sweep(D[, support, drop = FALSE], 2, norms[support], "/")
+  #selected_atoms <- sweep(D[, support, drop = FALSE], 2, norms[support], "/")
+  selected_atoms <- sweep(as.matrix(D[, support, drop = FALSE]), 2, norms[support], "/")
 
   # Energy attributed to iteration k is defined as the decrease in
   # squared residual norm:
