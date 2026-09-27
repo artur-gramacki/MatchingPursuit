@@ -246,8 +246,10 @@ print.summary.mp <- function(x, ...) {
   cat("Sampling frequency: ", x$sampling_frequency, " Hz\n", sep = "")
   cat("Duration:           ", signif(x$duration, 6), " s\n", sep = "")
 
-  cat("\nPer-channel decomposition:\n\n")
+  cat("\nPer-channel decomposition:\n")
   cat("Explained energy = 1 - residual energy / signal energy\n\n")
+  cat("Note:\n")
+  cat("-----\n")
   cat("For MP, this measure is preferred because the reconstruction\n")
   cat("and residual are not generally orthogonal. Consequently, the\n")
   cat("ratio reconstruction energy / signal energy is not, in general,\n")
@@ -258,7 +260,7 @@ print.summary.mp <- function(x, ...) {
 
     ch <- x$channel_summary[i, ]
 
-    cat("\nChannel ", ch$channel, " (", ch$channel_name,"): ", ch$selected_atoms, " atoms\n", sep = "")
+    cat("\nChannel ", ch$channel, ":             ", ch$selected_atoms, " atoms\n", sep = "")
     cat("Signal energy:         ", signif(ch$signal_energy, 6), "\n", sep = "")
     cat("Reconstruction energy: ", signif(ch$reconstruction_energy, 6), "\n", sep = "")
     cat("Residual energy:       ", signif(ch$residual_energy, 6), "\n", sep = "")
