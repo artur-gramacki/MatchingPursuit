@@ -248,12 +248,14 @@ print.summary.mp <- function(x, ...) {
 
   cat("\nPer-channel decomposition:\n")
   cat("Explained energy = 1 - residual energy / signal energy\n\n")
-  cat("Note:\n")
-  cat("-----\n")
-  cat("For MP, this measure is preferred because the reconstruction\n")
-  cat("and residual are not generally orthogonal. Consequently, the\n")
-  cat("ratio reconstruction energy / signal energy is not, in general,\n")
-  cat("equal to the explained energy fraction.\n")
+  if (x$method == "mp") {
+    cat("Note:\n")
+    cat("-----\n")
+    cat("For MP, this measure is preferred because the reconstruction\n")
+    cat("and residual are not generally orthogonal. Consequently, the\n")
+    cat("ratio reconstruction energy / signal energy is not, in general,\n")
+    cat("equal to the explained energy fraction.\n")
+  }
 
 
   for (i in seq_len(nrow(x$channel_summary))) {
