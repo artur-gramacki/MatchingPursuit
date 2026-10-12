@@ -84,19 +84,18 @@ signal, and the support of an atom may extend beyond the signal boundaries.
 }
 \section{Usage in sparse decomposition workflow}{
 
-The output of \code{read_gabor_dict()} is a low-level description of the
-Gabor time-frequency grid. It serves as input to \code{topk_gabor_atoms()},
-which computes phase-invariant projections onto the signal and selects the
-best \code{topk} candidate atoms independently for each signal channel.
+The output of \code{read_gabor_dict()} is a parameterized description
+of the Gabor time-frequency grid. It serves as input to
+\code{mp_core_gabor()} and \code{omp_core_gabor()}, which perform
+iterative signal decomposition directly on the parameterized dictionary.
 
-The resulting \code{"topk"} object stores the parameters required to
-reconstruct the selected atoms, but does not contain their full time-domain
-waveforms. These atoms can subsequently be materialized as a sparse or dense
-matrix using \code{gabor_atoms_matrix()} and passed to \code{mp_core()} or
-\code{omp_core()} for decomposition.
+At each iteration, candidate Gabor atoms are evaluated against the
+current residual using FFT-based projections and analytical phase
+optimization. Only the selected atoms are reconstructed in the
+time domain, avoiding materialization of the complete dictionary.
 
-The higher-level \code{mp_omp_execute()} function performs all of these
-preparation steps internally.
+The higher-level \code{mp_omp_execute()} function handles dictionary
+preparation and multi-channel decomposition internally.
 }
 
 \section{EMPI compatibility}{
@@ -174,10 +173,8 @@ range(atoms_overstep[, "time_sample"])
 
 }
 \seealso{
-\code{\link{gabor_atoms_matrix}},
-\code{\link{topk_gabor_atoms}},
-\code{\link{mp_omp_execute}},
-\code{\link{omp_core}},
-\code{\link{mp_core}},
-\code{\link{generate_xml_dict}}
+\code{\link{generate_xml_dict}},
+\code{\link{mp_core_gabor}},
+\code{\link{omp_core_gabor}},
+\code{\link{mp_omp_execute}}
 }

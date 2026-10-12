@@ -17,11 +17,15 @@ The package provides native R implementations of both MP and OMP through
 user-defined dictionaries represented as numeric matrices, with candidate
 atoms stored in columns.
 
-For Gabor-based time-frequency analysis, the package provides a dedicated
-workflow based on \code{generate_xml_dict()}, \code{read_gabor_dict()},
-\code{topk_gabor_atoms()}, and the high-level \code{mp_omp_execute()}
-interface. Decomposition results can be visualized using \code{plot()} and
-\code{tf_map()}.
+For Gabor-based time-frequency analysis, the package provides dedicated
+implementations \code{mp_core_gabor()} and \code{omp_core_gabor()},
+which perform iterative atom selection directly on a parameterized Gabor
+dictionary without materializing the complete dictionary as a matrix.
+Dictionary specifications are generated using \code{generate_xml_dict()}
+and parsed by \code{read_gabor_dict()}. The high-level
+\code{mp_omp_execute()} function provides a convenient interface for
+multi-channel decomposition. Results can be visualized using
+\code{plot()} and \code{tf_map()}.
 
 In addition to the native R implementations, the package can use
 \strong{Enhanced Matching Pursuit Implementation (EMPI)} as an optional
@@ -51,7 +55,7 @@ Pati, Y.C. & Rezaiifar, R. & Krishnaprasad, P.S. (1993). \emph{Orthogonal Matchi
 Function Approximation with Applications to Wavelet Decomposition}. Proceedings of the 27th Asilomar
 Conference on Signals, Systems and Computers, vol. 1, pp. 40-44 \doi{10.1109/ACSSC.1993.342465}
 
-Różański, P.T. (2024). \emph{empi: GPU-Accelerated Match ing Pursuit with Continuous Dictionaries}.
+Różański, P.T. (2024). \emph{empi: GPU-Accelerated Matching Pursuit with Continuous Dictionaries}.
 ACM Transactions on Mathematical Software, vol.50, no. 3, pp. 1-17, \doi{10.1145/3674832}
 }
 \seealso{

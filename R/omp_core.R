@@ -120,11 +120,9 @@
 #'   Number of OMP iterations performed.}
 #'
 #' @seealso
-#' \code{\link{gabor_atoms_matrix}},
-#' \code{\link{topk_gabor_atoms}},
 #' \code{\link{mp_core}},
-#' \code{\link{mp_omp_execute}},
-#' \code{\link{tf_map}}
+#' \code{\link{omp_core_gabor}},
+#' \code{\link{mp_omp_execute}}
 #'
 #' @export
 #'
@@ -166,7 +164,8 @@
 #' fit$relative_residual_energy
 #' # [1] 1.00000000 0.28422833 0.16609350 0.08795047
 #'
-#' # For a complete Gabor decomposition workflow, see mp_omp_execute().
+#' # For Gabor-specific decomposition, see omp_core_gabor()
+#' # and mp_omp_execute().
 #'
 
 omp_core <- function(
@@ -376,7 +375,11 @@ omp_core <- function(
     x_active <- as.numeric(backsolve(t(L), z))
 
     # 4. Build the full sparse coefficient vector
-    if (verbose) message("iteration: ", k, ", selected atom: ", j)
+    #if (verbose) message("iteration: ", k, ", selected atom: ", j)
+    if (verbose) {
+      atom_id <- if (!is.null(colnames(D))) colnames(D)[j] else j
+      message("iteration: ", k, ", selected atom: ", atom_id)
+    }
 
     # 5. Update residual
     residual <- sig -  as.numeric(D[, support, drop = FALSE] %*% (x_active / norms[support]))

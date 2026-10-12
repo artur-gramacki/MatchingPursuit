@@ -38,8 +38,10 @@
 #' renormalized. This preserves the normalization of the complete atom
 #' independently of its position relative to the signal boundaries.
 #'
-#' @note This function is primarily intended for internal use by \code{topk_gabor_atoms()},
-#' but it is exported to support advanced experiments and methodological testing.
+#' @note This function is used internally by \code{mp_core_gabor()} and
+#' \code{omp_core_gabor()} to evaluate Gabor candidate projections.
+#' It is also exported to support advanced experiments and
+#' methodological testing.
 #'
 #' @return A list with two matrices:
 #'
@@ -57,8 +59,8 @@
 #'
 #' @seealso
 #' \code{\link{read_gabor_dict}},
-#' \code{\link{topk_gabor_atoms}},
-#' \code{\link{gabor_atoms_matrix}}
+#' \code{\link{mp_core_gabor}},
+#' \code{\link{omp_core_gabor}}
 #'
 #' @export
 #'
@@ -132,17 +134,6 @@ gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
 
   # Normalize the complete envelope before boundary truncation
   w_norm <- w / sqrt(sum(w^2))
-
-
-  # Previous implementation retained for reference.
-  # It was replaced because split() internally uses factor(), which introduced
-  # substantial overhead for large dictionary blocks.
-  #
-  ### time_sample <- block[, "time_sample"]
-  ### time_groups <- split(seq_len(nrow(block)), time_sample)
-  ###
-  ### for (idx_in_dict in time_groups) {
-  ###   t_sample <- time_sample[idx_in_dict[1L]]
 
   time_sample <- block[, "time_sample"]
 

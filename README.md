@@ -30,8 +30,9 @@ general time-series data using the **Matching Pursuit** and **Orthogonal Matchin
 algorithms. For multi-channel signals, each channel is decomposed independently; 
 atoms are not selected jointly across channels.
 
-The package provides two native R decomposition implementations, **MP-R** and **OMP-R**, 
-together with the optional external **EMPI** backend for high-performance MP decomposition.
+The package provides native R implementations of **MP-R** and **OMP-R** for both
+general matrix-based dictionaries and parameterized Gabor dictionaries, together
+with the optional external **EMPI** backend for high-performance MP decomposition.
 
 Supported features:
 
@@ -40,7 +41,8 @@ Supported features:
     - Matching Pursuit (**MP-R**)
     - Orthogonal Matching Pursuit (**OMP-R**)
 - An educational and reference implementation of OMP through `omp_reference()`
-- Specialized Gabor dictionary support for time-frequency decomposition
+- Direct, iterative Gabor-based MP/OMP decomposition using FFT-based projections
+  and analytical phase optimization, without materializing the full dictionary
 - Optional high-performance Gabor-based Matching Pursuit using the external
   **Enhanced Matching Pursuit Implementation (EMPI)** backend
 - Support for biomedical signal formats:
@@ -71,9 +73,10 @@ install.packages("MatchingPursuit")
 ### MP-R and OMP-R: Gabor-based decomposition
 
 For Gabor-based decomposition, `mp_omp_execute()` provides the high-level interface. 
-It prepares the Gabor dictionary, selects candidate atoms, performs MP or OMP 
-decomposition, combines the numerical results with Gabor metadata, and returns an 
-object of class `"mp"`.
+It generates or reads the parameterized Gabor dictionary and calls
+`mp_core_gabor()` or `omp_core_gabor()` for iterative selection based on the
+current residual. It combines decomposition results across channels and returns
+an object of class `"mp"` without materializing the complete dictionary.
 
 ```r
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -118,11 +121,11 @@ dictionary <- cbind(
   cos(2 * pi * 10 * t)
 )
 
-signal <- sin(2 * pi * 5 * t) + 0.5 * cos(2 * pi * 10 * t)
+signal_custom <- sin(2 * pi * 5 * t) + 0.5 * cos(2 * pi * 10 * t)
 
 out <- omp_core(
   dictionary = dictionary,
-  signal = signal,
+  signal = signal_custom,
   n_nonzero_coefs = 2
 )
 
@@ -176,7 +179,7 @@ and residual orthogonality checks.
 ```r
 ref <- omp_reference(
   dictionary = dictionary,
-  signal = signal,
+  signal = signal_custom,
   n_nonzero_coefs = 2
 )
 
@@ -209,17 +212,18 @@ The package provides three main decomposition routes.
 | Route | Main functions | Purpose | Recommended use |
 |:--|:--|:--|:--|
 | **General matrix-based MP/OMP** | `mp_core()`, `omp_core()` | Sparse decomposition with arbitrary matrix dictionaries | General sparse decomposition and experimentation |
-| **Native R Gabor-based MP/OMP** | `mp_omp_execute()` | High-level Gabor-based MP or OMP decomposition | Time-frequency decomposition in R |
+| **Native R Gabor-based MP/OMP** | `mp_core_gabor()`, `omp_core_gabor()`, `mp_omp_execute()` | Iterative decomposition directly on a parameterized Gabor dictionary | Time-frequency decomposition in R |
 | **External EMPI-based MP** | `empi_execute()` | Optimized Gabor-based Matching Pursuit | High-performance time-frequency decomposition |
 
 ## Typical workflows
 
-The diagram below summarizes the **three available decomposition workflows** and
-their relationship within the package. Blue boxes denote R functions, whereas 
-peach boxes represent workflow components, inputs, or returned objects. 
-The dashed red line connects `mp_omp_execute()` in panel (a) with its internal 
-workflow shown in panel (b).
+The package has three decomposition workflows. The workflow illustration below
+must be updated for version 1.4.0 if it still shows the former top-k Gabor
+preselection and matrix-materialization steps.
 
+<!-- TODO (1.4.0): Replace main_workflows.png with an updated diagram showing
+     read_gabor_dict() -> mp_core_gabor() / omp_core_gabor(), invoked by
+     mp_omp_execute(), with direct iterative atom selection. -->
 <p align="center">
   <img src="man/figures/main_workflows.png" width="800">
 </p>
@@ -231,18 +235,17 @@ with arbitrary matrix dictionaries. These functions return low-level decompositi
 results, giving the user direct control over the dictionary and the decomposition
 procedure.
 
-The **native R Gabor-based MP/OMP workflow**, implemented by `mp_omp_execute()`,
-provides a higher-level interface for Gabor-based MP and OMP decomposition. It
-integrates dictionary specification or generation, dictionary reading,
-channel-specific atom preselection, reconstruction of the selected atoms as a
-sparse or dense matrix, decomposition with `mp_core()` or `omp_core()`, and
-aggregation of the results into an object of class `"mp"`. If no XML dictionary
-specification is supplied, `generate_xml_dict()` creates one internally; otherwise,
-the user-provided XML file is used. The specification is processed by
-`read_gabor_dict()`, after which `topk_gabor_atoms()` selects candidate Gabor atoms
-for each signal channel. The selected atoms are then reconstructed by
-`gabor_atoms_matrix()` as a sparse or dense dictionary matrix and passed to
-`mp_core()` or `omp_core()` for decomposition.
+The **native R Gabor-based MP/OMP workflow** uses `mp_core_gabor()` and
+`omp_core_gabor()` for direct decomposition with a parameterized Gabor dictionary.
+The high-level `mp_omp_execute()` interface handles XML dictionary generation or
+selection, calls `read_gabor_dict()`, and processes each signal channel
+independently. At each iteration, the selected algorithm searches for the Gabor
+atom best matching the current residual. Candidate projections are evaluated
+using FFT-based computations, and atom phase is optimized analytically. Only
+selected atoms are constructed in the time domain; no top-k preselection or
+complete matrix dictionary is required. MP updates the residual after each
+selection, while OMP additionally recomputes all active coefficients by least
+squares. The channel results are combined into an object of class `"mp"`.
 
 The **external EMPI-based MP workflow** provides an alternative MP implementation
 through `empi_execute()`. In this case, decomposition is performed by the external

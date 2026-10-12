@@ -201,9 +201,10 @@ The input data (`signal`) is passed as an argument to the
 containing all atom parameters.
 
 For Gabor-based decomposition, `mp_omp_execute()` provides the high-level
-native R interface. It prepares the Gabor dictionary, selects candidate
-atoms, performs MP or OMP decomposition, and returns an object of class
-`"mp"`. In this example, classical Matching Pursuit is used; setting
+native R interface. It prepares a parameterized Gabor dictionary and performs
+iterative MP or OMP decomposition by selecting atoms against the current residual,
+without materializing the complete time-domain dictionary. It returns an object
+of class `"mp"`. In this example, classical Matching Pursuit is used; setting
 `mode = "omp"` runs Orthogonal Matching Pursuit instead.
 
 
@@ -1085,7 +1086,6 @@ fit <- mp_omp_execute(
    mode = 'omp',          # or "mp" for classical Matching Pursuit
    signal = signal,
    n_nonzero_coefs = 50,
-   topk = 10000,
    verbose = FALSE
  )
 
@@ -1094,11 +1094,12 @@ plot(fit)
 
 ### Gabor dictionary preparation {.unnumbered}
 
-For educational and experimental purposes, the individual steps performed 
-internally by the `mp_omp_execute()` function can also be carried out explicitly. 
-These steps include generating an XML file containing the dictionary parameters 
-using `generate_xml_dict()`, reading this file using `read_gabor_dict()`, and 
-preselecting candidate atoms using `topk_gabor_atoms()`. 
+For educational and experimental purposes, the dictionary preparation steps
+performed internally by `mp_omp_execute()` can also be carried out explicitly.
+These include generating an XML file containing the dictionary parameters using
+`generate_xml_dict()` and reading it with `read_gabor_dict()`. The resulting
+parameterized dictionary can be passed directly to `mp_core_gabor()` or
+`omp_core_gabor()` for iterative decomposition.
 
 ```{r generate_xml_dict, include = TRUE, echo = TRUE, warning = FALSE}
 sampling_frequency <- signal$sampling_frequency
@@ -1134,23 +1135,25 @@ dim(atoms_dict)
 head(atoms_dict)
 ```
 
-### Signal-dependent Gabor atom selection {.unnumbered}
+### Iterative Gabor atom selection {.unnumbered}
 
-The `topk_gabor_atoms()` function evaluates all dictionary atoms using 
-phase-invariant complex projections and selects the atoms 
-with the highest similarities to the analysed signal.
+The parameterized dictionary is passed directly to `mp_core_gabor()` or
+`omp_core_gabor()`. At each iteration, candidate atoms are evaluated against
+the current residual using FFT-based projections and analytical phase
+optimization. Only the selected atoms are constructed in the time domain;
+no preliminary top-k ranking or full matrix dictionary is required.
 
-This step substantially reduces the size of the optimization problem.
-Only the selected atoms are retained and converted into real-valued
-Gabor atoms with optimal phase estimates.
-
-```{r topk_gabor_atoms, include = TRUE, echo = TRUE, warning = FALSE}
-dict_topk <- topk_gabor_atoms(
+```{r mp_core_gabor_example, include = TRUE, echo = TRUE, warning = FALSE}
+fit_gabor <- mp_core_gabor(
   atoms_dict = atoms_dict,
   signal = signal,
-  topk = 10000,
-  verbose = TRUE
+  channel = 1,
+  n_nonzero_coefs = 10,
+  verbose = FALSE
 )
+
+fit_gabor$n_iters
+fit_gabor$relative_residual_energy
 ```
 
 ### Validation using a synthetic sparse signal {.unnumbered}
@@ -1295,16 +1298,15 @@ procedure.
 
 The **native R Gabor-based MP/OMP workflow**, implemented by `mp_omp_execute()`,
 provides a higher-level interface for Gabor-based MP and OMP decomposition. It
-integrates dictionary specification or generation, dictionary reading,
-channel-specific atom preselection, reconstruction of the selected atoms as a
-sparse or dense matrix, decomposition with `mp_core()` or `omp_core()`, and
-aggregation of the results into an object of class `"mp"`. If no XML dictionary
-specification is supplied, `generate_xml_dict()` creates one internally; otherwise,
-the user-provided XML file is used. The specification is processed by
-`read_gabor_dict()`, after which `topk_gabor_atoms()` selects candidate Gabor atoms
-for each signal channel. The selected atoms are then reconstructed by
-`gabor_atoms_matrix()` as a sparse or dense dictionary matrix and passed to
-`mp_core()` or `omp_core()` for decomposition.
+integrates dictionary specification or generation, dictionary reading, iterative
+atom selection against the current residual, and aggregation of channel-specific
+results into an object of class `"mp"`. If no XML dictionary specification is
+supplied, `generate_xml_dict()` creates one internally; otherwise, the
+user-provided XML file is used. The specification is processed by
+`read_gabor_dict()` to construct a parameterized dictionary, which is passed
+directly to `mp_core_gabor()` or `omp_core_gabor()`. These functions use FFT-based
+candidate evaluation and analytical phase optimization, materializing only the
+selected time-domain atoms rather than the complete dictionary.
 
 The **external EMPI-based MP workflow** provides an alternative MP implementation
 through `empi_execute()`. In this case, decomposition is performed by the external

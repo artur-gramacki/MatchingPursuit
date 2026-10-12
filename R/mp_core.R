@@ -89,10 +89,8 @@
 #' @export
 #'
 #' @seealso
-#' \code{\link{gabor_atoms_matrix}},
 #' \code{\link{omp_core}},
 #' \code{\link{read_gabor_dict}},
-#' \code{\link{topk_gabor_atoms}},
 #' \code{\link{mp_omp_execute}}
 #'
 #' @examples
@@ -288,7 +286,8 @@ mp_core <- function(
 
     if (verbose) {
       # message("iteration: ", k, ", selected atom: ", best_atom_idx, ", coefficient: ", signif(best_projection, 6))
-      message("iteration: ", k, ", selected atom: ", best_atom_idx)
+      atom_id <- if (!is.null(colnames(D))) colnames(D)[best_atom_idx] else best_atom_idx
+      message("iteration: ", k, ", selected atom: ", atom_id)
     }
 
     # Matching Pursuit residual update.

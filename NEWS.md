@@ -1,3 +1,27 @@
+# MatchingPursuit 1.4.0
+
+* Added `mp_core_gabor()` and `omp_core_gabor()` for direct MP and OMP
+  decomposition using parameterized Gabor dictionaries. Candidate atoms are
+  evaluated against the current residual using FFT-based projections and
+  analytical phase optimization, without materializing the full time-domain
+  dictionary.
+
+* Updated `mp_omp_execute()` to use `mp_core_gabor()` and `omp_core_gabor()`
+  for multi-channel decomposition instead of the previous top-k preselection
+  and matrix-based workflow. The `tol` argument is passed directly to the
+  selected algorithm and, when specified, overrides `n_nonzero_coefs`.
+
+* Removed `topk_gabor_atoms()`, `gabor_atoms_matrix()`, and the `topk` class.
+  The obsolete `topk` and `sparse` arguments are no longer part of the
+  `mp_omp_execute()` interface.
+
+* Added shared internal helpers for Gabor dictionary preparation, iterative
+  atom search, and reconstruction of selected atoms. Updated documentation
+  and examples to reflect the new Gabor decomposition workflow.
+
+* Retained `mp_core()` and `omp_core()` as general-purpose, matrix-based
+  implementations independent of the Gabor-specific workflow.
+  
 # MatchingPursuit 1.3.1
 
 * Improved the native MP/OMP workflow to support sparse Gabor dictionaries.
@@ -23,31 +47,6 @@
 * Updated documentation and examples to describe the revised top-k,
   materialization, and sparse MP/OMP workflow.
   
-# MatchingPursuit 1.3.0
-
-* Improved the native MP/OMP workflow to support sparse Gabor dictionaries.
-  `mp_core()` and `omp_core()` can now operate directly on sparse matrices from
-  the Matrix package, substantially reducing memory use and improving
-  decomposition speed for dictionaries containing many zero values.
-  
-* Added `gabor_atoms_matrix()` for reconstructing the Gabor atoms selected by
-  `topk_gabor_atoms()`. The function can return either a sparse matrix
-  (`sparse = TRUE`, the default) or a standard dense matrix.
-  
-* Refactored `topk_gabor_atoms()` so that it no longer materializes the complete
-  time-domain matrix of selected atoms. Instead, it stores the parameters needed
-  to reconstruct them later, including frequency, phase, support position and
-  length in samples. This substantially reduces the cost of the top-k selection
-  step, especially for large candidate sets.  
-  
-* Updated `mp_omp_execute()` so that the channel-specific atoms selected by
-  `topk_gabor_atoms()` are materialized with gabor_atoms_matrix() before being
-  passed to `mp_core()` or `omp_core()`. The sparse argument controls whether
-  the intermediate dictionary is sparse or dense and defaults to `TRUE`.  
-  
-* Updated documentation and examples to describe the revised top-k,
-  materialization, and sparse MP/OMP workflow.
-
 # MatchingPursuit 1.3.0
 
 * Simplified the native MP/OMP core interfaces. `mp_core()` and `omp_core()`

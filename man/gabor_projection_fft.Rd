@@ -61,8 +61,10 @@ renormalized. This preserves the normalization of the complete atom
 independently of its position relative to the signal boundaries.
 }
 \note{
-This function is primarily intended for internal use by \code{topk_gabor_atoms()},
-but it is exported to support advanced experiments and methodological testing.
+This function is used internally by \code{mp_core_gabor()} and
+\code{omp_core_gabor()} to evaluate Gabor candidate projections.
+It is also exported to support advanced experiments and
+methodological testing.
 }
 \examples{
 signal <- as.matrix(rnorm(256))
@@ -93,6 +95,6 @@ head(Mod(scm))
 }
 \seealso{
 \code{\link{read_gabor_dict}},
-\code{\link{topk_gabor_atoms}},
-\code{\link{gabor_atoms_matrix}}
+\code{\link{mp_core_gabor}},
+\code{\link{omp_core_gabor}}
 }

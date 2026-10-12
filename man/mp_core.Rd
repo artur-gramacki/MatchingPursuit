@@ -138,9 +138,7 @@ fit$relative_residual_energy
 
 }
 \seealso{
-\code{\link{gabor_atoms_matrix}},
 \code{\link{omp_core}},
 \code{\link{read_gabor_dict}},
-\code{\link{topk_gabor_atoms}},
 \code{\link{mp_omp_execute}}
 }
