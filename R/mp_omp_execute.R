@@ -38,6 +38,10 @@
 #' @param verbose Logical; if \code{TRUE}, progress information is printed
 #' during processing.
 #'
+#' @param progress Logical; if \code{TRUE}, displays messages indicating
+#'   the start and completion of each signal channel.
+#'   Defaults to \code{TRUE}.
+#'
 #' @return An object of class \code{"mp"} containing:
 #'
 #' \item{atoms}{A data frame describing the selected atoms.}
@@ -161,7 +165,7 @@
 #' # +-------------------------------------------------------------+
 #' xml_file <- system.file(
 #'   "extdata",
-#'   "sample1.xml",
+#'   "sample3.xml",
 #'   package = "MatchingPursuit"
 #' )
 #'
@@ -182,7 +186,8 @@ mp_omp_execute <- function (
     full_atoms_in_signal = FALSE,
     n_nonzero_coefs = NULL,
     tol = NULL,
-    verbose = FALSE
+    verbose = FALSE,
+    progress = TRUE
 ) {
 
   if (is.null(mode)) {
@@ -232,6 +237,10 @@ mp_omp_execute <- function (
   results <- vector("list", ncol(sig))
 
   for (ch in seq_len(ncol(sig))) {
+
+    if (progress && !verbose) {
+      message("Processing channel ", ch, "/", ncol(sig), " (", toupper(mode), ")...")
+    }
 
     if (mode == "omp") {
       res <- omp_core_gabor(
@@ -290,7 +299,9 @@ mp_omp_execute <- function (
     i8 <- po
     position <-c(position, i8)
 
-    if (verbose) {
+    if (progress && !verbose) {
+      message("Channel ", ch, "/", ncol(sig), " completed.")
+    } else if (verbose) {
       message("mp_omp_execute(): method = \"", mode,
               "\", channel = ", ch, " successfully processed.")
     }

@@ -229,8 +229,7 @@ omp_core_gabor <- function(
     atoms_dict = atoms_dict,
     signal_length = N,
     sampling_frequency = sampling_frequency,
-    sigma_divisor = sigma_divisor,
-    verbose = verbose
+    sigma_divisor = sigma_divisor
   )
 
 
@@ -264,12 +263,6 @@ omp_core_gabor <- function(
 
   # Orthogonal Matching Pursuit ----
   for (k in seq_len(max_iter)) {
-
-    if (verbose) {
-      message("iteration: ", k,
-              ", relative residual energy: ",
-              signif(residual_energy[k] / total_energy, 6))
-    }
 
     # 1. Search the full parameterized dictionary and optimize the phase of
     #    the new atom with respect to the current OMP residual. If the best
@@ -378,6 +371,8 @@ omp_core_gabor <- function(
       message("iteration: ", k,
               ", selected atom: ", best_atom_idx,
               ", coefficient: ", signif(x_active[k], 6),
+              ", relative residual energy: ",
+              signif(relative_residual_energy[k + 1L], 8),
               ", explained energy: ", signif(explained, 6), "%")
     }
 

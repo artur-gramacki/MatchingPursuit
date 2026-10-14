@@ -84,8 +84,7 @@ object invisibly.
 \code{summary.mp()} returns an object of class \code{"summary.mp"}
 containing signal dimensions, sampling information, the total number
 of selected atoms, the number of selected atoms per channel,
-#' signal, residual, and explained energy information, and ranges of
-selected atom parameters.
+signal, residual, relative residual, and explained energy information.
 
 \code{plot.mp()} is called for its side effect and returns no value.
 }

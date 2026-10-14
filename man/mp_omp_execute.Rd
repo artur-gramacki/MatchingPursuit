@@ -12,7 +12,8 @@ mp_omp_execute(
   full_atoms_in_signal = FALSE,
   n_nonzero_coefs = NULL,
   tol = NULL,
-  verbose = FALSE
+  verbose = FALSE,
+  progress = TRUE
 )
 }
 \arguments{
@@ -43,6 +44,10 @@ between 0 and 1. If specified, it overrides \code{n_nonzero_coefs}.}
 
 \item{verbose}{Logical; if \code{TRUE}, progress information is printed
 during processing.}
+
+\item{progress}{Logical; if \code{TRUE}, displays messages indicating
+the start and completion of each signal channel.
+Defaults to \code{TRUE}.}
 }
 \value{
 An object of class \code{"mp"} containing:
@@ -171,7 +176,7 @@ plot(fit_mp_full, channel = 3)
 # +-------------------------------------------------------------+
 xml_file <- system.file(
   "extdata",
-  "sample1.xml",
+  "sample3.xml",
   package = "MatchingPursuit"
 )
 

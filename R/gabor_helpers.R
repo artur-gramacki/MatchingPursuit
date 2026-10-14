@@ -111,14 +111,12 @@ precompute_gabor_gram_block <- function(
 
 # Precompute cosine-sine Gram matrix terms for the complete Gabor dictionary.
 precompute_gabor_gram <- function(
-    atoms_dict, block_rows, window_cache, signal_length, verbose = FALSE) {
+    atoms_dict, block_rows, window_cache, signal_length) {
 
   p <- nrow(atoms_dict)
   gram_aa <- numeric(p)
   gram_bb <- numeric(p)
   gram_ab <- numeric(p)
-
-  if (verbose) message("Precomputing Gabor normalization terms...")
 
   for (b in seq_along(block_rows)) {
 
@@ -136,12 +134,7 @@ precompute_gabor_gram <- function(
     gram_bb[ids] <- gram_block$gram_bb
     gram_ab[ids] <- gram_block$gram_ab
 
-    if (verbose) {
-      message("normalization: block ", b, "/", length(block_rows), " finished")
-    }
   }
-
-  if (verbose) message("Normalization terms ready.")
 
   list(
     gram_aa = gram_aa,
@@ -156,8 +149,7 @@ prepare_gabor_dictionary <- function(
     atoms_dict,
     signal_length,
     sampling_frequency,
-    sigma_divisor = NULL,
-    verbose = FALSE) {
+    sigma_divisor = NULL) {
 
   sigma_div <- if (is.null(sigma_divisor)) 3 else sigma_divisor
 
@@ -176,8 +168,7 @@ prepare_gabor_dictionary <- function(
     atoms_dict = atoms_dict,
     block_rows = block_rows,
     window_cache = window_cache,
-    signal_length = signal_length,
-    verbose = verbose
+    signal_length = signal_length
   )
 
   list(
