@@ -241,21 +241,28 @@ the original signal's energy is "explained" by the generated atoms.
 Naturally, increasing the number of generated atoms will likely bring
 the energy of the reconstructed signal closer to 100%.
 
-
 Alternatively, you can use the `tf_map()` function to display a time-frequency map. 
 The function provides greater control over the visualization process and offers 
 additional functionality, such as saving time-frequency maps to a file. See the 
 function documentation for details.
 
-In the below plot, the centers of the atoms (in terms of time and
-frequency coordinates) are marked with the numbers of successive atoms,
-sorted from highest to lowest energy.
+In the plot below, the centers of the atoms are marked with numbers indicating
+the order in which they were selected during decomposition. The color palette
+and the `mode`, `display_scale`, `db_range`, `shortening_factor_x`, and
+`shortening_factor_y` parameters have also been modified.
 
 ```{r sample1_plot_2, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 out <- tf_map(
   x = fit_mp,
   channel = 1,
   freq_divide = 4,
+  mode = "energy",
+  display_scale = "db",
+  db_range = 40,
+  shortening_factor_x = 4,
+  shortening_factor_y = 4,  
+  palette = "Inferno",
+  reverse_palette = FALSE,
   atom_centers = "numbers"
 )
 ```
@@ -458,22 +465,16 @@ signal_eeg_f_r_m[1:6, 1:6]
 
 ### Step 5 - MP decomposition {.unnumbered}
 
-**Important note:** The code below has been commented out. See the
-explanation given [here](#important_note).
+```{r eeg_mp_omp_execute, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
 
-```{r eeg_empi_execute, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-# The empi_options parameter is NULL, so the EMPI program is 
-# run with the parameters "-o local --gabor -i 50"
+# For example decomposition, get only one channel.
+sig <- as_sig(signal_eeg_f_r_m[, 2], sampling_frequency_r)
 
-# # To make the RDS file smaller (CRAN requirement), we select only one channel.
-# sig <- as_sig(signal_eeg_f_r_m[, 2], sampling_frequency_r)
-
-# eeg_empi_out <- empi_execute (
-#   signal = sig,
-#   empi_options = NULL
-# )
-# 
-# saveRDS(eeg_empi_out, file = "eeg_empi_out.rds")
+eeg_mp_out <- mp_omp_execute(
+  mode = "mp",
+  signal = sig,
+  n_nonzero_coefs = 50
+)
 ```
 
 ### Step 6 - Time-frequency map {.unnumbered}
@@ -492,14 +493,12 @@ decomposed.
 
 Additionally, the energy of the input signal and the reconstructed
 signal (from the generated atoms) is calculated. The results show that
-nearly all of the energy of the original signal (96.18%) is “explained”
+nearly all of the energy of the original signal (95.98%) is "explained"
 by the generated atoms.
 
 ```{r eeg_tf_map, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-file <- system.file("extdata", "eeg_empi_out.rds", package = "MatchingPursuit")
-eeg_empi_out <- readRDS(file = file)
-
-plot(eeg_empi_out)
+plot(eeg_mp_out)
+summary(eeg_mp_out)
 ```
 
 ### Step 7 - Displaying EEG signals using `plot()` (optional) {.unnumbered}
@@ -595,15 +594,19 @@ The input data (`signal`) is passed as an argument to the
 `empi_execute()` function, which generates the object of class `mp` 
 containing all atom parameters.
 
-**Important note:** The code below has been commented out. See the
-explanation given [here](#important_note).
+```{r ecg_mp_omp_execute, include = TRUE, echo = TRUE, warning = FALSE}
+# For example decomposition, get only one channel.
 
-```{r ecg_empi_execute, include = TRUE, echo = TRUE, warning = FALSE}
-# ecg_empi_out <- empi_execute(
-#   signal = out_ecg
-# )
-# 
-# saveRDS(ecg_empi_out, file = "00001_lr.rds")
+out_ecg_1_channel <- out_ecg
+out_ecg_1_channel$signal <- as.matrix(out_ecg$signal[, 1])
+out_ecg_1_channel$lead_names <-  "I"
+
+ecg_mp_out <- mp_omp_execute(
+  mode = "mp",
+  signal = out_ecg_1_channel
+)
+
+summary(ecg_mp_out)
 ```
 
 ### Step 3 - Time-frequency map {.unnumbered}
@@ -612,13 +615,9 @@ It is now time to generate the final time-frequency (T-F) map for the
 selected channel.
 
 ```{r 00001_lr, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 7}
-# Read the previously generated decomposition result.
-file <- system.file("extdata", "00001_lr.rds", package = "MatchingPursuit")
-ecg_empi_out <- readRDS(file = file)
-
 # Create time-frequency map based on atoms.
 out <- tf_map(
-  x = ecg_empi_out,
+  x = ecg_mp_out,
   channel = 1,
   verbose = TRUE
 )
@@ -698,28 +697,24 @@ representation of a signal with smoothly varying frequency. This
 limitation (and, in some respects, a drawback) of the Matching Pursuit algorithm
 should be taken into account.
 
-**Important note:** The code below has been commented out. See the
-explanation given [here](#important_note).
-
 ```{r chirp_plot_tf_1, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 6}
-# sig_file <- system.file("extdata", "sample2.csv", package = "MatchingPursuit")
-# signal <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
+sig_file <- system.file("extdata", "sample2.csv", package = "MatchingPursuit")
+signal <- read_csv_signals(sig_file, col_names_in_csv = FALSE)
 
-# sample2_empi_out <- empi_execute (
-#   signal = signal
-# )
-
-# saveRDS(sample2_empi_out, file = "sample2.rds")
+sample2_mp_omp_out <- mp_omp_execute (
+  mode = "omp",
+  signal = signal
+)
 ```
 
 ```{r chirp_plot_tf_2, include = TRUE, echo = TRUE, warning = FALSE, fig.width = 7, fig.height = 6}
-file <- system.file("extdata", "sample2.rds", package = "MatchingPursuit")
-sample2_empi_out <- readRDS(file = file)
-
 out <- tf_map(
-  x = sample2_empi_out,
+  x = sample2_mp_omp_out,
   channel = 1,
-  freq_divide = 1
+  freq_divide = 1,
+  mode = "energy",
+  display_scale = "db",
+  db_range = 12
 )
 
 ```

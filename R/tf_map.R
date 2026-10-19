@@ -5,8 +5,8 @@
 #' or 3) saved as an \code{.RData} object.
 #'
 #' The function also computes basic reconstruction-quality measures for the
-#' selected channel, including signal energy, residual energy, and normalized
-#' reconstruction error (NRE).
+#' selected channel, including signal energy, residual energy, and the proportion of explained
+#' signal energy.
 #'
 #' @importFrom graphics rasterImage par points text axis mtext layout plot.new plot.window box abline title
 #' @importFrom grDevices hcl.colors graphics.off pdf dev.off png
@@ -17,8 +17,19 @@
 #'
 #' @param channel Channel from the SQLite file to process.
 #'
-#' @param mode \code{"sqrt"}, \code{"log"}, or \code{"linear"}. Determines the intensity
-#' with which the so-called blobs are displayed on the T-F map.
+#' @param mode \code{"sqrt"} (default), \code{"linear"}, or \code{"energy"}.
+#'   Controls the amplitude assigned to each Gaussian blob.
+#'   \code{"sqrt"} uses \code{sqrt(energy * sampling_frequency)};
+#'   \code{"linear"} uses \code{energy * sampling_frequency};
+#'   \code{"energy"} normalizes the integral of each untruncated blob
+#'   over the whole time-frequency plane to its assigned atom energy.
+#'
+#' @param display_scale \code{"linear"} (default) or \code{"db"}.
+#'   Applies dB scaling after all blobs have been summed, for plotting only.
+#'   Does not modify the returned \code{tf_map} or saved RData matrices.
+#'
+#' @param db_range Positive number specifying the displayed dynamic range
+#'   in dB (default 20); used only if \code{display_scale = "db"}.
 #'
 #' @param freq_divide Specifies how many times the displayed frequency range in the T-F map
 #' should be reduced. At high sampling rates, especially when a low-pass filter with
@@ -31,9 +42,11 @@
 #' @param increase_factor Factor controlling the increase in the number of pixels along the
 #' frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropriate.
 #'
-#' @param shortening_factor_x Usually, a value of 2 provides better atom visualization.
+#' @param shortening_factor_x Positive factor narrowing the Gaussian blobs along time;
+#'   the default of 2 is a visualization choice, not an estimated physical uncertainty.
 #'
-#' @param shortening_factor_y Usually, a value of 2 provides better atom visualization.
+#' @param shortening_factor_y Positive factor narrowing the Gaussian blobs along frequency;
+#'   the default of 2 is a visualization choice, not an estimated physical uncertainty.
 #'
 #' @param atom_centers \code{"crosses"}, \code{"numbers"}, or \code{NULL}. Determines
 #' how the centres of atoms (represented as so-called blobs) are marked on the T-F map
@@ -77,6 +90,34 @@
 #'
 #' @param verbose Logical flag indicating whether progress information should be printed.
 #'
+#' @section Best practices:
+#' \itemize{
+#'   \item For an exploratory, visually balanced map, start with
+#'     \code{mode = "sqrt", display_scale = "linear"}.
+#'     This reduces the contrast between weak and strong atoms; the map is not
+#'     an energy-normalized time-frequency density.
+#'   \item To represent assigned atom energies by the integrals of Gaussian
+#'     blobs, use \code{mode = "energy"}. The normalization holds for
+#'     each complete blob; cropping at time or frequency boundaries can remove
+#'     part of its displayed integral. For MP/OMP, the interpretation of the
+#'     supplied atom energies depends on how they were computed upstream.
+#'   \item Use \code{display_scale = "db"} to make weak structures
+#'     more visible. It computes \code{10 * log10(tf_map / max(tf_map))}
+#'     and clips values below \code{-db_range} dB. Try 20 dB for a
+#'     selective display and 40 dB to reveal more weak structures.
+#'     \code{db_range} has no effect with \code{display_scale = "linear"}.
+#'   \item \code{mode = "linear"} is a legacy amplitude rule proportional
+#'     to atom energy. At fixed shortening factors it differs from
+#'     \code{mode = "energy"} only by a global multiplier.
+#'   \item When comparing MP, OMP, signals, or recordings, keep the mode,
+#'     Gaussian widths, frequency range, and palette fixed. The dB display
+#'     is normalized separately to each map's maximum, so colors across
+#'     different maps do not indicate equal absolute intensities.
+#'   \item The returned \code{tf_map} contains the summed, untransformed
+#'     Gaussian map for the chosen \code{mode}; it is not a spectrogram.
+#'     Saved RData matrices are additionally resized and scaled to [0, 1].
+#' }
+#'
 #' @return Depending on the \code{out_mode} parameter, the function:
 #'    \itemize{
 #'      \item displays the time-frequency map on the screen
@@ -107,41 +148,93 @@
 #' @export
 #'
 #' @examples
-#' if (interactive()) {
-#' file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+#' # Read signal and XML dictionary
+#' file <- system.file(
+#'   "extdata", "sample1.csv",
+#'   package = "MatchingPursuit"
+#' )
+#'
 #' signal <- read_csv_signals(file)
 #'
-#' sample1_empi_out <- empi_execute (
+#' xml_file <- system.file(
+#'   "extdata", "sample1.xml",
+#'   package = "MatchingPursuit"
+#' )
+#'
+#' # Perform OMP decomposition
+#' sample1_empi_out <- mp_omp_execute(
+#'   mode = "omp",
 #'   signal = signal,
-#'   empi_options = "-o local --gabor -i 25",
+#'   dictionary = xml_file,
+#'   n_nonzero_coefs = 20,
+#'   verbose = FALSE
 #' )
 #'
-#' # 'freq_divide' is set arbitrarily
+#' # Example 1: Default visualization
+#' # Square-root amplitude scaling and linear display.
 #' out <- tf_map(
 #'   x = sample1_empi_out,
 #'   channel = 1,
 #'   mode = "sqrt",
+#'   display_scale = "linear",
+#'   freq_divide = 4
+#' )
+#'
+#' # Example 2: Energy-normalized Gaussian blobs
+#' # With a linear display, strong atoms dominate;
+#' # weak atoms may be less visible.
+#' out <- tf_map(
+#'   x = sample1_empi_out,
+#'   channel = 1,
+#'   mode = "energy",
+#'   display_scale = "linear",
+#'   freq_divide = 4
+#' )
+#'
+#' # Example 3: Logarithmic display
+#' # Enhances the visibility of weaker structures.
+#' # Values below -20 dB are mapped to the background color.
+#' out <- tf_map(
+#'   x = sample1_empi_out,
+#'   channel = 1,
+#'   mode = "energy",
+#'   display_scale = "db",
+#'   db_range = 20,
+#'   freq_divide = 4
+#' )
+#'
+#' # Example 4: Wider dynamic range and alternative palette
+#' # Larger shortening factors produce more compact blobs.
+#' # Atom numbers identify the selected dictionary elements.
+#' out <- tf_map(
+#'   x = sample1_empi_out,
+#'   channel = 1,
+#'   mode = "energy",
+#'   display_scale = "db",
+#'   db_range = 40,
 #'   freq_divide = 4,
-#'   increase_factor= 4,
-#'   atom_centers = "crosses",
-#'   out_mode = "plot",
+#'   shortening_factor_x = 4,
+#'   shortening_factor_y = 4,
+#'   palette = "Inferno",
+#'   reverse_palette = FALSE,
+#'   atom_centers = "numbers"
 #' )
 #'
-#' # 'freq_divide' is determined based on the atom with the highest frequency
+#' # Example 5: Automatic frequency range
+#' # The displayed frequency range is determined from the
+#' # highest frequency among the selected atoms.
 #' out <- tf_map(
 #'   x = sample1_empi_out,
 #'   channel = 1,
-#'   mode = "sqrt",
-#'   increase_factor= 4,
-#'   atom_centers = "numbers",
-#'   out_mode = "plot",
+#'   freq_divide = NULL
 #' )
-#' }
 #'
 tf_map <- function(
     x = NULL,
     channel,
     mode = "sqrt",
+    display_scale = "linear",
+    db_range = 20,
     freq_divide = NULL,
     increase_factor = 4,
     shortening_factor_x = 2,
@@ -159,6 +252,13 @@ tf_map <- function(
     plot_signals = TRUE,
     write_atoms = FALSE,
     verbose = FALSE) {
+
+  mode <- match.arg(mode, c("sqrt", "linear", "energy"))
+  display_scale <- match.arg(display_scale, c("linear", "db"))
+  if (length(db_range) != 1L || !is.numeric(db_range) ||
+      !is.finite(db_range) || db_range <= 0) {
+    stop("'db_range' must be a positive finite number.")
+  }
 
   # Store
   old_par <- par("mfrow", "pty", "mai", "mgp", "las", "xaxs", "yaxs")
@@ -226,27 +326,16 @@ tf_map <- function(
     tf_map_resampled <- NULL
 
   if (palette == 'my custom palette') {
-    col <-  c(
-      "#000f82", "#001385", "#011789", "#011b8d", "#021f91", "#022395", "#032798", "#042b9c",
-      "#042fa0", "#0533a4", "#0537a8", "#063bab", "#073faf", "#0743b3", "#0847b7", "#084bbb",
-      "#094fbf", "#0a53c2", "#0a57c6", "#0b5bca", "#0b5fce", "#0c63d2", "#0d67d5", "#0d6bd9",
-      "#0e6fdd", "#0e73e1", "#0f77e5", "#107be8", "#107fec", "#1183f0", "#1187f4", "#128bf8",
-      "#1390fc", "#1693f8", "#1996f4", "#1c9af0", "#1f9dec", "#22a1e8", "#25a4e4", "#28a8e0",
-      "#2cabdc", "#2faed8", "#32b2d4", "#35b5d0", "#38b9cc", "#3bbcc8", "#3ec0c4", "#41c3c0",
-      "#45c7bc", "#48cab8", "#4bcdb4", "#4ed1b0", "#51d4ac", "#54d8a8", "#57dba4", "#5adfa0",
-      "#5ee29c", "#61e598", "#64e994", "#67ec90", "#6af08c", "#6df388", "#70f784", "#73fa80",
-      "#77fe7c", "#7bf978", "#7ff575", "#83f171", "#88ed6e", "#8ce96a", "#90e567", "#94e063",
-      "#99dc60", "#9dd85c", "#a1d459", "#a5d055", "#aacc52", "#aec74e", "#b2c34b", "#b6bf47",
-      "#bbbb44", "#bfb741", "#c3b33d", "#c7af3a", "#ccaa36", "#d0a633", "#d4a22f", "#d89e2c",
-      "#dd9a28", "#e19625", "#e59121", "#e98d1e", "#ee891a", "#f28517", "#f68113", "#fa7d10",
-      "#ff790d", "#fb750c", "#f8720c", "#f56f0b", "#f26c0b", "#ef690a", "#eb660a", "#e8630a",
-      "#e56009", "#e25c09", "#df5908", "#db5608", "#d85308", "#d55007", "#d24d07", "#cf4a06",
-      "#cc4706", "#c84306", "#c54005", "#c23d05", "#bf3a04", "#bc3704", "#b83404", "#b53103",
-      "#b22e03", "#af2a02", "#ac2702", "#a82402", "#a52101", "#a21e01", "#9f1b00", "#9c1800",
-      "#991500")
+    col <- grDevices::colorRampPalette(
+      c("#000F82", "#1F5FD1", "#3FA9F5", "#8BE9FD", "#D9FF88", "#FFD166", "#F77F00", "#991500"
+      ),
+      space = "Lab"
+    )(256)
+
   } else {
-    col <- hcl.colors(128, palette, rev = reverse_palette)
+    col <- hcl.colors(256, palette, rev = reverse_palette)
   }
+
 
   total_channels <- length(unique(out$atoms$channel_id))
 
@@ -313,10 +402,10 @@ tf_map <- function(
       "Epoch size (in points):     ", epochSize, "\n",
       "Signal length (in seconds): ", s, "\n\n",
 
-      "Signal energy:              ", round(signal_energy, 2), "\n",
-      "Reconstruction energy:      ", round(reconstruction_energy, 2), "\n",
-      "Residual energy:            ", round(residual_energy, 2), "\n",
-      "Explained_energy:           ", round(100 * explained_energy, 2),"%"
+      "Signal energy:              ", round(signal_energy, 4), "\n",
+      "Reconstruction energy:      ", round(reconstruction_energy, 4), "\n",
+      "Residual energy:            ", round(residual_energy, 4), "\n",
+      "Explained_energy:           ", round(100 * explained_energy, 4),"%"
     )
   }
 
@@ -391,23 +480,14 @@ tf_map <- function(
         border = "black"
       )
 
-      if (atom_centers == "crosses") {
+      if (identical(atom_centers, "crosses")) {
         points(position[n], frequency[n] , pch = 3, col = "black", cex = 1)
       }
 
-      if(atom_centers == "numbers") {
+      if (identical(atom_centers, "numbers")) {
         text(position[n], frequency[n], n, col = "black", cex = 1)
       }
     }
-
-    if (mode == "sqrt")
-      A  <- sqrt(energy[n] * sampling_frequency)
-
-    if (mode == "log")
-      A  <- log(energy[n] * sampling_frequency)
-
-    if (mode == "linear")
-      A  <- energy[n] * sampling_frequency
 
     # from Heisenberg rule: delta_t x delta_omega >= 1/2
     radius_x <- (scale[n] / 2) / shortening_factor_x
@@ -417,6 +497,13 @@ tf_map <- function(
     y0 <- frequency[n]
     sx <- radius_x
     sy <- radius_y
+
+    if (mode == "sqrt")
+      A <- sqrt(energy[n] * sampling_frequency)
+    if (mode == "linear")
+      A <- energy[n] * sampling_frequency
+    if (mode == "energy")
+      A <- energy[n] / (2 * pi * sx * sy)
 
     # 2D Gaussian
     z <- with(grid,
@@ -428,6 +515,21 @@ tf_map <- function(
     tf_map <- tf_map + z_mtx
 
   } # for (n in 1:num_atoms)
+
+  # Display transformation only. Keep tf_map in its original units.
+  tf_map_display <- tf_map
+
+  if (display_scale == "db") {
+    if (any(!is.finite(tf_map)) || any(tf_map < 0)) {
+      stop("dB display requires a finite, non-negative map. Use mode = 'energy', 'sqrt', or 'linear'.")
+    }
+    peak <- max(tf_map)
+    if (peak > 0) {
+      tf_map_display <- 10 * log10(pmax(tf_map / peak, 10^(-db_range / 10)))
+    } else {
+      tf_map_display[] <- -db_range
+    }
+  }
 
   if (out_mode == "plot") {
     if (plot_signals) {
@@ -442,7 +544,13 @@ tf_map <- function(
     # Drawing with graphics::image() is very slow, especially for large matrices.
     # Graphics::rasterImage() is much faster.
 
-    z_col <- col[cut(tf_map, breaks = 129)]
+    n_col <- length(col)
+    z_col <- col[cut(
+      tf_map_display,
+      breaks = if (display_scale == "db") seq(-db_range, 0, length.out = n_col + 1L) else n_col,
+      include.lowest = TRUE
+    )]
+
     # image() and rasterImage() differ in the orientation of the Y axis.
     # Often you also need to do the following:
     rot90 <- function(m) t(m)[ncol(m):1, ]
@@ -472,7 +580,7 @@ tf_map <- function(
     mtext("Frequency [Hz]", side = 2, line = 3.5, cex = 0.8)
 
     # At the centres of the atoms, the atom numbers
-    if (atom_centers == "numbers") {
+    if (identical(atom_centers, "numbers")) {
       for (n in 1:num_atoms) {
         text(position[n], frequency[n], n, col = color, cex = 1)
       }
@@ -480,7 +588,7 @@ tf_map <- function(
 
     # We display small crosses in the centres of atoms
     for (n in 1:num_atoms) {
-      if (atom_centers == "crosses") {
+      if (identical(atom_centers, "crosses")) {
         points(position[n], frequency[n], pch = 3, col = color, cex = 0.8)
       }
     }
@@ -494,9 +602,7 @@ tf_map <- function(
       plot(x = xx, signal, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
            main = "Original signal", panel.first = grid())
       abline(h = 0, col = "blue")
-
-      main_txt <- paste0("Reconstructed signal (explained energy = ", round(100 * explained_energy, 2),"%)"
-      )
+      main_txt <- paste0("Reconstructed signal (explained energy = ", round(100 * explained_energy, 2),"%)")
       plot(x = xx, reconstruction, type = "l", xlab = "", ylab = "", xaxs = "i", las = 1, ylim = sig_range,
            main = main_txt, panel.first = grid())
       abline(h = 0, col = "blue")
@@ -508,9 +614,10 @@ tf_map <- function(
     graphics.off()
     png(file_name, width = size[1], height = size[2], pointsize = 18)
     par(pty = "m", mai = c(0, 0, 0, 0))
-    graphics::image(x = t, y = y, z = tf_map, col = col)
-    if (atom_centers == "crosses") points(position, frequency, pch = 3, col = color, cex = 0.8)
-    if (atom_centers == "numbers") {
+    graphics::image(x = t, y = y, z = tf_map_display, col = col,
+                    zlim = if (display_scale == "db") c(-db_range, 0) else range(tf_map_display))
+    if (identical(atom_centers, "crosses")) points(position, frequency, pch = 3, col = color, cex = 0.8)
+    if (identical(atom_centers, "numbers")) {
       for (n in 1:num_atoms) {
         text(position[n], frequency[n], n, col = color, cex = 0.8)
       }

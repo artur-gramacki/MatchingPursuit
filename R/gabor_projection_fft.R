@@ -118,6 +118,10 @@ gabor_projection_fft <- function(block, signal, sigma_divisor = NULL) {
   window_len <- block[1L, "window_len"]
   fft_size   <- block[1L, "fft_size"]
 
+  if (!is.finite(window_len) || !is.finite(fft_size) || window_len < 1 || fft_size < window_len) {
+    stop("'fft_size' must be greater than or equal to 'window_len'.")
+  }
+
   # ---------------------------------------------------------------+
   # Full Gaussian envelope
   # ---------------------------------------------------------------+

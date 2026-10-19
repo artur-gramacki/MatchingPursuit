@@ -1,5 +1,3 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.txt$
-^replication_script\.R$
-

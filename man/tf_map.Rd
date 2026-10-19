@@ -8,6 +8,8 @@ tf_map(
   x = NULL,
   channel,
   mode = "sqrt",
+  display_scale = "linear",
+  db_range = 20,
   freq_divide = NULL,
   increase_factor = 4,
   shortening_factor_x = 2,
@@ -32,8 +34,19 @@ tf_map(
 
 \item{channel}{Channel from the SQLite file to process.}
 
-\item{mode}{\code{"sqrt"}, \code{"log"}, or \code{"linear"}. Determines the intensity
-with which the so-called blobs are displayed on the T-F map.}
+\item{mode}{\code{"sqrt"} (default), \code{"linear"}, or \code{"energy"}.
+Controls the amplitude assigned to each Gaussian blob.
+\code{"sqrt"} uses \code{sqrt(energy * sampling_frequency)};
+\code{"linear"} uses \code{energy * sampling_frequency};
+\code{"energy"} normalizes the integral of each untruncated blob
+over the whole time-frequency plane to its assigned atom energy.}
+
+\item{display_scale}{\code{"linear"} (default) or \code{"db"}.
+Applies dB scaling after all blobs have been summed, for plotting only.
+Does not modify the returned \code{tf_map} or saved RData matrices.}
+
+\item{db_range}{Positive number specifying the displayed dynamic range
+in dB (default 20); used only if \code{display_scale = "db"}.}
 
 \item{freq_divide}{Specifies how many times the displayed frequency range in the T-F map
 should be reduced. At high sampling rates, especially when a low-pass filter with
@@ -46,9 +59,11 @@ with the highest frequency \code{fmax} according to \code{freq_divide = (f / 2) 
 \item{increase_factor}{Factor controlling the increase in the number of pixels along the
 frequency axis. Non-negative integers such as 2, 4, 5, or 8 are usually appropriate.}
 
-\item{shortening_factor_x}{Usually, a value of 2 provides better atom visualization.}
+\item{shortening_factor_x}{Positive factor narrowing the Gaussian blobs along time;
+the default of 2 is a visualization choice, not an estimated physical uncertainty.}
 
-\item{shortening_factor_y}{Usually, a value of 2 provides better atom visualization.}
+\item{shortening_factor_y}{Positive factor narrowing the Gaussian blobs along frequency;
+the default of 2 is a visualization choice, not an estimated physical uncertainty.}
 
 \item{atom_centers}{\code{"crosses"}, \code{"numbers"}, or \code{NULL}. Determines
 how the centres of atoms (represented as so-called blobs) are marked on the T-F map
@@ -127,39 +142,119 @@ or 3) saved as an \code{.RData} object.
 }
 \details{
 The function also computes basic reconstruction-quality measures for the
-selected channel, including signal energy, residual energy, and normalized
-reconstruction error (NRE).
+selected channel, including signal energy, residual energy, and the proportion of explained
+signal energy.
 }
+\section{Best practices}{
+
+\itemize{
+  \item For an exploratory, visually balanced map, start with
+    \code{mode = "sqrt", display_scale = "linear"}.
+    This reduces the contrast between weak and strong atoms; the map is not
+    an energy-normalized time-frequency density.
+  \item To represent assigned atom energies by the integrals of Gaussian
+    blobs, use \code{mode = "energy"}. The normalization holds for
+    each complete blob; cropping at time or frequency boundaries can remove
+    part of its displayed integral. For MP/OMP, the interpretation of the
+    supplied atom energies depends on how they were computed upstream.
+  \item Use \code{display_scale = "db"} to make weak structures
+    more visible. It computes \code{10 * log10(tf_map / max(tf_map))}
+    and clips values below \code{-db_range} dB. Try 20 dB for a
+    selective display and 40 dB to reveal more weak structures.
+    \code{db_range} has no effect with \code{display_scale = "linear"}.
+  \item \code{mode = "linear"} is a legacy amplitude rule proportional
+    to atom energy. At fixed shortening factors it differs from
+    \code{mode = "energy"} only by a global multiplier.
+  \item When comparing MP, OMP, signals, or recordings, keep the mode,
+    Gaussian widths, frequency range, and palette fixed. The dB display
+    is normalized separately to each map's maximum, so colors across
+    different maps do not indicate equal absolute intensities.
+  \item The returned \code{tf_map} contains the summed, untransformed
+    Gaussian map for the chosen \code{mode}; it is not a spectrogram.
+    Saved RData matrices are additionally resized and scaled to [0, 1].
+}
+}
+
 \examples{
-if (interactive()) {
-file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+# Read signal and XML dictionary
+file <- system.file(
+  "extdata", "sample1.csv",
+  package = "MatchingPursuit"
+)
+
 signal <- read_csv_signals(file)
 
-sample1_empi_out <- empi_execute (
+xml_file <- system.file(
+  "extdata", "sample1.xml",
+  package = "MatchingPursuit"
+)
+
+# Perform OMP decomposition
+sample1_empi_out <- mp_omp_execute(
+  mode = "omp",
   signal = signal,
-  empi_options = "-o local --gabor -i 25",
+  dictionary = xml_file,
+  n_nonzero_coefs = 20,
+  verbose = FALSE
 )
 
-# 'freq_divide' is set arbitrarily
+# Example 1: Default visualization
+# Square-root amplitude scaling and linear display.
 out <- tf_map(
   x = sample1_empi_out,
   channel = 1,
   mode = "sqrt",
+  display_scale = "linear",
+  freq_divide = 4
+)
+
+# Example 2: Energy-normalized Gaussian blobs
+# With a linear display, strong atoms dominate;
+# weak atoms may be less visible.
+out <- tf_map(
+  x = sample1_empi_out,
+  channel = 1,
+  mode = "energy",
+  display_scale = "linear",
+  freq_divide = 4
+)
+
+# Example 3: Logarithmic display
+# Enhances the visibility of weaker structures.
+# Values below -20 dB are mapped to the background color.
+out <- tf_map(
+  x = sample1_empi_out,
+  channel = 1,
+  mode = "energy",
+  display_scale = "db",
+  db_range = 20,
+  freq_divide = 4
+)
+
+# Example 4: Wider dynamic range and alternative palette
+# Larger shortening factors produce more compact blobs.
+# Atom numbers identify the selected dictionary elements.
+out <- tf_map(
+  x = sample1_empi_out,
+  channel = 1,
+  mode = "energy",
+  display_scale = "db",
+  db_range = 40,
   freq_divide = 4,
-  increase_factor= 4,
-  atom_centers = "crosses",
-  out_mode = "plot",
+  shortening_factor_x = 4,
+  shortening_factor_y = 4,
+  palette = "Inferno",
+  reverse_palette = FALSE,
+  atom_centers = "numbers"
 )
 
-# 'freq_divide' is determined based on the atom with the highest frequency
+# Example 5: Automatic frequency range
+# The displayed frequency range is determined from the
+# highest frequency among the selected atoms.
 out <- tf_map(
   x = sample1_empi_out,
   channel = 1,
-  mode = "sqrt",
-  increase_factor= 4,
-  atom_centers = "numbers",
-  out_mode = "plot",
+  freq_divide = NULL
 )
-}
 
 }

@@ -26,13 +26,18 @@ build_gabor_window_cache <- function(atoms_dict, sigma_div) {
   window_cache
 }
 
-
 # Precompute cosine-sine Gram matrix terms for one Gabor dictionary block.
 precompute_gabor_gram_block <- function(
     block, ids, window_cache, signal_length) {
 
   window_len <- as.integer(block[1L, "window_len"])
   fft_size <- as.integer(block[1L, "fft_size"])
+
+  # Validate FFT size against the Gabor window length
+  if (!is.finite(window_len) || !is.finite(fft_size) || window_len < 1L || fft_size < window_len) {
+    stop("'fft_size' must be greater than or equal to ",
+      "'window_len', and both must be valid positive integers.")
+  }
 
   cache <- window_cache[[as.character(window_len)]]
   n <- cache$n

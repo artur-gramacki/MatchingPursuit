@@ -14,6 +14,17 @@
 * Removed `topk_gabor_atoms()`, `gabor_atoms_matrix()`, and the `topk` class.
   The obsolete `topk` and `sparse` arguments are no longer part of the
   `mp_omp_execute()` interface.
+  
+* Extended `tf_map()` with separate controls for Gaussian blob amplitude
+  scaling (`mode = "sqrt"`, `"linear"`, or `"energy"`) and map display
+  (`display_scale = "linear"` or `"db"`). The new `db_range` argument controls
+  the displayed dynamic range in decibels. Energy-normalized blobs integrate
+  to the assigned atom energy over the full time-frequency plane.
+
+* Improved time-frequency map visualization with a smoothly interpolated
+  custom color palette, configurable palettes and blob widths, and updated
+  examples illustrating the available display modes. The returned `tf_map`
+  retains its original values before display-scale transformation.  
 
 * Added shared internal helpers for Gabor dictionary preparation, iterative
   atom search, and reconstruction of selected atoms. Updated documentation

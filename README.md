@@ -130,10 +130,10 @@ out <- omp_core(
 )
 
 out$support
-[1] 1 4
+# [1] 1 4
 
 out$relative_residual_energy
-[1] 1.000000e+00 2.012529e-01 4.867641e-32
+# [1] 1.000000e+00 2.012529e-01 6.721842e-32
 ```
 
 In the example above, OMP correctly identifies atoms 1 and 4, corresponding to 
@@ -184,20 +184,20 @@ ref <- omp_reference(
 )
 
 ref$selected_atoms
-[1] 1 4
+# [1] 1 4
 
 ref$coefficients_original_dict
-[1] 1.0 0.0 0.0 0.5
+# [1] 1.0 0.0 0.0 0.5
 
 ref$normalized_reconstruction_error_original_dict
-[1] 6.95e-16
+# [1] 6.951762e-16
 
 ref$orthogonality
-[[1]]
--5.03e-15
+# [[1]]
+# [1] -5.031148e-15
 
-[[2]]
--5.30e-15  7.07e-15
+# [[2]]
+# [1] -5.297255e-15  7.072036e-15
 ```
 
 The reference implementation recovers the exact coefficients of the original 
@@ -260,16 +260,6 @@ MP/OMP for arbitrary user-defined dictionaries, the integrated native Gabor MP/O
 workflow, and the external EMPI-based Gabor MP workflow. The latter two return a
 common `"mp"` object, facilitating consistent visualization and interpretation
 within the package.
-
-## Reproducing the SoftwareX examples
-
-The complete code used to reproduce the analyses and results presented in the
-SoftwareX article is provided in:
-
-[`replication_script.R`](https://github.com/artur-gramacki/MatchingPursuit/releases/download/1.3.0/replication_script.R)
-
-The script includes signal generation, decomposition settings, reconstruction
-accuracy evaluation, runtime measurements, and the EEG example.
 
 ## Documentation
 

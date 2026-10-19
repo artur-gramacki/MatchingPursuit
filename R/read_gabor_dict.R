@@ -223,6 +223,13 @@ read_gabor_dict <- function (
     window_shift <- as.integer(params[["windowShift"]])
     fft_size <- as.integer(params[["fftSize"]])
 
+    # Validate FFT size against the Gabor window length
+    if (is.na(fft_size) || is.na(window_len) || fft_size < window_len) {
+      stop("Invalid dictionary block ", block_id,
+        ": 'fftSize' must be greater than or equal to 'windowLen'."
+      )
+    }
+
     # Only atoms fully contained within the signal
     if (full_atoms_in_signal) {
       end_time <- signal_length - window_len
