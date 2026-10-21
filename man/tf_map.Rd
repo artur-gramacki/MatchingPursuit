@@ -152,23 +152,28 @@ signal energy.
     \code{mode = "sqrt", display_scale = "linear"}.
     This reduces the contrast between weak and strong atoms; the map is not
     an energy-normalized time-frequency density.
+
   \item To represent assigned atom energies by the integrals of Gaussian
     blobs, use \code{mode = "energy"}. The normalization holds for
     each complete blob; cropping at time or frequency boundaries can remove
     part of its displayed integral. For MP/OMP, the interpretation of the
     supplied atom energies depends on how they were computed upstream.
+
   \item Use \code{display_scale = "db"} to make weak structures
     more visible. It computes \code{10 * log10(tf_map / max(tf_map))}
     and clips values below \code{-db_range} dB. Try 20 dB for a
     selective display and 40 dB to reveal more weak structures.
     \code{db_range} has no effect with \code{display_scale = "linear"}.
+
   \item \code{mode = "linear"} is a legacy amplitude rule proportional
     to atom energy. At fixed shortening factors it differs from
     \code{mode = "energy"} only by a global multiplier.
+
   \item When comparing MP, OMP, signals, or recordings, keep the mode,
     Gaussian widths, frequency range, and palette fixed. The dB display
     is normalized separately to each map's maximum, so colors across
     different maps do not indicate equal absolute intensities.
+
   \item The returned \code{tf_map} contains the summed, untransformed
     Gaussian map for the chosen \code{mode}; it is not a spectrogram.
     Saved RData matrices are additionally resized and scaled to [0, 1].
@@ -194,8 +199,8 @@ sample1_empi_out <- mp_omp_execute(
   mode = "omp",
   signal = signal,
   dictionary = xml_file,
-  n_nonzero_coefs = 20,
-  verbose = FALSE
+  n_nonzero_coefs = 16,
+  verbose = TRUE
 )
 
 # Example 1: Default visualization
@@ -208,7 +213,18 @@ out <- tf_map(
   freq_divide = 4
 )
 
-# Example 2: Energy-normalized Gaussian blobs
+# Example 2: Automatic frequency range
+# The displayed frequency range is determined from the
+# highest frequency among the selected atoms.
+out <- tf_map(
+  x = sample1_empi_out,
+  channel = 1,
+  mode = "sqrt",
+  display_scale = "linear",
+  freq_divide = NULL
+)
+
+# Example 3: Energy-normalized Gaussian blobs
 # With a linear display, strong atoms dominate;
 # weak atoms may be less visible.
 out <- tf_map(
@@ -219,7 +235,7 @@ out <- tf_map(
   freq_divide = 4
 )
 
-# Example 3: Logarithmic display
+# Example 4: Logarithmic display
 # Enhances the visibility of weaker structures.
 # Values below -20 dB are mapped to the background color.
 out <- tf_map(
@@ -231,7 +247,7 @@ out <- tf_map(
   freq_divide = 4
 )
 
-# Example 4: Wider dynamic range and alternative palette
+# Example 5: Wider dynamic range and alternative palette
 # Larger shortening factors produce more compact blobs.
 # Atom numbers identify the selected dictionary elements.
 out <- tf_map(
@@ -246,15 +262,6 @@ out <- tf_map(
   palette = "Inferno",
   reverse_palette = FALSE,
   atom_centers = "numbers"
-)
-
-# Example 5: Automatic frequency range
-# The displayed frequency range is determined from the
-# highest frequency among the selected atoms.
-out <- tf_map(
-  x = sample1_empi_out,
-  channel = 1,
-  freq_divide = NULL
 )
 
 }

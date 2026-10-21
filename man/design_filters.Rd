@@ -6,15 +6,15 @@
 \usage{
 design_filters(
   sampling_frequency = 256,
-  notch = c(49, 51),
+  notch = NULL,
   notch_order = 2,
-  lowpass = 30,
+  lowpass = NULL,
   lowpass_order = 4,
-  highpass = 1,
+  highpass = NULL,
   highpass_order = 4,
-  bandpass = c(0.5, 40),
+  bandpass = NULL,
   bandpass_order = 4,
-  bandstop = c(0.5, 40),
+  bandstop = NULL,
   bandstop_order = 4
 )
 }
@@ -22,30 +22,36 @@ design_filters(
 \item{sampling_frequency}{Sampling frequency in Hz.}
 
 \item{notch}{Numeric vector of length two specifying the lower and upper
-cutoff frequencies of the notch filter in Hz.}
+cutoff frequencies of the notch filter in Hz.
+\code{NULL} skips this filter.}
 
 \item{notch_order}{Positive integer specifying the notch filter order.}
 
-\item{lowpass}{Numeric value specifying the low-pass cutoff frequency in Hz.}
+\item{lowpass}{Numeric value specifying the low-pass cutoff frequency in Hz.
+\code{NULL} skips this filter.}
 
 \item{lowpass_order}{Positive integer specifying the low-pass filter order.}
 
-\item{highpass}{Numeric value specifying the high-pass cutoff frequency in Hz.}
+\item{highpass}{Numeric value specifying the high-pass cutoff frequency in Hz.
+\code{NULL} skips this filter.}
 
 \item{highpass_order}{Positive integer specifying the high-pass filter order.}
 
 \item{bandpass}{Numeric vector of length two specifying the lower and upper
-cutoff frequencies of the band-pass filter in Hz.}
+cutoff frequencies of the band-pass filter in Hz.
+\code{NULL} skips this filter.}
 
 \item{bandpass_order}{Positive integer specifying the band-pass filter order.}
 
 \item{bandstop}{Numeric vector of length two specifying the lower and upper
-cutoff frequencies of the band-stop filter in Hz.}
+cutoff frequencies of the band-stop filter in Hz.
+\code{NULL} skips this filter.}
 
 \item{bandstop_order}{Positive integer specifying the band-stop filter order.}
 }
 \value{
-A list containing the designed Butterworth filter objects:
+A list containing the designed Butterworth filter objects
+  (or \code{NULL} for omitted filters):
 
 \describe{
   \item{notch}{Notch filter used to remove a specific narrow frequency band.}

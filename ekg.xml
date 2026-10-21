@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dict>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="17"/>
+<param name="windowShift" value="1"/>
+<param name="fftSize" value="64"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="27"/>
+<param name="windowShift" value="2"/>
+<param name="fftSize" value="64"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="39"/>
+<param name="windowShift" value="2"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="59"/>
+<param name="windowShift" value="4"/>
+<param name="fftSize" value="128"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="87"/>
+<param name="windowShift" value="5"/>
+<param name="fftSize" value="256"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="131"/>
+<param name="windowShift" value="8"/>
+<param name="fftSize" value="512"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="197"/>
+<param name="windowShift" value="12"/>
+<param name="fftSize" value="512"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="297"/>
+<param name="windowShift" value="18"/>
+<param name="fftSize" value="1024"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="441"/>
+<param name="windowShift" value="26"/>
+<param name="fftSize" value="1024"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="665"/>
+<param name="windowShift" value="40"/>
+<param name="fftSize" value="2048"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="997"/>
+<param name="windowShift" value="60"/>
+<param name="fftSize" value="2048"/>
+</block>
+<block>
+<param name="type" value="gabor"/>
+<param name="windowLen" value="1499"/>
+<param name="windowShift" value="90"/>
+<param name="fftSize" value="4096"/>
+</block>
+</dict>
