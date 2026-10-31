@@ -6,6 +6,10 @@
   analytical phase optimization, without materializing the full time-domain
   dictionary.
 
+* Added `mp_omp_gabor_to_mp()` to convert single-channel results from
+  `mp_core_gabor()` and `omp_core_gabor()` into standardized `mp` objects,
+  enabling their use with time-frequency visualization functions.
+
 * Updated `mp_omp_execute()` to use `mp_core_gabor()` and `omp_core_gabor()`
   for multi-channel decomposition instead of the previous top-k preselection
   and matrix-based workflow. The `tol` argument is passed directly to the
