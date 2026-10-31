@@ -1,4 +1,4 @@
-#' Implements the classical Matching Pursuit (MP) algorithm
+#' Implements the classical Matching Pursuit algorithm
 #'
 #' Computes a sparse representation of a signal using the classical Matching
 #' Pursuit (MP) algorithm and a dictionary of atoms.

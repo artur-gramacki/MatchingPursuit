@@ -123,7 +123,10 @@ User can check whether the EMPI program is installed; if not, an error
 message is displayed indicating that installation is required.
 
 ```{r empi_check, include = TRUE, echo = TRUE}
-empi_check()
+tryCatch(
+  empi_check(),
+  error = function(e) message(conditionMessage(e))
+)
 ```
 
 [Back to menu](#top)
@@ -236,7 +239,7 @@ that the original signal and the reconstructed signal differ only
 minimally. Also, basic signal parameters are displayed, along with
 information about the number of atoms into which the input signal was
 decomposed. Additionally, the energy of the input signal and the reconstructed
-signal (from the atoms) is calculated. The results show that 91.58% of
+signal (from the atoms) is calculated. The results show that 92.45% of
 the original signal's energy is "explained" by the generated atoms.
 Naturally, increasing the number of generated atoms will likely bring
 the energy of the reconstructed signal closer to 100%.
@@ -1283,6 +1286,9 @@ Panel (b) shows the main steps performed internally by `mp_omp_execute()`.
 ```{r fig_1, echo=FALSE, out.width="100%", fig.align="center"}
 knitr::include_graphics("../man/figures/main_workflows.png")
 ```
+
+**Figure legend:** Blue boxes represent R functions, while light orange boxes represent 
+workflow steps, inputs, or output objects.
 
 The **general matrix-based MP/OMP workflow** operates directly on a user-defined numeric
 dictionary and input signal through `mp_core()` or `omp_core()`. It is independent

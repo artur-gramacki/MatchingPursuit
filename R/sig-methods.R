@@ -1,4 +1,4 @@
-#' Methods for Signal Objects
+#' Methods for signal objects
 #'
 #' Methods for printing, summarizing, and plotting objects of class
 #' \code{"sig"}, together with a print method for objects returned by

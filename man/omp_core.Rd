@@ -2,7 +2,7 @@
 % Please edit documentation in R/omp_core.R
 \name{omp_core}
 \alias{omp_core}
-\title{Implements Orthogonal Matching Pursuit (OMP) algorithm}
+\title{Implements Orthogonal Matching Pursuit algorithm}
 \usage{
 omp_core(
   dictionary,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/omp_core_gabor.R
 \name{omp_core_gabor}
 \alias{omp_core_gabor}
-\title{Orthogonal Matching Pursuit for a Parameterized Gabor Dictionary}
+\title{Orthogonal Matching Pursuit for a parameterized Gabor dictionary}
 \usage{
 omp_core_gabor(
   atoms_dict,

@@ -1,4 +1,4 @@
-#' Matching Pursuit for a Parameterized Gabor Dictionary
+#' Matching Pursuit for a oarameterized Gabor dictionary
 #'
 #' Performs Matching Pursuit directly on a parameterized Gabor dictionary
 #' without materializing the complete dictionary as a time-domain matrix.
@@ -181,7 +181,9 @@ mp_core_gabor <- function(
 
   sigma_div <- if (is.null(sigma_divisor)) 3 else sigma_divisor
 
-  # Same iteration-limit policy as omp_core_gabor().
+  # Practical safeguard limiting the number of MP iterations.
+  # Unlike OMP, MP can revisit previously selected atoms.
+  # This is a computational limit, not a theoretical bound.
   max_possible <- as.integer(min(N, 2 * as.double(p)))
 
   if (is.null(tol)) {

@@ -21,7 +21,7 @@ update_gabor_omp_cholesky <- function(active_atoms, new_atom, L) {
   list(ok = TRUE, L = L_new, alpha = alpha)
 }
 
-#' Orthogonal Matching Pursuit for a Parameterized Gabor Dictionary
+#' Orthogonal Matching Pursuit for a parameterized Gabor dictionary
 #'
 #' Performs Orthogonal Matching Pursuit directly on a parameterized Gabor
 #' dictionary without materializing the complete dictionary as a time-domain

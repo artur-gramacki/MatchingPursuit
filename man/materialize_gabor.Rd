@@ -78,7 +78,7 @@ D <- materialize_gabor(
   phase_mode = "grid"
 )
 
-# Select five atoms with low frequencies, distributed across the signal
+# Select four atoms with low frequencies, distributed across the signal
 target_time <- seq(0.25, 1.75, length.out = 4)
 target_freq <- c(4, 8, 12, 20)
 

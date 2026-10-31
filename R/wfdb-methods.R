@@ -1,4 +1,4 @@
-#' Methods for WFDB Objects
+#' Methods for WFDB objects
 #'
 #' Methods for printing, summarizing, and plotting objects of class
 #' \code{"wfdb"}, together with a print method for objects returned by

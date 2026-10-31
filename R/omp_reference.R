@@ -1,4 +1,4 @@
-#' Reference implementation of Orthogonal Matching Pursuit (OMP)
+#' Reference implementation of Orthogonal Matching Pursuit
 #'
 #' A straightforward reference implementation of the Orthogonal Matching
 #' Pursuit (OMP) algorithm that closely follows its mathematical formulation.

@@ -6,7 +6,7 @@
 \alias{print.wfdb}
 \alias{summary.wfdb}
 \alias{print.summary.wfdb}
-\title{Methods for WFDB Objects}
+\title{Methods for WFDB objects}
 \usage{
 \method{plot}{wfdb}(
   x,

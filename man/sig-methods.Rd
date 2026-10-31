@@ -6,7 +6,7 @@
 \alias{summary.sig}
 \alias{print.summary.sig}
 \alias{plot.sig}
-\title{Methods for Signal Objects}
+\title{Methods for signal objects}
 \usage{
 \method{print}{sig}(x, ...)
 

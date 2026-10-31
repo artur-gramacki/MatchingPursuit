@@ -217,16 +217,17 @@ The package provides three main decomposition routes.
 
 ## Typical workflows
 
-The package has three decomposition workflows. The workflow illustration below
-must be updated for version 1.4.0 if it still shows the former top-k Gabor
-preselection and matrix-materialization steps.
+The diagram below illustrates the main workflows supported by MatchingPursuit. The 
+package provides native R implementations of MP and OMP for both user-defined matrix 
+dictionaries and parameterized Gabor dictionaries, as well as optional integration with 
+the external EMPI backend. Gabor-based MP and OMP can be performed without materializing 
+the full dictionary.
 
-<!-- TODO (1.4.0): Replace main_workflows.png with an updated diagram showing
-     read_gabor_dict() -> mp_core_gabor() / omp_core_gabor(), invoked by
-     mp_omp_execute(), with direct iterative atom selection. -->
 <p align="center">
   <img src="man/figures/main_workflows.png" width="800">
 </p>
+**Figure legend:** Blue boxes represent R functions, while light orange boxes represent 
+workflow steps, inputs, or output objects.
 
 The **general matrix-based MP/OMP workflow** operates directly on a user-defined numeric
 dictionary and input signal through `mp_core()` or `omp_core()`. It is independent

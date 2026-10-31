@@ -2,7 +2,7 @@
 % Please edit documentation in R/mp_omp_execute.R
 \name{mp_omp_execute}
 \alias{mp_omp_execute}
-\title{Matching Pursuit (MP) or Orthogonal Matching Pursuit (OMP) decomposition
+\title{Matching Pursuit or Orthogonal Matching Pursuit decomposition
 for multi-channel signals}
 \usage{
 mp_omp_execute(

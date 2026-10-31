@@ -1,6 +1,6 @@
 Package: MatchingPursuit
 Type: Package
-Title: Processing Time Series Data Using the Matching Pursuit Algorithm
+Title: Sparse Time Series Decomposition Using Matching Pursuit and Orthogonal Matching Pursuit
 Version: 1.4.0
 Authors@R: c(
   person(

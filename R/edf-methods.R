@@ -1,4 +1,4 @@
-#' Methods for EDF Objects
+#' Methods for EDF objects
 #'
 #' Methods for printing, summarizing, and plotting objects of class
 #' \code{"edf"}, together with a print method for objects returned by

@@ -2,7 +2,7 @@
 % Please edit documentation in R/omp_reference.R
 \name{omp_reference}
 \alias{omp_reference}
-\title{Reference implementation of Orthogonal Matching Pursuit (OMP)}
+\title{Reference implementation of Orthogonal Matching Pursuit}
 \usage{
 omp_reference(
   dictionary,

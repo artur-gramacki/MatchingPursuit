@@ -1,4 +1,4 @@
-#' Implements Orthogonal Matching Pursuit (OMP) algorithm
+#' Implements Orthogonal Matching Pursuit algorithm
 #'
 #' Performs Orthogonal Matching Pursuit (OMP) to obtain a sparse
 #' representation of a signal using a dictionary of candidate atoms.

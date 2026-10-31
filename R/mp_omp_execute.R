@@ -1,4 +1,4 @@
-#' Matching Pursuit (MP) or Orthogonal Matching Pursuit (OMP) decomposition
+#' Matching Pursuit or Orthogonal Matching Pursuit decomposition
 #' for multi-channel signals
 #'
 #' Performs sparse signal decomposition using either the Matching Pursuit (MP) or

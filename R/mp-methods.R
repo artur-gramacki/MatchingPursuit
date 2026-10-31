@@ -1,4 +1,4 @@
-#' Methods for Matching Pursuit Objects
+#' Methods for Matching Pursuit objects
 #'
 #' Methods for printing, summarizing, and plotting objects of class
 #' \code{"mp"}, together with a print method for objects returned by

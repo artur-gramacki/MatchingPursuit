@@ -6,7 +6,7 @@
 \alias{print.edf}
 \alias{summary.edf}
 \alias{print.summary.edf}
-\title{Methods for EDF Objects}
+\title{Methods for EDF objects}
 \usage{
 \method{plot}{edf}(
   x,

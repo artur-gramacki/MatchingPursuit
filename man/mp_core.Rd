@@ -2,7 +2,7 @@
 % Please edit documentation in R/mp_core.R
 \name{mp_core}
 \alias{mp_core}
-\title{Implements the classical Matching Pursuit (MP) algorithm}
+\title{Implements the classical Matching Pursuit algorithm}
 \usage{
 mp_core(
   dictionary,

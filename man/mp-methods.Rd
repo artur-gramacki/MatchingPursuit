@@ -6,7 +6,7 @@
 \alias{print.mp}
 \alias{summary.mp}
 \alias{print.summary.mp}
-\title{Methods for Matching Pursuit Objects}
+\title{Methods for Matching Pursuit objects}
 \usage{
 \method{plot}{mp}(
   x,
