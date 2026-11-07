@@ -188,7 +188,7 @@ generate_xml_dict <- function(N, file, max_window_length = c("3N", "N-1")) {
   fftSize <- sapply(
     windowLen,
     function(L) {
-      as.integer(2^ceiling(log2(2*L)))
+      as.integer(2^ceiling(log2(2 * L)))
     }
   )
 
@@ -198,11 +198,17 @@ generate_xml_dict <- function(N, file, max_window_length = c("3N", "N-1")) {
 
   writeLines('<?xml version="1.0" encoding="ISO-8859-1"?>', con)
   writeLines('<dict>', con)
+  writeLines('<libVersion>0.6.1</libVersion>', con)
+  writeLines('<blockproperties name="GAUSS-WINDOW">', con)
+  writeLines('<param name="windowtype" value="gauss"/>', con)
+    writeLines('</blockproperties>', con)
 
+  # TODO: Implement windowopt support compatible with MPTK and EMPI. Now, windowopt is ignored
   for(i in seq_along(windowLen)) {
-    block <- c('<block>', '<param name="type" value="gabor"/>',
+    block <- c('<block uses="GAUSS-WINDOW">', '<param name="type" value="gabor"/>',
       sprintf('<param name="windowLen" value="%d"/>', windowLen[i]),
       sprintf('<param name="windowShift" value="%d"/>', windowShift[i]),
+      c('<param name="windowopt" value="0"/>'),
       sprintf('<param name="fftSize" value="%d"/>', fftSize[i]),
       '</block>'
     )
