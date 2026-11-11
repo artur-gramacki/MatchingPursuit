@@ -91,7 +91,9 @@ The functionality of the package includes:
 7. Signal pre-processing using notch, low-pass, high-pass, band-pass, and band-stop filters  
 8. Sparse decomposition using arbitrary user-defined dictionaries represented
    as numeric matrices  
+   
 ## Naming convention
+
 In this vignette, we use the following naming convention:
 
 - The terms **MP-R** and **OMP-R** with a suffix **R** refer to the corresponding backends rather than to algorithms. The terms **MP** and **OMP** without a suffix **R** refer to the corresponding algorithms rather than to a specific implementation.
