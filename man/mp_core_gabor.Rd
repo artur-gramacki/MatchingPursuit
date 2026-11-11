@@ -2,7 +2,7 @@
 % Please edit documentation in R/mp_core_gabor.R
 \name{mp_core_gabor}
 \alias{mp_core_gabor}
-\title{Matching Pursuit for a Parameterized Gabor Dictionary}
+\title{Matching Pursuit for a oarameterized Gabor dictionary}
 \usage{
 mp_core_gabor(
   atoms_dict,

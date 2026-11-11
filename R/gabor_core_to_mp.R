@@ -83,7 +83,7 @@
 #'   verbose = FALSE
 #' )
 #'
-#' out_mp <- mp_omp_gabor_to_mp(fit_mp, sampling_frequency)
+#' out_mp <- gabor_core_to_mp(fit_mp, sampling_frequency)
 #'
 #' # OMP decomposition
 #' fit_omp <- omp_core_gabor(
@@ -94,7 +94,7 @@
 #'   verbose = FALSE
 #' )
 #'
-#' out_omp <- mp_omp_gabor_to_mp(fit_omp, sampling_frequency)
+#' out_omp <- gabor_core_to_mp(fit_omp, sampling_frequency)
 #'
 #' # Verify the resulting object
 #' class(out_omp)
@@ -103,7 +103,7 @@
 #' # Verify reconstruction consistency
 #' max(abs(out_omp$reconstruction[, 1] - fit_omp$reconstruction))
 #'
-mp_omp_gabor_to_mp <- function(core, sampling_frequency) {
+gabor_core_to_mp <- function(core, sampling_frequency) {
 
   # Validate input ----
   required <- c("selected_atoms", "signal", "coefs", "energy",
