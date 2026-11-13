@@ -96,8 +96,10 @@ The functionality of the package includes:
 
 In this vignette, we use the following naming convention:
 
-- The terms **MP-R** and **OMP-R** with a suffix **R** refer to the corresponding backends rather than to algorithms. The terms **MP** and **OMP** without a suffix **R** refer to the corresponding algorithms rather than to a specific implementation.
+- The terms **MP-*R** and **OMP-R** (with a suffix **R**) refer to the native R implementations of **MP** and **OMP** (without a suffix **R**), respectively, including their matrix-based and parameterized Gabor variants. The terms MP and OMP refer to the algorithms independently of any particular implementation.
 - **EMPI** refers to the external backend implementing the Matching Pursuit algorithm, developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
+
+
 
 ## Installing the optional EMPI backend
 
@@ -105,7 +107,7 @@ The below `empi_install()` function downloads **Enhanced Matching
 Pursuit Implementation** external program (or **EMPI** for short), see
 @Rozanski-2024, and stores it in the cache directory. The function
 downloads the EMPI program in a version compatible with the operating
-system used (Windows, Linux, MacOS-arm64).
+system used (Windows, Linux, MacOS ARM64).
 
 First, the user can check where EMPI will be downloaded from.
 
@@ -121,7 +123,7 @@ function cannot be executed while generating this vignette.
 # empi_install()
 ```
 
-User can check whether the EMPI program is installed; if not, an error
+The user can check whether the EMPI program is installed; if not, an error
 message is displayed indicating that installation is required.
 
 ```{r empi_check, include = TRUE, echo = TRUE}
@@ -241,8 +243,8 @@ that the original signal and the reconstructed signal differ only
 minimally. Also, basic signal parameters are displayed, along with
 information about the number of atoms into which the input signal was
 decomposed. Additionally, the energy of the input signal and the reconstructed
-signal (from the atoms) is calculated. The results show that 92.45% of
-the original signal's energy is "explained" by the generated atoms.
+signal (from the atoms) is calculated. The decomposition reduces the residual 
+energy by 92.45% relative to the original signal energy.
 Naturally, increasing the number of generated atoms will likely bring
 the energy of the reconstructed signal closer to 100%.
 
@@ -317,8 +319,8 @@ sample1_empi_out <- readRDS(file = file)
 plot(sample1_empi_out)
 ```
 The T-F map is similar to the previous one, although some differences in
-atom selection can be observed. The reconstructed signal explains a slightly
-larger proportion of the original signal energy, reaching 92.69%.
+atom selection can be observed. The decomposition reduces the residual 
+energy by 92.69% relative to the original signal energy.
 
 [Back to menu](#top)
 
@@ -596,7 +598,7 @@ out_ecg$record_name
 ### Step 2 - MP decomposition {.unnumbered}
 
 The input data (`signal`) is passed as an argument to the
-`empi_execute()` function, which generates the object of class `mp` 
+`mp_omp_execute()` function, which generates the object of class `mp` 
 containing all atom parameters.
 
 ```{r ecg_mp_omp_execute, include = TRUE, echo = TRUE, warning = FALSE}
@@ -665,10 +667,10 @@ f <- 128
 t1 = n / f
 t <- seq(from = 0, to = n - 1, by = 1) / f
 
-g1 <- gabor_atom(n, f, mean = 2, phase = 0, sigma = 1, frequency = 50, normalization = F)
-g2 <- gabor_atom(n, f, mean = 8, phase = 0, sigma = 1.5, frequency = 25, normalization = F)
-g3 <- gabor_atom(n, f, mean = 2, phase = 0, sigma = 2, frequency = 30, normalization = F)
-g4 <- gabor_atom(n, f, mean = 7, phase = 0, sigma = 0.5, frequency = 15, normalization = F)
+g1 <- gabor_atom(n, f, mean = 2, phase = 0, sigma = 1, frequency = 50, normalization = FALSE)
+g2 <- gabor_atom(n, f, mean = 8, phase = 0, sigma = 1.5, frequency = 25, normalization = FALSE)
+g3 <- gabor_atom(n, f, mean = 2, phase = 0, sigma = 2, frequency = 30, normalization = FALSE)
+g4 <- gabor_atom(n, f, mean = 7, phase = 0, sigma = 0.5, frequency = 15, normalization = FALSE)
 imp <- rep(0, n)
 imp[n / 2] <- 4
 sine <- 0.2 * sin(2 * pi * 3 * t)
@@ -730,7 +732,7 @@ out <- tf_map(
 
 The Matching Pursuit algorithm is well-known and described in the
 literature. Its purpose is to approximate the analyzed signal using
-so-called atoms. (the text below is adapted from @Kunik-2025).
+so-called atoms (the text below is adapted from @Kunik-2025).
 
 Given a discrete signal $f \in \mathbb{R}^n$, and a possibly overcomplete
 dictionary $D =\{g_{\gamma}\}_{\gamma \in \Gamma}$ of
@@ -780,7 +782,7 @@ is modulated by a Gaussian envelope (in red).
 ```{r gabor_atom, include = TRUE, echo = FALSE, fig.width = 7, fig.height = 5, fig.align = 'center'}
 N <- 512
 fs <- 256
-# normalization = T --> signal's norm = 1
+# normalization = TRUE --> signal's norm = 1
 
 par(mfrow = c(2,2), pty = "m", mai = c(0.4, 0.4, 0.3, 0.2))
 
@@ -912,7 +914,7 @@ par(old_par)
 ## The Orthogonal Matching Pursuit algorithm in a nutshell
 
 The package also provides an implementation of the Orthogonal Matching
-Pursuit (OMP) algorithm. OMP algorithm is closely related to
+Pursuit (OMP) algorithm. The OMP algorithm is closely related to
 MP, but differs in how approximation coefficients are estimated.
 
 In the classical MP algorithm, after an atom has been selected, only
@@ -976,14 +978,14 @@ R^{n+1} = f - D_n \mathbf{a}^{(n)}. \tag{15}
 $$
 
 Because the residual is orthogonal to the span of the selected atoms,
-its correlation with every selected atom is zero. Consequently, a
+its correlation with every selected atom is zero (in exact arithmetic). Consequently, a
 previously selected atom cannot be selected again.
 
 ## Comparison of MP and OMP
 
 Both MP and OMP use a greedy correlation-based strategy to select atoms from a dictionary. The main difference between the two algorithms lies in the way the coefficients associated with the selected atoms are estimated and the residual is updated. In MP, only the coefficient of the newly selected atom is estimated at each iteration, whereas OMP jointly re-estimates the coefficients of all atoms selected so far. 
 
-The main advantage of OMP is that, after solving the least-squares problem, the residual is orthogonal to the subspace spanned by all selected atoms. Consequently, the coefficients of previously selected atoms can be re-estimated when new atoms are added. In contrast, MP does not revisit previously estimated coefficients, which makes it computationally simpler but may result in a less accurate approximation for a given number of selected atoms.
+The main advantage of OMP is that, after solving the least-squares problem, the residual is orthogonal to the subspace spanned by all selected atoms. Consequently, the coefficients of previously selected atoms can be re-estimated when new atoms are added. In contrast, MP does not revisit previously estimated coefficients, which makes it computationally simpler.OMP often achieves a lower reconstruction error than MP for a given number of selected atoms, although this is not guaranteed for every signal and dictionary.
 
 The choice between MP and OMP therefore represents a trade-off between computational efficiency and approximation accuracy. MP may be preferable when computational simplicity and speed are important, whereas OMP generally provides a more accurate reconstruction for a given number of selected atoms and may require fewer atoms to achieve a prescribed reconstruction accuracy. This improvement comes at the cost of higher computational complexity, since the coefficients of all selected atoms must be jointly updated after each iteration.
 
@@ -1473,7 +1475,7 @@ A practical dictionary usually consists of multiple blocks with different window
 | 1619       | 97           | 4096    | 0                 | 2049                   | 0               |
 
 
-An interesting special case are the two last blocks:
+The last two blocks illustrate special cases:
 
 ```
 <block>

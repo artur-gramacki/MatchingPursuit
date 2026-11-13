@@ -98,7 +98,7 @@ The time–frequency map below shows the energy distribution of the selected ato
 White crosses indicate the centers of individual time–frequency blobs, i.e. 
 the atoms' central time and central frequency coordinates. The panels below 
 show the original signal and its reconstruction; in this example, the reconstruction 
-explains 98.69% of the signal energy.
+explains 99.25% of the signal energy.
 
 <p align="center">
   <img src="man/figures/mp.png" width="700">
