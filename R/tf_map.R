@@ -387,7 +387,7 @@ tf_map <- function(
   frequency <- out$atoms$frequency[rows]
   signal <- out$signal[, channel]
   reconstruction <- out$reconstruction[, channel]
-  gabors <- out$gabors[[channel]]
+  gabors <- out$selected_atoms[[channel]]
 
   # Signal energy
   signal_energy <- sum(signal^2, na.rm = TRUE)

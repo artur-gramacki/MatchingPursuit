@@ -8,7 +8,7 @@ empi_install()
 }
 \value{
 The function downloads the EMPI program in a version compatible
-with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64)
+with the operating system used (Windows, Linux, MacOS-arm64)
 and stores it in the package cache directory.
 }
 \description{

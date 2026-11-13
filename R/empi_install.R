@@ -9,7 +9,7 @@
 #' repository, verifies its integrity using a checksum, and extracts it.
 #'
 #' @return The function downloads the EMPI program in a version compatible
-#' with the operating system used (Windows, Linux, MacOS-x64, MacOS-arm64)
+#' with the operating system used (Windows, Linux, MacOS-arm64)
 #' and stores it in the package cache directory.
 #'
 #' @importFrom utils download.file unzip
