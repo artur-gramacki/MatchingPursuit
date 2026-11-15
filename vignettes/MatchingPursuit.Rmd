@@ -96,7 +96,7 @@ The functionality of the package includes:
 
 In this vignette, we use the following naming convention:
 
-- The terms **MP-*R** and **OMP-R** (with a suffix **R**) refer to the native R implementations of **MP** and **OMP** (without a suffix **R**), respectively, including their matrix-based and parameterized Gabor variants. The terms MP and OMP refer to the algorithms independently of any particular implementation.
+- The terms **MP-R** and **OMP-R** (with a suffix **R**) refer to the native R implementations of **MP** and **OMP** (without a suffix **R**), respectively, including their matrix-based and parameterized Gabor variants. The terms MP and OMP refer to the algorithms independently of any particular implementation.
 - **EMPI** refers to the external backend implementing the Matching Pursuit algorithm, developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
 
 
