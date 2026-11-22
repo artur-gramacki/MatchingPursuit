@@ -1,3 +1,19 @@
+# MatchingPursuit 1.4.1
+
+* Updated the README and package vignette for improved clarity and consistency.
+
+* Standardized the terminology for the four native R implementations: MP-Matrix, 
+  OMP-Matrix, MP-Gabor, and OMP-Gabor.
+
+* Revised descriptions of the matrix-based, Gabor-based, and external EMPI 
+  decomposition workflows.
+
+* Updated workflow diagrams and example figures.
+
+* Corrected minor documentation and formatting issues.
+
+* Regenerated package documentation and updated package metadata.
+
 # MatchingPursuit 1.4.0
 
 * Added `mp_core_gabor()` and `omp_core_gabor()` for direct MP and OMP

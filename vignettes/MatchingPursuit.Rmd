@@ -77,8 +77,8 @@ The functionality of the package includes:
 
 
 1. Native R implementations of:
-    - Matching Pursuit (**MP-R**)  
-    - Orthogonal Matching Pursuit (**OMP-R**)  
+    - **MP-Matrix** and **OMP-Matrix** for matrix-based dictionaries
+    - **MP-Gabor** and **OMP-Gabor** for parameterized Gabor dictionaries
 2. An educational and reference implementation of OMP through `omp_reference()`  
 3. Optional high-performance Gabor-based Matching Pursuit using the external
    **Enhanced Matching Pursuit Implementation (EMPI)** backend  
@@ -96,10 +96,10 @@ The functionality of the package includes:
 
 In this vignette, we use the following naming convention:
 
-- The terms **MP-R** and **OMP-R** (with a suffix **R**) refer to the native R implementations of **MP** and **OMP** (without a suffix **R**), respectively, including their matrix-based and parameterized Gabor variants. The terms MP and OMP refer to the algorithms independently of any particular implementation.
-- **EMPI** refers to the external backend implementing the Matching Pursuit algorithm, developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
-
-
+- **MP-Matrix** and **OMP-Matrix** refer to the native R implementations using matrix-based dictionaries.
+- **MP-Gabor** and **OMP-Gabor** refer to the native R implementations using parameterized Gabor dictionaries.
+- **MP** and **OMP** refer to the algorithms independently of any particular implementation.
+- **EMPI** refers to the external Matching Pursuit implementation developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
 
 ## Installing the optional EMPI backend
 
@@ -280,8 +280,7 @@ The same signal can also be decomposed using the optional external
 Enhanced Matching Pursuit Implementation (EMPI) backend. Note that
 EMPI must be installed separately before `empi_execute()` can be used.
 
-::: {#important_note}
-:::
+::: {#important_note} :::
 
 **Important note:** The code in the chunk below has been commented out
 because CRAN's verification rules prohibit automatic binary downloads.
@@ -985,7 +984,7 @@ previously selected atom cannot be selected again.
 
 Both MP and OMP use a greedy correlation-based strategy to select atoms from a dictionary. The main difference between the two algorithms lies in the way the coefficients associated with the selected atoms are estimated and the residual is updated. In MP, only the coefficient of the newly selected atom is estimated at each iteration, whereas OMP jointly re-estimates the coefficients of all atoms selected so far. 
 
-The main advantage of OMP is that, after solving the least-squares problem, the residual is orthogonal to the subspace spanned by all selected atoms. Consequently, the coefficients of previously selected atoms can be re-estimated when new atoms are added. In contrast, MP does not revisit previously estimated coefficients, which makes it computationally simpler.OMP often achieves a lower reconstruction error than MP for a given number of selected atoms, although this is not guaranteed for every signal and dictionary.
+The main advantage of OMP is that, after solving the least-squares problem, the residual is orthogonal to the subspace spanned by all selected atoms. Consequently, the coefficients of previously selected atoms can be re-estimated when new atoms are added. In contrast, MP does not revisit previously estimated coefficients, which makes it computationally simpler. OMP often achieves a lower reconstruction error than MP for a given number of selected atoms, although this is not guaranteed for every signal and dictionary.
 
 The choice between MP and OMP therefore represents a trade-off between computational efficiency and approximation accuracy. MP may be preferable when computational simplicity and speed are important, whereas OMP generally provides a more accurate reconstruction for a given number of selected atoms and may require fewer atoms to achieve a prescribed reconstruction accuracy. This improvement comes at the cost of higher computational complexity, since the coefficients of all selected atoms must be jointly updated after each iteration.
 
@@ -1142,8 +1141,8 @@ head(atoms_dict)
 The parameterized dictionary is passed directly to `mp_core_gabor()` or
 `omp_core_gabor()`. At each iteration, candidate atoms are evaluated against
 the current residual using FFT-based projections and analytical phase
-optimization. Only the selected atoms are constructed in the time domain;
-no preliminary top-k ranking or full matrix dictionary is required.
+optimization. Only the selected atoms are constructed in the time domain,
+without materializing the full dictionary matrix.
 
 ```{r mp_core_gabor_example, include = TRUE, echo = TRUE, warning = FALSE}
 fit_gabor <- mp_core_gabor(
@@ -1275,12 +1274,11 @@ relative_clean_error
 
 [Back to menu](#top)
 
-### Relationship between MP-R, OMP-R, and EMPI backends {.unnumbered}
+### Relationship between MP-Matrix, OMP-Matrix, MP-Gabor, OMP-Gabor, and EMPI backends {.unnumbered}
 
-MP-R and OMP-R implement Matching Pursuit and Orthogonal Matching Pursuit,
-respectively. EMPI is a high-performance C++ backend specialized in Gabor-based
-Matching Pursuit and is designed for substantially faster decomposition of large
-dictionaries.
+The package provides four native R implementations: MP-Matrix and OMP-Matrix for 
+matrix-based dictionaries, and MP-Gabor and OMP-Gabor for parameterized Gabor dictionaries. 
+EMPI is an external high-performance C++ implementation of Gabor-based Matching Pursuit.
 
 The diagram below summarizes the **three available decomposition workflows** and
 their relationship within the package. Blue boxes denote R functions, whereas 
@@ -1291,17 +1289,14 @@ Panel (b) shows the main steps performed internally by `mp_omp_execute()`.
 knitr::include_graphics("../man/figures/main_workflows.png")
 ```
 
-**Figure legend:** Blue boxes represent R functions, while light orange boxes represent 
-workflow steps, inputs, or output objects.
-
-The **general matrix-based MP/OMP workflow** operates directly on a user-defined numeric
+The **MP-Matrix / OMP-Matrix workflow** operates directly on a user-defined numeric
 dictionary and input signal through `mp_core()` or `omp_core()`. It is independent
 of the Gabor-specific dictionary construction utilities and can therefore be used
 with arbitrary matrix dictionaries. These functions return low-level decomposition
 results, giving the user direct control over the dictionary and the decomposition
 procedure.
 
-The **native R Gabor-based MP/OMP workflow**, implemented by `mp_omp_execute()`,
+The **MP-Gabor / OMP-Gabor workflow**, implemented by `mp_omp_execute()`,
 provides a higher-level interface for Gabor-based MP and OMP decomposition. It
 integrates dictionary specification or generation, dictionary reading, iterative
 atom selection against the current residual, and aggregation of channel-specific
@@ -1313,7 +1308,7 @@ directly to `mp_core_gabor()` or `omp_core_gabor()`. These functions use FFT-bas
 candidate evaluation and analytical phase optimization, materializing only the
 selected time-domain atoms rather than the complete dictionary.
 
-The **external EMPI-based MP workflow** provides an alternative MP implementation
+The **EMPI workflow** provides an alternative MP implementation
 through `empi_execute()`. In this case, decomposition is performed by the external
 high-performance C++ EMPI backend rather than by the native R MP/OMP core functions.
 The wrapper integrates the external decomposition results into the same

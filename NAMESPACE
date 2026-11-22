@@ -46,60 +46,44 @@ export(resample_signal)
 export(signal_to_bin)
 export(tf_map)
 importFrom(EGM,read_wfdb)
-importFrom(RSQLite,
-  dbConnect,
-  dbDisconnect,
-  dbGetQuery,
-  dbListTables
-)
+importFrom(RSQLite,dbConnect)
+importFrom(RSQLite,dbDisconnect)
+importFrom(RSQLite,dbGetQuery)
+importFrom(RSQLite,dbListTables)
 importFrom(digest,digest)
 importFrom(edf,read.edf)
-importFrom(grDevices,
-  dev.off,
-  graphics.off,
-  hcl.colors,
-  pdf,
-  png
-)
-importFrom(graphics,
-  abline,
-  axis,
-  box,
-  layout,
-  lines,
-  mtext,
-  par,
-  plot,
-  plot.new,
-  plot.window,
-  points,
-  rasterImage,
-  segments,
-  text,
-  title
-)
-importFrom(imager,
-  as.cimg,
-  resize
-)
-importFrom(signal,
-  butter,
-  freqz
-)
-importFrom(stats,
-  median,
-  mvfft
-)
+importFrom(grDevices,dev.off)
+importFrom(grDevices,graphics.off)
+importFrom(grDevices,hcl.colors)
+importFrom(grDevices,pdf)
+importFrom(grDevices,png)
+importFrom(graphics,abline)
+importFrom(graphics,axis)
+importFrom(graphics,box)
+importFrom(graphics,layout)
+importFrom(graphics,lines)
+importFrom(graphics,mtext)
+importFrom(graphics,par)
+importFrom(graphics,plot)
+importFrom(graphics,plot.new)
+importFrom(graphics,plot.window)
+importFrom(graphics,points)
+importFrom(graphics,rasterImage)
+importFrom(graphics,segments)
+importFrom(graphics,text)
+importFrom(graphics,title)
+importFrom(imager,as.cimg)
+importFrom(imager,resize)
+importFrom(signal,butter)
+importFrom(signal,freqz)
+importFrom(stats,median)
+importFrom(stats,mvfft)
 importFrom(tools,file_path_sans_ext)
-importFrom(utils,
-  download.file,
-  flush.console,
-  read.table,
-  tail,
-  unzip
-)
-importFrom(xml2,
-  read_xml,
-  xml_attr,
-  xml_find_all
-)
+importFrom(utils,download.file)
+importFrom(utils,flush.console)
+importFrom(utils,read.table)
+importFrom(utils,tail)
+importFrom(utils,unzip)
+importFrom(xml2,read_xml)
+importFrom(xml2,xml_attr)
+importFrom(xml2,xml_find_all)

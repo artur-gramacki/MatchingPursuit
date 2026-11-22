@@ -68,11 +68,6 @@ Useful links:
 \author{
 \strong{Maintainer}: Artur Gramacki \email{a.gramacki@gmail.com} (\href{https://orcid.org/0000-0002-1610-9743}{ORCID})
 
-Authors:
-\itemize{
-  \item Artur Gramacki \email{a.gramacki@gmail.com} (\href{https://orcid.org/0000-0002-1610-9743}{ORCID})
-}
-
 Other contributors:
 \itemize{
   \item Jarosław Gramacki \email{j.gramacki@gmail.com} (\href{https://orcid.org/0000-0001-5032-1353}{ORCID}) [contributor]
