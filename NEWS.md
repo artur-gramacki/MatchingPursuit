@@ -1,6 +1,6 @@
 # MatchingPursuit 1.4.1
 
-* Updated the README and package vignette for improved clarity and consistency.
+* Updated the `README.md` and package vignette for improved clarity and consistency.
 
 * Standardized the terminology for the four native R implementations: MP-Matrix, 
   OMP-Matrix, MP-Gabor, and OMP-Gabor.

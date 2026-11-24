@@ -37,4 +37,3 @@ Encoding: UTF-8
 NeedsCompilation: no
 Packaged: 2026-08-19 12:46:54 UTC; Artur
 Config/roxygen2/version: 8.1.1
-RoxygenNote: 7.3.3

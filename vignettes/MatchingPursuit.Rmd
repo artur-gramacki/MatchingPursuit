@@ -78,7 +78,7 @@ The functionality of the package includes:
 
 1. Native R implementations of:
     - **MP-Matrix** and **OMP-Matrix** for matrix-based dictionaries
-    - **MP-Gabor** and **OMP-Gabor** for parameterized Gabor dictionaries
+    - **MP-Gabor** and **OMP-Gabor** for Gabor-based dictionaries 
 2. An educational and reference implementation of OMP through `omp_reference()`  
 3. Optional high-performance Gabor-based Matching Pursuit using the external
    **Enhanced Matching Pursuit Implementation (EMPI)** backend  
@@ -97,7 +97,7 @@ The functionality of the package includes:
 In this vignette, we use the following naming convention:
 
 - **MP-Matrix** and **OMP-Matrix** refer to the native R implementations using matrix-based dictionaries.
-- **MP-Gabor** and **OMP-Gabor** refer to the native R implementations using parameterized Gabor dictionaries.
+- **MP-Gabor** and **OMP-Gabor** refer to the native R implementations using Gabor-based dictionaries.
 - **MP** and **OMP** refer to the algorithms independently of any particular implementation.
 - **EMPI** refers to the external Matching Pursuit implementation developed by Piotr T. Różański and available on [GitHub](https://github.com/develancer/empi).
 
@@ -980,6 +980,8 @@ Because the residual is orthogonal to the span of the selected atoms,
 its correlation with every selected atom is zero (in exact arithmetic). Consequently, a
 previously selected atom cannot be selected again.
 
+[Back to menu](#top)
+
 ## Comparison of MP and OMP
 
 Both MP and OMP use a greedy correlation-based strategy to select atoms from a dictionary. The main difference between the two algorithms lies in the way the coefficients associated with the selected atoms are estimated and the residual is updated. In MP, only the coefficient of the newly selected atom is estimated at each iteration, whereas OMP jointly re-estimates the coefficients of all atoms selected so far. 
@@ -1271,8 +1273,6 @@ relative_clean_error <- sqrt(
 
 relative_clean_error
 ```
-
-[Back to menu](#top)
 
 ### Relationship between MP-Matrix, OMP-Matrix, MP-Gabor, OMP-Gabor, and EMPI backends {.unnumbered}
 

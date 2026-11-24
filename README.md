@@ -52,8 +52,6 @@ Additional features include:
 
 ## Installation
 
-## Installation
-
 You can install the latest version available on 
 [CRAN](https://CRAN.R-project.org/package=MatchingPursuit) with:
 
@@ -78,6 +76,9 @@ or `omp_core_gabor()`, respectively. Each channel is decomposed independently, a
 the results are combined into an object of class `mp` without materializing the 
 full dictionary matrix.
 
+If `dictionary = NULL` (default option), an XML Gabor dictionary specification 
+is generated internally.
+
 
 ```r
 sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
@@ -94,8 +95,6 @@ out_mp <- mp_omp_execute(
 plot(out_mp)
 ```
 
-If `dictionary = NULL`, an XML Gabor dictionary specification is generated internally.
-
 The time–frequency map below shows the energy distribution of the selected atoms. 
 White crosses indicate the centers of individual time–frequency blobs, 
 corresponding to the atoms' central time and frequency coordinates. 
@@ -105,6 +104,54 @@ the reconstruction explains 99.25% of the signal energy.
 <p align="center">
   <img src="man/figures/mp.png" width="700">
 </p>
+
+Alternatively, a user-defined XML dictionary can be supplied through the dictionary 
+argument. The XML file defines the Gabor dictionary parameters, including window 
+lengths, time shifts, and FFT sizes. The dictionary is loaded and processed without 
+constructing the full matrix of sampled atoms.
+
+```r
+sig_file <- system.file("extdata", "sample1.csv", package = "MatchingPursuit")
+signal <- read_csv_signals(sig_file)
+
+xml_file <- system.file("extdata", "sample1.xml", package = "MatchingPursuit")
+
+# use mode = "omp" for OMP-Gabor
+out_mp <- mp_omp_execute(
+  signal = signal,
+  mode = "mp",
+  dictionary = xml_file,
+  n_nonzero_coefs = 50
+)
+
+plot(out_mp)
+```
+
+The XML file defines the Gabor dictionary using one or more blocks. Each block 
+specifies the window length (`windowLen`), time shift (`windowShift`), and FFT size 
+(`fftSize`). For example, the first two blocks of the included `sample1.xml` file are:
+
+```r
+<dict>
+  <block>
+    <param name="type" value="gabor"/>
+    <param name="windowLen" value="17"/>
+    <param name="windowShift" value="1"/>
+    <param name="fftSize" value="32"/>
+  </block>
+  <block>
+    <param name="type" value="gabor"/>
+    <param name="windowLen" value="25"/>
+    <param name="windowShift" value="1"/>
+    <param name="fftSize" value="64"/>
+  </block>
+</dict>
+```
+
+The complete `sample1.xml` file contains 13 blocks with different parameter combinations. 
+The dictionary is loaded and processed without materializing the full matrix of sampled 
+atoms. For a detailed description of the XML dictionary structure, its parameters, 
+and dictionary generation, see the package vignette.
 
 ### MP-Matrix and OMP-Matrix
 
@@ -173,6 +220,155 @@ In this example, the selected atoms explain 98.96% of the signal energy.
 </p>
 
  
+## Multichannel EEG analysis
+ 
+The following example demonstrates a complete EEG analysis workflow using a 
+recording distributed with the package. The analysis consists of five steps: (1) 
+importing an EDF recording, (2) filtering, (3) resampling from 256 Hz to 128 Hz, (4) 
+constructing an 18-channel bipolar montage, and (5) performing OMP-Gabor decomposition 
+followed by time–frequency visualization.
+ 
+### 1. Import the EEG recording
+
+The annotation channel is automatically excluded during EDF import, leaving 19 EEG 
+channels for further processing.
+
+```r 
+file <- system.file("extdata", "EEG.edf", package = "MatchingPursuit")
+signal_eeg <- read_edf_signals(file)
+
+eeg <- signal_eeg$signal
+sf <- signal_eeg$sampling_frequency
+```
+
+### 2. Apply zero-phase filtering
+
+A notch filter (49–51 Hz), a 40 Hz low-pass filter, and a 1 Hz high-pass filter are 
+applied to each EEG channel.
+
+```r
+fc <- design_filters(
+  sampling_frequency = sf,
+  notch = c(49, 51),
+  lowpass = 40,
+  highpass = 1
+)
+
+eeg_f <- eeg
+
+for (m in seq_len(ncol(eeg_f))) {
+  eeg_f[, m] <- signal::filtfilt(fc$notch, eeg[, m])
+  eeg_f[, m] <- signal::filtfilt(fc$lowpass, eeg_f[, m])
+  eeg_f[, m] <- signal::filtfilt(fc$highpass, eeg_f[, m])
+}
+```
+
+### 3. Resample the filtered signals
+
+The sampling frequency is reduced from 256 Hz to 128 Hz to decrease computational cost. 
+This step is optional.
+
+```r
+sf_r <- 128
+eeg_f_r <- resample_signal(
+  signal = eeg_f,
+  p = 1,
+  q = 2
+)
+```
+
+### 4. Construct a bipolar EEG montage
+
+The bipolar montage is constructed from 18 electrode pairs.
+
+```r
+pairs <- list(
+  c("Fp2","F4"), c("F4","C4"), c("C4","P4"), c("P4","O2"),
+  c("Fp1","F3"), c("F3","C3"), c("C3","P3"), c("P3","O1"),
+  c("Fp2","F8"), c("F8","T4"), c("T4","T6"), c("T6","O2"),
+  c("Fp1","F7"), c("F7","T3"), c("T3","T5"), c("T5","O1"),
+  c("Fz","Cz"), c("Cz","Pz")
+)
+
+eeg_f_r_m <- eeg_montage(
+  eeg_f_r,
+  montage_type = "bipolar",
+  bipolar_pairs = pairs
+)
+
+signal <- as_sig(eeg_f_r_m, sf_r)
+```
+
+### 5. Perform OMP-Gabor decomposition and visualize the results
+
+Each EEG channel is decomposed independently using 20 selected atoms.
+
+```r
+out_omp <- mp_omp_execute(
+  signal = signal,
+  mode = "omp",
+  n_nonzero_coefs = 20,
+  verbose = TRUE
+)
+
+summary(out_omp)
+plot(out_omp)
+```
+
+The resulting time–frequency representations show the selected Gabor atoms for 
+each EEG channel. More detailed explanations of EEG preprocessing and montage 
+construction are provided in the package vignette.
+
+<p align="center">
+  <img src="man/figures/eeg.png" width="700">
+</p>
+
+
+## Multichannel ECG analysis
+
+MatchingPursuit provides a dedicated plotting method for WFDB (WaveForm DataBase) 
+objects, designed primarily for ECG visualization. The method displays individual 
+ECG leads on a conventional electrocardiographic grid, with small squares representing 
+0.04 s × 0.1 mV and large squares representing 0.20 s × 0.5 mV. Each lead is displayed 
+separately with its corresponding label. The plotting function also allows users to 
+select a time interval, adjust the vertical spacing between leads, and optionally 
+display baseline reference lines.
+
+```r
+# ECG data comes from https://physionet.org/content/ptb-xl/1.0.3/
+file <- system.file("extdata", "00001_lr.hea", package = "MatchingPursuit")
+signal_ecg <- read_wfdb_signals(file)
+plot(
+  signal_ecg, 
+  begin = 0, 
+  end = 10, 
+  panel_height = 1.0
+)
+```
+
+<p align="center">
+  <img src="man/figures/ecg_grid.png" width="700">
+</p>
+
+The ECG recording is then decomposed using OMP-Gabor with 20 selected atoms per channel. 
+The resulting plot shows the time–frequency representation of the selected Gabor atoms, 
+ together with the original and reconstructed ECG signals.
+
+```r
+out_omp <- mp_omp_execute(
+  signal = signal_ecg,
+  mode = "omp",
+  n_nonzero_coefs = 20,
+  verbose = TRUE
+)
+
+plot(out_omp)
+```
+
+<p align="center">
+  <img src="man/figures/ecg.png" width="700">
+</p>
+
 
 ## Package architecture
 
@@ -222,10 +418,10 @@ consistent reconstruction and visualization.
 
 ## Documentation
 
-The package documentation includes:
+The package documentation, including the vignette and reference
+manual, is available on [CRAN](https://CRAN.R-project.org/package=MatchingPursuit)
 
-- Introduction vignette
-- Reference manual
+
 
 ## Supported input formats
 
