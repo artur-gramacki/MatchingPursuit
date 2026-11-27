@@ -280,7 +280,7 @@ The same signal can also be decomposed using the optional external
 Enhanced Matching Pursuit Implementation (EMPI) backend. Note that
 EMPI must be installed separately before `empi_execute()` can be used.
 
-::: {#important_note} :::
+::: {#important_note}
 
 **Important note:** The code in the chunk below has been commented out
 because CRAN's verification rules prohibit automatic binary downloads.
@@ -290,6 +290,8 @@ executed here. This is why the output object from the `empi_execute()`
 has been generated in advance and included in the package as `rds` file.
 In the next chunk, the `plot()` and `tf_map()` functions use this file as 
 input.
+
+:::
 
 Notice the `empi_options` parameter in the `empi_execute()` function.
 You can omit this parameter, and the EMPI program will run
